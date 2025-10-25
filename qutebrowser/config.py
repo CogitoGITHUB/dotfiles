@@ -76,6 +76,6 @@ c.colors.prompts.selected.fg = white
 c.colors.prompts.border = f"1px solid {gray}"
 
 ### Web content (optional CSS filter for grayscale websites) ###
-c.content.user_stylesheets = ['~/.config/qutebrowser/monochrome.css']
+#c.content.user_stylesheets = ['~/.config/qutebrowser/monochrome.css']
 
 

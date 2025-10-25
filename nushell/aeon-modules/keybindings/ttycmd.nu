@@ -28,7 +28,7 @@ let keybindings = [
     {
       name: hyprland
       modifier: control
-      keycode: char_d
+      keycode: char_h
       mode: emacs
       event: {
         send: executehostcommand

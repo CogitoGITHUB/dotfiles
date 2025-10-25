@@ -23,15 +23,6 @@ max_size = "1920px 100%"
 margin = 0
 
 
-
-[layout_center]
-dmargin = 60
-offset = [0, 30]
-next = "movefocus r"
-prev = "movefocus l"
-next2 = "movefocus d"
-prev2 = "movefocus u"
-
 [shortcuts_menu.entries]
 
 "Open Jira ticket" = 'open-jira-ticket "$(wl-paste)"'

@@ -22,9 +22,10 @@
       url = "github:VirtCode/hypr-dynamic-cursors";
       inputs.hyprland.follows = "hyprland";
     };
+    # The 'hyprscroll' input has been removed as the plugin is now in 'hyprland-plugins'
   };
 
-  # The 'outputs' function now correctly consumes all input flakes.
+  # Removed hyprscroll from the outputs list
   outputs = { self, nixpkgs, hyprland, hyprland-plugins, hyprland-easymotion, hypr-dynamic-cursors, ... }@inputs:
     let
       system = "x86_64-linux";
@@ -55,6 +56,9 @@
                   inputs.hyprland-plugins.packages.${system}.hyprexpo
                   inputs.hyprland-plugins.packages.${system}.hyprwinwrap
                   
+                  # ADDED: The renamed scrolling plugin from the official repo
+                  inputs.hyprland-plugins.packages.${system}.hyprscrolling 
+                  
                   # EasyMotion Plugin
                   inputs.hyprland-easymotion.packages.${system}.hyprland-easymotion
 
@@ -68,4 +72,3 @@
       };
     };
 }
-
