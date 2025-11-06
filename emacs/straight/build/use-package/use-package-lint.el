@@ -1,1 +1,1 @@
-/home/asdf/.config/emacs/straight/repos/use-package/use-package-lint.el
+/data/data/com.termux/files/home/.config/emacs/straight/repos/use-package/use-package-lint.el

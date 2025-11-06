@@ -1,1 +1,1 @@
-/home/asdf/.config/emacs/straight/repos/bind-key/bind-key-pkg.el
+/data/data/com.termux/files/home/.config/emacs/straight/repos/bind-key/bind-key-pkg.el

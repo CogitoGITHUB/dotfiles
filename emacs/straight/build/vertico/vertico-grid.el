@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/vertico/extensions/vertico-grid.el

@@ -1,1 +1,1 @@
-/home/asdf/.config/emacs/straight/repos/use-package/.github/PULL_REQUEST_TEMPLATE.md
+/data/data/com.termux/files/home/.config/emacs/straight/repos/use-package/.github/PULL_REQUEST_TEMPLATE.md
