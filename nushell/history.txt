@@ -2593,3 +2593,21 @@ mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
 Hyprland
 cat .config/nushell/aeon-modules/keybindings/
 cat .config/nushell/aeon-modules/keybindings/ttycmd.nu
+emacs .
+cd .config/nushell/core-modules/
+ls
+n general.nu
+nvim general.nu
+source general.nu
+cd ..
+emacs .
+nvim config.nu
+emacs .
+execnu
+emacs config.nu
+pkg install starphip
+pkg install starship
+pkg install athin
+pkg install atuin
+ll
+mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu

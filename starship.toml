@@ -60,28 +60,3 @@ format = "[$all_status]($style) "
 min_time = 200
 style = "black"
 format = "[$duration]($style) "
-
-# ===========================================
-# DISABLE UNNECESSARY MODULES
-# ===========================================
-[username]
-disabled = true
-[hostname]
-disabled = true
-[time]
-disabled = true
-[aws]
-disabled = true
-[docker_context]
-disabled = true
-[nodejs]
-disabled = true
-[python]
-disabled = true
-[rust]
-disabled = true
-[battery]
-disabled = true
-[line_break]
-disabled = false
-
