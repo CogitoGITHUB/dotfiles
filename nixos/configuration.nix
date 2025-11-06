@@ -8,8 +8,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.initrd.luks.devices."luks-0f4afb55-ff8a-4750-a4e4-0731f389af1a".device = "/dev/disk/by-uuid/0f4afb55-ff8a-4750-a4e4-0731f389af1a";
-
   # Networking
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant.
@@ -90,6 +88,7 @@ services.power-profiles-daemon.enable = true;
 
 
 environment.systemPackages = with pkgs; [
+    nyxt
     gimp
     krita
     inkscape
@@ -109,8 +108,9 @@ environment.systemPackages = with pkgs; [
     bluetui
     exiftool
     bat
-    tmux
     zathura
+    zellij
+    wezterm
     nb
     ffmpeg
     python3

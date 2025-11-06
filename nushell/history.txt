@@ -2568,3 +2568,28 @@ nvim .
 nvim zoxide.nu
 nvim config.ron
 nvim config.nu
+sudo nixos-rebuild switch --flake .#mySystem
+cd nixos/
+sudo nixos-rebuild switch --flake .#mySystem
+emacs .
+sudo reboot
+fastfetch
+sudo reboot
+fastfetch
+emacs .
+nix-shell -p gemini-cli
+clear
+nmcli dev wifi connect "TP-Link_5E9C" password "44875817"
+fa
+zoxide init nushell | save -f ~/.zoxide.nu
+source ~/.zoxide.nu
+fa
+clear
+fa
+zoxide 
+z
+cler
+mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
+Hyprland
+cat .config/nushell/aeon-modules/keybindings/
+cat .config/nushell/aeon-modules/keybindings/ttycmd.nu

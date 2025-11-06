@@ -2,12 +2,17 @@
 name = "all-white"
 
 [colors]
+# everything readable on white background
+AlertInfo = "black"
+AlertWarn = "black"
+AlertError = "black"
+Guidance = "black"
+Base = "black"
+Annotation = "black"
+Title = "black"
+Important = "black"
 
-AlertInfo = "white"
-AlertWarn = "white"
-AlertError = "white"
-Guidance = "white"
-Base = "white"
-Annotation = "white"
-Title = "white"
-Important = "white"
+# optional soft contrast for subtle highlighting
+Hint = "#222222"
+Muted = "#555555"
+

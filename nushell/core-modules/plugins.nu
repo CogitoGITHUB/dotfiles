@@ -18,11 +18,7 @@ let plugins = {
     gh: { enabled: true }
     zoxide: { enabled: true }
     starship: { enabled: true }
-    carapace: { 
-        enabled: true
-        config_path: "~/.config/carapace/init.nu"
-    }
-    atuin: { 
+       atuin: { 
         enabled: true
         config_path: "~/.local/share/atuin/init.nu"
     }

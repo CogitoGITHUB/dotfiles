@@ -1,22 +1,3 @@
-#+TITLE: Emacs.org
-;;#+PROPERTY: header-args :tangle ~/.emacs.d/init.el
-
-
-
-Automatic version-control with Git ?
-
-If the directory attached to an outline node is a Git repository, Org can be configured to automatically commit changes to that repository when it sees them.
-
-To make Org mode take care of versioning of attachments for you, add the following to your Emacs config:
-
-(require 'org-attach-git)
-
-
-
-
-;;;;;;;;;;; M-x : DESCRIBE KEYBINDINGS ;;;;;
-
-
 * Emacs Manual
 
 # (based on lisp & other manuals)

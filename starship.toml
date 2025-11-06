@@ -1,44 +1,87 @@
 # ~/.config/starship.toml
-format = "$all"
+# AeonCore — pure black text on white background
+
+# Core layout
+format = """
+$directory$git_branch$git_status$cmd_duration$line_break$character
+"""
 add_newline = true
 
-# global style override
+# ===========================================
+# PALETTE
+# ===========================================
+[palettes.monochrome]
+text = "black"
+muted = "black"
+highlight = "black"
+success = "black"
+error = "black"
+
 palette = "monochrome"
 
-[palettes.monochrome]
-text = "white"
-muted = "bright-black"
-highlight = "bright-white"
-success = "white"
-error = "bright-black"
-
-# prompt character
+# ===========================================
+# CHARACTER
+# ===========================================
 [character]
-success_symbol = "[>](white)"
-error_symbol = "[x](bright-black)"
-vicmd_symbol = "[<](white)"
+success_symbol = "[>](black)"
+error_symbol = "[x](black)"
+vicmd_symbol = "[<](black)"
+format = "$symbol "
 
-# directory
+# ===========================================
+# DIRECTORY
+# ===========================================
 [directory]
-style = "white"
+style = "black"
 truncation_length = 3
-truncation_symbol = "…/"
+truncation_symbol = "~/"
+read_only = " (ro)"
+format = "[$path]($style) "
 
-# git status
+# ===========================================
+# GIT BRANCH
+# ===========================================
 [git_branch]
-style = "white"
+symbol = ""
+style = "black"
+format = "($branch) "
 
+# ===========================================
+# GIT STATUS
+# ===========================================
 [git_status]
-style = "bright-black"
+style = "black"
+format = "[$all_status]($style) "
 
-# command duration
+# ===========================================
+# COMMAND DURATION
+# ===========================================
 [cmd_duration]
-style = "bright-black"
+min_time = 200
+style = "black"
+format = "[$duration]($style) "
 
-# time
+# ===========================================
+# DISABLE UNNECESSARY MODULES
+# ===========================================
+[username]
+disabled = true
+[hostname]
+disabled = true
 [time]
 disabled = true
-format = "[$time]($style) "
-time_format = "%H:%M"
-style = "bright-black"
+[aws]
+disabled = true
+[docker_context]
+disabled = true
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[battery]
+disabled = true
+[line_break]
+disabled = false
 

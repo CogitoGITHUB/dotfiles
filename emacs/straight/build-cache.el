@@ -3,9 +3,9 @@
 
 "30.2"
 
-#s(hash-table test equal data ("straight" ("2025-10-11 01:08:28" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-10-11 01:08:28" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-10-11 01:08:41" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2025-10-11 01:08:42" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "use-package" ("2025-10-11 01:08:46" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2025-10-11 01:08:45" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "org" ("2025-10-11 01:10:48" ("emacs") (:type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "denote" ("2025-10-17 14:09:31" ("emacs") (:type git :host github :repo "protesilaos/denote" :files ("*" (:exclude ".git")) :package "denote" :local-repo "denote")) "org-roam" ("2025-10-17 20:21:49" ("emacs" "dash" "org" "emacsql" "magit-section") (:type git :host github :repo "org-roam/org-roam" :files (:defaults "extensions/*" "org-roam-pkg.el") :package "org-roam" :local-repo "org-roam")) "dash" ("2025-10-17 20:21:27" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "emacsql" ("2025-10-17 20:21:30" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql")) "magit-section" ("2025-10-17 20:21:48" ("emacs" "compat" "cond-let" "llama" "seq") (:type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit" :package "magit-section" :local-repo "magit")) "compat" ("2025-10-17 20:21:45" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2025-10-17 20:21:44" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "cond-let" ("2025-10-17 20:21:46" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-10-17 20:21:47" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "org-roam-ui" ("2025-10-17 20:22:11" ("emacs" "org-roam" "simple-httpd" "websocket") (:type git :host github :repo "org-roam/org-roam-ui" :files (:defaults "out" "org-roam-ui-pkg.el") :package "org-roam-ui" :local-repo "org-roam-ui")) "simple-httpd" ("2025-10-17 20:22:09" ("cl-lib") (:type git :host github :repo "skeeto/emacs-web-server" :package "simple-httpd" :local-repo "emacs-web-server")) "nongnu-elpa" ("2025-10-17 20:22:04" nil (:type git :repo "https://github.com/emacsmirror/nongnu_elpa.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-10-17 20:22:07" nil (:type git :host github :repo "dimitri/el-get" :build nil :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-10-17 20:22:09" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "websocket" ("2025-10-17 20:22:11" ("cl-lib") (:type git :host github :repo "ahyatt/emacs-websocket" :package "websocket" :local-repo "emacs-websocket"))))
+#s(hash-table test equal data ("straight" ("2025-11-06 19:27:57" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-06 19:27:57" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-11-06 19:28:05" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2025-11-06 19:28:06" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "use-package" ("2025-11-06 19:28:09" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2025-11-06 19:28:08" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "magit" ("2025-11-06 19:28:31" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "compat" ("2025-11-06 19:28:23" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2025-11-06 19:28:23" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "cond-let" ("2025-11-06 19:28:24" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-06 19:28:25" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-06 19:28:25" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-06 19:28:27" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-06 19:28:29" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "which-key" ("2025-11-06 19:28:34" ("emacs") (:type git :host github :repo "justbur/emacs-which-key" :package "which-key" :local-repo "emacs-which-key")) "vertico" ("2025-11-06 19:28:35" ("emacs" "compat") (:type git :files (:defaults "extensions/vertico-*.el" "vertico-pkg.el") :host github :repo "minad/vertico" :package "vertico" :local-repo "vertico")) "orderless" ("2025-11-06 19:28:37" ("emacs" "compat") (:type git :host github :repo "oantolin/orderless" :package "orderless" :local-repo "orderless")) "marginalia" ("2025-11-06 19:28:38" ("emacs" "compat") (:type git :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia")) "consult" ("2025-11-06 19:28:43" ("emacs" "compat") (:type git :host github :repo "minad/consult" :package "consult" :local-repo "consult"))))
 
-#s(hash-table test equal data ("straight" ((straight-x straight straight-autoloads straight-ert-print-hack) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
+#s(hash-table test equal data ("straight" ((straight-ert-print-hack straight-x straight straight-autoloads) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
 A repo is considered \"unused\" if it was not explicitly requested via
 `straight-use-package' during the current Emacs session.
 If FORCE is non-nil do not prompt before deleting repos.
@@ -352,7 +352,7 @@ instead of strings they will be lists whose cars are the dependents and
 whose cdrs are the recursive dependents in the same format returned from
 `straight-dependents'.
 
-(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "bind-key" ((bind-key-pkg bind-key bind-key-autoloads) (defvar personal-keybindings nil "List of bindings performed by `bind-key'.
+(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "bind-key" ((bind-key-autoloads bind-key-pkg bind-key) (defvar personal-keybindings nil "List of bindings performed by `bind-key'.
 
 Elements have the form ((KEY . [MAP]) CMD ORIGINAL-CMD)") (autoload 'bind-key "bind-key" "Bind KEY-NAME to COMMAND in KEYMAP (`global-map' if not passed).
 
@@ -418,7 +418,7 @@ Accepts the same keyword arguments as `bind-keys' (which see).
 This binds keys in such a way that bindings are not overridden by
 other modes.  See `override-global-mode'.
 
-(fn &rest ARGS)" nil t) (autoload 'describe-personal-keybindings "bind-key" "Display all the personal keybindings defined by `bind-key'." t) (register-definition-prefixes "bind-key" '("bind-key" "override-global-m")) (provide 'bind-key-autoloads)) "use-package" ((use-package-delight use-package-pkg use-package-ensure use-package-lint use-package-jump use-package-diminish use-package use-package-autoloads use-package-ensure-system-package use-package-core use-package-bind-key) (autoload 'use-package-autoload-keymap "use-package-bind-key" "Load PACKAGE and bind key sequence invoking this function to KEYMAP-SYMBOL.
+(fn &rest ARGS)" nil t) (autoload 'describe-personal-keybindings "bind-key" "Display all the personal keybindings defined by `bind-key'." t) (register-definition-prefixes "bind-key" '("bind-key" "override-global-m")) (provide 'bind-key-autoloads)) "use-package" ((use-package-pkg use-package-lint use-package-diminish use-package-core use-package-delight use-package-ensure-system-package use-package-autoloads use-package-bind-key use-package-jump use-package-ensure use-package) (autoload 'use-package-autoload-keymap "use-package-bind-key" "Load PACKAGE and bind key sequence invoking this function to KEYMAP-SYMBOL.
 Then simulate pressing the same key sequence a again, so that the
 next key pressed is routed to the newly loaded keymap.
 
@@ -524,659 +524,7 @@ will jump to the file that originally required PACKAGE instead.
 
 (fn PACKAGE)" t) (register-definition-prefixes "use-package-jump" '("use-package-find-require")) (autoload 'use-package-lint "use-package-lint" "Check for errors in `use-package' declarations.
 For example, if the module's `:if' condition is met, but even
-with the specified `:load-path' the module cannot be found." t) (register-definition-prefixes "use-package-lint" '("use-package-lint-declaration")) (provide 'use-package-autoloads)) "org" ((ox-odt ob-sqlite org-indent ob-forth org-datetree ob-ditaa ob-css org-tempo ol-rmail ob-clojure ob-sql org-goto ob-lilypond oc-basic ob-java org-mouse org-element ob-ref ob-plantuml org-ctags ob-scheme ol-bbdb org-protocol org-colview ob-gnuplot ol-gnus org-refile ox-latex org-plot org-keys ob-shell ob-octave org-persist org-archive ob-ruby ox-publish ol-info ol-man org-fold ob-lisp ob-C ob-emacs-lisp ox-koma-letter ol-docview ob-tangle org ox org-footnote ob-lob org-list ob-groovy org-lint ol-irc ox-html org-clock oc org-cycle ob-ocaml ol-eshell org-inlinetask ob-lua org-loaddefs oc-csl ob-perl org-feed org-habit oc-biblatex ob-matlab org-compat ob-sass org-macro ol-mhe ob-csharp ob org-table ob-exp ob-awk ol-w3m ob-dot ob-js ob-table ol-eww ob-python org-entities ob-processing oc-natbib org-num ol-bibtex org-attach-git ox-org org-version org-macs ob-eval ox-man ob-fortran org-agenda ox-ascii ob-julia org-timer org-capture ox-beamer ob-maxima ob-R ob-screen org-src ob-latex org-id ob-eshell org-fold-core ol-doi org-mobile ox-icalendar ob-comint org-crypt org-pcomplete ox-md ol ob-haskell ob-core ob-sed ob-org org-attach ob-calc ob-makefile oc-bibtex org-faces org-duration org-element-ast ox-texinfo)) "denote" ((denote-autoloads denote \.dir-locals) (put 'denote-directory 'safe-local-variable (lambda (val) (or (stringp val) (listp val) (eq val 'local) (eq val 'default-directory)))) (put 'denote-known-keywords 'safe-local-variable #'listp) (put 'denote-infer-keywords 'safe-local-variable (lambda (val) (or val (null val)))) (autoload 'denote-sort-files "denote" "Returned sorted list of Denote FILES.
-
-With COMPONENT as a symbol among `denote-sort-components',
-sort files based on the corresponding file name component.
-
-With COMPONENT as the symbol of a function, use it to perform the
-sorting.  In this case, the function is called with two arguments, as
-described by `sort'.
-
-With COMPONENT as a nil value keep the original date-based
-sorting which relies on the identifier of each file name.
-
-With optional REVERSE as a non-nil value, reverse the sort order.
-
-(fn FILES COMPONENT &optional REVERSE)") (autoload 'denote-sort-dired "denote" "Produce Dired buffer with sorted files from variable `denote-directory'.
-When called interactively, prompt for FILES-MATCHING-REGEXP and,
-depending on the value of the user option `denote-sort-dired-extra-prompts',
-also prompt for SORT-BY-COMPONENT, REVERSE, and EXCLUDE-REGEXP.
-
-1. FILES-MATCHING-REGEXP limits the list of Denote files to
-   those matching the provided regular expression.
-
-2. SORT-BY-COMPONENT sorts the files by their file name component (one
-   among `denote-sort-components').  If it is nil, sorting is performed
-   according to the user option `denote-sort-dired-default-sort-component',
-   falling back to the identifier.
-
-3. REVERSE is a boolean to reverse the order when it is a non-nil value.
-   If `denote-sort-dired-extra-prompts' is configured to skip this
-   prompt, then the sorting is done according to the user option
-   `denote-sort-dired-default-reverse-sort', falling back to
-   nil (i.e. no reverse sort).
-
-4. EXCLUDE-REGEXP excludes the files that match the given regular
-   expression.  This is done after FILES-MATCHING-REGEXP and
-   OMIT-CURRENT have been applied.
-
-When called from Lisp, the arguments are a string, a symbol among
-`denote-sort-components', a non-nil value, and a string, respectively.
-
-(fn FILES-MATCHING-REGEXP SORT-BY-COMPONENT REVERSE EXCLUDE-REGEXP)" t) (autoload 'denote "denote" "Create a new note with the appropriate metadata and file name.
-
-Run the `denote-after-new-note-hook' after creating the new note and
-return its path.  Before returning the path, determine what needs to be
-done to the buffer, in accordance with the user option `denote-kill-buffers'.
-
-When called interactively, the metadata and file name are prompted
-according to the value of `denote-prompts'.
-
-When called from Lisp, all arguments are optional.
-
-- TITLE is a string or a function returning a string.
-
-- KEYWORDS is a list of strings.  The list can be empty or the
-  value can be set to nil.
-
-- FILE-TYPE is a symbol among those described in the user option
-  `denote-file-type'.
-
-- DIRECTORY is a string representing the path to either the
-  value of the variable `denote-directory' or a subdirectory
-  thereof.  The subdirectory must exist: Denote will not create
-  it.  If DIRECTORY does not resolve to a valid path, the first
-  item in the variable `denote-directory' is used instead.
-
-- DATE is a string representing a date like 2022-06-30 or a date
-  and time like 2022-06-16 14:30.  A nil value or an empty string
-  is interpreted as the `current-time'.
-
-- IDENTIFIER is a string identifying the note.  It should have the
-  format of the variable `denote-date-identifier-format', like
-  20220630T1430000.
-
-- TEMPLATE is a symbol which represents the key of a cons cell in
-  the user option `denote-templates'.  The value of that key is
-  inserted to the newly created buffer after the front matter.
-
-- SIGNATURE is a string.
-
-(fn &optional TITLE KEYWORDS FILE-TYPE DIRECTORY DATE TEMPLATE SIGNATURE IDENTIFIER)" t) (autoload 'denote-type "denote" "Create note while prompting for a file type.
-
-This is the equivalent of calling `denote' when `denote-prompts'
-has the `file-type' prompt appended to its existing prompts." t) (function-put 'denote-type 'interactive-only 't) (autoload 'denote-date "denote" "Create note while prompting for a date.
-
-The date can be in YEAR-MONTH-DAY notation like 2022-06-30 or
-that plus the time: 2022-06-16 14:30.  When the user option
-`denote-date-prompt-use-org-read-date' is non-nil, the date
-prompt uses the more powerful Org+calendar system.
-
-This is the equivalent of calling `denote' when `denote-prompts'
-has the `date' prompt appended to its existing prompts." t) (function-put 'denote-date 'interactive-only 't) (autoload 'denote-subdirectory "denote" "Create note while prompting for a subdirectory.
-
-Available candidates include the value of the variable
-`denote-directory' and any subdirectory thereof.
-
-This is the equivalent of calling `denote' when `denote-prompts'
-has the `subdirectory' prompt appended to its existing prompts." t) (function-put 'denote-subdirectory 'interactive-only 't) (autoload 'denote-template "denote" "Create note while prompting for a template.
-
-Available candidates include the keys in the `denote-templates'
-alist.  The value of the selected key is inserted in the newly
-created note after the front matter.
-
-This is the equivalent of calling `denote' when `denote-prompts'
-has the `template' prompt appended to its existing prompts." t) (function-put 'denote-template 'interactive-only 't) (autoload 'denote-signature "denote" "Create note while prompting for a file signature.
-
-This is the equivalent of calling `denote' when `denote-prompts'
-has the `signature' prompt appended to its existing prompts." t) (function-put 'denote-signature 'interactive-only 't) (autoload 'denote-region "denote" "Call `denote' and insert therein the text of the active region.
-
-Note that, currently, `denote-save-buffers' and
-`denote-kill-buffers' are NOT respected.  The buffer is not
-saved or killed at the end of `denote-region'." t) (function-put 'denote-region 'interactive-only 't) (autoload 'denote-open-or-create "denote" "Visit TARGET file in variable `denote-directory'.
-If file does not exist, invoke `denote' to create a file.  In that case,
-use the last input at the file prompt as the default value of the title
-prompt.
-
-(fn TARGET)" t) (autoload 'denote-open-or-create-with-command "denote" "Like `denote-open-or-create' but use one of the `denote-commands-for-new-notes'." t) (function-put 'denote-open-or-create-with-command 'interactive-only 't) (autoload 'denote-rename-file "denote" "Rename file and update existing front matter if appropriate.
-
-Always rename the file where it is located in the file system:
-never move it to another directory.
-
-If in Dired, consider FILE to be the one at point, else the
-current file, else prompt with minibuffer completion for one.
-When called from Lisp, FILE is a file system path represented as
-a string.
-
-If FILE has a Denote-compliant identifier, retain it while
-updating components of the file name referenced by the user
-option `denote-prompts'.  By default, these are the TITLE and
-KEYWORDS.  The SIGNATURE is another one.  When called from Lisp,
-TITLE and SIGNATURE are strings, while KEYWORDS is a list of
-strings.
-
-The IDENTIFIER is a string that has the format of variable
-`denote-date-identifier-format'.
-
-If there is no identifier, create a new identifier using
-`denote-get-identifier-function'.  By default, it creates a new
-identifier using the date parameter, the date of last modification or
-the `current-time'.
-
-In interactive use, and assuming `denote-prompts' includes a
-title entry, make the TITLE prompt have prefilled text in the
-minibuffer that consists of the current title of FILE.  The
-current title is either retrieved from the front matter (such as
-the #+title in Org) or from the file name.
-
-Do the same for the SIGNATURE prompt, subject to `denote-prompts',
-by prefilling the minibuffer with the current signature of FILE,
-if any.
-
-Same principle for the KEYWORDS prompt: convert the keywords in
-the file name into a comma-separated string and prefill the
-minibuffer with it (the KEYWORDS prompt accepts more than one
-keywords, each separated by a comma, else the `crm-separator').
-
-For all prompts, interpret an empty input as an instruction to
-remove that file name component.  For example, if a TITLE prompt
-is available and FILE is 20240211T093531--some-title__keyword1.org
-then rename FILE to 20240211T093531__keyword1.org.
-
-In interactive use, if there is no entry for a file name
-component in `denote-prompts', keep it as-is.
-
-When called from Lisp, the special symbol `keep-current' can be
-used for the TITLE, KEYWORDS, SIGNATURE, DATE, and IDENTIFIER
-parameters to keep them as-is.
-
-[ NOTE: Please check with your minibuffer user interface how to
-  provide an empty input.  The Emacs default setup accepts the
-  empty minibuffer contents as they are, though popular packages
-  like `vertico' use the first available completion candidate
-  instead.  For `vertico', the user must either move one up to
-  select the prompt and then type RET there with empty contents,
-  or use the command `vertico-exit-input' with empty contents.
-  That Vertico command is bound to M-RET as of this writing on
-  2024-02-13 08:08 +0200. ]
-
-As a final step, ask for confirmation, showing the difference
-between old and new file names.  Do not ask for confirmation if
-the user option `denote-rename-confirmations' does not contain
-the symbol `modify-file-name'.
-
-If FILE has front matter for TITLE and KEYWORDS, ask to rewrite
-their values in order to reflect the new input, unless
-`denote-rename-confirmations' lacks `rewrite-front-matter'.  When
-the `denote-save-buffers' is nil (the default), do not save the
-underlying buffer, thus giving the user the option to
-double-check the result, such as by invoking the command
-`diff-buffer-with-file'.  The rewrite of the TITLE and KEYWORDS
-in the front matter should not affect the rest of the front
-matter.
-
-If the file does not have front matter but is among the supported file
-types (per the user option `denote-file-type'), add front matter to the
-top of it and leave the buffer unsaved for further inspection.  Save the
-buffer if `denote-save-buffers' is non-nil.
-
-When `denote-kill-buffers' is t or `on-rename', kill the buffer
-if it was not already being visited before the rename operation.
-
-For the front matter of each file type, refer to the variables:
-
-- `denote-org-front-matter'
-- `denote-text-front-matter'
-- `denote-toml-front-matter'
-- `denote-yaml-front-matter'
-
-Construct the file name in accordance with the user option
-`denote-file-name-components-order'.
-
-Run the `denote-after-rename-file-hook' after renaming FILE.
-
-This command is intended to (i) rename Denote files, (ii) convert
-existing supported file types to Denote notes, and (ii) rename
-non-note files (e.g. PDF) that can benefit from Denote's
-file-naming scheme.
-
-For a version of this command that works with multiple files
-one-by-one, use `denote-dired-rename-files'.
-
-(fn FILE TITLE KEYWORDS SIGNATURE DATE IDENTIFIER)" t) (autoload 'denote-dired-rename-files "denote" "Rename Dired marked files same way as `denote-rename-file'.
-Rename each file in sequence, making all the relevant prompts.
-Unlike `denote-rename-file', do not prompt for confirmation of
-the changes made to the file: perform them outright (same as
-setting `denote-rename-confirmations' to a nil value)." '(dired-mode)) (function-put 'denote-dired-rename-files 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-with-keywords "denote" "Rename marked files in Dired to a Denote file name by writing keywords.
-
-Specifically, do the following:
-
-- retain the file's existing name and make it the TITLE field,
-  per Denote's file-naming scheme;
-
-- sluggify the TITLE, according to our conventions (check the
-  user option `denote-file-name-slug-functions');
-
-- prepend an identifier to the TITLE;
-
-- preserve the file's extension, if any;
-
-- prompt once for KEYWORDS and apply the user's input to the
-  corresponding field in the file name, rewriting any keywords
-  that may exist while removing keywords that do exist if
-  KEYWORDS is empty;
-
-- add or rewrite existing front matter to the underlying file, if it is
-  recognized as a Denote note (per the user option `denote-file-type'),
-  such that it includes the new keywords.
-
-Construct the file name in accordance with the user option
-`denote-file-name-components-order'.
-
-Run the `denote-after-rename-file-hook' after renaming is done.
-
-Also see the specialized commands to only add or remove keywords:
-
-- `denote-dired-rename-marked-files-add-keywords'.
-- `denote-dired-rename-marked-files-remove-keywords'." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-with-keywords 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-add-keywords "denote" "Like `denote-dired-rename-marked-files-with-keywords' to only add keywords." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-add-keywords 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-remove-keywords "denote" "Like `denote-dired-rename-marked-files-with-keywords' to only remove keywords." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-remove-keywords 'interactive-only 't) (autoload 'denote-rename-file-using-front-matter "denote" "Rename FILE using its front matter as input.
-When called interactively, FILE is the variable `buffer-file-name' or
-the Dired file at point, which is subsequently inspected for the
-requisite front matter.  It is thus implied that the FILE has a file
-type that is supported by Denote, per the user option `denote-file-type'.
-
-The values of `denote-rename-confirmations',
-`denote-save-buffers' and `denote-kill-buffers' are respected.
-
-Only the front matter lines that appear in the front matter template (as
-defined in `denote-file-types') will be handled.
-
-To change the identifier (date) of the note with this command, the
-identifier line (if present) of the front matter must be modified.
-Modifying the date line has no effect.
-
-While this command generally does not modify the front matter, there are
-exceptions.  The value of the `date' line will follow that of the
-`identifier' line.  If they are both in the front matter template and
-the `date' line is missing, it will be added again.  Similarly, if they
-are both in the front matter template and the `date' line is present and
-the `identifier' line has been removed, the `date' line will be removed
-as well.  Also, if the keywords are out of order and
-`denote-sort-keywords' is non-nil, they will be sorted.  There will be a
-prompt for this if `denote-rename-confirmations' contains
-`rewrite-front-matter'.
-
-Construct the file name in accordance with the user option
-`denote-file-name-components-order'.
-
-(fn FILE)" t) (autoload 'denote-dired-rename-marked-files-using-front-matter "denote" "Call `denote-rename-file-using-front-matter' over the Dired marked files.
-Refer to the documentation of that command for the technicalities.
-
-Marked files must count as notes for the purposes of Denote, which means
-that they at least have an identifier in their file name and use a
-supported file type, per the user option `denote-file-type'.  Files that
-do not meet this criterion are ignored because Denote cannot know if
-they have front matter and what that may be." '(dired-mode)) (autoload 'denote-change-file-type-and-front-matter "denote" "Change file type of FILE and add an appropriate front matter.
-
-If in Dired, consider FILE to be the one at point, else the
-current file, else prompt with minibuffer completion for one.
-
-Add a front matter in the format of the NEW-FILE-TYPE at the
-beginning of the file.
-
-Retrieve the title of FILE from a line starting with a title
-field in its front matter, depending on the previous file
-type (e.g.  #+title for Org).  The same process applies for
-keywords.
-
-As a final step, ask for confirmation, showing the difference
-between old and new file names.
-
-Important note: No attempt is made to modify any other elements
-of the file.  This needs to be done manually.
-
-Construct the file name in accordance with the user option
-`denote-file-name-components-order'.
-
-(fn FILE NEW-FILE-TYPE)" t) (autoload 'denote-dired-mode "denote" "Fontify all Denote-style file names.
-
-Add this or `denote-dired-mode-in-directories' to
-`dired-mode-hook'.
-
-This is a minor mode.  If called interactively, toggle the `Denote-Dired
-mode' mode.  If the prefix argument is positive, enable the mode, and if
-it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `denote-dired-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'denote-dired-mode-in-directories "denote" "Enable `denote-dired-mode' in `denote-dired-directories'.
-Add this function to `dired-mode-hook'.
-
-If `denote-dired-directories-include-subdirectories' is non-nil,
-also enable it in all subdirectories.") (autoload 'denote-link "denote" "Create link to FILE note in variable `denote-directory' with DESCRIPTION.
-
-When called interactively, prompt for FILE using completion.  In this
-case, derive FILE-TYPE from the current buffer.  FILE-TYPE is used to
-determine the format of the link.
-
-Return the DESCRIPTION of the link in the format specified by
-`denote-link-description-format'.  The default is to return the text of
-the active region or the title of the note (plus the signature if
-present).
-
-With optional ID-ONLY as a non-nil argument, such as with a universal
-prefix (\\[universal-argument]), insert links with just the identifier
-and no further description.  In this case, the link format is always
-[[denote:IDENTIFIER]].
-
-If the DESCRIPTION is empty, format the link the same as with ID-ONLY.
-
-When called from Lisp, FILE is a string representing a full file system
-path.  FILE-TYPE is a symbol as described in the user option
-`denote-file-type'.  DESCRIPTION is a string.  Whether the caller treats
-the active region specially, is up to it.
-
-(fn FILE FILE-TYPE DESCRIPTION &optional ID-ONLY)" t) (autoload 'denote-find-link "denote" "Use minibuffer completion to visit linked file.
-Also see `denote-find-backlink'." t) (function-put 'denote-find-link 'interactive-only 't) (autoload 'denote-link-after-creating "denote" "Create new note in the background and link to it directly.
-
-Use `denote' interactively to produce the new note.  Its doc
-string explains which prompts will be used and under what
-conditions.
-
-With optional ID-ONLY as a prefix argument create a link that
-consists of just the identifier.  Else try to also include the
-file's title.  This has the same meaning as in `denote-link'.
-
-For a variant of this, see `denote-link-after-creating-with-command'.
-
-IMPORTANT NOTE: Normally, `denote' does not save the buffer it
-produces for the new note.  This is a safety precaution to not
-write to disk unless the user wants it (e.g. the user may choose
-to kill the buffer, thus cancelling the creation of the note).
-However, for this command the creation of the note happens in the
-background and the user may miss the step of saving their buffer.
-We thus have to save the buffer in order to (i) establish valid
-links, and (ii) retrieve whatever front matter from the target
-file.  Though see `denote-save-buffer-after-creation'.
-
-(fn &optional ID-ONLY)" t) (autoload 'denote-link-after-creating-with-command "denote" "Like `denote-link-after-creating' but prompt for note-making COMMAND.
-Use this to, for example, call `denote-signature' so that the
-newly created note has a signature as part of its file name.
-
-Optional ID-ONLY has the same meaning as in the command
-`denote-link-after-creating'.
-
-(fn COMMAND &optional ID-ONLY)" t) (autoload 'denote-link-or-create "denote" "Use `denote-link' on TARGET file, creating it if necessary.
-
-If TARGET file does not exist, call `denote-link-after-creating' which
-runs the `denote' command interactively to create the file.  The
-established link will then be targeting that new file.  In that case,
-use the last input at the file prompt as the default value of the title
-prompt.
-
-With optional ID-ONLY as a prefix argument create a link that
-consists of just the identifier.  Else try to also include the
-file's title.  This has the same meaning as in `denote-link'.
-
-(fn TARGET &optional ID-ONLY)" t) (autoload 'denote-grep "denote" "Search QUERY in the content of Denote files.
-QUERY should be a regular expression accepted by `xref-search-program'.
-
-The files to search for are those returned by `denote-directory-files'
-with a non-nil TEXT-ONLY argument.
-
-Results are put in a buffer which allows folding and further
-filtering (see the manual for details).
-
-You can insert a link to a grep search in any note by using the command
-`denote-query-contents-link'.
-
-(fn QUERY)" t) (autoload 'denote-grep-marked-dired-files "denote" "Do the equivalent of `denote-grep' for QUERY in marked Dired files.
-
-(fn QUERY)" t) (autoload 'denote-grep-files-referenced-in-region "denote" "Perform `denote-grep' QUERY in files referenced between START and END.
-When called interactively, prompt for QUERY.  Also get START and END as
-the buffer positions that delimit the marked region.  When called from
-Lisp, QUERY is a string, while START and END are buffer positions, as
-integers.
-
-Find references to files by their identifier.  This includes links with
-just the identifier (as described in `denote-link' and related), links
-written by an Org dynamic block (see the `denote-org' package), or even
-file listings such as those of `dired' and the command-line `ls' program.
-
-(fn QUERY START END)" t) (autoload 'denote-backlinks "denote" "Produce a buffer with backlinks to the current note.
-
-Show the names of files linking to the current file.
-
-Place the buffer below the current window or wherever the user option
-`denote-backlinks-display-buffer-action' specifies." t) (autoload 'denote-find-backlink "denote" "Use minibuffer completion to visit backlink to current file.
-Visit the file itself, not the location where the link is.  For a
-context-sensitive operation, use `denote-find-backlink-with-location'.
-
-Alo see `denote-find-link'." t) (function-put 'denote-find-backlink 'interactive-only 't) (autoload 'denote-find-backlink-with-location "denote" "Like `denote-find-backlink' but jump to the exact location of the link." t) (function-put 'denote-find-backlink-with-location 'interactive-only 't) (autoload 'denote-query-contents-link "denote" "Insert query link for file contents.
-Prompt for QUERY or use the text of the active region.  When the user
-follows this link, place any matches in a separate buffer (using the
-built-in Xref mechanism).  This is the equivalent of a Unix grep command
-across the variable `denote-directory'.
-
-(fn QUERY)" t) (autoload 'denote-query-filenames-link "denote" "Insert query link for file names.
-Prompt for QUERY or use the text of the active region.  When the user
-follows this link, place any matches in a separate buffer (using the
-built-in Dired mechanism).  This is the equivalent of a Unix find
-command across the variable `denote-directory'.
-
-(fn QUERY)" t) (autoload 'denote-fontify-links-mode-maybe "denote" "Enable `denote-fontify-links-mode' in a denote file unless in `org-mode'.") (autoload 'denote-fontify-links-mode "denote" "A minor mode to fontify and fold Denote links.
-
-Enabled this mode only when the current buffer is a Denote note and the
-major mode is not `org-mode' (or derived therefrom).  Consider using
-`denote-fontify-links-mode-maybe' for this purpose.
-
-This is a minor mode.  If called interactively, toggle the
-`Denote-Fontify-Links mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `denote-fontify-links-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'denote-add-links "denote" "Insert links to all files whose file names match REGEXP.
-Use this command to reference multiple files at once.  Particularly
-useful for the creation of metanotes (read the manual for more on the
-matter).
-
-Optional ID-ONLY has the same meaning as in `denote-link': it
-inserts links with just the identifier.
-
-(fn REGEXP &optional ID-ONLY)" t) (autoload 'denote-link-to-file-with-contents "denote" "Link to a file whose contents match QUERY.
-This is similar to `denote-link', except that the file prompt is limited
-to files matching QUERY.  Optional ID-ONLY has the same meaning as in
-`denote-link'.
-
-(fn QUERY &optional ID-ONLY)" t) (autoload 'denote-link-to-all-files-with-contents "denote" "Link to all files whose contents match QUERY.
-This is similar to `denote-add-links', except it searches inside file
-contents, not file names.  Optional ID-ONLY has the same meaning as in
-`denote-link' and `denote-add-links'.
-
-(fn QUERY &optional ID-ONLY)" t) (autoload 'denote-link-dired-marked-notes "denote" "Insert Dired marked FILES as links in BUFFER.
-
-FILES conform with the Denote file-naming scheme, such that they can be
-linked to using the `denote:' link type.
-
-The BUFFER is one which visits a Denote note file.  If there are
-multiple BUFFER candidates in buffers, prompt with completion for
-one among them.  If there is none, throw an error.
-
-With optional ID-ONLY as a prefix argument, insert links with
-just the identifier (same principle as with `denote-link').
-
-This command is meant to be used from a Dired buffer.
-
-(fn FILES BUFFER &optional ID-ONLY)" '(dired-mode)) (defvar denote-menu-bar-mode t "Non-nil if Denote-Menu-Bar mode is enabled.
-See the `denote-menu-bar-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `denote-menu-bar-mode'.") (custom-autoload 'denote-menu-bar-mode "denote" nil) (autoload 'denote-menu-bar-mode "denote" "Show Denote menu bar.
-
-This is a global minor mode.  If called interactively, toggle the
-`Denote-Menu-Bar mode' mode.  If the prefix argument is positive, enable
-the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='denote-menu-bar-mode)'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'denote-link-ol-follow "denote" "Find file of type `denote:' matching LINK.
-LINK is the identifier of the note, optionally followed by a file search
-option akin to that of standard Org `file:' link types.  Read Info
-node `(org) Query Options'.
-
-If LINK is not an identifier, then it is not pointing to a file but to a
-query of file contents or file names (see the commands
-`denote-query-contents-link' and `denote-query-filenames-link').
-
-Uses the function `denote-directory' to establish the path to the file.
-
-(fn LINK)") (autoload 'denote-link-ol-complete "denote" "Like `denote-link' but for Org integration.
-This lets the user complete a link through the `org-insert-link'
-interface by first selecting the `denote:' hyperlink type.") (autoload 'denote-link-ol-store "denote" "Handler for `org-store-link' adding support for denote: links.
-Optional INTERACTIVE? is used by `org-store-link'.
-
-Also see the user option `denote-org-store-link-to-heading'.
-
-(fn &optional INTERACTIVE?)") (autoload 'denote-link-ol-export "denote" "Export a `denote:' link from Org files.
-The LINK, DESCRIPTION, and FORMAT are handled by the export
-backend.
-
-(fn LINK DESCRIPTION FORMAT)") (eval-after-load 'org `(funcall ',(lambda nil (with-no-warnings (org-link-set-parameters "denote" :follow #'denote-link-ol-follow :face #'denote-get-link-face :help-echo #'denote-link-ol-help-echo :complete #'denote-link-ol-complete :store #'denote-link-ol-store :export #'denote-link-ol-export))))) (autoload 'denote-org-capture "denote" "Create new note through `org-capture-templates'.
-Use this as a function that returns the path to the new file.
-The file is populated with Denote's front matter.  It can then be
-expanded with the usual specifiers or strings that
-`org-capture-templates' supports.
-
-This function obeys `denote-prompts', but it ignores `file-type',
-if present: it always sets the Org file extension for the created
-note to ensure that the capture process works as intended,
-especially for the desired output of the
-`denote-org-capture-specifiers' (which can include arbitrary
-text).
-
-Consult the manual for template samples.") (autoload 'denote-org-capture-with-prompts "denote" "Like `denote-org-capture' but with optional prompt parameters.
-
-When called without arguments, do not prompt for anything.  Just
-return the front matter with title and keyword fields empty and
-the date and identifier fields specified.  Also make the file
-name consist of only the identifier plus the Org file name
-extension.
-
-Otherwise produce a minibuffer prompt for every non-nil value
-that corresponds to the TITLE, KEYWORDS, SUBDIRECTORY, DATE, and
-TEMPLATE arguments.  The prompts are those used by the standard
-`denote' command and all of its utility commands.
-
-When returning the contents that fill in the Org capture
-template, the sequence is as follows: front matter, TEMPLATE, and
-then the value of the user option `denote-org-capture-specifiers'.
-
-Important note: in the case of SUBDIRECTORY actual subdirectories
-must exist---Denote does not create them.  Same principle for
-TEMPLATE as templates must exist and are specified in the user
-option `denote-templates'.
-
-(fn &optional TITLE KEYWORDS SUBDIRECTORY DATE TEMPLATE)") (defvar denote-rename-buffer-mode nil "Non-nil if Denote-Rename-Buffer mode is enabled.
-See the `denote-rename-buffer-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `denote-rename-buffer-mode'.") (custom-autoload 'denote-rename-buffer-mode "denote" nil) (autoload 'denote-rename-buffer-mode "denote" "Automatically rename Denote buffers to be easier to read.
-
-A buffer is renamed upon visiting the underlying file.  This
-means that existing buffers are not renamed until they are
-visited again in a new buffer (files are visited with the command
-`find-file' or related).
-
-This is a global minor mode.  If called interactively, toggle the
-`Denote-Rename-Buffer mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='denote-rename-buffer-mode)'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "denote" '("denote-")) (provide 'denote-autoloads)) "dash" ((dash-autoloads dash) (autoload 'dash-fontify-mode "dash" "Toggle fontification of Dash special variables.
-
-Dash-Fontify mode is a buffer-local minor mode intended for Emacs
-Lisp buffers.  Enabling it causes the special variables bound in
-anaphoric Dash macros to be fontified.  These anaphoras include
-`it', `it-index', `acc', and `other'.  In older Emacs versions
-which do not dynamically detect macros, Dash-Fontify mode
-additionally fontifies Dash macro calls.
-
-See also `dash-fontify-mode-lighter' and
-`global-dash-fontify-mode'.
-
-This is a minor mode.  If called interactively, toggle the `Dash-Fontify
-mode' mode.  If the prefix argument is positive, enable the mode, and if
-it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `dash-fontify-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (put 'global-dash-fontify-mode 'globalized-minor-mode t) (defvar global-dash-fontify-mode nil "Non-nil if Global Dash-Fontify mode is enabled.
-See the `global-dash-fontify-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `global-dash-fontify-mode'.") (custom-autoload 'global-dash-fontify-mode "dash" nil) (autoload 'global-dash-fontify-mode "dash" "Toggle Dash-Fontify mode in all buffers.
-With prefix ARG, enable Global Dash-Fontify mode if ARG is positive;
-otherwise, disable it.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.
-Enable the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-Dash-Fontify mode is enabled in all buffers where
-`dash--turn-on-fontify-mode' would do it.
-
-See `dash-fontify-mode' for more information on Dash-Fontify mode.
-
-(fn &optional ARG)" t) (autoload 'dash-register-info-lookup "dash" "Register the Dash Info manual with `info-lookup-symbol'.
-This allows Dash symbols to be looked up with \\[info-lookup-symbol]." t) (register-definition-prefixes "dash" '("!cdr" "!cons" "--" "->" "-a" "-butlast" "-c" "-d" "-e" "-f" "-gr" "-i" "-juxt" "-keep" "-l" "-m" "-no" "-o" "-p" "-r" "-s" "-t" "-u" "-value-to-list" "-when-let" "-zip" "dash-")) (provide 'dash-autoloads)) "emacsql" ((emacsql-sqlite emacsql-sqlite-module emacsql-sqlite-builtin emacsql-mysql emacsql-psql emacsql emacsql-pg emacsql-autoloads emacsql-compiler) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
-A prefix argument causes the SQL to be printed into the current buffer.
-
-(fn &optional PREFIX)" t) (register-definition-prefixes "emacsql" '("emacsql-")) (register-definition-prefixes "emacsql-compiler" '("emacsql-")) (register-definition-prefixes "emacsql-mysql" '("emacsql-mysql-")) (register-definition-prefixes "emacsql-pg" '("emacsql-pg-connection")) (register-definition-prefixes "emacsql-psql" '("emacsql-psql-")) (register-definition-prefixes "emacsql-sqlite" '("emacsql-")) (register-definition-prefixes "emacsql-sqlite-builtin" '("emacsql-sqlite-builtin-connection")) (register-definition-prefixes "emacsql-sqlite-module" '("emacsql-sqlite-module-connection")) (provide 'emacsql-autoloads)) "seq" ((seq-pkg seq-25 seq-24 seq-autoloads seq) (register-definition-prefixes "seq-24" '("seq")) (autoload 'seq-subseq "seq-25" "Return the sequence of elements of SEQUENCE from START to END.
+with the specified `:load-path' the module cannot be found." t) (register-definition-prefixes "use-package-lint" '("use-package-lint-declaration")) (provide 'use-package-autoloads)) "seq" ((seq-pkg seq-autoloads seq-25 seq-24 seq) (register-definition-prefixes "seq-24" '("seq")) (autoload 'seq-subseq "seq-25" "Return the sequence of elements of SEQUENCE from START to END.
 END is exclusive.
 
 If END is omitted, it defaults to the length of the sequence.  If
@@ -1260,7 +608,7 @@ SEQUENCE must be a sequence of numbers or markers.
 (fn SEQUENCE)") (autoload 'seq-random-elt "seq-25" "Return a randomly chosen element from SEQUENCE.
 Signal an error if SEQUENCE is empty.
 
-(fn SEQUENCE)") (register-definition-prefixes "seq-25" '("seq-")) (provide 'seq-autoloads)) "compat" ((compat-28 compat-27 compat-25 compat-29 compat-30 compat-26 compat-autoloads compat compat-pkg compat-macs) (register-definition-prefixes "compat" '("compat-")) (register-definition-prefixes "compat-macs" '("compat-")) (provide 'compat-autoloads)) "cond-let" ((cond-let-autoloads cond-let) (register-definition-prefixes "cond-let" '("cond-let")) (provide 'cond-let-autoloads)) "llama" ((llama-autoloads \.dir-locals llama) (autoload 'llama "llama" "Expand to a `lambda' expression that wraps around FN and BODY.
+(fn SEQUENCE)") (register-definition-prefixes "seq-25" '("seq-")) (provide 'seq-autoloads)) "compat" ((compat-26 compat-28 compat-25 compat-pkg compat-30 compat-macs compat compat-27 compat-autoloads compat-29) (register-definition-prefixes "compat" '("compat-")) (register-definition-prefixes "compat-macs" '("compat-")) (provide 'compat-autoloads)) "cond-let" ((cond-let cond-let-autoloads) (register-definition-prefixes "cond-let" '("cond-let")) (provide 'cond-let-autoloads)) "llama" ((\.dir-locals llama-autoloads llama) (autoload 'llama "llama" "Expand to a `lambda' expression that wraps around FN and BODY.
 
 This macro provides a compact way to write short `lambda' expressions.
 It expands to a `lambda' expression, which calls the function FN with
@@ -1337,7 +685,7 @@ evaluate `(default-value \\='llama-fontify-mode)'.
 The mode's hook is called both when the mode is enabled and when it is
 disabled.
 
-(fn &optional ARG)" t) (register-definition-prefixes "llama" '("##" "all-completions" "elisp-" "intern" "lisp--el-match-keyword@llama" "llama-")) (provide 'llama-autoloads)) "magit-section" ((magit-section magit-section-autoloads) (autoload 'magit-add-section-hook "magit-section" "Add to the value of section hook HOOK the function FUNCTION.
+(fn &optional ARG)" t) (register-definition-prefixes "llama" '("##" "all-completions" "elisp-" "intern" "lisp--el-match-keyword@llama" "llama-")) (provide 'llama-autoloads)) "magit-section" ((magit-section-autoloads magit-section) (autoload 'magit-add-section-hook "magit-section" "Add to the value of section hook HOOK the function FUNCTION.
 
 Add FUNCTION at the beginning of the hook list unless optional
 APPEND is non-nil, in which case FUNCTION is added at the end.
@@ -1372,196 +720,1482 @@ Then call the `magit-*-setup-buffer' function of the the major-mode
 with the variables' values as arguments, which were recorded by
 `magit--make-bookmark'.
 
-(fn BOOKMARK)") (register-definition-prefixes "magit-section" '("context-menu-region" "isearch-clean-overlays" "magit-")) (provide 'magit-section-autoloads)) "org-roam" ((org-roam-db org-roam-log org-roam-protocol org-roam-mode org-roam-graph org-roam-overlay org-roam-compat org-roam-dailies org-roam-utils org-roam-migrate org-roam-node org-roam-autoloads org-roam-capture org-roam org-roam-id org-roam-export) (autoload 'org-roam-list-files "org-roam" "Return a list of all Org-roam files under `org-roam-directory'.
-See `org-roam-file-p' for how each file is determined to be as
-part of Org-Roam.") (register-definition-prefixes "org-roam" '("org-roam-")) (autoload 'org-roam-capture- "org-roam-capture" "Main entry point of `org-roam-capture' module.
-GOTO and KEYS correspond to `org-capture' arguments.
-INFO is a plist for filling up Org-roam's capture templates.
-NODE is an `org-roam-node' construct containing information about the node.
-PROPS is a plist containing additional Org-roam properties for each template.
-TEMPLATES is a list of org-roam templates.
+(fn BOOKMARK)") (register-definition-prefixes "magit-section" '("context-menu-region" "isearch-clean-overlays" "magit-")) (provide 'magit-section-autoloads)) "transient" ((transient-autoloads transient) (autoload 'transient-insert-suffix "transient" "Insert a SUFFIX into PREFIX before LOC.
+PREFIX is a prefix command, a symbol.
+SUFFIX is a suffix command or a group specification (of
+  the same forms as expected by `transient-define-prefix').
+LOC is a command, a key vector, a key description (a string
+  as returned by `key-description'), or a coordination list
+  (whose last element may also be a command or key).
+Remove a conflicting binding unless optional KEEP-OTHER is
+  non-nil.  When the conflict appears to be a false-positive,
+  non-nil KEEP-OTHER may be ignored, which can be prevented
+  by using `always'.
+See info node `(transient)Modifying Existing Transients'.
 
-(fn &key GOTO KEYS NODE INFO PROPS TEMPLATES)") (autoload 'org-roam-capture "org-roam-capture" "Launches an `org-capture' process for a new or existing node.
-This uses the templates defined at `org-roam-capture-templates'.
-Arguments GOTO and KEYS see `org-capture'.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-The TEMPLATES, if provided, override the list of capture templates (see
-`org-roam-capture-'.)
-The INFO, if provided, is passed along to the underlying `org-roam-capture-'.
+(fn PREFIX LOC SUFFIX &optional KEEP-OTHER)") (function-put 'transient-insert-suffix 'lisp-indent-function 'defun) (autoload 'transient-append-suffix "transient" "Insert a SUFFIX into PREFIX after LOC.
+PREFIX is a prefix command, a symbol.
+SUFFIX is a suffix command or a group specification (of
+  the same forms as expected by `transient-define-prefix').
+LOC is a command, a key vector, a key description (a string
+  as returned by `key-description'), or a coordination list
+  (whose last element may also be a command or key).
+Remove a conflicting binding unless optional KEEP-OTHER is
+  non-nil.  When the conflict appears to be a false-positive,
+  non-nil KEEP-OTHER may be ignored, which can be prevented
+  by using `always'.
+See info node `(transient)Modifying Existing Transients'.
 
-(fn &optional GOTO KEYS &key FILTER-FN TEMPLATES INFO)" t) (register-definition-prefixes "org-roam-capture" '("org-roam-capture-")) (register-definition-prefixes "org-roam-compat" '("org-roam--")) (autoload 'org-roam-dailies-capture-today "org-roam-dailies" "Create an entry in the daily-note for today.
-When GOTO is non-nil, go the note without creating an entry.
+(fn PREFIX LOC SUFFIX &optional KEEP-OTHER)") (function-put 'transient-append-suffix 'lisp-indent-function 'defun) (autoload 'transient-replace-suffix "transient" "Replace the suffix at LOC in PREFIX with SUFFIX.
+PREFIX is a prefix command, a symbol.
+SUFFIX is a suffix command or a group specification (of
+  the same forms as expected by `transient-define-prefix').
+LOC is a command, a key vector, a key description (a string
+  as returned by `key-description'), or a coordination list
+  (whose last element may also be a command or key).
+See info node `(transient)Modifying Existing Transients'.
 
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
+(fn PREFIX LOC SUFFIX)") (function-put 'transient-replace-suffix 'lisp-indent-function 'defun) (autoload 'transient-inline-group "transient" "Inline the included GROUP into PREFIX.
+Replace the symbol GROUP with its expanded layout in the
+layout of PREFIX.
 
-(fn &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-today "org-roam-dailies" "Find the daily-note for today, creating it if necessary.
+(fn PREFIX GROUP)") (function-put 'transient-inline-group 'lisp-indent-function 'defun) (autoload 'transient-remove-suffix "transient" "Remove the suffix or group at LOC in PREFIX.
+PREFIX is a prefix command, a symbol.
+LOC is a command, a key vector, a key description (a string
+  as returned by `key-description'), or a coordination list
+  (whose last element may also be a command or key).
+See info node `(transient)Modifying Existing Transients'.
 
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
+(fn PREFIX LOC)") (function-put 'transient-remove-suffix 'lisp-indent-function 'defun) (register-definition-prefixes "transient" '("find-function-advised-original" "transient")) (provide 'transient-autoloads)) "with-editor" ((with-editor with-editor-autoloads) (autoload 'with-editor-export-editor "with-editor" "Teach subsequent commands to use current Emacs instance as editor.
 
-(fn &optional KEYS)" t) (autoload 'org-roam-dailies-capture-tomorrow "org-roam-dailies" "Create an entry in the daily-note for tomorrow.
+Set and export the environment variable ENVVAR, by default
+\"EDITOR\".  The value is automatically generated to teach
+commands to use the current Emacs instance as \"the editor\".
 
-With numeric argument N, use the daily-note N days in the future.
+This works in `shell-mode', `term-mode', `eshell-mode' and
+`vterm'.
 
-With a `C-u' prefix or when GOTO is non-nil, go the note without
-creating an entry.
+(fn &optional (ENVVAR \"EDITOR\"))" t) (autoload 'with-editor-export-git-editor "with-editor" "Like `with-editor-export-editor' but always set `$GIT_EDITOR'." t) (autoload 'with-editor-export-hg-editor "with-editor" "Like `with-editor-export-editor' but always set `$HG_EDITOR'." t) (defvar shell-command-with-editor-mode nil "Non-nil if Shell-Command-With-Editor mode is enabled.
+See the `shell-command-with-editor-mode' command
+for a description of this minor mode.") (custom-autoload 'shell-command-with-editor-mode "with-editor" nil) (autoload 'shell-command-with-editor-mode "with-editor" "Teach `shell-command' to use current Emacs instance as editor.
 
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
+Teach `shell-command', and all commands that ultimately call that
+command, to use the current Emacs instance as editor by executing
+\"EDITOR=CLIENT COMMAND&\" instead of just \"COMMAND&\".
 
-(fn N &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-tomorrow "org-roam-dailies" "Find the daily-note for tomorrow, creating it if necessary.
+CLIENT is automatically generated; EDITOR=CLIENT instructs
+COMMAND to use to the current Emacs instance as \"the editor\",
+assuming no other variable overrides the effect of \"$EDITOR\".
+CLIENT may be the path to an appropriate emacsclient executable
+with arguments, or a script which also works over Tramp.
 
-With numeric argument N, use the daily-note N days in the
-future.
-
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
-
-(fn N &optional KEYS)" t) (autoload 'org-roam-dailies-capture-yesterday "org-roam-dailies" "Create an entry in the daily-note for yesteday.
-
-With numeric argument N, use the daily-note N days in the past.
-
-When GOTO is non-nil, go the note without creating an entry.
-
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
-
-(fn N &optional GOTO KEYS)" t) (autoload 'org-roam-dailies-goto-yesterday "org-roam-dailies" "Find the daily-note for yesterday, creating it if necessary.
-
-With numeric argument N, use the daily-note N days in the
-future.
-
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
-
-(fn N &optional KEYS)" t) (autoload 'org-roam-dailies-capture-date "org-roam-dailies" "Create an entry in the daily-note for a date using the calendar.
-Prefer past dates, unless PREFER-FUTURE is non-nil.
-With a `C-u' prefix or when GOTO is non-nil, go the note without
-creating an entry.
-
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
-
-(fn &optional GOTO PREFER-FUTURE KEYS)" t) (autoload 'org-roam-dailies-goto-date "org-roam-dailies" "Find the daily-note for a date using the calendar, creating it if necessary.
-Prefer past dates, unless PREFER-FUTURE is non-nil.
-
-ELisp programs can set KEYS to a string associated with a template.
-In this case, interactive selection will be bypassed.
-
-(fn &optional PREFER-FUTURE KEYS)" t) (autoload 'org-roam-dailies-find-directory "org-roam-dailies" "Find and open `org-roam-dailies-directory'." t) (register-definition-prefixes "org-roam-dailies" '("org-roam-dailies-")) (autoload 'org-roam-db-sync "org-roam-db" "Synchronize the cache state with the current Org files on-disk.
-If FORCE, force a rebuild of the cache from scratch.
-
-(fn &optional FORCE)" t) (defvar org-roam-db-autosync-mode nil "Non-nil if Org-Roam-Db-Autosync mode is enabled.
-See the `org-roam-db-autosync-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `org-roam-db-autosync-mode'.") (custom-autoload 'org-roam-db-autosync-mode "org-roam-db" nil) (autoload 'org-roam-db-autosync-mode "org-roam-db" "Global minor mode to keep your Org-roam session automatically synchronized.
-
-Through the session this will continue to setup your
-buffers (that are Org-roam file visiting), keep track of the
-related changes, maintain cache consistency and incrementally
-update the currently active database.
-
-If you need to manually trigger resync of the currently active
-database, see `org-roam-db-sync' command.
+Alternatively you can use the `with-editor-async-shell-command',
+which also allows the use of another variable instead of
+\"EDITOR\".
 
 This is a global minor mode.  If called interactively, toggle the
-`Org-Roam-Db-Autosync mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
+`Shell-Command-With-Editor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
 mode if ARG is nil, omitted, or is a positive number.  Disable the mode
 if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='org-roam-db-autosync-mode)'.
+evaluate `(default-value \\='shell-command-with-editor-mode)'.
 
 The mode's hook is called both when the mode is enabled and when it is
 disabled.
 
-(fn &optional ARG)" t) (autoload 'org-roam-db-autosync-enable "org-roam-db" "Activate `org-roam-db-autosync-mode'.") (register-definition-prefixes "org-roam-db" '("emacsql-constraint" "org-roam-db")) (register-definition-prefixes "org-roam-export" '("org-roam-export--org-html--reference")) (autoload 'org-roam-graph "org-roam-graph" "Build and possibly display a graph for NODE.
-ARG may be any of the following values:
-  - nil       show the graph.
-  - `\\[universal-argument]'     show the graph for NODE.
-  - `\\[universal-argument]' N   show the graph for NODE limiting nodes to N steps.
+(fn &optional ARG)" t) (autoload 'with-editor-async-shell-command "with-editor" "Like `async-shell-command' but with `$EDITOR' set.
 
-(fn &optional ARG NODE)" t) (register-definition-prefixes "org-roam-graph" '("org-roam-")) (autoload 'org-roam-update-org-id-locations "org-roam-id" "Scan Org-roam files to update `org-id' related state.
-This is like `org-id-update-id-locations', but will automatically
-use the currently bound `org-directory' and `org-roam-directory'
-along with DIRECTORIES (if any), where the lookup for files in
-these directories will be always recursive.
+Execute string \"ENVVAR=CLIENT COMMAND\" in an inferior shell;
+display output, if any.  With a prefix argument prompt for an
+environment variable, otherwise the default \"EDITOR\" variable
+is used.  With a negative prefix argument additionally insert
+the COMMAND's output at point.
 
-Note: Org-roam doesn't have hard dependency on
-`org-id-locations-file' to lookup IDs for nodes that are stored
-in the database, but it still tries to properly integrates with
-`org-id'. This allows the user to cross-reference IDs outside of
-the current `org-roam-directory', and also link with \"id:\"
-links to headings/files within the current `org-roam-directory'
-that are excluded from identification in Org-roam as
-`org-roam-node's, e.g. with \"ROAM_EXCLUDE\" property.
+CLIENT is automatically generated; ENVVAR=CLIENT instructs
+COMMAND to use to the current Emacs instance as \"the editor\",
+assuming it respects ENVVAR as an \"EDITOR\"-like variable.
+CLIENT may be the path to an appropriate emacsclient executable
+with arguments, or a script which also works over Tramp.
 
-(fn &rest DIRECTORIES)" t) (register-definition-prefixes "org-roam-id" '("org-roam-id-")) (register-definition-prefixes "org-roam-log" '("org-roam-log-")) (autoload 'org-roam-migrate-wizard "org-roam-migrate" "Migrate all notes from to be compatible with Org-roam v2.
-1. Convert all notes from v1 format to v2.
-2. Rebuild the cache.
-3. Replace all file links with ID links." t) (register-definition-prefixes "org-roam-migrate" '("org-roam-migrate-")) (autoload 'org-roam-buffer-display-dedicated "org-roam-mode" "Launch NODE dedicated Org-roam buffer.
-Unlike the persistent `org-roam-buffer', the contents of this
-buffer won't be automatically changed and will be held in place.
+Also see `async-shell-command' and `shell-command'.
 
-In interactive calls prompt to select NODE, unless called with
-`universal-argument', in which case NODE will be set to
-`org-roam-node-at-point'.
+(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t) (autoload 'with-editor-shell-command "with-editor" "Like `shell-command' or `with-editor-async-shell-command'.
+If COMMAND ends with \"&\" behave like the latter,
+else like the former.
 
-(fn NODE)" t) (register-definition-prefixes "org-roam-mode" '("org-roam-")) (autoload 'org-roam-node-find "org-roam-node" "Find and open an Org-roam node by its title or alias.
-INITIAL-INPUT is the initial input for the prompt.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-If OTHER-WINDOW, visit the NODE in another window.
-The TEMPLATES, if provided, override the list of capture templates (see
-`org-roam-capture-'.)
+(fn COMMAND &optional OUTPUT-BUFFER ERROR-BUFFER ENVVAR)" t) (register-definition-prefixes "with-editor" '("server-" "shell-command" "start-file-process" "with-editor")) (provide 'with-editor-autoloads)) "magit" ((magit-bookmark magit-autorevert git-rebase magit-process magit-pull magit-repos magit-remote magit-commit magit-transient magit-autoloads \.dir-locals magit-worktree magit-base magit-refs magit-reflog magit-sparse-checkout magit-mode magit-dired magit-submodule magit-ediff magit-stash magit magit-fetch magit-extras magit-margin magit-diff magit-notes magit-git magit-bisect magit-reset magit-apply magit-log magit-wip magit-files magit-gitignore git-commit magit-patch magit-bundle magit-sequence magit-merge magit-blame magit-branch magit-push magit-status magit-tag magit-clone magit-core magit-subtree) (put 'git-commit-major-mode 'safe-local-variable (lambda (val) (memq val '(text-mode markdown-mode org-mode fundamental-mode log-edit-mode git-commit-elisp-text-mode)))) (register-definition-prefixes "git-commit" '("git-commit-" "global-git-commit-mode")) (autoload 'git-rebase-current-line "git-rebase" "Parse current line into a `git-rebase-action' instance.
+If the current line isn't recognized as a rebase line, an
+instance with all nil values is returned, unless optional
+BATCH is non-nil, in which case nil is returned.  Non-nil
+BATCH also ignores commented lines.
 
-(fn &optional OTHER-WINDOW INITIAL-INPUT FILTER-FN PRED &key TEMPLATES)" t) (autoload 'org-roam-node-random "org-roam-node" "Find and open a random Org-roam node.
-With prefix argument OTHER-WINDOW, visit the node in another
-window instead.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
+(fn &optional BATCH)") (autoload 'git-rebase-mode "git-rebase" "Major mode for editing of a Git rebase file.
 
-(fn &optional OTHER-WINDOW FILTER-FN)" t) (autoload 'org-roam-node-insert "org-roam-node" "Find an Org-roam node and insert (where the point is) an \"id:\" link to it.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-The TEMPLATES, if provided, override the list of capture templates (see
-`org-roam-capture-'.)
-The INFO, if provided, is passed to the underlying `org-roam-capture-'.
+Rebase files are generated when you run \"git rebase -i\" or run
+`magit-interactive-rebase'.  They describe how Git should perform
+the rebase.  See the documentation for git-rebase (e.g., by
+running \"man git-rebase\" at the command line) for details.
 
-(fn &optional FILTER-FN &key TEMPLATES INFO)" t) (autoload 'org-roam-refile "org-roam-node" "Refile node at point to an org-roam NODE.
+(fn)" t) (defconst git-rebase-filename-regexp "/git-rebase-todo\\'") (add-to-list 'auto-mode-alist (cons git-rebase-filename-regexp #'git-rebase-mode)) (register-definition-prefixes "git-rebase" '("git-rebase-" "magit-imenu--rebase-")) (defvar magit-define-global-key-bindings 'default "Which set of key bindings to add to the global keymap, if any.
 
-If region is active, then use it instead of the node at point.
+This option controls which set of Magit key bindings, if any, may
+be added to the global keymap, even before Magit is first used in
+the current Emacs session.
 
-(fn NODE)" t) (autoload 'org-roam-extract-subtree "org-roam-node" "Convert current subtree at point to a node, and extract it into a new file." t) (autoload 'org-roam-ref-find "org-roam-node" "Find and open an Org-roam node that's dedicated to a specific ref.
-INITIAL-INPUT is the initial input to the prompt.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
+If the value is nil, no bindings are added.
 
-(fn &optional INITIAL-INPUT FILTER-FN)" t) (register-definition-prefixes "org-roam-node" '("org-roam-")) (register-definition-prefixes "org-roam-overlay" '("org-roam-overlay-")) (register-definition-prefixes "org-roam-protocol" '("org-roam-")) (autoload 'org-roam-version "org-roam-utils" "Return `org-roam' version.
-Interactively, or when MESSAGE is non-nil, show in the echo area.
+If \\+`default', maybe add:
 
-(fn &optional MESSAGE)" t) (autoload 'org-roam-diagnostics "org-roam-utils" "Collect and print info for `org-roam' issues." t) (register-definition-prefixes "org-roam-utils" '("org-roam-")) (provide 'org-roam-autoloads)) "simple-httpd" ((simple-httpd simple-httpd-autoloads) (autoload 'httpd-start "simple-httpd" "Start the web server process. If the server is already
-running, this will restart the server. There is only one server
-instance per Emacs instance." t) (autoload 'httpd-stop "simple-httpd" "Stop the web server if it is currently running, otherwise do nothing." t) (autoload 'httpd-running-p "simple-httpd" "Return non-nil if the simple-httpd server is running.") (autoload 'httpd-serve-directory "simple-httpd" "Start the web server with given `directory' as `httpd-root'.
+    \\`C-x' \\`g'     `magit-status'
+    \\`C-x' \\`M-g'   `magit-dispatch'
+    \\`C-c' \\`M-g'   `magit-file-dispatch'
 
-(fn DIRECTORY)" t) (register-definition-prefixes "simple-httpd" '("defservlet" "httpd" "with-httpd-buffer")) (provide 'simple-httpd-autoloads)) "websocket" ((websocket-autoloads websocket) (register-definition-prefixes "websocket" '("websocket-")) (provide 'websocket-autoloads)) "org-roam-ui" ((org-roam-ui org-roam-ui-autoloads) (defvar org-roam-ui-mode nil "Non-nil if org-roam-ui mode is enabled.
-See the `org-roam-ui-mode' command
+If `recommended', maybe add:
+
+    \\`C-x' \\`g'     `magit-status'
+    \\`C-c' \\`g'     `magit-dispatch'
+    \\`C-c' \\`f'     `magit-file-dispatch'
+
+    These bindings are strongly recommended, but we cannot use
+    them by default, because the \\`C-c <LETTER>' namespace is
+    strictly reserved for bindings added by the user.
+
+The bindings in the chosen set may be added when
+`after-init-hook' is run.  Each binding is added if, and only
+if, at that time no other key is bound to the same command,
+and no other command is bound to the same key.  In other words
+we try to avoid adding bindings that are unnecessary, as well
+as bindings that conflict with other bindings.
+
+Adding these bindings is delayed until `after-init-hook' is
+run to allow users to set the variable anywhere in their init
+file (without having to make sure to do so before `magit' is
+loaded or autoloaded) and to increase the likelihood that all
+the potentially conflicting user bindings have already been
+added.
+
+To set this variable use either `setq' or the Custom interface.
+Do not use the function `customize-set-variable' because doing
+that would cause Magit to be loaded immediately, when that form
+is evaluated (this differs from `custom-set-variables', which
+doesn't load the libraries that define the customized variables).
+
+Setting this variable has no effect if `after-init-hook' has
+already been run.") (custom-autoload 'magit-define-global-key-bindings "magit" t) (defun magit-maybe-define-global-key-bindings (&optional force) "See variable `magit-define-global-key-bindings'." (when magit-define-global-key-bindings (let ((map (current-global-map))) (pcase-dolist (`(,key \, def) (cond ((eq magit-define-global-key-bindings 'recommended) '(("C-x g" . magit-status) ("C-c g" . magit-dispatch) ("C-c f" . magit-file-dispatch))) ('(("C-x g" . magit-status) ("C-x M-g" . magit-dispatch) ("C-c M-g" . magit-file-dispatch))))) (when (or force (not (or (lookup-key map (kbd key)) (where-is-internal def (make-sparse-keymap) t)))) (define-key map (kbd key) def)))))) (if after-init-time (magit-maybe-define-global-key-bindings) (add-hook 'after-init-hook #'magit-maybe-define-global-key-bindings t)) (autoload 'magit-dispatch "magit" nil t) (autoload 'magit-run "magit" nil t) (autoload 'magit-git-command "magit" "Execute COMMAND asynchronously; display output.
+
+Interactively, prompt for COMMAND in the minibuffer.  \"git \" is
+used as initial input, but can be deleted to run another command.
+
+With a prefix argument COMMAND is run in the top-level directory
+of the current working tree, otherwise in `default-directory'.
+
+(fn COMMAND)" t) (autoload 'magit-git-command-topdir "magit" "Execute COMMAND asynchronously; display output.
+
+Interactively, prompt for COMMAND in the minibuffer.  \"git \" is
+used as initial input, but can be deleted to run another command.
+
+COMMAND is run in the top-level directory of the current
+working tree.
+
+(fn COMMAND)" t) (autoload 'magit-shell-command "magit" "Execute COMMAND asynchronously; display output.
+
+Interactively, prompt for COMMAND in the minibuffer.  With a
+prefix argument COMMAND is run in the top-level directory of
+the current working tree, otherwise in `default-directory'.
+
+(fn COMMAND)" t) (autoload 'magit-shell-command-topdir "magit" "Execute COMMAND asynchronously; display output.
+
+Interactively, prompt for COMMAND in the minibuffer.  COMMAND
+is run in the top-level directory of the current working tree.
+
+(fn COMMAND)" t) (autoload 'magit-version "magit" "Return the version of Magit currently in use.
+
+If optional argument PRINT-DEST is non-nil, also print the used
+versions of Magit, Transient, Git and Emacs to the output stream
+selected by that argument.  Interactively use the echo area, or
+with a prefix argument use the current buffer.  Additionally put
+the output in the kill ring.
+
+(fn &optional PRINT-DEST)" t) (register-definition-prefixes "magit" '("magit-")) (autoload 'magit-stage-files "magit-apply" "Read one or more files and stage all changes in those files.
+With prefix argument FORCE, offer ignored files for completion.
+
+(fn FILES &optional FORCE)" t) (autoload 'magit-stage-modified "magit-apply" "Stage all changes to files modified in the worktree.
+Stage all new content of tracked files and remove tracked files
+that no longer exist in the working tree from the index also.
+With a prefix argument also stage previously untracked (but not
+ignored) files.
+
+(fn &optional ALL)" t) (autoload 'magit-unstage-files "magit-apply" "Read one or more files and unstage all changes to those files.
+
+(fn FILES)" t) (autoload 'magit-unstage-all "magit-apply" "Remove all changes from the staging area." t) (register-definition-prefixes "magit-apply" '("magit-")) (defun magit-custom-initialize-after-init (symbol value) (internal--define-uninitialized-variable symbol) (cond ((not after-init-time) (letrec ((f (lambda nil (remove-hook 'after-init-hook f) (custom-initialize-set symbol value)))) (add-hook 'after-init-hook f))) ((not load-file-name) (custom-initialize-set symbol value)) ((let ((thisfile load-file-name)) (letrec ((f (lambda (file) (when (equal file thisfile) (remove-hook 'after-load-functions f) (custom-initialize-set symbol value))))) (add-hook 'after-load-functions f)))))) (put 'magit-auto-revert-mode 'globalized-minor-mode t) (defcustom magit-auto-revert-mode (not (or global-auto-revert-mode noninteractive)) "Non-nil if Magit-Auto-Revert mode is enabled.
+See the `magit-auto-revert-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
-or call the function `org-roam-ui-mode'.") (custom-autoload 'org-roam-ui-mode "org-roam-ui" nil) (autoload 'org-roam-ui-mode "org-roam-ui" "Enable org-roam-ui.
+or call the function `magit-auto-revert-mode'." :set #'custom-set-minor-mode :initialize #'magit-custom-initialize-after-init :type 'boolean :group 'magit-auto-revert :group 'magit-essentials :package-version '(magit . "2.4.0") :link '(info-link "(magit)Automatic Reverting of File-Visiting Buffers")) (custom-autoload 'magit-auto-revert-mode "magit-autorevert" nil) (autoload 'magit-auto-revert-mode "magit-autorevert" "Toggle Auto-Revert mode in all buffers.
+With prefix ARG, enable Magit-Auto-Revert mode if ARG is positive;
+otherwise, disable it.
 
-This serves the web-build and API over HTTP.
+If called from Lisp, toggle the mode if ARG is `toggle'.
+Enable the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+Auto-Revert mode is enabled in all buffers where
+`magit-turn-on-auto-revert-mode-if-desired' would do it.
+
+See `auto-revert-mode' for more information on Auto-Revert mode.
+
+(fn &optional ARG)" t) (register-definition-prefixes "magit-autorevert" '("auto-revert-buffer" "magit-")) (autoload 'magit-emacs-Q-command "magit-base" "Show a shell command that runs an uncustomized Emacs with only Magit loaded.
+See info node `(magit)Debugging Tools' for more information." t) (define-advice Info-follow-nearest-node (:around (fn &optional fork) gitman) (let ((node (Info-get-token (point) "\\*note[ 
+	]+" "\\*note[ 
+	]+\\([^:]*\\):\\(:\\|[ 
+	]*(\\)?"))) (if (and node (string-match "^(gitman)\\(.+\\)" node)) (pcase magit-view-git-manual-method ('info (funcall fn fork)) ('man (require 'man) (man (match-string-no-properties 1 node))) ('woman (require 'woman) (woman (match-string-no-properties 1 node))) (_ (user-error "Invalid value for `magit-view-git-manual-method'"))) (funcall fn fork)))) (define-advice org-man-export (:around (fn link description format) gitman) (if (and (eq format 'texinfo) (string-prefix-p "git" link)) (string-replace "%s" link "
+@ifinfo
+@ref{%s,,,gitman,}.
+@end ifinfo
+@ifhtml
+@html
+the <a href=\"http://git-scm.com/docs/%s\">%s(1)</a> manpage.
+@end html
+@end ifhtml
+@iftex
+the %s(1) manpage.
+@end iftex
+") (funcall fn link description format))) (register-definition-prefixes "magit-base" '("magit-")) (autoload 'magit-bisect "magit-bisect" nil t) (autoload 'magit-bisect-start "magit-bisect" "Start a bisect session.
+
+Bisecting a bug means to find the commit that introduced it.
+This command starts such a bisect session by asking for a known
+good and a known bad commit.  To move the session forward use the
+other actions from the bisect transient command (\\<magit-status-mode-map>\\[magit-bisect]).
+
+(fn BAD GOOD ARGS)" t) (autoload 'magit-bisect-reset "magit-bisect" "After bisecting, cleanup bisection state and return to original `HEAD'." t) (autoload 'magit-bisect-good "magit-bisect" "While bisecting, mark the current commit as good.
+Use this after you have asserted that the commit does not contain
+the bug in question." t) (autoload 'magit-bisect-bad "magit-bisect" "While bisecting, mark the current commit as bad.
+Use this after you have asserted that the commit does contain the
+bug in question." t) (autoload 'magit-bisect-mark "magit-bisect" "While bisecting, mark the current commit with a bisect term.
+During a bisect using alternate terms, commits can still be
+marked with `magit-bisect-good' and `magit-bisect-bad', as those
+commands map to the correct term (\"good\" to --term-old's value
+and \"bad\" to --term-new's).  However, in some cases, it can be
+difficult to keep that mapping straight in your head; this
+command provides an interface that exposes the underlying terms." t) (autoload 'magit-bisect-skip "magit-bisect" "While bisecting, skip the current commit.
+Use this if for some reason the current commit is not a good one
+to test.  This command lets Git choose a different one." t) (autoload 'magit-bisect-run "magit-bisect" "Bisect automatically by running commands after each step.
+
+Unlike `git bisect run' this can be used before bisecting has
+begun.  In that case it behaves like `git bisect start; git
+bisect run'.
+
+(fn CMDLINE &optional BAD GOOD ARGS)" t) (register-definition-prefixes "magit-bisect" '("magit-")) (autoload 'magit-blame-echo "magit-blame" nil t) (autoload 'magit-blame-addition "magit-blame" nil t) (autoload 'magit-blame-removal "magit-blame" nil t) (autoload 'magit-blame-reverse "magit-blame" nil t) (autoload 'magit-blame "magit-blame" nil t) (register-definition-prefixes "magit-blame" '("magit-")) (autoload 'magit-branch "magit" nil t) (autoload 'magit-checkout "magit-branch" "Checkout COMMIT, updating the index and the working tree.
+If COMMIT is a local branch, then that becomes the current
+branch.  If it is something else, then `HEAD' becomes detached.
+Checkout fails if the working tree or the staging area contain
+changes.
+
+(git checkout COMMIT).
+
+(fn COMMIT &optional ARGS)" t) (function-put 'magit-checkout 'interactive-only 'magit--checkout) (autoload 'magit-branch-create "magit-branch" "Create BRANCH at branch or revision START-POINT.
+
+(fn BRANCH START-POINT)" t) (function-put 'magit-branch-create 'interactive-only 'magit-call-git) (autoload 'magit-branch-and-checkout "magit-branch" "Create and checkout BRANCH at branch or revision START-POINT.
+
+(fn BRANCH START-POINT &optional ARGS)" t) (function-put 'magit-branch-and-checkout 'interactive-only 'magit-call-git) (autoload 'magit-branch-or-checkout "magit-branch" "Hybrid between `magit-checkout' and `magit-branch-and-checkout'.
+
+Ask the user for an existing branch or revision.  If the user
+input actually can be resolved as a branch or revision, then
+check that out, just like `magit-checkout' would.
+
+Otherwise create and checkout a new branch using the input as
+its name.  Before doing so read the starting-point for the new
+branch.  This is similar to what `magit-branch-and-checkout'
+does.
+
+(fn ARG &optional START-POINT)" t) (function-put 'magit-branch-or-checkout 'interactive-only 'magit-call-git) (autoload 'magit-branch-checkout "magit-branch" "Checkout an existing or new local branch.
+
+Read a branch name from the user offering all local branches and
+a subset of remote branches as candidates.  Omit remote branches
+for which a local branch by the same name exists from the list
+of candidates.  The user can also enter a completely new branch
+name.
+
+- If the user selects an existing local branch, then check that
+  out.
+
+- If the user selects a remote branch, then create and checkout
+  a new local branch with the same name.  Configure the selected
+  remote branch as push target.
+
+- If the user enters a new branch name, then create and check
+  that out, after also reading the starting-point from the user.
+
+In the latter two cases the upstream is also set.  Whether it is
+set to the chosen START-POINT or something else depends on the
+value of `magit-branch-adjust-remote-upstream-alist', just like
+when using `magit-branch-and-checkout'.
+
+(fn BRANCH &optional START-POINT)" t) (function-put 'magit-branch-checkout 'interactive-only 'magit-call-git) (autoload 'magit-branch-orphan "magit-branch" "Create and checkout an orphan BRANCH with contents from revision START-POINT.
+
+(fn BRANCH START-POINT)" t) (autoload 'magit-branch-spinout "magit-branch" "Create new branch from the unpushed commits.
+Like `magit-branch-spinoff' but remain on the current branch.
+If there are any uncommitted changes, then behave exactly like
+`magit-branch-spinoff'.
+
+(fn BRANCH &optional FROM)" t) (autoload 'magit-branch-spinoff "magit-branch" "Create new branch from the unpushed commits.
+
+Create and checkout a new branch starting at and tracking the
+current branch.  That branch in turn is reset to the last commit
+it shares with its upstream.  If the current branch has no
+upstream or no unpushed commits, then the new branch is created
+anyway and the previously current branch is not touched.
+
+This is useful to create a feature branch after work has already
+began on the old branch (likely but not necessarily \"master\").
+
+If the current branch is a member of the value of option
+`magit-branch-prefer-remote-upstream' (which see), then the
+current branch will be used as the starting point as usual, but
+the upstream of the starting-point may be used as the upstream
+of the new branch, instead of the starting-point itself.
+
+If optional FROM is non-nil, then the source branch is reset
+to `FROM~', instead of to the last commit it shares with its
+upstream.  Interactively, FROM is only ever non-nil, if the
+region selects some commits, and among those commits, FROM is
+the commit that is the fewest commits ahead of the source
+branch.
+
+The commit at the other end of the selection actually does not
+matter, all commits between FROM and `HEAD' are moved to the new
+branch.  If FROM is not reachable from `HEAD' or is reachable
+from the source branch's upstream, then an error is raised.
+
+(fn BRANCH &optional FROM)" t) (autoload 'magit-branch-reset "magit-branch" "Reset a branch to the tip of another branch or any other commit.
+
+When the branch being reset is the current branch, then do a
+hard reset.  If there are any uncommitted changes, then the user
+has to confirm the reset because those changes would be lost.
+
+This is useful when you have started work on a feature branch but
+realize it's all crap and want to start over.
+
+When resetting to another branch and a prefix argument is used,
+then also set the target branch as the upstream of the branch
+that is being reset.
+
+(fn BRANCH TO &optional SET-UPSTREAM)" t) (autoload 'magit-branch-delete "magit-branch" "Delete one or multiple branches.
+
+If the region marks multiple branches, then offer to delete
+those, otherwise prompt for a single branch to be deleted,
+defaulting to the branch at point.
+
+Require confirmation when deleting branches is dangerous in some
+way.  Option `magit-no-confirm' can be customized to not require
+confirmation in certain cases.  See its docstring to learn why
+confirmation is required by default in certain cases or if a
+prompt is confusing.
+
+(fn BRANCHES &optional FORCE)" t) (autoload 'magit-branch-rename "magit-branch" "Rename the branch named OLD to NEW.
+
+With a prefix argument FORCE, rename even if a branch named NEW
+already exists.
+
+If `branch.OLD.pushRemote' is set, then unset it.  Depending on
+the value of `magit-branch-rename-push-target' (which see) maybe
+set `branch.NEW.pushRemote' and maybe rename the push-target on
+the remote.
+
+(fn OLD NEW &optional FORCE)" t) (autoload 'magit-branch-shelve "magit-branch" "Shelve a BRANCH.
+Rename \"refs/heads/BRANCH\" to \"refs/shelved/YYYY-MM-DD-BRANCH\",
+and also rename the respective reflog file.
+
+(fn BRANCH)" t) (autoload 'magit-branch-unshelve "magit-branch" "Unshelve a BRANCH.
+Rename \"refs/shelved/BRANCH\" to \"refs/heads/BRANCH\".  If BRANCH
+is prefixed with \"YYYY-MM-DD\", then drop that part of the name.
+Also rename the respective reflog file.
+
+(fn BRANCH)" t) (autoload 'magit-branch-configure "magit-branch" nil t) (register-definition-prefixes "magit-branch" '("magit-")) (autoload 'magit-bundle "magit-bundle" nil t) (autoload 'magit-bundle-import "magit-bundle" nil t) (autoload 'magit-bundle-create-tracked "magit-bundle" "Create and track a new bundle.
+
+(fn FILE TAG BRANCH REFS ARGS)" t) (autoload 'magit-bundle-update-tracked "magit-bundle" "Update a bundle that is being tracked using TAG.
+
+(fn TAG)" t) (autoload 'magit-bundle-verify "magit-bundle" "Check whether FILE is valid and applies to the current repository.
+
+(fn FILE)" t) (autoload 'magit-bundle-list-heads "magit-bundle" "List the refs in FILE.
+
+(fn FILE)" t) (register-definition-prefixes "magit-bundle" '("magit-")) (autoload 'magit-clone "magit-clone" nil t) (autoload 'magit-clone-regular "magit-clone" "Create a clone of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+
+(fn REPOSITORY DIRECTORY ARGS)" t) (autoload 'magit-clone-shallow "magit-clone" "Create a shallow clone of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+With a prefix argument read the DEPTH of the clone;
+otherwise use 1.
+
+(fn REPOSITORY DIRECTORY ARGS DEPTH)" t) (autoload 'magit-clone-shallow-since "magit-clone" "Create a shallow clone of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+Exclude commits before DATE, which is read from the
+user.
+
+(fn REPOSITORY DIRECTORY ARGS DATE)" t) (autoload 'magit-clone-shallow-exclude "magit-clone" "Create a shallow clone of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+Exclude commits reachable from EXCLUDE, which is a
+branch or tag read from the user.
+
+(fn REPOSITORY DIRECTORY ARGS EXCLUDE)" t) (autoload 'magit-clone-bare "magit-clone" "Create a bare clone of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+
+(fn REPOSITORY DIRECTORY ARGS)" t) (autoload 'magit-clone-mirror "magit-clone" "Create a mirror of REPOSITORY in DIRECTORY.
+Then show the status buffer for the new repository.
+
+(fn REPOSITORY DIRECTORY ARGS)" t) (autoload 'magit-clone-sparse "magit-clone" "Clone REPOSITORY into DIRECTORY and create a sparse checkout.
+
+(fn REPOSITORY DIRECTORY ARGS)" t) (register-definition-prefixes "magit-clone" '("magit-")) (autoload 'magit-commit "magit-commit" nil t) (autoload 'magit-commit-create "magit-commit" "Create a new commit.
+
+(fn &optional ARGS)" t) (autoload 'magit-commit-extend "magit-commit" "Amend staged changes to the last commit, without editing its message.
+
+With a prefix argument do not update the committer date; without an
+argument update it.  The option `magit-commit-extend-override-date'
+can be used to inverse the meaning of the prefix argument.  Called
+non-interactively, the optional OVERRIDE-DATE argument controls this
+behavior, and the option is of no relevance.
+
+(fn &optional ARGS OVERRIDE-DATE)" t) (autoload 'magit-commit-amend "magit-commit" "Amend staged changes (if any) to the last commit, and edit its message.
+
+(fn &optional ARGS)" t) (autoload 'magit-commit-reword "magit-commit" "Reword the message of the last commit, without amending its tree.
+
+With a prefix argument do not update the committer date; without an
+argument update it.  The option `magit-commit-reword-override-date'
+can be used to inverse the meaning of the prefix argument.  Called
+non-interactively, the optional OVERRIDE-DATE argument controls this
+behavior, and the option is of no relevance.
+
+(fn &optional ARGS OVERRIDE-DATE)" t) (autoload 'magit-commit-fixup "magit-commit" "Create a fixup commit, leaving the original commit message untouched.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+During a later rebase, when this commit gets squashed into its targeted
+commit, the original message of the targeted commit is used as-is.
+
+In other words, call \"git commit --fixup=COMMIT --no-edit\".
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-squash "magit-commit" "Create a squash commit, without the user authoring a commit message.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+During a later rebase, when this commit gets squashed into its targeted
+commit, the user is given a chance to edit the original message to take
+the changes from the squash commit into account.
+
+In other words, call \"git commit --squash=COMMIT --no-edit\".
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-alter "magit-commit" "Create a squash commit, authoring the final commit message now.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+During a later rebase, when this commit gets squashed into its targeted
+commit, the original message of the targeted commit is replaced with the
+message of this commit, without the user automatically being given a
+chance to edit again.
+
+In other words, call \"git commit --fixup=amend:COMMIT --edit\".
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-augment "magit-commit" "Create a squash commit, authoring a new temporary commit message.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+During a later rebase, when this commit gets squashed into its targeted
+commit, the user is asked to write a final commit message, in a buffer
+that starts out containing both the original commit message, as well as
+the temporary commit message of the squash commit.
+
+In other words, call \"git commit --squash=COMMIT --edit\".
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-revise "magit-commit" "Reword the message of an existing commit, without editing its tree.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+During a later rebase, when this commit gets squashed into its targeted
+commit, a combined commit is created which uses the message of the fixup
+commit and the tree of the targeted commit.
+
+In other words, call \"git commit --fixup=reword:COMMIT --edit\".
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-instant-fixup "magit-commit" "Create a fixup commit, and immediately combine it with its target.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+Leave the original commit message of the targeted commit untouched.
+
+Like `magit-commit-fixup' but also run a `--autofixup' rebase.
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-instant-squash "magit-commit" "Create a squash commit, and immediately combine it with its target.
+
+If there is a reachable commit at point, target that.  Otherwise prompt
+for a commit.  If `magit-commit-squash-confirm' is non-nil, always make
+the user explicitly select a commit, in a buffer dedicated to that task.
+
+Turing the rebase phase, when the two commits are being squashed, ask
+the user to author the final commit message, based on the original
+message of the targeted commit.
+
+Like `magit-commit-squash' but also run a `--autofixup' rebase.
+
+(fn &optional COMMIT ARGS)" t) (autoload 'magit-commit-reshelve "magit-commit" "Change committer (and possibly author) date of the last commit.
+
+The current time is used as the initial minibuffer input and the
+original author or committer date is available as the previous
+history element.
+
+Both the author and the committer dates are changed, unless one
+of the following is true, in which case only the committer date
+is updated:
+- You are not the author of the commit that is being reshelved.
+- The command was invoked with a prefix argument.
+- Non-interactively if UPDATE-AUTHOR is nil.
+
+(fn DATE UPDATE-AUTHOR &optional ARGS)" t) (autoload 'magit-commit-absorb-modules "magit-commit" "Spread modified modules across recent commits.
+
+(fn PHASE COMMIT)" t) (autoload 'magit-commit-absorb "magit-commit" nil t) (autoload 'magit-commit-autofixup "magit-commit" nil t) (register-definition-prefixes "magit-commit" '("magit-")) (autoload 'magit-diff "magit-diff" nil t) (autoload 'magit-diff-refresh "magit-diff" nil t) (autoload 'magit-diff-dwim "magit-diff" "Show changes for the thing at point.
+
+For example, if point is on a commit, show the changes introduced by
+that commit.  Likewise if point is on the section titled \"Unstaged
+changes\", then show those changes in a separate buffer.  Generally
+speaking, compare the thing at point with the most logical, trivial
+and (in *any* situation) at least potentially useful other thing it
+could be compared to.
+
+When the region selects commits, then compare the two commits at
+either end.  There are different ways two commits can be compared.
+In the buffer showing the diff, you can control how the comparison,
+is done, using \"D r\" and \"D f\".
+
+This function does not always show the changes that you might want
+to view in any given situation.  You can think of the changes being
+shown as the smallest common denominator.  There is no AI involved.
+If this command never does what you want, then ignore it, and instead
+use the commands that allow you to explicitly specify what you need.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-diff-range "magit-diff" "Show differences between two commits.
+
+REV-OR-RANGE should be a range or a single revision.  If it is a
+revision, then show changes in the working tree relative to that
+revision.  If it is a range, but one side is omitted, then show
+changes relative to `HEAD'.
+
+If the region is active, use the revisions on the first and last
+line of the region as the two sides of the range.  With a prefix
+argument, instead of diffing the revisions, choose a revision to
+view changes along, starting at the common ancestor of both
+revisions (i.e., use a \"...\" range).
+
+(fn REV-OR-RANGE &optional ARGS FILES)" t) (autoload 'magit-diff-working-tree "magit-diff" "Show changes between the current working tree and the `HEAD' commit.
+With a prefix argument show changes between the working tree and
+a commit read from the minibuffer.
+
+(fn &optional REV ARGS FILES)" t) (autoload 'magit-diff-staged "magit-diff" "Show changes between the index and the `HEAD' commit.
+With a prefix argument show changes between the index and
+a commit read from the minibuffer.
+
+(fn &optional REV ARGS FILES)" t) (autoload 'magit-diff-unstaged "magit-diff" "Show changes between the working tree and the index.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-diff-unmerged "magit-diff" "Show changes that are being merged.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-diff-while-committing "magit-diff" "While committing, show the changes that are about to be committed.
+While amending, invoking the command again toggles between
+showing just the new changes or all the changes that will
+be committed." t) (autoload 'magit-diff-buffer-file "magit-diff" "Show diff for the blob or file visited in the current buffer.
+
+When the buffer visits a blob, then show the respective commit.
+When the buffer visits a file, then show the differences between
+`HEAD' and the working tree.  In both cases limit the diff to
+the file or blob." t) (autoload 'magit-diff-paths "magit-diff" "Show changes between any two files on disk.
+
+(fn A B)" t) (autoload 'magit-show-commit "magit-diff" "Visit the revision at point in another buffer.
+If there is no revision at point or with a prefix argument prompt
+for a revision.
+
+(fn REV &optional ARGS FILES MODULE)" t) (register-definition-prefixes "magit-diff" '("magit-")) (autoload 'magit-dired-jump "magit-dired" "Visit file at point using Dired.
+With a prefix argument, visit in another window.  If there
+is no file at point, then instead visit `default-directory'.
+
+(fn &optional OTHER-WINDOW)" t) (autoload 'magit-dired-stage "magit-dired" "In Dired, staged all marked files or the file at point." t) (autoload 'magit-dired-unstage "magit-dired" "In Dired, unstaged all marked files or the file at point." t) (autoload 'magit-dired-log "magit-dired" "In Dired, show log for all marked files or the directory if none are marked.
+
+(fn &optional FOLLOW)" t) (autoload 'magit-dired-am-apply-patches "magit-dired" "In Dired, apply the marked (or next ARG) files as patches.
+If inside a repository, then apply in that.  Otherwise prompt
+for a repository.
+
+(fn REPO &optional ARG)" t) (autoload 'magit-do-async-shell-command "magit-dired" "Open FILE with `dired-do-async-shell-command'.
+Interactively, open the file at point.
+
+(fn FILE)" t) (autoload 'magit-ediff "magit-ediff" nil) (autoload 'magit-ediff-resolve-all "magit-ediff" "Resolve all conflicts in the FILE at point using Ediff.
+
+If there is no file at point or if it doesn't have any unmerged
+changes, then prompt for a file.
+
+See info node `(magit) Ediffing' for more information about this
+and alternative commands.
+
+(fn FILE)" t) (autoload 'magit-ediff-resolve-rest "magit-ediff" "Resolve outstanding conflicts in the FILE at point using Ediff.
+
+If there is no file at point or if it doesn't have any unmerged
+changes, then prompt for a file.
+
+See info node `(magit) Ediffing' for more information about this
+and alternative commands.
+
+(fn FILE)" t) (autoload 'magit-ediff-stage "magit-ediff" "Stage and unstage changes to FILE using Ediff.
+FILE has to be relative to the top directory of the repository.
+
+(fn FILE)" t) (autoload 'magit-ediff-compare "magit-ediff" "Compare REVA:FILEA with REVB:FILEB using Ediff.
+
+FILEA and FILEB have to be relative to the top directory of the
+repository.  If REVA or REVB is nil, then this stands for the
+working tree state.
+
+If the region is active, use the revisions on the first and last
+line of the region.  With a prefix argument, instead of diffing
+the revisions, choose a revision to view changes along, starting
+at the common ancestor of both revisions (i.e., use a \"...\"
+range).
+
+(fn REVA REVB FILEA FILEB)" t) (autoload 'magit-ediff-dwim "magit-ediff" "Compare, stage, or resolve using Ediff.
+This command tries to guess what file, and what commit or range
+the user wants to compare, stage, or resolve using Ediff.  It
+might only be able to guess either the file, or range or commit,
+in which case the user is asked about the other.  It might not
+always guess right, in which case the appropriate `magit-ediff-*'
+command has to be used explicitly.  If it cannot read the user's
+mind at all, then it asks the user for a command to run." t) (autoload 'magit-ediff-show-staged "magit-ediff" "Show staged changes using Ediff.
+
+This only allows looking at the changes; to stage, unstage,
+and discard changes using Ediff, use `magit-ediff-stage'.
+
+FILE must be relative to the top directory of the repository.
+
+(fn FILE)" t) (autoload 'magit-ediff-show-unstaged "magit-ediff" "Show unstaged changes using Ediff.
+
+This only allows looking at the changes; to stage, unstage,
+and discard changes using Ediff, use `magit-ediff-stage'.
+
+FILE must be relative to the top directory of the repository.
+
+(fn FILE)" t) (autoload 'magit-ediff-show-working-tree "magit-ediff" "Show changes between `HEAD' and working tree using Ediff.
+FILE must be relative to the top directory of the repository.
+
+(fn FILE)" t) (autoload 'magit-ediff-show-commit "magit-ediff" "Show changes introduced by COMMIT using Ediff.
+
+(fn COMMIT)" t) (autoload 'magit-ediff-show-stash "magit-ediff" "Show changes introduced by STASH using Ediff.
+`magit-ediff-show-stash-with-index' controls whether a
+three-buffer Ediff is used in order to distinguish changes in the
+stash that were staged.
+
+(fn STASH)" t) (register-definition-prefixes "magit-ediff" '("magit-ediff-")) (autoload 'magit-git-mergetool "magit-extras" nil t) (autoload 'magit-run-git-gui-blame "magit-extras" "Run `git gui blame' on the given FILENAME and COMMIT.
+Interactively run it for the current file and the `HEAD', with a
+prefix or when the current file cannot be determined let the user
+choose.  When the current buffer is visiting FILENAME instruct
+blame to center around the line point is on.
+
+(fn COMMIT FILENAME &optional LINENUM)" t) (autoload 'magit-run-git-gui "magit-extras" "Run `git gui' for the current git repository." t) (autoload 'magit-run-gitk "magit-extras" "Run `gitk' in the current repository." t) (autoload 'magit-run-gitk-branches "magit-extras" "Run `gitk --branches' in the current repository." t) (autoload 'magit-run-gitk-all "magit-extras" "Run `gitk --all' in the current repository." t) (autoload 'magit-project-status "magit-extras" "Run `magit-status' in the current project's root." t) (autoload 'magit-previous-line "magit-extras" "Like `previous-line' but with Magit-specific shift-selection.
+
+Magit's selection mechanism is based on the region but selects an
+area that is larger than the region.  This causes `previous-line'
+when invoked while holding the shift key to move up one line and
+thereby select two lines.  When invoked inside a hunk body this
+command does not move point on the first invocation and thereby
+it only selects a single line.  Which inconsistency you prefer
+is a matter of preference.
+
+(fn &optional ARG TRY-VSCROLL)" t) (function-put 'magit-previous-line 'interactive-only '"use `forward-line' with negative argument instead.") (autoload 'magit-next-line "magit-extras" "Like `next-line' but with Magit-specific shift-selection.
+
+Magit's selection mechanism is based on the region but selects
+an area that is larger than the region.  This causes `next-line'
+when invoked while holding the shift key to move down one line
+and thereby select two lines.  When invoked inside a hunk body
+this command does not move point on the first invocation and
+thereby it only selects a single line.  Which inconsistency you
+prefer is a matter of preference.
+
+(fn &optional ARG TRY-VSCROLL)" t) (function-put 'magit-next-line 'interactive-only 'forward-line) (autoload 'magit-clean "magit-extras" "Remove untracked files from the working tree.
+With a prefix argument also remove ignored files,
+with two prefix arguments remove ignored files only.
+
+(git clean -f -d [-x|-X])
+
+(fn &optional ARG)" t) (autoload 'magit-generate-changelog "magit-extras" "Insert ChangeLog entries into the current buffer.
+
+The entries are generated from the diff being committed.
+If prefix argument, AMENDING, is non-nil, include changes
+in HEAD as well as staged changes in the diff to check.
+
+(fn &optional AMENDING)" t) (autoload 'magit-add-change-log-entry "magit-extras" "Find change log file and add date entry and item for current change.
+This differs from `add-change-log-entry' (which see) in that
+it acts on the current hunk in a Magit buffer instead of on
+a position in a file-visiting buffer.
+
+(fn &optional WHOAMI FILE-NAME OTHER-WINDOW)" t) (autoload 'magit-add-change-log-entry-other-window "magit-extras" "Find change log file in other window and add entry and item.
+This differs from `add-change-log-entry-other-window' (which see)
+in that it acts on the current hunk in a Magit buffer instead of
+on a position in a file-visiting buffer.
+
+(fn &optional WHOAMI FILE-NAME)" t) (autoload 'magit-edit-line-commit "magit-extras" "Edit the commit that added the current line.
+
+With a prefix argument edit the commit that removes the line,
+if any.  The commit is determined using `git blame' and made
+editable using `git rebase --interactive' if it is reachable
+from `HEAD', or by checking out the commit (or a branch that
+points at it) otherwise.
+
+(fn &optional TYPE)" t) (autoload 'magit-diff-edit-hunk-commit "magit-extras" "From a hunk, edit the respective commit and visit the file.
+
+First visit the file being modified by the hunk at the correct
+location using `magit-diff-visit-file'.  This actually visits a
+blob.  When point is on a diff header, not within an individual
+hunk, then this visits the blob the first hunk is about.
+
+Then invoke `magit-edit-line-commit', which uses an interactive
+rebase to make the commit editable, or if that is not possible
+because the commit is not reachable from `HEAD' by checking out
+that commit directly.  This also causes the actual worktree file
+to be visited.
+
+Neither the blob nor the file buffer are killed when finishing
+the rebase.  If that is undesirable, then it might be better to
+use `magit-rebase-edit-commit' instead of this command." t) (autoload 'magit-reshelve-since "magit-extras" "Change the author and committer dates of the commits since COMMIT.
+
+Ask the user for the first reachable commit whose dates should
+be changed.  Then read the new date for that commit.  The initial
+minibuffer input and the previous history element offer good
+values.  The next commit will be created one minute later and so
+on.
+
+This command is only intended for interactive use and should only
+be used on highly rearranged and unpublished history.
+
+If KEYID is non-nil, then use that to sign all reshelved commits.
+Interactively use the value of the \"--gpg-sign\" option in the
+list returned by `magit-rebase-arguments'.
+
+(fn COMMIT KEYID)" t) (autoload 'magit-pop-revision-stack "magit-extras" "Insert a representation of a revision into the current buffer.
+
+Pop a revision from the `magit-revision-stack' and insert it into
+the current buffer according to `magit-pop-revision-stack-format'.
+Revisions can be put on the stack using `magit-copy-section-value'
+and `magit-copy-buffer-revision'.
+
+If the stack is empty or with a prefix argument, instead read a
+revision in the minibuffer.  By using the minibuffer history this
+allows selecting an item which was popped earlier or to insert an
+arbitrary reference or revision without first pushing it onto the
+stack.
+
+When reading the revision from the minibuffer, then it might not
+be possible to guess the correct repository.  When this command
+is called inside a repository (e.g., while composing a commit
+message), then that repository is used.  Otherwise (e.g., while
+composing an email) then the repository recorded for the top
+element of the stack is used (even though we insert another
+revision).  If not called inside a repository and with an empty
+stack, or with two prefix arguments, then read the repository in
+the minibuffer too.
+
+(fn REV TOPLEVEL)" t) (autoload 'magit-copy-section-value "magit-extras" "Save the value of the current section for later use.
+
+Save the section value to the `kill-ring', and, provided that
+the current section is a commit, branch, or tag section, push
+the (referenced) revision to the `magit-revision-stack' for use
+with `magit-pop-revision-stack'.
+
+When `magit-copy-revision-abbreviated' is non-nil, save the
+abbreviated revision to the `kill-ring' and the
+`magit-revision-stack'.
+
+When the current section is a branch or a tag, and a prefix
+argument is used, then save the revision at its tip to the
+`kill-ring' instead of the reference name.
+
+When the region is active, then save that to the `kill-ring',
+like `kill-ring-save' would, instead of behaving as described
+above.  If a prefix argument is used and the region is within
+a hunk, then strip the diff marker column and keep only either
+the added or removed lines, depending on the sign of the prefix
+argument.
+
+(fn ARG)" t) (autoload 'magit-copy-buffer-revision "magit-extras" "Save the revision of the current buffer for later use.
+
+Save the revision shown in the current buffer to the `kill-ring'
+and push it to the `magit-revision-stack'.
+
+This command is mainly intended for use in `magit-revision-mode'
+buffers, the only buffers where it is always unambiguous exactly
+which revision should be saved.
+
+Most other Magit buffers usually show more than one revision, in
+some way or another, so this command has to select one of them,
+and that choice might not always be the one you think would have
+been the best pick.
+
+In such buffers it is often more useful to save the value of
+the current section instead, using `magit-copy-section-value'.
+
+When the region is active, then save that to the `kill-ring',
+like `kill-ring-save' would, instead of behaving as described
+above.
+
+When `magit-copy-revision-abbreviated' is non-nil, save the
+abbreviated revision to the `kill-ring' and the
+`magit-revision-stack'." t) (autoload 'magit-display-repository-buffer "magit-extras" "Display a Magit buffer belonging to the current Git repository.
+The buffer is displayed using `magit-display-buffer', which see.
+
+(fn BUFFER)" t) (autoload 'magit-switch-to-repository-buffer "magit-extras" "Switch to a Magit buffer belonging to the current Git repository.
+
+(fn BUFFER)" t) (autoload 'magit-switch-to-repository-buffer-other-window "magit-extras" "Switch to a Magit buffer belonging to the current Git repository.
+
+(fn BUFFER)" t) (autoload 'magit-switch-to-repository-buffer-other-frame "magit-extras" "Switch to a Magit buffer belonging to the current Git repository.
+
+(fn BUFFER)" t) (autoload 'magit-abort-dwim "magit-extras" "Abort current operation.
+Depending on the context, this will abort a merge, a rebase, a
+patch application, a cherry-pick, a revert, or a bisect." t) (autoload 'magit-back-to-indentation "magit-extras" "Move point to the first non-whitespace character on this line.
+In Magit diffs, also skip over - and + at the beginning of the line." t) (register-definition-prefixes "magit-extras" '("magit-")) (autoload 'magit-fetch "magit-fetch" nil t) (autoload 'magit-fetch-from-pushremote "magit-fetch" nil t) (autoload 'magit-fetch-from-upstream "magit-fetch" nil t) (autoload 'magit-fetch-other "magit-fetch" "Fetch from another repository.
+
+(fn REMOTE ARGS)" t) (autoload 'magit-fetch-branch "magit-fetch" "Fetch a BRANCH from a REMOTE.
+
+(fn REMOTE BRANCH ARGS)" t) (autoload 'magit-fetch-refspec "magit-fetch" "Fetch a REFSPEC from a REMOTE.
+
+(fn REMOTE REFSPEC ARGS)" t) (autoload 'magit-fetch-all "magit-fetch" "Fetch from all remotes.
+
+(fn ARGS)" t) (autoload 'magit-fetch-all-prune "magit-fetch" "Fetch from all remotes, and prune.
+Prune remote tracking branches for branches that have been
+removed on the respective remote." t) (autoload 'magit-fetch-all-no-prune "magit-fetch" "Fetch from all remotes." t) (autoload 'magit-fetch-modules "magit-fetch" nil t) (register-definition-prefixes "magit-fetch" '("magit-")) (autoload 'magit-find-file "magit-files" "View FILE from REV.
+Switch to a buffer visiting blob REV:FILE, creating one if none
+already exists.  If prior to calling this command the current
+buffer and/or cursor position is about the same file, then go
+to the line and column corresponding to that location.
+
+(fn REV FILE)" t) (autoload 'magit-find-file-other-window "magit-files" "View FILE from REV, in another window.
+Switch to a buffer visiting blob REV:FILE, creating one if none
+already exists.  If prior to calling this command the current
+buffer and/or cursor position is about the same file, then go to
+the line and column corresponding to that location.
+
+(fn REV FILE)" t) (autoload 'magit-find-file-other-frame "magit-files" "View FILE from REV, in another frame.
+Switch to a buffer visiting blob REV:FILE, creating one if none
+already exists.  If prior to calling this command the current
+buffer and/or cursor position is about the same file, then go to
+the line and column corresponding to that location.
+
+(fn REV FILE)" t) (autoload 'magit-file-dispatch "magit" nil t) (autoload 'magit-blob-visit-file "magit-files" "View the file from the worktree corresponding to the current blob.
+When visiting a blob or the version from the index, then go to
+the same location in the respective file in the working tree." t) (autoload 'magit-file-stage "magit-files" "Stage all changes to the file being visited in the current buffer." t) (autoload 'magit-file-unstage "magit-files" "Unstage all changes to the file being visited in the current buffer." t) (autoload 'magit-file-untrack "magit-files" "Untrack the selected FILES or one file read in the minibuffer.
+
+With a prefix argument FORCE do so even when the files have
+staged as well as unstaged changes.
+
+(fn FILES &optional FORCE)" t) (autoload 'magit-file-rename "magit-files" "Rename or move FILE to NEWNAME.
+NEWNAME may be a file or directory name.  If FILE isn't tracked in
+Git, fallback to using `rename-file'.
+
+(fn FILE NEWNAME)" t) (autoload 'magit-file-delete "magit-files" "Delete the selected FILES or one file read in the minibuffer.
+
+With a prefix argument FORCE do so even when the files have
+uncommitted changes.  When the files aren't being tracked in
+Git, then fallback to using `delete-file'.
+
+(fn FILES &optional FORCE)" t) (autoload 'magit-file-checkout "magit-files" "Checkout FILE from REV.
+
+(fn REV FILE)" t) (register-definition-prefixes "magit-files" '("lsp" "magit-")) (register-definition-prefixes "magit-git" '("magit-")) (autoload 'magit-gitignore "magit-gitignore" nil t) (autoload 'magit-gitignore-in-topdir "magit-gitignore" "Add the Git ignore RULE to the top-level \".gitignore\" file.
+Since this file is tracked, it is shared with other clones of the
+repository.  Also stage the file.
+
+(fn RULE)" t) (autoload 'magit-gitignore-in-subdir "magit-gitignore" "Add the Git ignore RULE to a \".gitignore\" file in DIRECTORY.
+Prompt the user for a directory and add the rule to the
+\".gitignore\" file in that directory.  Since such files are
+tracked, they are shared with other clones of the repository.
+Also stage the file.
+
+(fn RULE DIRECTORY)" t) (autoload 'magit-gitignore-in-gitdir "magit-gitignore" "Add the Git ignore RULE to \"$GIT_DIR/info/exclude\".
+Rules in that file only affects this clone of the repository.
+
+(fn RULE)" t) (autoload 'magit-gitignore-on-system "magit-gitignore" "Add the Git ignore RULE to the file specified by `core.excludesFile'.
+Rules that are defined in that file affect all local repositories.
+
+(fn RULE)" t) (autoload 'magit-skip-worktree "magit-gitignore" "Call \"git update-index --skip-worktree -- FILE\".
+
+(fn FILE)" t) (autoload 'magit-no-skip-worktree "magit-gitignore" "Call \"git update-index --no-skip-worktree -- FILE\".
+
+(fn FILE)" t) (autoload 'magit-assume-unchanged "magit-gitignore" "Call \"git update-index --assume-unchanged -- FILE\".
+
+(fn FILE)" t) (autoload 'magit-no-assume-unchanged "magit-gitignore" "Call \"git update-index --no-assume-unchanged -- FILE\".
+
+(fn FILE)" t) (register-definition-prefixes "magit-gitignore" '("magit-")) (autoload 'magit-log "magit-log" nil t) (autoload 'magit-log-refresh "magit-log" nil t) (autoload 'magit-log-current "magit-log" nil t) (autoload 'magit-log-head "magit-log" "Show log for `HEAD'.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-log-related "magit-log" "Show log for the current branch, its upstream and its push target.
+When the upstream is a local branch, then also show its own
+upstream.  When `HEAD' is detached, then show log for that, the
+previously checked out branch and its upstream and push-target.
+
+(fn REVS &optional ARGS FILES)" t) (autoload 'magit-log-other "magit-log" "Show log for one or more revs read from the minibuffer.
+The user can input any revision or revisions separated by a
+space, or even ranges, but only branches and tags, and a
+representation of the commit at point, are available as
+completion candidates.
+
+(fn REVS &optional ARGS FILES)" t) (autoload 'magit-log-branches "magit-log" "Show log for all local branches and `HEAD'.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-log-matching-branches "magit-log" "Show log for all branches matching PATTERN and `HEAD'.
+
+(fn PATTERN &optional ARGS FILES)" t) (autoload 'magit-log-matching-tags "magit-log" "Show log for all tags matching PATTERN and `HEAD'.
+
+(fn PATTERN &optional ARGS FILES)" t) (autoload 'magit-log-all-branches "magit-log" "Show log for all local and remote branches and `HEAD'.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-log-all "magit-log" "Show log for all references and `HEAD'.
+
+(fn &optional ARGS FILES)" t) (autoload 'magit-log-buffer-file "magit-log" "Show log for the blob or file visited in the current buffer.
+With a prefix argument or when `--follow' is an active log
+argument, then follow renames.  When the region is active,
+restrict the log to the lines that the region touches.
+
+(fn &optional FOLLOW BEG END)" t) (autoload 'magit-log-trace-definition "magit-log" "Show log for the definition at point.
+
+(fn FILE FN COMMIT)" t) (autoload 'magit-log-merged "magit-log" "Show log for the merge of COMMIT into BRANCH.
+
+More precisely, find merge commit M that brought COMMIT into
+BRANCH, and show the log of the range \"M^1..M\". If COMMIT is
+directly on BRANCH, then show approximately
+`magit-log-merged-commit-count' surrounding commits instead.
+
+This command requires git-when-merged, which is available from
+https://github.com/mhagger/git-when-merged.
+
+(fn COMMIT BRANCH &optional ARGS FILES)" t) (autoload 'magit-delete-shelved-branch "magit-log" "Delete the shelved BRANCH.
+Delete a ref created by `magit-branch-shelve'.
+
+(fn BRANCH)" t) (autoload 'magit-log-move-to-parent "magit-log" "Move to the Nth parent of the current commit.
+
+(fn &optional N)" t) (autoload 'magit-shortlog "magit-log" nil t) (autoload 'magit-shortlog-since "magit-log" "Show a history summary for commits since REV.
+
+(fn COMMIT ARGS)" t) (autoload 'magit-shortlog-range "magit-log" "Show a history summary for commit or range REV-OR-RANGE.
+
+(fn REV-OR-RANGE ARGS)" t) (autoload 'magit-cherry "magit-log" "Show commits in a branch that are not merged in the upstream branch.
+
+(fn HEAD UPSTREAM)" t) (register-definition-prefixes "magit-log" '("magit-")) (register-definition-prefixes "magit-margin" '("magit-")) (autoload 'magit-merge "magit" nil t) (autoload 'magit-merge-plain "magit-merge" "Merge commit REV into the current branch; using default message.
+
+Unless there are conflicts or a prefix argument is used create a
+merge commit using a generic commit message and without letting
+the user inspect the result.  With a prefix argument pretend the
+merge failed to give the user the opportunity to inspect the
+merge.
+
+(git merge --no-edit|--no-commit [ARGS] REV)
+
+(fn REV &optional ARGS NOCOMMIT)" t) (autoload 'magit-merge-editmsg "magit-merge" "Merge commit REV into the current branch; and edit message.
+Perform the merge and prepare a commit message but let the user
+edit it.
+
+(git merge --edit --no-ff [ARGS] REV)
+
+(fn REV &optional ARGS)" t) (autoload 'magit-merge-nocommit "magit-merge" "Merge commit REV into the current branch; pretending it failed.
+Pretend the merge failed to give the user the opportunity to
+inspect the merge and change the commit message.
+
+(git merge --no-commit --no-ff [ARGS] REV)
+
+(fn REV &optional ARGS)" t) (autoload 'magit-merge-dissolve "magit-merge" "Merge the current branch into BRANCH and remove the former.
+
+Before merging, force push the source branch to its push-remote,
+provided the respective remote branch already exists, ensuring
+that the respective pull-request (if any) won't get stuck on some
+obsolete version of the commits that are being merged.  Finally
+if `forge-branch-pullreq' was used to create the merged branch,
+then also remove the respective remote branch.
+
+(fn BRANCH &optional ARGS)" t) (autoload 'magit-merge-absorb "magit-merge" "Merge BRANCH into the current branch and remove the former.
+
+Before merging, force push the source branch to its push-remote,
+provided the respective remote branch already exists, ensuring
+that the respective pull-request (if any) won't get stuck on some
+obsolete version of the commits that are being merged.  Finally
+if `forge-branch-pullreq' was used to create the merged branch,
+then also remove the respective remote branch.
+
+(fn BRANCH &optional ARGS)" t) (autoload 'magit-merge-squash "magit-merge" "Squash commit REV into the current branch; don't create a commit.
+
+(git merge --squash REV)
+
+(fn REV)" t) (autoload 'magit-merge-preview "magit-merge" "Preview result of merging REV into the current branch.
+
+(fn REV)" t) (autoload 'magit-merge-abort "magit-merge" "Abort the current merge operation.
+
+(git merge --abort)" t) (register-definition-prefixes "magit-merge" '("magit-")) (autoload 'magit-info "magit-mode" "Visit the Magit manual." t) (register-definition-prefixes "magit-mode" '("magit-")) (autoload 'magit-notes "magit" nil t) (register-definition-prefixes "magit-notes" '("magit-notes-")) (autoload 'magit-patch "magit-patch" nil t) (autoload 'magit-patch-create "magit-patch" nil t) (autoload 'magit-patch-apply "magit-patch" nil t) (autoload 'magit-patch-save "magit-patch" "Write current diff into patch FILE.
+
+What arguments are used to create the patch depends on the value
+of `magit-patch-save-arguments' and whether a prefix argument is
+used.
+
+If the value is the symbol `buffer', then use the same arguments
+as the buffer.  With a prefix argument use no arguments.
+
+If the value is a list beginning with the symbol `exclude', then
+use the same arguments as the buffer except for those matched by
+entries in the cdr of the list.  The comparison is done using
+`string-prefix-p'.  With a prefix argument use the same arguments
+as the buffer.
+
+If the value is a list of strings (including the empty list),
+then use those arguments.  With a prefix argument use the same
+arguments as the buffer.
+
+Of course the arguments that are required to actually show the
+same differences as those shown in the buffer are always used.
+
+(fn FILE &optional ARG)" t) (autoload 'magit-request-pull "magit-patch" "Request upstream to pull from your public repository.
+
+URL is the url of your publicly accessible repository.
+START is a commit that already is in the upstream repository.
+END is the last commit, usually a branch name, which upstream
+is asked to pull.  START has to be reachable from that commit.
+
+(fn URL START END)" t) (register-definition-prefixes "magit-patch" '("magit-")) (register-definition-prefixes "magit-process" '("magit-")) (autoload 'magit-pull "magit-pull" nil t) (autoload 'magit-pull-from-pushremote "magit-pull" nil t) (autoload 'magit-pull-from-upstream "magit-pull" nil t) (autoload 'magit-pull-branch "magit-pull" "Pull from a branch read in the minibuffer.
+
+(fn SOURCE ARGS)" t) (register-definition-prefixes "magit-pull" '("magit-pull-")) (autoload 'magit-push "magit-push" nil t) (autoload 'magit-push-current-to-pushremote "magit-push" nil t) (autoload 'magit-push-current-to-upstream "magit-push" nil t) (autoload 'magit-push-current "magit-push" "Push the current branch to a branch read in the minibuffer.
+
+(fn TARGET ARGS)" t) (autoload 'magit-push-other "magit-push" "Push an arbitrary branch or commit somewhere.
+Both the source and the target are read in the minibuffer.
+
+(fn SOURCE TARGET ARGS)" t) (autoload 'magit-push-refspecs "magit-push" "Push one or multiple REFSPECS to a REMOTE.
+Both the REMOTE and the REFSPECS are read in the minibuffer.  To
+use multiple REFSPECS, separate them with commas.  Completion is
+only available for the part before the colon, or when no colon
+is used.
+
+(fn REMOTE REFSPECS ARGS)" t) (autoload 'magit-push-matching "magit-push" "Push all matching branches to another repository.
+If multiple remotes exist, then read one from the user.
+If just one exists, use that without requiring confirmation.
+
+(fn REMOTE &optional ARGS)" t) (autoload 'magit-push-tags "magit-push" "Push all tags to another repository.
+If only one remote exists, then push to that.  Otherwise prompt
+for a remote, offering the remote configured for the current
+branch as default.
+
+(fn REMOTE &optional ARGS)" t) (autoload 'magit-push-tag "magit-push" "Push a tag to another repository.
+
+(fn TAG REMOTE &optional ARGS)" t) (autoload 'magit-push-notes-ref "magit-push" "Push a notes ref to another repository.
+
+(fn REF REMOTE &optional ARGS)" t) (autoload 'magit-push-implicitly "magit-push" nil t) (autoload 'magit-push-to-remote "magit-push" nil t) (register-definition-prefixes "magit-push" '("magit-")) (autoload 'magit-reflog-current "magit-reflog" "Display the reflog of the current branch.
+If `HEAD' is detached, then show the reflog for that instead." t) (autoload 'magit-reflog-other "magit-reflog" "Display the reflog of a branch or another ref.
+
+(fn REF)" t) (autoload 'magit-reflog-head "magit-reflog" "Display the `HEAD' reflog." t) (register-definition-prefixes "magit-reflog" '("magit-reflog-")) (autoload 'magit-show-refs "magit-refs" nil t) (autoload 'magit-show-refs-head "magit-refs" "List and compare references in a dedicated buffer.
+Compared with `HEAD'.
+
+(fn &optional ARGS)" t) (autoload 'magit-show-refs-current "magit-refs" "List and compare references in a dedicated buffer.
+Compare with the current branch or `HEAD' if it is detached.
+
+(fn &optional ARGS)" t) (autoload 'magit-show-refs-other "magit-refs" "List and compare references in a dedicated buffer.
+Compared with a branch read from the user.
+
+(fn &optional REF ARGS)" t) (register-definition-prefixes "magit-refs" '("magit-")) (autoload 'magit-remote "magit-remote" nil t) (autoload 'magit-remote-add "magit-remote" "Add a remote named REMOTE and fetch it.
+
+(fn REMOTE URL &optional ARGS)" t) (autoload 'magit-remote-rename "magit-remote" "Rename the remote named OLD to NEW.
+
+(fn OLD NEW)" t) (autoload 'magit-remote-remove "magit-remote" "Delete the remote named REMOTE.
+
+(fn REMOTE)" t) (autoload 'magit-remote-prune "magit-remote" "Remove stale remote-tracking branches for REMOTE.
+
+(fn REMOTE)" t) (autoload 'magit-remote-prune-refspecs "magit-remote" "Remove stale refspecs for REMOTE.
+
+A refspec is stale if there no longer exists at least one branch
+on the remote that would be fetched due to that refspec.  A stale
+refspec is problematic because its existence causes Git to refuse
+to fetch according to the remaining non-stale refspecs.
+
+If only stale refspecs remain, then offer to either delete the
+remote or to replace the stale refspecs with the default refspec.
+
+Also remove the remote-tracking branches that were created due to
+the now stale refspecs.  Other stale branches are not removed.
+
+(fn REMOTE)" t) (autoload 'magit-remote-set-head "magit-remote" "Set the local representation of REMOTE's default branch.
+Query REMOTE and set the symbolic-ref refs/remotes/<remote>/HEAD
+accordingly.  With a prefix argument query for the branch to be
+used, which allows you to select an incorrect value if you fancy
+doing that.
+
+(fn REMOTE &optional BRANCH)" t) (autoload 'magit-remote-unset-head "magit-remote" "Unset the local representation of REMOTE's default branch.
+Delete the symbolic-ref \"refs/remotes/<remote>/HEAD\".
+
+(fn REMOTE)" t) (autoload 'magit-update-default-branch "magit-remote" nil t) (autoload 'magit-remote-unshallow "magit-remote" "Convert a shallow remote into a full one.
+If only a single refspec is set and it does not contain a
+wildcard, then also offer to replace it with the standard
+refspec.
+
+(fn REMOTE)" t) (autoload 'magit-remote-configure "magit-remote" nil t) (register-definition-prefixes "magit-remote" '("magit-")) (autoload 'magit-list-repositories "magit-repos" "Display a list of repositories.
+
+Use the option `magit-repository-directories' to control which
+repositories are displayed." t) (register-definition-prefixes "magit-repos" '("magit-")) (autoload 'magit-reset "magit" nil t) (autoload 'magit-reset-mixed "magit-reset" "Reset the `HEAD' and index to COMMIT, but not the working tree.
+
+(git reset --mixed COMMIT)
+
+(fn COMMIT)" t) (autoload 'magit-reset-soft "magit-reset" "Reset the `HEAD' to COMMIT, but not the index and working tree.
+
+(git reset --soft COMMIT)
+
+(fn COMMIT)" t) (autoload 'magit-reset-hard "magit-reset" "Reset the `HEAD', index, and working tree to COMMIT.
+
+(git reset --hard COMMIT)
+
+(fn COMMIT)" t) (autoload 'magit-reset-keep "magit-reset" "Reset the `HEAD' and index to COMMIT, while keeping uncommitted changes.
+
+(git reset --keep COMMIT)
+
+(fn COMMIT)" t) (autoload 'magit-reset-index "magit-reset" "Reset the index to COMMIT.
+Keep the `HEAD' and working tree as-is, so if COMMIT refers to the
+head this effectively unstages all changes.
+
+(git reset COMMIT .)
+
+(fn COMMIT)" t) (autoload 'magit-reset-worktree "magit-reset" "Reset the worktree to COMMIT.
+Keep the `HEAD' and index as-is.
+
+(fn COMMIT)" t) (autoload 'magit-reset-quickly "magit-reset" "Reset the `HEAD' and index to COMMIT, and possibly the working tree.
+With a prefix argument reset the working tree otherwise don't.
+
+(git reset --mixed|--hard COMMIT)
+
+(fn COMMIT &optional HARD)" t) (register-definition-prefixes "magit-reset" '("magit-reset-")) (autoload 'magit-sequencer-continue "magit-sequence" "Resume the current cherry-pick or revert sequence." t) (autoload 'magit-sequencer-skip "magit-sequence" "Skip the stopped at commit during a cherry-pick or revert sequence." t) (autoload 'magit-sequencer-abort "magit-sequence" "Abort the current cherry-pick or revert sequence.
+This discards all changes made since the sequence started." t) (autoload 'magit-cherry-pick "magit-sequence" nil t) (autoload 'magit-cherry-copy "magit-sequence" "Copy COMMITS from another branch onto the current branch.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then pick all of them,
+without prompting.
+
+(fn COMMITS &optional ARGS)" t) (autoload 'magit-cherry-apply "magit-sequence" "Apply the changes in COMMITS but do not commit them.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then apply all of them,
+without prompting.
+
+(fn COMMITS &optional ARGS)" t) (autoload 'magit-cherry-harvest "magit-sequence" "Move COMMITS from another BRANCH onto the current branch.
+Remove the COMMITS from BRANCH and stay on the current branch.
+If a conflict occurs, then you have to fix that and finish the
+process manually.
+
+(fn COMMITS BRANCH &optional ARGS)" t) (autoload 'magit-cherry-donate "magit-sequence" "Move COMMITS from the current branch onto another existing BRANCH.
+Remove COMMITS from the current branch and stay on that branch.
+If a conflict occurs, then you have to fix that and finish the
+process manually.  `HEAD' is allowed to be detached initially.
+
+(fn COMMITS BRANCH &optional ARGS)" t) (autoload 'magit-cherry-spinout "magit-sequence" "Move COMMITS from the current branch onto a new BRANCH.
+Remove COMMITS from the current branch and stay on that branch.
+If a conflict occurs, then you have to fix that and finish the
+process manually.
+
+(fn COMMITS BRANCH START-POINT &optional ARGS)" t) (autoload 'magit-cherry-spinoff "magit-sequence" "Move COMMITS from the current branch onto a new BRANCH.
+Remove COMMITS from the current branch and checkout BRANCH.
+If a conflict occurs, then you have to fix that and finish
+the process manually.
+
+(fn COMMITS BRANCH START-POINT &optional ARGS)" t) (autoload 'magit-revert "magit-sequence" nil t) (autoload 'magit-revert-and-commit "magit-sequence" "Revert COMMIT by creating a new commit.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then revert all of them,
+without prompting.
+
+(fn COMMIT &optional ARGS)" t) (autoload 'magit-revert-no-commit "magit-sequence" "Revert COMMIT by applying it in reverse to the worktree.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then revert all of them,
+without prompting.
+
+(fn COMMIT &optional ARGS)" t) (autoload 'magit-am "magit-sequence" nil t) (autoload 'magit-am-apply-patches "magit-sequence" "Apply the patches FILES.
+
+(fn &optional FILES ARGS)" t) (autoload 'magit-am-apply-maildir "magit-sequence" "Apply the patches from MAILDIR.
+
+(fn &optional MAILDIR ARGS)" t) (autoload 'magit-am-continue "magit-sequence" "Resume the current patch applying sequence." t) (autoload 'magit-am-skip "magit-sequence" "Skip the stopped at patch during a patch applying sequence." t) (autoload 'magit-am-abort "magit-sequence" "Abort the current patch applying sequence.
+This discards all changes made since the sequence started." t) (autoload 'magit-rebase "magit-sequence" nil t) (autoload 'magit-rebase-onto-pushremote "magit-sequence" nil t) (autoload 'magit-rebase-onto-upstream "magit-sequence" nil t) (autoload 'magit-rebase-branch "magit-sequence" "Rebase the current branch onto a branch read in the minibuffer.
+All commits that are reachable from `HEAD' but not from the
+selected branch TARGET are being rebased.
+
+(fn TARGET ARGS)" t) (autoload 'magit-rebase-subset "magit-sequence" "Rebase a subset of the current branch's history onto a new base.
+Rebase commits from START to `HEAD' onto NEWBASE.
+START has to be selected from a list of recent commits.
+
+(fn NEWBASE START ARGS)" t) (autoload 'magit-rebase-interactive "magit-sequence" "Start an interactive rebase sequence.
+
+(fn COMMIT ARGS)" t) (autoload 'magit-rebase-autosquash "magit-sequence" "Combine squash and fixup commits with their intended targets.
+By default only squash into commits that are not reachable from
+the upstream branch.  If no upstream is configured or with a prefix
+argument, prompt for the first commit to potentially squash into.
+
+(fn SELECT ARGS)" t) (autoload 'magit-rebase-edit-commit "magit-sequence" "Edit a single older commit using rebase.
+
+(fn COMMIT ARGS)" t) (autoload 'magit-rebase-reword-commit "magit-sequence" "Reword a single older commit using rebase.
+
+(fn COMMIT ARGS)" t) (autoload 'magit-rebase-remove-commit "magit-sequence" "Remove a single older commit using rebase.
+
+(fn COMMIT ARGS)" t) (autoload 'magit-rebase-continue "magit-sequence" "Restart the current rebasing operation.
+In some cases this pops up a commit message buffer for you do
+edit.  With a prefix argument the old message is reused as-is.
+
+(fn &optional NOEDIT)" t) (autoload 'magit-rebase-skip "magit-sequence" "Skip the current commit and restart the current rebase operation." t) (autoload 'magit-rebase-edit "magit-sequence" "Edit the todo list of the current rebase operation." t) (autoload 'magit-rebase-abort "magit-sequence" "Abort the current rebase operation, restoring the original branch." t) (register-definition-prefixes "magit-sequence" '("magit-")) (autoload 'magit-sparse-checkout "magit-sparse-checkout" nil t) (autoload 'magit-sparse-checkout-enable "magit-sparse-checkout" "Convert the working tree to a sparse checkout.
+
+(fn &optional ARGS)" t) (autoload 'magit-sparse-checkout-set "magit-sparse-checkout" "Restrict working tree to DIRECTORIES.
+To extend rather than override the currently configured
+directories, call `magit-sparse-checkout-add' instead.
+
+(fn DIRECTORIES)" t) (autoload 'magit-sparse-checkout-add "magit-sparse-checkout" "Add DIRECTORIES to the working tree.
+To override rather than extend the currently configured
+directories, call `magit-sparse-checkout-set' instead.
+
+(fn DIRECTORIES)" t) (autoload 'magit-sparse-checkout-reapply "magit-sparse-checkout" "Reapply the sparse checkout rules to the working tree.
+Some operations such as merging or rebasing may need to check out
+files that aren't included in the sparse checkout.  Call this
+command to reset to the sparse checkout state." t) (autoload 'magit-sparse-checkout-disable "magit-sparse-checkout" "Convert sparse checkout to full checkout.
+Note that disabling the sparse checkout does not clear the
+configured directories.  Call `magit-sparse-checkout-enable' to
+restore the previous sparse checkout." t) (register-definition-prefixes "magit-sparse-checkout" '("magit-sparse-checkout-")) (autoload 'magit-stash "magit-stash" nil t) (autoload 'magit-stash-both "magit-stash" "Create a stash of the index and working tree.
+Untracked files are included according to infix arguments.
+One prefix argument is equivalent to `--include-untracked'
+while two prefix arguments are equivalent to `--all'.
+
+(fn MESSAGE &optional INCLUDE-UNTRACKED)" t) (autoload 'magit-stash-index "magit-stash" "Create a stash of the index only.
+Unstaged and untracked changes are not stashed.  The stashed
+changes are applied in reverse to both the index and the
+worktree.  This command can fail when the worktree is not clean.
+Applying the resulting stash has the inverse effect.
+
+(fn MESSAGE)" t) (autoload 'magit-stash-worktree "magit-stash" "Create a stash of unstaged changes in the working tree.
+Untracked files are included according to infix arguments.
+One prefix argument is equivalent to `--include-untracked'
+while two prefix arguments are equivalent to `--all'.
+
+(fn MESSAGE &optional INCLUDE-UNTRACKED)" t) (autoload 'magit-stash-keep-index "magit-stash" "Create a stash of the index and working tree, keeping index intact.
+Untracked files are included according to infix arguments.
+One prefix argument is equivalent to `--include-untracked'
+while two prefix arguments are equivalent to `--all'.
+
+(fn MESSAGE &optional INCLUDE-UNTRACKED)" t) (autoload 'magit-snapshot-both "magit-stash" "Create a snapshot of the index and working tree.
+Untracked files are included according to infix arguments.
+One prefix argument is equivalent to `--include-untracked'
+while two prefix arguments are equivalent to `--all'.
+
+(fn &optional INCLUDE-UNTRACKED)" t) (autoload 'magit-snapshot-index "magit-stash" "Create a snapshot of the index only.
+Unstaged and untracked changes are not stashed." t) (autoload 'magit-snapshot-worktree "magit-stash" "Create a snapshot of unstaged changes in the working tree.
+Untracked files are included according to infix arguments.
+One prefix argument is equivalent to `--include-untracked'
+while two prefix arguments are equivalent to `--all'.
+
+(fn &optional INCLUDE-UNTRACKED)" t) (autoload 'magit-stash-push "magit-stash" nil t) (autoload 'magit-stash-apply "magit-stash" "Apply a stash to the working tree.
+
+When using a Git release before v2.38.0, simply run \"git stash
+apply\" or with a prefix argument \"git stash apply --index\".
+
+When using Git v2.38.0 or later, behave more intelligently:
+
+First try \"git stash apply --index\", which tries to preserve the
+index stored in the stash, if any.  This may fail because applying
+the stash could result in conflicts and those have to be stored in
+the index, making it impossible to also store the stash's index
+there.
+
+If \"git stash\" fails, then potentially fall back to using \"git
+apply\".  If the stash does not touch any unstaged files, then pass
+\"--3way\" to that command.  Otherwise ask the user whether to use
+that argument or \"--reject\".  Customize `magit-no-confirm' if you
+want to fall back to using \"--3way\", without being prompted.
+
+(fn STASH)" t) (autoload 'magit-stash-pop "magit-stash" "Apply a stash to the working tree, on success remove it from stash list.
+
+When using a Git release before v2.38.0, simply run \"git stash
+pop\" or with a prefix argument \"git stash pop --index\".
+
+When using Git v2.38.0 or later, behave more intelligently:
+
+First try \"git stash apply --index\", which tries to preserve the
+index stored in the stash, if any.  This may fail because applying
+the stash could result in conflicts and those have to be stored in
+the index, making it impossible to also store the stash's index
+there.
+
+If \"git stash\" fails, then potentially fall back to using \"git
+apply\".  If the stash does not touch any unstaged files, then pass
+\"--3way\" to that command.  Otherwise ask the user whether to use
+that argument or \"--reject\".  Customize `magit-no-confirm' if you
+want to fall back to using \"--3way\", without being prompted.
+
+(fn STASH)" t) (autoload 'magit-stash-drop "magit-stash" "Remove a stash from the stash list.
+When the region is active offer to drop all contained stashes.
+
+(fn STASH)" t) (autoload 'magit-stash-clear "magit-stash" "Remove all stashes saved in REF's reflog by deleting REF.
+
+(fn REF)" t) (autoload 'magit-stash-branch "magit-stash" "Create and checkout a new BRANCH from an existing STASH.
+The new branch starts at the commit that was current when the
+stash was created.  If the stash applies cleanly, then drop it.
+
+(fn STASH BRANCH)" t) (autoload 'magit-stash-branch-here "magit-stash" "Create and checkout a new BRANCH from an existing STASH.
+Use the current branch or `HEAD' as the starting-point of BRANCH.
+Then apply STASH, dropping it if it applies cleanly.
+
+(fn STASH BRANCH)" t) (autoload 'magit-stash-format-patch "magit-stash" "Create a patch from STASH.
+
+(fn STASH)" t) (autoload 'magit-stash-list "magit-stash" "List all stashes in a buffer." t) (autoload 'magit-stash-show "magit-stash" "Show all diffs of a stash in a buffer.
+
+(fn STASH &optional ARGS FILES)" t) (register-definition-prefixes "magit-stash" '("magit-")) (autoload 'magit-init "magit-status" "Initialize a Git repository, then show its status.
+
+If the directory is below an existing repository, then the user
+has to confirm that a new one should be created inside.  If the
+directory is the root of the existing repository, then the user
+has to confirm that it should be reinitialized.
+
+Non-interactively DIRECTORY is (re-)initialized unconditionally.
+
+(fn DIRECTORY)" t) (autoload 'magit-status "magit-status" "Show the status of the current Git repository in a buffer.
+
+If the current directory isn't located within a Git repository,
+then prompt for an existing repository or an arbitrary directory,
+depending on option `magit-repository-directories', and show the
+status of the selected repository instead.
+
+* If that option specifies any existing repositories, then offer
+  those for completion and show the status buffer for the
+  selected one.
+
+* Otherwise read an arbitrary directory using regular file-name
+  completion.  If the selected directory is the top-level of an
+  existing working tree, then show the status buffer for that.
+
+* Otherwise offer to initialize the selected directory as a new
+  repository.  After creating the repository show its status
+  buffer.
+
+These fallback behaviors can also be forced using one or more
+prefix arguments:
+
+* With two prefix arguments (or more precisely a numeric prefix
+  value of 16 or greater) read an arbitrary directory and act on
+  it as described above.  The same could be accomplished using
+  the command `magit-init'.
+
+* With a single prefix argument read an existing repository, or
+  if none can be found based on `magit-repository-directories',
+  then fall back to the same behavior as with two prefix
+  arguments.
+
+(fn &optional DIRECTORY CACHE)" t) (defalias 'magit #'magit-status "Begin using Magit.
+
+This alias for `magit-status' exists for better discoverability.
+
+Instead of invoking this alias for `magit-status' using
+\"M-x magit RET\", you should bind a key to `magit-status'
+and read the info node `(magit)Getting Started', which
+also contains other useful hints.") (autoload 'magit-status-here "magit-status" "Like `magit-status' but with non-nil `magit-status-goto-file-position'.
+Before doing so, save all file-visiting buffers belonging to the current
+repository without prompting." t) (autoload 'magit-status-quick "magit-status" "Show the status of the current Git repository, maybe without refreshing.
+
+If the status buffer of the current Git repository exists but
+isn't being displayed in the selected frame, then display it
+without refreshing it.
+
+If the status buffer is being displayed in the selected frame,
+then also refresh it.
+
+Prefix arguments have the same meaning as for `magit-status',
+and additionally cause the buffer to be refresh.
+
+To use this function instead of `magit-status', add this to your
+init file: (global-set-key (kbd \"C-x g\") \\='magit-status-quick)." t) (autoload 'magit-status-setup-buffer "magit-status" "
+
+(fn &optional DIRECTORY)") (register-definition-prefixes "magit-status" '("magit-")) (autoload 'magit-submodule "magit-submodule" nil t) (autoload 'magit-submodule-add "magit-submodule" nil t) (autoload 'magit-submodule-read-name-for-path "magit-submodule" "
+
+(fn PATH &optional PREFER-SHORT)") (autoload 'magit-submodule-register "magit-submodule" nil t) (autoload 'magit-submodule-populate "magit-submodule" nil t) (autoload 'magit-submodule-update "magit-submodule" nil t) (autoload 'magit-submodule-synchronize "magit-submodule" nil t) (autoload 'magit-submodule-unpopulate "magit-submodule" nil t) (autoload 'magit-submodule-remove "magit-submodule" "Unregister MODULES and remove their working directories.
+
+For safety reasons, do not remove the gitdirs and if a module has
+uncommitted changes, then do not remove it at all.  If a module's
+gitdir is located inside the working directory, then move it into
+the gitdir of the superproject first.
+
+With the \"--force\" argument offer to remove dirty working
+directories and with a prefix argument offer to delete gitdirs.
+Both actions are very dangerous and have to be confirmed.  There
+are additional safety precautions in place, so you might be able
+to recover from making a mistake here, but don't count on it.
+
+(fn MODULES ARGS TRASH-GITDIRS)" t) (autoload 'magit-insert-modules "magit-submodule" "Insert submodule sections.
+Hook `magit-module-sections-hook' controls which module sections
+are inserted, and option `magit-module-sections-nested' controls
+whether they are wrapped in an additional section.") (autoload 'magit-insert-modules-overview "magit-submodule" "Insert sections for all modules.
+For each section insert the path and the output of `git describe --tags',
+or, failing that, the abbreviated HEAD commit hash.") (autoload 'magit-insert-modules-unpulled-from-upstream "magit-submodule" "Insert sections for modules that haven't been pulled from the upstream.
+These sections can be expanded to show the respective commits.") (autoload 'magit-insert-modules-unpulled-from-pushremote "magit-submodule" "Insert sections for modules that haven't been pulled from the push-remote.
+These sections can be expanded to show the respective commits.") (autoload 'magit-insert-modules-unpushed-to-upstream "magit-submodule" "Insert sections for modules that haven't been pushed to the upstream.
+These sections can be expanded to show the respective commits.") (autoload 'magit-insert-modules-unpushed-to-pushremote "magit-submodule" "Insert sections for modules that haven't been pushed to the push-remote.
+These sections can be expanded to show the respective commits.") (autoload 'magit-list-submodules "magit-submodule" "Display a list of the current repository's populated submodules." t) (register-definition-prefixes "magit-submodule" '("magit-")) (autoload 'magit-subtree "magit-subtree" nil t) (autoload 'magit-subtree-import "magit-subtree" nil t) (autoload 'magit-subtree-export "magit-subtree" nil t) (autoload 'magit-subtree-add "magit-subtree" "Add REF from REPOSITORY as a new subtree at PREFIX.
+
+(fn PREFIX REPOSITORY REF ARGS)" t) (autoload 'magit-subtree-add-commit "magit-subtree" "Add COMMIT as a new subtree at PREFIX.
+
+(fn PREFIX COMMIT ARGS)" t) (autoload 'magit-subtree-merge "magit-subtree" "Merge COMMIT into the PREFIX subtree.
+
+(fn PREFIX COMMIT ARGS)" t) (autoload 'magit-subtree-pull "magit-subtree" "Pull REF from REPOSITORY into the PREFIX subtree.
+
+(fn PREFIX REPOSITORY REF ARGS)" t) (autoload 'magit-subtree-push "magit-subtree" "Extract the history of the subtree PREFIX and push it to REF on REPOSITORY.
+
+(fn PREFIX REPOSITORY REF ARGS)" t) (autoload 'magit-subtree-split "magit-subtree" "Extract the history of the subtree PREFIX.
+
+(fn PREFIX COMMIT ARGS)" t) (register-definition-prefixes "magit-subtree" '("magit-")) (autoload 'magit-tag "magit" nil t) (autoload 'magit-tag-create "magit-tag" "Create a new tag with the given NAME at COMMIT.
+With a prefix argument annotate the tag.
+
+(git tag [--annotate] NAME REV)
+
+(fn NAME COMMIT &optional ARGS)" t) (autoload 'magit-tag-delete "magit-tag" "Delete one or more tags.
+If the region marks multiple tags (and nothing else), then offer
+to delete those, otherwise prompt for a single tag to be deleted,
+defaulting to the tag at point.
+
+(git tag -d TAGS)
+
+(fn TAGS)" t) (autoload 'magit-tag-prune "magit-tag" "Offer to delete tags missing locally from REMOTE, and vice versa.
+
+(fn TAGS REMOTE-TAGS REMOTE)" t) (autoload 'magit-tag-release "magit-tag" "Create a release tag for `HEAD'.
+
+Assume that release tags match `magit-release-tag-regexp'.
+
+If `HEAD's message matches `magit-release-commit-regexp', then
+base the tag on the version string specified by that.  Otherwise
+prompt for the name of the new tag using the highest existing
+tag as initial input and leaving it to the user to increment the
+desired part of the version string.
+
+When creating an annotated tag, prepare a message based on the message
+of the highest existing tag, provided that contains the corresponding
+version string, and substituting the new version string for that.  If
+that is not the case, propose a message using a reasonable format.
+
+(fn TAG MSG &optional ARGS)" t) (register-definition-prefixes "magit-tag" '("magit-")) (register-definition-prefixes "magit-transient" '("magit-")) (defvar magit-wip-mode nil "Non-nil if Magit-Wip mode is enabled.
+See the `magit-wip-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `magit-wip-mode'.") (custom-autoload 'magit-wip-mode "magit-wip" nil) (autoload 'magit-wip-mode "magit-wip" "Save uncommitted changes to work-in-progress refs.
+
+Whenever appropriate (i.e., when dataloss would be a possibility
+otherwise) this mode causes uncommitted changes to be committed
+to dedicated work-in-progress refs.
+
+For historic reasons this mode is implemented on top of four
+other `magit-wip-*' modes, which can also be used individually,
+if you want finer control over when the wip refs are updated;
+but that is discouraged.
 
 This is a global minor mode.  If called interactively, toggle the
-`org-roam-ui mode' mode.  If the prefix argument is positive, enable the
+`Magit-Wip mode' mode.  If the prefix argument is positive, enable the
 mode, and if it is zero or negative, disable the mode.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
@@ -1569,34 +2203,43 @@ mode if ARG is nil, omitted, or is a positive number.  Disable the mode
 if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='org-roam-ui-mode)'.
+evaluate `(default-value \\='magit-wip-mode)'.
 
 The mode's hook is called both when the mode is enabled and when it is
 disabled.
 
-(fn &optional ARG)" t) (autoload 'org-roam-ui-open "org-roam-ui" "Ensure `org-roam-ui' is running, then open the `org-roam-ui' webpage." t) (autoload 'org-roam-ui-node-zoom "org-roam-ui" "Move the view of the graph to current node.
-or optionally a node of your choosing.
-Optionally takes three arguments:
-The ID of the node you want to travel to.
-The SPEED in ms it takes to make the transition.
-The PADDING around the nodes in the viewport.
-
-(fn &optional ID SPEED PADDING)" t) (autoload 'org-roam-ui-node-local "org-roam-ui" "Open the local graph view of the current node.
-Optionally with ID (string), SPEED (number, ms) and PADDING (number, px).
-
-(fn &optional ID SPEED PADDING)" t) (autoload 'org-roam-ui-add-to-local-graph "org-roam-ui" "Add current node to the local graph. If not in local mode, open local-graph for this node.
-
-(fn &optional ID)" t) (autoload 'org-roam-ui-remove-from-local-graph "org-roam-ui" "Remove current node from the local graph. If not in local mode, open local-graph for this node.
-
-(fn &optional ID)" t) (autoload 'org-roam-ui-sync-theme "org-roam-ui" "Sync your current Emacs theme with org-roam-ui." t) (defvar org-roam-ui-follow-mode nil "Non-nil if org-roam-ui-Follow mode is enabled.
-See the `org-roam-ui-follow-mode' command
+(fn &optional ARG)" t) (put 'magit-wip-after-save-mode 'globalized-minor-mode t) (defvar magit-wip-after-save-mode nil "Non-nil if Magit-Wip-After-Save mode is enabled.
+See the `magit-wip-after-save-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
-or call the function `org-roam-ui-follow-mode'.") (custom-autoload 'org-roam-ui-follow-mode "org-roam-ui" nil) (autoload 'org-roam-ui-follow-mode "org-roam-ui" "Set whether ORUI should follow your every move in Emacs.
+or call the function `magit-wip-after-save-mode'.") (custom-autoload 'magit-wip-after-save-mode "magit-wip" nil) (autoload 'magit-wip-after-save-mode "magit-wip" "Toggle Magit-Wip-After-Save-Local mode in all buffers.
+With prefix ARG, enable Magit-Wip-After-Save mode if ARG is positive;
+otherwise, disable it.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.
+Enable the mode if ARG is nil, omitted, or is a positive number.
+Disable the mode if ARG is a negative number.
+
+Magit-Wip-After-Save-Local mode is enabled in all buffers where
+`magit-wip-after-save-local-mode-turn-on' would do it.
+
+See `magit-wip-after-save-local-mode' for more information on
+Magit-Wip-After-Save-Local mode.
+
+(fn &optional ARG)" t) (defvar magit-wip-after-apply-mode nil "Non-nil if Magit-Wip-After-Apply mode is enabled.
+See the `magit-wip-after-apply-mode' command
+for a description of this minor mode.") (custom-autoload 'magit-wip-after-apply-mode "magit-wip" nil) (autoload 'magit-wip-after-apply-mode "magit-wip" "Commit to work-in-progress refs.
+
+After applying a change using any \"apply variant\"
+command (apply, stage, unstage, discard, and reverse) commit the
+affected files to the current wip refs.  For each branch there
+may be two wip refs; one contains snapshots of the files as found
+in the worktree and the other contains snapshots of the entries
+in the index.
 
 This is a global minor mode.  If called interactively, toggle the
-`org-roam-ui-Follow mode' mode.  If the prefix argument is positive,
+`Magit-Wip-After-Apply mode' mode.  If the prefix argument is positive,
 enable the mode, and if it is zero or negative, disable the mode.
 
 If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
@@ -1604,15 +2247,735 @@ mode if ARG is nil, omitted, or is a positive number.  Disable the mode
 if ARG is a negative number.
 
 To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='org-roam-ui-follow-mode)'.
+evaluate `(default-value \\='magit-wip-after-apply-mode)'.
 
 The mode's hook is called both when the mode is enabled and when it is
 disabled.
 
-(fn &optional ARG)" t) (register-definition-prefixes "org-roam-ui" '("img/:file" "node/:id" "org-roam-ui-")) (provide 'org-roam-ui-autoloads))))
+(fn &optional ARG)" t) (defvar magit-wip-before-change-mode nil "Non-nil if Magit-Wip-Before-Change mode is enabled.
+See the `magit-wip-before-change-mode' command
+for a description of this minor mode.") (custom-autoload 'magit-wip-before-change-mode "magit-wip" nil) (autoload 'magit-wip-before-change-mode "magit-wip" "Commit to work-in-progress refs before certain destructive changes.
 
-#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "use-package" nil "bind-key" nil "org" (org :type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "denote" nil "org-roam" nil "dash" nil "emacsql" nil "magit-section" nil "compat" nil "seq" nil "cond-let" nil "llama" nil "org-roam-ui" nil "simple-httpd" nil "cl-lib" nil "websocket" nil)) melpa #s(hash-table test equal data (version 3 "use-package" nil "bind-key" nil "denote" nil "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "compat" nil "seq" nil "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "org-roam-ui" (org-roam-ui :type git :files (:defaults "out" "org-roam-ui-pkg.el") :host github :repo "org-roam/org-roam-ui") "simple-httpd" (simple-httpd :type git :host github :repo "skeeto/emacs-web-server") "cl-lib" nil "websocket" (websocket :type git :host github :repo "ahyatt/emacs-websocket"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "denote" (denote :type git :host github :repo "emacs-straight/denote" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "cl-lib" nil)) nongnu-elpa #s(hash-table test equal data (version (5 "https://github.com/emacsmirror/nongnu_elpa.git") "cl-lib" nil)) el-get #s(hash-table test equal data (version 2 "cl-lib" nil)) emacsmirror-mirror #s(hash-table test equal data (version 2 "cl-lib" nil))))
+Before invoking a revert command or an \"apply variant\"
+command (apply, stage, unstage, discard, and reverse) commit the
+affected tracked files to the current wip refs.  For each branch
+there may be two wip refs; one contains snapshots of the files
+as found in the worktree and the other contains snapshots of the
+entries in the index.
 
-("websocket" "cl-lib" "simple-httpd" "org-roam-ui" "llama" "cond-let" "seq" "compat" "magit-section" "emacsql" "dash" "org-roam" "denote" "org" "bind-key" "use-package" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
+Only changes to files which could potentially be affected by the
+command which is about to be called are committed.
+
+This is a global minor mode.  If called interactively, toggle the
+`Magit-Wip-Before-Change mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='magit-wip-before-change-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'magit-wip-commit-initial-backup "magit-wip" "Before saving, commit current file to a worktree wip ref.
+
+The user has to add this function to `before-save-hook'.
+
+Commit the current state of the visited file before saving the
+current buffer to that file.  This backs up the same version of
+the file as `backup-buffer' would, but stores the backup in the
+worktree wip ref, which is also used by the various Magit Wip
+modes, instead of in a backup file as `backup-buffer' would.
+
+This function ignores the variables that affect `backup-buffer'
+and can be used along-side that function, which is recommended
+because this function only backs up files that are tracked in
+a Git repository.") (register-definition-prefixes "magit-wip" '("magit-")) (autoload 'magit-worktree "magit-worktree" nil t) (autoload 'magit-worktree-checkout "magit-worktree" "Checkout COMMIT in a new worktree in DIRECTORY.
+COMMIT may, but does not have to be, a local branch.
+Interactively, use `magit-read-worktree-directory-function'.
+
+(fn DIRECTORY COMMIT)" t) (autoload 'magit-worktree-branch "magit-worktree" "Create a new BRANCH and check it out in a new worktree at DIRECTORY.
+Interactively, use `magit-read-worktree-directory-function'.
+
+(fn DIRECTORY BRANCH START-POINT)" t) (autoload 'magit-worktree-move "magit-worktree" "Move existing WORKTREE directory to DIRECTORY.
+
+(fn WORKTREE DIRECTORY)" t) (register-definition-prefixes "magit-worktree" '("magit-")) (provide 'magit-autoloads)) "which-key" ((which-key which-key-autoloads) (defvar which-key-mode nil "Non-nil if Which-Key mode is enabled.
+See the `which-key-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `which-key-mode'.") (custom-autoload 'which-key-mode "which-key" nil) (autoload 'which-key-mode "which-key" "Toggle `which-key-mode'.
+
+This is a global minor mode.  If called interactively, toggle the
+`Which-Key mode' mode.  If the prefix argument is positive, enable the
+mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='which-key-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'which-key-setup-side-window-right "which-key" "Set up side-window on right." t) (autoload 'which-key-setup-side-window-right-bottom "which-key" "Set up side-window on right if space allows.
+Otherwise, use bottom." t) (autoload 'which-key-setup-side-window-bottom "which-key" "Set up side-window that opens on bottom." t) (autoload 'which-key-setup-minibuffer "which-key" "Set up minibuffer display.
+Do not use this setup if you use the paging commands.  Instead use
+`which-key-setup-side-window-bottom', which is nearly identical
+but more functional." t) (autoload 'which-key-add-keymap-based-replacements "which-key" "Replace the description of KEY using REPLACEMENT in KEYMAP.
+KEY should take a format suitable for use in `kbd'.  REPLACEMENT
+should be a cons cell of the form (STRING . COMMAND) for each
+REPLACEMENT, where STRING is the replacement string and COMMAND
+is a symbol corresponding to the intended command to be
+replaced.  COMMAND can be nil if the binding corresponds to a key
+prefix.  An example is
+
+(which-key-add-keymap-based-replacements global-map
+  \"C-x w\" \\='(\"Save as\" . write-file)).
+
+For backwards compatibility, REPLACEMENT can also be a string,
+but the above format is preferred, and the option to use a string
+for REPLACEMENT will eventually be removed.
+
+(fn KEYMAP KEY REPLACEMENT &rest MORE)") (function-put 'which-key-add-keymap-based-replacements 'lisp-indent-function 'defun) (autoload 'which-key-add-key-based-replacements "which-key" "Replace the description of KEY-SEQUENCE with REPLACEMENT.
+KEY-SEQUENCE is a string suitable for use in `kbd'.
+REPLACEMENT may either be a string, as in
+
+(which-key-add-key-based-replacements \"C-x 1\" \"maximize\")
+
+a cons of two strings as in
+
+(which-key-add-key-based-replacements \"C-x 8\"
+                                        \\='(\"unicode\" . \"Unicode keys\"))
+
+or a function that takes a (KEY . BINDING) cons and returns a
+replacement.
+
+In the second case, the second string is used to provide a longer
+name for the keys under a prefix.
+
+MORE allows you to specifcy additional KEY REPLACEMENT pairs.  All
+replacements are added to `which-key-replacement-alist'.
+
+(fn KEY-SEQUENCE REPLACEMENT &rest MORE)") (autoload 'which-key-add-major-mode-key-based-replacements "which-key" "Functions like `which-key-add-key-based-replacements'.
+The difference is that MODE specifies the `major-mode' that must
+be active for KEY-SEQUENCE and REPLACEMENT (MORE contains
+addition KEY-SEQUENCE REPLACEMENT pairs) to apply.
+
+(fn MODE KEY-SEQUENCE REPLACEMENT &rest MORE)") (function-put 'which-key-add-major-mode-key-based-replacements 'lisp-indent-function 'defun) (autoload 'which-key-reload-key-sequence "which-key" "Simulate entering the key sequence KEY-SEQ.
+KEY-SEQ should be a list of events as produced by
+`listify-key-sequence'.  If nil, KEY-SEQ defaults to
+`which-key--current-key-list'.  Any prefix arguments that were
+used are reapplied to the new key sequence.
+
+(fn &optional KEY-SEQ)") (autoload 'which-key-show-standard-help "which-key" "Call the command in `which-key--prefix-help-cmd-backup'.
+Usually this is `describe-prefix-bindings'.
+
+(fn &optional _)" t) (autoload 'which-key-show-next-page-no-cycle "which-key" "Show next page of keys or `which-key-show-standard-help'." t) (autoload 'which-key-show-previous-page-no-cycle "which-key" "Show previous page of keys if one exists." t) (autoload 'which-key-show-next-page-cycle "which-key" "Show the next page of keys, cycling from end to beginning.
+
+(fn &optional _)" t) (autoload 'which-key-show-previous-page-cycle "which-key" "Show the previous page of keys, cycling from beginning to end.
+
+(fn &optional _)" t) (autoload 'which-key-show-top-level "which-key" "Show top-level bindings.
+
+(fn &optional _)" t) (autoload 'which-key-show-major-mode "which-key" "Show top-level bindings in the map of the current major mode.
+This function will also detect evil bindings made using
+`evil-define-key' in this map.  These bindings will depend on the
+current evil state.
+
+(fn &optional ALL)" t) (autoload 'which-key-show-full-major-mode "which-key" "Show all bindings in the map of the current major mode.
+This function will also detect evil bindings made using
+`evil-define-key' in this map.  These bindings will depend on the
+current evil state." t) (autoload 'which-key-dump-bindings "which-key" "Dump bindings from PREFIX into buffer named BUFFER-NAME.
+PREFIX should be a string suitable for `kbd'.
+
+(fn PREFIX BUFFER-NAME)" t) (autoload 'which-key-undo-key "which-key" "Undo last keypress and force which-key update.
+
+(fn &optional _)" t) (autoload 'which-key-C-h-dispatch "which-key" "Dispatch \\`C-h' commands by looking up key in `which-key-C-h-map'.
+This command is always accessible (from any prefix) if
+`which-key-use-C-h-commands' is non nil." t) (autoload 'which-key-show-keymap "which-key" "Show the top-level bindings in KEYMAP using which-key.
+KEYMAP is selected interactively from all available keymaps.
+
+If NO-PAGING is non-nil, which-key will not intercept subsequent
+keypresses for the paging functionality.
+
+(fn KEYMAP &optional NO-PAGING)" t) (autoload 'which-key-show-full-keymap "which-key" "Show all bindings in KEYMAP using which-key.
+KEYMAP is selected interactively from all available keymaps.
+
+(fn KEYMAP)" t) (autoload 'which-key-show-minor-mode-keymap "which-key" "Show the top-level bindings in KEYMAP using which-key.
+KEYMAP is selected interactively by mode in
+`minor-mode-map-alist'.
+
+(fn &optional ALL)" t) (autoload 'which-key-show-full-minor-mode-keymap "which-key" "Show all bindings in KEYMAP using which-key.
+KEYMAP is selected interactively by mode in
+`minor-mode-map-alist'." t) (register-definition-prefixes "which-key" '("evil-state" "which-key-")) (provide 'which-key-autoloads)) "vertico" ((vertico-autoloads vertico-repeat vertico-multiform vertico-quick vertico-grid vertico-sort vertico-suspend vertico-reverse vertico-indexed vertico-buffer vertico-flat vertico-directory vertico-mouse vertico-unobtrusive vertico) (defvar vertico-mode nil "Non-nil if Vertico mode is enabled.
+See the `vertico-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-mode'.") (custom-autoload 'vertico-mode "vertico" nil) (autoload 'vertico-mode "vertico" "VERTical Interactive COmpletion.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico mode' mode.  If the prefix argument is positive, enable the
+mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico" '("vertico-")) (defvar vertico-buffer-mode nil "Non-nil if Vertico-Buffer mode is enabled.
+See the `vertico-buffer-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-buffer-mode'.") (custom-autoload 'vertico-buffer-mode "vertico-buffer" nil) (autoload 'vertico-buffer-mode "vertico-buffer" "Display Vertico like a regular buffer in a large window.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Buffer mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-buffer-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-buffer" '("vertico-buffer-")) (autoload 'vertico-directory-enter "vertico-directory" "Enter directory or exit completion with current candidate.
+Exit with current input if prefix ARG is given.
+
+(fn &optional ARG)" t) (autoload 'vertico-directory-up "vertico-directory" "Delete N names before point.
+
+(fn &optional N)" t) (autoload 'vertico-directory-delete-char "vertico-directory" "Delete N directories or chars before point.
+
+(fn N)" t) (autoload 'vertico-directory-delete-word "vertico-directory" "Delete N directories or words before point.
+
+(fn N)" t) (autoload 'vertico-directory-tidy "vertico-directory" "Tidy shadowed file name, see `rfn-eshadow-overlay'.") (autoload 'vertico-directory-map "vertico-directory" nil t 'keymap) (register-definition-prefixes "vertico-directory" '("vertico-directory-map")) (defvar vertico-flat-mode nil "Non-nil if Vertico-Flat mode is enabled.
+See the `vertico-flat-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-flat-mode'.") (custom-autoload 'vertico-flat-mode "vertico-flat" nil) (autoload 'vertico-flat-mode "vertico-flat" "Flat, horizontal display for Vertico.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Flat mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-flat-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-flat" '("vertico-flat-")) (defvar vertico-grid-mode nil "Non-nil if Vertico-Grid mode is enabled.
+See the `vertico-grid-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-grid-mode'.") (custom-autoload 'vertico-grid-mode "vertico-grid" nil) (autoload 'vertico-grid-mode "vertico-grid" "Grid display for Vertico.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Grid mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-grid-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-grid" '("vertico-grid-")) (defvar vertico-indexed-mode nil "Non-nil if Vertico-Indexed mode is enabled.
+See the `vertico-indexed-mode' command
+for a description of this minor mode.") (custom-autoload 'vertico-indexed-mode "vertico-indexed" nil) (autoload 'vertico-indexed-mode "vertico-indexed" "Prefix candidates with indices.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Indexed mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-indexed-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-indexed" '("vertico-indexed-")) (defvar vertico-mouse-mode nil "Non-nil if Vertico-Mouse mode is enabled.
+See the `vertico-mouse-mode' command
+for a description of this minor mode.") (custom-autoload 'vertico-mouse-mode "vertico-mouse" nil) (autoload 'vertico-mouse-mode "vertico-mouse" "Mouse support for Vertico.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Mouse mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-mouse-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-mouse" '("vertico-mouse-")) (defvar vertico-multiform-mode nil "Non-nil if Vertico-Multiform mode is enabled.
+See the `vertico-multiform-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-multiform-mode'.") (custom-autoload 'vertico-multiform-mode "vertico-multiform" nil) (autoload 'vertico-multiform-mode "vertico-multiform" "Configure Vertico in various forms per command.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Multiform mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-multiform-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-multiform" '("vertico-multiform-")) (autoload 'vertico-quick-jump "vertico-quick" "Jump to candidate using quick keys." t) (autoload 'vertico-quick-exit "vertico-quick" "Exit with candidate using quick keys." t) (autoload 'vertico-quick-insert "vertico-quick" "Insert candidate using quick keys." t) (register-definition-prefixes "vertico-quick" '("vertico-quick")) (autoload 'vertico-repeat-save "vertico-repeat" "Save Vertico session for `vertico-repeat'.
+This function must be registered as `minibuffer-setup-hook'.") (autoload 'vertico-repeat-next "vertico-repeat" "Repeat Nth next Vertico completion session.
+This command must be called from an existing Vertico session
+after `vertico-repeat-previous'.
+
+(fn N)" t) (autoload 'vertico-repeat-previous "vertico-repeat" "Repeat Nth previous Vertico completion session.
+If called from an existing Vertico session, restore the input and
+selected candidate for the current command.
+
+(fn N)" t) (autoload 'vertico-repeat-select "vertico-repeat" "Select a Vertico session from the session history and repeat it.
+If called from an existing Vertico session, you can select among
+previous sessions for the current command." t) (autoload 'vertico-repeat "vertico-repeat" "Repeat last Vertico session.
+If prefix ARG is non-nil, offer completion menu to select from session history.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-repeat" '("vertico-repeat-")) (defvar vertico-reverse-mode nil "Non-nil if Vertico-Reverse mode is enabled.
+See the `vertico-reverse-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-reverse-mode'.") (custom-autoload 'vertico-reverse-mode "vertico-reverse" nil) (autoload 'vertico-reverse-mode "vertico-reverse" "Reverse the Vertico display.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Reverse mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-reverse-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-reverse" '("vertico-reverse-map")) (autoload 'vertico-sort-history-length-alpha "vertico-sort") (autoload 'vertico-sort-history-alpha "vertico-sort") (autoload 'vertico-sort-length-alpha "vertico-sort") (autoload 'vertico-sort-alpha "vertico-sort") (autoload 'vertico-sort-directories-first "vertico-sort" "Sort directories before files in LIST.
+
+(fn LIST)") (register-definition-prefixes "vertico-sort" '("vertico-sort-")) (autoload 'vertico-suspend "vertico-suspend" "Suspend the current completion session.
+If the command is invoked from within the Vertico minibuffer, the
+current session is suspended.  If the command is invoked from
+outside the minibuffer, the active minibuffer is either selected
+or the latest completion session is restored." t) (register-definition-prefixes "vertico-suspend" '("vertico-suspend--")) (defvar vertico-unobtrusive-mode nil "Non-nil if Vertico-Unobtrusive mode is enabled.
+See the `vertico-unobtrusive-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `vertico-unobtrusive-mode'.") (custom-autoload 'vertico-unobtrusive-mode "vertico-unobtrusive" nil) (autoload 'vertico-unobtrusive-mode "vertico-unobtrusive" "Unobtrusive display for Vertico.
+
+This is a global minor mode.  If called interactively, toggle the
+`Vertico-Unobtrusive mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='vertico-unobtrusive-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "vertico-unobtrusive" '("vertico-unobtrusive--restore")) (provide 'vertico-autoloads)) "orderless" ((orderless-kwd orderless-autoloads orderless) (autoload 'orderless-all-completions "orderless" "Split STRING into components and find entries TABLE matching all.
+The predicate PRED is used to constrain the entries in TABLE.  The
+matching portions of each candidate are highlighted.
+This function is part of the `orderless' completion style.
+
+(fn STRING TABLE PRED POINT)") (autoload 'orderless-try-completion "orderless" "Complete STRING to unique matching entry in TABLE.
+This uses `orderless-all-completions' to find matches for STRING
+in TABLE among entries satisfying PRED.  If there is only one
+match, it completes to that match.  If there are no matches, it
+returns nil.  In any other case it \"completes\" STRING to
+itself, without moving POINT.
+This function is part of the `orderless' completion style.
+
+(fn STRING TABLE PRED POINT)") (add-to-list 'completion-styles-alist '(orderless orderless-try-completion orderless-all-completions "Completion of multiple components, in any order.")) (autoload 'orderless-ivy-re-builder "orderless" "Convert STR into regexps for use with ivy.
+This function is for integration of orderless with ivy, use it as
+a value in `ivy-re-builders-alist'.
+
+(fn STR)") (register-definition-prefixes "orderless" '("orderless-")) (autoload 'orderless-kwd-dispatch "orderless-kwd" "Match COMPONENT against the keywords in `orderless-kwd-alist'.
+
+(fn COMPONENT INDEX TOTAL)") (register-definition-prefixes "orderless-kwd" '("orderless-kwd-")) (provide 'orderless-autoloads)) "marginalia" ((marginalia-autoloads marginalia) (defvar marginalia-mode nil "Non-nil if Marginalia mode is enabled.
+See the `marginalia-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `marginalia-mode'.") (custom-autoload 'marginalia-mode "marginalia" nil) (autoload 'marginalia-mode "marginalia" "Annotate completion candidates with richer information.
+
+This is a global minor mode.  If called interactively, toggle the
+`Marginalia mode' mode.  If the prefix argument is positive, enable the
+mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='marginalia-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'marginalia-cycle "marginalia" "Cycle between annotators in `marginalia-annotators'." t) (function-put 'marginalia-cycle 'completion-predicate #'(lambda (&rest _) (> (minibuffer-depth) 1))) (register-definition-prefixes "marginalia" '("marginalia-")) (provide 'marginalia-autoloads)) "consult" ((consult-xref consult-imenu consult-kmacro consult-autoloads consult consult-org consult-flymake consult-register consult-compile consult-info) (autoload 'consult-completion-in-region "consult" "Use minibuffer completion as the UI for `completion-at-point'.
+
+The arguments START, END, COLLECTION and PREDICATE and expected return
+value are as specified for `completion-in-region'.  Use this function as
+a value for `completion-in-region-function'.
+
+(fn START END COLLECTION PREDICATE)") (autoload 'consult-outline "consult" "Jump to an outline heading, obtained by matching against `outline-regexp'.
+
+This command supports narrowing to a heading level and candidate
+preview.  The initial narrowing LEVEL can be given as prefix
+argument.  The symbol at point is added to the future history.
+
+(fn &optional LEVEL)" t) (autoload 'consult-mark "consult" "Jump to a marker in MARKERS list (defaults to buffer-local `mark-ring').
+
+The command supports preview of the currently selected marker position.
+The symbol at point is added to the future history.
+
+(fn &optional MARKERS)" t) (autoload 'consult-global-mark "consult" "Jump to a marker in MARKERS list (defaults to `global-mark-ring').
+
+The command supports preview of the currently selected marker position.
+The symbol at point is added to the future history.
+
+(fn &optional MARKERS)" t) (autoload 'consult-line "consult" "Search for a matching line.
+
+Depending on the setting `consult-point-placement' the command
+jumps to the beginning or the end of the first match on the line
+or the line beginning.  The default candidate is the non-empty
+line next to point.  This command obeys narrowing.  Optional
+INITIAL input can be provided.  The search starting point is
+changed if the START prefix argument is set.  The symbol at point
+and the last `isearch-string' is added to the future history.
+
+(fn &optional INITIAL START)" t) (autoload 'consult-line-multi "consult" "Search for a matching line in multiple buffers.
+
+By default search across all project buffers.  If the prefix
+argument QUERY is non-nil, all buffers are searched.  Optional
+INITIAL input can be provided.  The symbol at point and the last
+`isearch-string' is added to the future history.  In order to
+search a subset of buffers, QUERY can be set to a plist according
+to `consult--buffer-query'.
+
+(fn QUERY &optional INITIAL)" t) (autoload 'consult-keep-lines "consult" "Filter a subset of the lines in the current buffer with live preview.
+
+The filtered lines are kept and the other lines are deleted.  When
+called interactively, the lines selected are those that match the
+minibuffer input.  In order to match the inverse of the input, prefix
+the input with `! '.  When called from Elisp, the filtering is performed
+by a FILTER function.  If the buffer is narrowed to a region, the
+command only acts on this region.  See also `consult-focus-lines' which
+uses overlays to display only matching lines, but does not modify the
+buffer.
+
+FILTER is the filter function, called for each line.
+INITIAL is the initial input.
+
+(fn FILTER &optional INITIAL)" t) (autoload 'consult-focus-lines "consult" "Show only matching lines using overlays.
+
+In contrast to `consult-keep-lines' the buffer is not modified.  The
+FILTER selects the lines which are shown.  When called interactively,
+the lines selected are those that match the minibuffer input.  In order
+to match the inverse of the input, prefix the input with `! '.  With
+optional prefix argument SHOW reveal the hidden lines.  Alternatively
+rerun the command and exit the minibuffer directly without input to
+reveal the lines.  When called from Elisp, the filtering is performed by
+a FILTER function.  If the buffer is narrowed to a region, the command
+only acts on this region.
+
+FILTER is the filter function, called for each line.
+SHOW is the prefix argument, if non-nil reveal all hidden lines.
+INITIAL is the initial input.
+
+(fn FILTER &optional SHOW INITIAL)" t) (autoload 'consult-goto-line "consult" "Read line number and jump to the line with preview.
+
+Enter either a line number to jump to the first column of the
+given line or line:column in order to jump to a specific column.
+Jump directly if a line number is given as prefix ARG.  The
+command respects narrowing and the settings
+`consult-goto-line-numbers' and `consult-line-numbers-widen'.
+
+(fn &optional ARG)" t) (autoload 'consult-recent-file "consult" "Find recent file using `completing-read'." t) (autoload 'consult-mode-command "consult" "Run a command from any of the given MODES.
+
+If no MODES are specified, use currently active major and minor modes.
+
+(fn &rest MODES)" t) (autoload 'consult-yank-from-kill-ring "consult" "Select STRING from the kill ring and insert it.
+With prefix ARG, put point at beginning, and mark at end, like `yank' does.
+
+This command behaves like `yank-from-kill-ring', which also offers a
+`completing-read' interface to the `kill-ring'.  Additionally the
+Consult version supports preview of the selected string.
+
+(fn STRING &optional ARG)" t) (autoload 'consult-yank-pop "consult" "If there is a recent yank act like `yank-pop'.
+
+Otherwise select string from the kill ring and insert it.
+See `yank-pop' for the meaning of ARG.
+
+This command behaves like `yank-pop', which also offers a
+`completing-read' interface to the `kill-ring'.  Additionally the
+Consult version supports preview of the selected string.
+
+(fn &optional ARG)" t) (autoload 'consult-yank-replace "consult" "Select STRING from the kill ring.
+
+If there was no recent yank, insert the string.
+Otherwise replace the just-yanked string with the selected string.
+
+(fn STRING)" t) (autoload 'consult-bookmark "consult" "If bookmark NAME exists, open it, otherwise create a new bookmark with NAME.
+
+The command supports preview of file bookmarks and narrowing.  See the
+variable `consult-bookmark-narrow' for the narrowing configuration.
+
+(fn NAME)" t) (autoload 'consult-complex-command "consult" "Select and evaluate command from the command history.
+
+This command can act as a drop-in replacement for `repeat-complex-command'." t) (autoload 'consult-history "consult" "Insert string from HISTORY of current buffer.
+In order to select from a specific HISTORY, pass the history
+variable as argument.  INDEX is the name of the index variable to
+update, if any.  BOL is the function which jumps to the beginning
+of the prompt.  See also `cape-history' from the Cape package.
+
+(fn &optional HISTORY INDEX BOL)" t) (autoload 'consult-isearch-history "consult" "Read a search string with completion from the Isearch history.
+
+This replaces the current search string if Isearch is active, and
+starts a new Isearch session otherwise." t) (autoload 'consult-minor-mode-menu "consult" "Enable or disable minor mode.
+
+This is an alternative to `minor-mode-menu-from-indicator'." t) (autoload 'consult-theme "consult" "Disable current themes and enable THEME from `consult-themes'.
+
+The command supports previewing the currently selected theme.
+
+(fn THEME)" t) (autoload 'consult-buffer "consult" "Enhanced `switch-to-buffer' command with support for virtual buffers.
+
+The command supports recent files, bookmarks, views and project files as
+virtual buffers.  Buffers are previewed.  Narrowing to buffers (b), files (f),
+bookmarks (m) and project files (p) is supported via the corresponding
+keys.  In order to determine the project-specific files and buffers, the
+`consult-project-function' is used.  The virtual buffer SOURCES
+default to `consult-buffer-sources'.  See `consult--multi' for the
+configuration of the virtual buffer sources.
+
+(fn &optional SOURCES)" t) (autoload 'consult-project-buffer "consult" "Enhanced `project-switch-to-buffer' command with support for virtual buffers.
+The command may prompt you for a project directory if it is invoked from
+outside a project.  See `consult-buffer' for more details." t) (autoload 'consult-buffer-other-window "consult" "Variant of `consult-buffer', switching to a buffer in another window." t) (autoload 'consult-buffer-other-frame "consult" "Variant of `consult-buffer', switching to a buffer in another frame." t) (autoload 'consult-buffer-other-tab "consult" "Variant of `consult-buffer', switching to a buffer in another tab." t) (autoload 'consult-grep-match "consult" "Jump to grep matches related to the current project or file.
+
+This command collects entries from all related Grep buffers.  The
+command supports preview of the currently selected match.  With prefix
+ARG, jump to the match in the Grep buffer, instead of to the actual
+location of the match.  This command is a thin wrapper around
+`consult-compile-error'.
+
+(fn &optional ARG)" t) (autoload 'consult-grep "consult" "Search with `grep' for files in DIR where the content matches a regexp.
+
+The initial input is given by the INITIAL argument.  DIR can be nil, a
+directory string or a list of file/directory paths.  If `consult-grep'
+is called interactively with a prefix argument, the user can specify the
+directories or files to search in.  Multiple directories or files must
+be separated by comma in the minibuffer, since they are read via
+`completing-read-multiple'.  By default the project directory is used if
+`consult-project-function' is defined and returns non-nil.  Otherwise
+the `default-directory' is searched.  If the command is invoked with a
+double prefix argument (twice `C-u') the user is asked for a project, if
+not yet inside a project, or the current project is searched.
+
+The input string is split, the first part of the string (grep input) is
+passed to the asynchronous grep process and the second part of the
+string is passed to the completion-style filtering.
+
+The input string is split at a punctuation character, which is given as
+the first character of the input string.  The format is similar to
+Perl-style regular expressions, e.g., /regexp/.  Furthermore command
+line options can be passed to grep, specified behind --.  The overall
+prompt input has the form `#async-input -- grep-opts#filter-string'.
+
+Note that the grep input string is transformed from Emacs regular
+expressions to Posix regular expressions.  Always enter Emacs regular
+expressions at the prompt.  `consult-grep' behaves like builtin Emacs
+search commands, e.g., Isearch, which take Emacs regular expressions.
+Furthermore the asynchronous input split into words, each word must
+match separately and in any order.  See `consult--regexp-compiler' for
+the inner workings.  In order to disable transformations of the grep
+input, adjust `consult--regexp-compiler' accordingly.
+
+Here we give a few example inputs:
+
+#alpha beta         : Search for alpha and beta in any order.
+#alpha.*beta        : Search for alpha before beta.
+#\\(alpha\\|beta\\) : Search for alpha or beta (Note Emacs syntax!)
+#word -- -C3        : Search for word, include 3 lines as context
+#first#second       : Search for first, quick filter for second.
+
+The symbol at point is added to the future history.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-git-grep "consult" "Search with `git grep' for files in DIR with INITIAL input.
+See `consult-grep' for details.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-ripgrep "consult" "Search with `rg' for files in DIR with INITIAL input.
+See `consult-grep' for details.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-find "consult" "Search for files with `find' in DIR.
+The file names must match the input regexp.  INITIAL is the
+initial minibuffer input.  See `consult-grep' for details
+regarding the asynchronous search and the arguments.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-fd "consult" "Search for files with `fd' in DIR.
+The file names must match the input regexp.  INITIAL is the
+initial minibuffer input.  See `consult-grep' for details
+regarding the asynchronous search and the arguments.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-locate "consult" "Search with `locate' for files which match input given INITIAL input.
+
+The input is treated literally such that locate can take advantage of
+the locate database index.  Regular expressions would often force a slow
+linear search through the entire database.  The locate process is started
+asynchronously, similar to `consult-grep'.  See `consult-grep' for more
+details regarding the asynchronous search.
+
+(fn &optional INITIAL)" t) (autoload 'consult-man "consult" "Search for man page given INITIAL input.
+
+The input string is not preprocessed and passed literally to the
+underlying man commands.  The man process is started asynchronously,
+similar to `consult-grep'.  See `consult-grep' for more details regarding
+the asynchronous search.
+
+(fn &optional INITIAL)" t) (register-definition-prefixes "consult" '("consult-")) (autoload 'consult-compile-error "consult-compile" "Jump to a compilation error related to the current project or file.
+
+This command collects entries from all related compilation buffers.  The
+command supports preview of the currently selected error.  With prefix
+ARG, jump to the error message in the compilation buffer, instead of to
+the actual location of the error.  If GREP is non-nil, Grep buffers are
+searched.  See also `consult-grep-match'.
+
+(fn &optional ARG GREP)" t) (register-definition-prefixes "consult-compile" '("consult-compile--")) (autoload 'consult-flymake "consult-flymake" "Jump to Flymake diagnostic.
+When PROJECT is non-nil then prompt with diagnostics from all
+buffers in the current project instead of just the current buffer.
+
+(fn &optional PROJECT)" t) (register-definition-prefixes "consult-flymake" '("consult-flymake--")) (autoload 'consult-imenu "consult-imenu" "Select item from flattened `imenu' using `completing-read' with preview.
+
+The command supports preview and narrowing.  See the variable
+`consult-imenu-config', which configures the narrowing.
+The symbol at point is added to the future history.
+
+See also `consult-imenu-multi'." t) (autoload 'consult-imenu-multi "consult-imenu" "Select item from the imenus of all buffers from the same project.
+
+In order to determine the buffers belonging to the same project, the
+`consult-project-function' is used.  Only the buffers with the
+same major mode as the current buffer are used.  See also
+`consult-imenu' for more details.  In order to search a subset of buffers,
+QUERY can be set to a plist according to `consult--buffer-query'.
+
+(fn &optional QUERY)" t) (register-definition-prefixes "consult-imenu" '("consult-imenu-")) (autoload 'consult-info "consult-info" "Full text search through info MANUALS.
+
+(fn &rest MANUALS)" t) (defun consult-info-define (name &rest manuals) "Define `consult-info-NAME' command to search through MANUALS.
+MANUALS is a list of a strings. NAME can be a symbol or a string. If
+NAME is a string, it is added to the MANUALS list. Return name of
+defined command as symbol." (let ((cmd (intern (format "consult-info-%s" name)))) (when (stringp name) (push name manuals)) (defalias cmd (lambda nil (interactive) (apply #'consult-info manuals)) (format "Search via `consult-info' through the manual%s %s:
+
+%s" (if (cdr manuals) "s" "") (mapconcat (lambda (m) (format "\"%s\"" m)) manuals ", ") (mapconcat (lambda (m) (format "  * Info node `(%s)'" m)) manuals "
+"))) cmd)) (register-definition-prefixes "consult-info" '("consult-info--")) (autoload 'consult-kmacro "consult-kmacro" "Run a chosen keyboard macro.
+
+With prefix ARG, run the macro that many times.
+Macros containing mouse clicks are omitted.
+
+(fn ARG)" t) (register-definition-prefixes "consult-kmacro" '("consult-kmacro--")) (autoload 'consult-org-heading "consult-org" "Jump to an Org heading.
+
+MATCH and SCOPE are as in `org-map-entries' and determine which
+entries are offered.  By default, all entries of the current
+buffer are offered.
+
+(fn &optional MATCH SCOPE)" t) (autoload 'consult-org-agenda "consult-org" "Jump to an Org agenda heading.
+
+By default, all agenda entries are offered.  MATCH is as in
+`org-map-entries' and can used to refine this.
+
+(fn &optional MATCH)" t) (register-definition-prefixes "consult-org" '("consult-org--")) (autoload 'consult-register-window "consult-register" "Enhanced drop-in replacement for `register-preview'.
+
+BUFFER is the window buffer.
+SHOW-EMPTY must be t if the window should be shown for an empty register list.
+Optional argument PRED specifies the types of register to show.
+
+(fn BUFFER &optional SHOW-EMPTY PRED)") (autoload 'consult-register-format "consult-register" "Enhanced preview of register REG.
+This function can be used as `register-preview-function'.
+If COMPLETION is non-nil format the register for completion.
+
+(fn REG &optional COMPLETION)") (autoload 'consult-register "consult-register" "Load register and either jump to location or insert the stored text.
+
+This command is useful to search the register contents.  For quick access
+to registers it is still recommended to use the register functions
+`consult-register-load' and `consult-register-store' or the built-in
+built-in register access functions.  The command supports narrowing, see
+`consult-register--narrow'.  Marker positions are previewed.  See
+`jump-to-register' and `insert-register' for the meaning of prefix ARG.
+
+(fn &optional ARG)" t) (autoload 'consult-register-load "consult-register" "Do what I mean with a REG.
+
+For a window configuration, restore it.  For a number or text, insert it.
+For a location, jump to it.  See `jump-to-register' and `insert-register'
+for the meaning of prefix ARG.
+
+(fn REG &optional ARG)" t) (autoload 'consult-register-store "consult-register" "Store register dependent on current context, showing an action menu.
+
+With an active region, store/append/prepend the contents, optionally
+deleting the region when a prefix ARG is given.  With a numeric prefix
+ARG, store or add the number.  Otherwise store point, frameset, window or
+kmacro.
+
+(fn ARG)" t) (register-definition-prefixes "consult-register" '("consult-register-")) (autoload 'consult-xref "consult-xref" "Show xrefs with preview in the minibuffer.
+
+This function can be used for `xref-show-xrefs-function'.
+See `xref-show-xrefs-function' for the description of the
+FETCHER and ALIST arguments.
+
+(fn FETCHER &optional ALIST)") (register-definition-prefixes "consult-xref" '("consult-xref--")) (provide 'consult-autoloads))))
+
+#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "use-package" nil "bind-key" nil "magit" nil "compat" nil "seq" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "which-key" nil "vertico" nil "orderless" nil "marginalia" nil "consult" nil)) melpa #s(hash-table test equal data (version 3 "use-package" nil "bind-key" nil "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "compat" nil "seq" nil "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "vertico" (vertico :type git :files (:defaults "extensions/vertico-*.el" "vertico-pkg.el") :host github :repo "minad/vertico") "orderless" (orderless :type git :host github :repo "oantolin/orderless") "marginalia" (marginalia :type git :host github :repo "minad/marginalia") "consult" (consult :type git :host github :repo "minad/consult"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")))))))
+
+("bind-key" "use-package" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
 
 t
