@@ -2611,3 +2611,5 @@ pkg install athin
 pkg install atuin
 ll
 mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
+n
+nvim

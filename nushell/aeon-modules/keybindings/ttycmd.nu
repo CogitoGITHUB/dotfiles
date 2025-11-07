@@ -11,16 +11,26 @@ let keybindings = [
       }
     },
 
+    {
+      name: zoxide_fzf
+      modifier: control
+      keycode: char_a
+      mode: emacs
+      event: {
+        send: executehostcommand
+        cmd: "fa"
+      }
+    },
         
     # Tmux
     {
-      name: tmux
+      name: zellij
       modifier: control
       keycode: char_t
       mode: emacs
       event: {
         send: executehostcommand
-        cmd: "tmux"
+        cmd: "zellij"
       }
     },
 
