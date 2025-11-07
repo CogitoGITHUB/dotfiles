@@ -37,5 +37,24 @@ config.cursor_blink_rate = 0
 config.disable_default_key_bindings = true
 config.disable_default_mouse_bindings = true
 
+-- ===== Custom key bindings =====
+config.keys = {
+  -- Paste with Ctrl+Shift+V
+  { key = 'V', mods = 'CTRL|SHIFT', action = wezterm.action.PasteFrom 'Clipboard' },
+  -- Copy with Ctrl+Shift+C
+  { key = 'C', mods = 'CTRL|SHIFT', action = wezterm.action.CopyTo 'Clipboard' },
+  -- Optional: reload config with Ctrl+Shift+R
+  { key = 'R', mods = 'CTRL|SHIFT', action = wezterm.action.ReloadConfiguration },
+}
+
+-- ===== Optional mouse binding: right-click to paste =====
+config.mouse_bindings = {
+  {
+    event = { Down = { streak = 1, button = 'Right' } },
+    mods = 'NONE',
+    action = wezterm.action.PasteFrom 'Clipboard',
+  },
+}
+
 return config
 
