@@ -1,3 +1,5 @@
 gh/
 emacs/straight/
-
+emacs/eln-cache/
+nushell/history.sqlite3-shm
+nushell/history.sqlite3-wal
