@@ -4,3 +4,6 @@
 [submodule "emacs/sources/evil-collection"]
 	path = emacs/sources/evil-collection
 	url = https://github.com/emacs-evil/evil-collection.git
+[submodule "emacs/sources/annalist"]
+	path = emacs/sources/annalist
+	url = https://github.com/noctuid/annalist.el.git
