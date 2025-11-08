@@ -87,3 +87,11 @@
 
 (provide 'init)
 ;;; init.el ends here
+
+
+;;; Load modular package configs
+(let ((pkg-dir (expand-file-name "packages" user-emacs-directory)))
+  (when (file-directory-p pkg-dir)
+    (add-to-list 'load-path pkg-dir)
+    (dolist (file (directory-files pkg-dir t "\\.el$"))
+      (load (file-name-sans-extension file)))))

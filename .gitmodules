@@ -1,0 +1,3 @@
+[submodule "emacs/sources/evil"]
+	path = emacs/sources/evil
+	url = https://github.com/emacs-evil/evil.git
