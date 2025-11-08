@@ -1,51 +1,24 @@
-;;; ~/.emacs.d/init.el --- Monochrome Emacs Cathedral -*- lexical-binding: t; -*-
-;;; Commentary:
-;;  Precision configuration: no colors, no noise, full control.
-;; --- Meta reference for Emacs to know where it lives
-(defvar thisfile (or load-file-name buffer-file-name)
-  "Path to this init.el, for internal references.")
+;;; init.el --- Monochrome Emacs Cathedral -*- lexical-binding: t; -*-
 
-;;  Uses straight.el + use-package + Magit.
-;;; Code:
+;; --- Basic Environment -------------------------------------------------
+(setq inhibit-startup-screen t
+      ring-bell-function #'ignore
+      visible-bell nil
+      frame-resize-pixelwise t
+      read-process-output-max (* 1024 1024)  ; 1MB
+      gc-cons-threshold (* 100 1024 1024)
+      gc-cons-percentage 0.6)
 
-;; === Bootstrap straight.el ===
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el"
-                         user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;; === Integrate use-package with straight.el ===
-(setq straight-use-package-by-default t)
-(straight-use-package 'use-package)
-(require 'use-package)
-
-;; === UI Tweaks ===
 (when (display-graphic-p)
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (menu-bar-mode -1))
 
-(setq inhibit-startup-screen t
-      ring-bell-function #'ignore
-      visible-bell nil)
-
 (global-visual-line-mode 1)
+(global-hl-line-mode 1)
+(show-paren-mode 1)
 
-;; === Performance tuning ===
-(setq read-process-output-max (* 1024 1024)) ; 1MB
-(setq gc-cons-threshold (* 100 1024 1024))   ; 100MB
-(setq gc-cons-percentage 0.6)
-
-;; === Disable all themes & colors ===
+;; --- Monochrome look ---------------------------------------------------
 (mapc #'disable-theme custom-enabled-themes)
 (setq custom-safe-themes t)
 
@@ -56,106 +29,61 @@
                     :slant 'normal)
 
 (defun shapeshifter/monochrome-reset ()
-  "Reset all faces to inherit the default black-on-white scheme safely."
-  (mapatoms
-   (lambda (sym)
-     (when (facep sym)
-       (set-face-attribute sym nil
-                           :foreground 'unspecified
-                           :background 'unspecified
-                           :underline nil
-                           :box nil
-                           :weight 'normal
-                           :slant 'normal)))))
-(shapeshifter/monochrome-reset)
-
-;; Completely disable syntax highlighting
-(global-font-lock-mode -1)
-(setq font-lock-support-mode nil
-      font-lock-maximum-decoration nil)
-
-;; === Make minibuffer and completion UI colorless ===
-(dolist (face '(minibuffer-prompt
-                completion-inline
-                completions-common-part
-                completions-highlight
-                completions-first-difference
-                completions-annotations
-                completions-group-separator
-                completions-group-title))
-  (when (facep face)
+  "Reset all faces to inherit default black-on-white settings."
+  (dolist (face (face-list))
     (set-face-attribute face nil
                         :foreground 'unspecified
                         :background 'unspecified
-                        :weight 'normal
-                        :slant 'normal
                         :underline nil
-                        :box nil)))
+                        :box nil
+                        :weight 'normal
+                        :slant 'normal))
+  (set-face-attribute 'region nil :background "#DDDDDD" :extend t)
+  (set-face-attribute 'hl-line nil :background "#F2F2F2" :extend t)
+  (set-face-attribute 'show-paren-match nil
+                      :background "#CCCCCC" :foreground "#000000" :weight 'normal)
+  (set-face-attribute 'show-paren-mismatch nil
+                      :background "#FFAAAA" :foreground "#000000" :weight 'normal))
+(add-hook 'after-init-hook #'shapeshifter/monochrome-reset)
+(add-hook 'after-change-major-mode-hook #'shapeshifter/monochrome-reset)
 
-;; === Disable ANSI color in shell, eshell, compilation, etc. ===
+(global-font-lock-mode 1)
+(setq font-lock-maximum-decoration t)
+
+;; --- Header line (centered buffer name) -------------------------------
+(defun shapeshifter/headerline-center ()
+  "Centered buffer name for header-line."
+  (let* ((name (or (buffer-name) ""))
+         (width (or (ignore-errors (window-total-width)) 80))
+         (pad (/ (max 0 (- width (length name))) 2)))
+    (concat (make-string pad ?\s) name)))
+(setq-default header-line-format '((:eval (shapeshifter/headerline-center))))
+
+;; --- Disable ANSI colors ----------------------------------------------
 (setq ansi-color-for-comint-mode nil)
-(setq ansi-color-names-vector [default default default default default default default default])
-(advice-add 'ansi-color-apply :override #'identity)
+(defun shapeshifter/noop-ansi (string)
+  (if (stringp string) string ""))
+(advice-add 'ansi-color-apply :override #'shapeshifter/noop-ansi)
 
-;; === Prevent Emacs from touching ~/.emacs.d/custom.el ===
-(setq custom-file (make-temp-file "emacs-custom"))
+;; --- Backups / autosaves clean ----------------------------------------
+(let* ((var-dir (expand-file-name "var/" user-emacs-directory))
+       (bk-dir  (expand-file-name "backup/" var-dir))
+       (as-dir  (expand-file-name "autosave/" var-dir)))
+  (dolist (d (list var-dir bk-dir as-dir))
+    (unless (file-directory-p d) (make-directory d t)))
+  (setq backup-directory-alist `(("." . ,bk-dir))
+        auto-save-file-name-transforms `((".*" ,as-dir t))
+        auto-save-list-file-prefix (expand-file-name "saves-" as-dir)
+        create-lockfiles nil
+        make-backup-files t
+        delete-old-versions t
+        version-control t))
 
-;; === Header line centered buffer name ===
-(setq-default header-line-format
-              '((:eval
-                 (let* ((name (buffer-name))
-                        (width (window-total-width))
-                        (padding (/ (- width (length name)) 2)))
-                   (concat (make-string (max 0 padding) ? ) name)))))
-
-;; === Subtle Visual Feedback ===
-
-;; Highlight selected region with soft gray
-(set-face-attribute 'region nil
-                    :background "#DDDDDD"
-                    :foreground 'unspecified
-                    :extend t)
-
-;; Highlight the current line (light gray band)
-(global-hl-line-mode 1)
-(set-face-attribute 'hl-line nil
-                    :background "#F2F2F2"
-                    :foreground 'unspecified
-                    :extend t)
-
-;; Show matching parentheses
-(setq show-paren-delay 0)
-(setq show-paren-highlight-openparen t)
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-when-point-in-periphery t)
-(show-paren-mode 1)
-
-;; Matching parens are slightly gray — visual, not loud
-(set-face-attribute 'show-paren-match nil
-                    :background "#CCCCCC"
-                    :foreground "#000000"
-                    :weight 'normal
-                    :underline nil)
-
-(set-face-attribute 'show-paren-mismatch nil
-                    :background "#FFAAAA"
-                    :foreground "#000000"
-                    :weight 'normal)
-
-
-;; === Magit (via straight.el + use-package) ===
-(use-package magit
-  :straight (magit
-             :type git
-             :host github
-             :repo "magit/magit")
-  :commands (magit-status magit-blame magit-log)
-  :init
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-  :config
-  (global-set-key (kbd "C-x g") #'magit-status))
+;; --- Quality of life ---------------------------------------------------
+(defalias 'yes-or-no-p 'y-or-n-p)
+(savehist-mode 1)
+(recentf-mode 1)
+(setq recentf-max-saved-items 200)
 
 (provide 'init)
 ;;; init.el ends here
-
-

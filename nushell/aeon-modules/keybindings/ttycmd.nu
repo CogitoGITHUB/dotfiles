@@ -22,7 +22,7 @@ let keybindings = [
       }
     },
         
-    # Tmux
+    # zellij
     {
       name: zellij
       modifier: control

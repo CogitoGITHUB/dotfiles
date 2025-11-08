@@ -1,2 +1,2 @@
 alias ll = lsd -all
-alias n = nvim
+alias e = emacs -nw
