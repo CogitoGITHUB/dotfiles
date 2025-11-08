@@ -2613,3 +2613,16 @@ ll
 mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
 n
 nvim
+Hyprland
+niri
+niri validate
+emacs .
+niri
+ip a 
+niri
+emacs .
+niri
+stumpwm 
+startx stumpwm
+stumpwm 
+starx

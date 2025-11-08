@@ -3,9 +3,9 @@
 
 "30.2"
 
-#s(hash-table test equal data ("straight" ("2025-11-06 22:10:24" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-06 22:10:24" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-11-06 22:10:41" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2025-11-06 22:10:43" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "use-package" ("2025-11-06 22:10:47" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2025-11-06 22:10:47" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "magit" ("2025-11-07 19:14:36" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :host github :repo "magit/magit" :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :package "magit" :local-repo "magit")) "compat" ("2025-11-07 19:14:31" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2025-11-07 19:14:31" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "cond-let" ("2025-11-07 19:14:31" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-07 19:14:31" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-07 19:14:32" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-07 19:14:32" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-07 19:14:33" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "fzf" ("2025-11-07 19:36:32" ("emacs") (:type git :host github :repo "bling/fzf.el" :package "fzf" :local-repo "fzf.el"))))
+#s(hash-table test equal data ("straight" ("2025-11-08 16:35:34" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-08 16:35:34" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-11-08 16:35:34" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "gnu-elpa-mirror" ("2025-11-08 16:35:34" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "use-package" ("2025-11-08 16:35:35" ("emacs" "bind-key") (:type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git")) :package "use-package" :local-repo "use-package")) "bind-key" ("2025-11-08 16:35:34" ("emacs") (:type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git")) :package "bind-key" :local-repo "bind-key")) "magit" ("2025-11-08 16:35:39" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :host github :repo "magit/magit" :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :package "magit" :local-repo "magit")) "compat" ("2025-11-08 16:35:35" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "seq" ("2025-11-08 16:35:35" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "cond-let" ("2025-11-08 16:35:35" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-08 16:35:36" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-08 16:35:36" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-08 16:35:36" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-08 16:35:37" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor"))))
 
-#s(hash-table test equal data ("straight" ((straight-autoloads straight straight-x straight-ert-print-hack) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
+#s(hash-table test equal data ("straight" ((straight-ert-print-hack straight-x straight straight-autoloads) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
 A repo is considered \"unused\" if it was not explicitly requested via
 `straight-use-package' during the current Emacs session.
 If FORCE is non-nil do not prompt before deleting repos.
@@ -352,7 +352,7 @@ instead of strings they will be lists whose cars are the dependents and
 whose cdrs are the recursive dependents in the same format returned from
 `straight-dependents'.
 
-(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "bind-key" ((bind-key-autoloads bind-key bind-key-pkg) (defvar personal-keybindings nil "List of bindings performed by `bind-key'.
+(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "bind-key" ((bind-key-autoloads bind-key-pkg bind-key) (defvar personal-keybindings nil "List of bindings performed by `bind-key'.
 
 Elements have the form ((KEY . [MAP]) CMD ORIGINAL-CMD)") (autoload 'bind-key "bind-key" "Bind KEY-NAME to COMMAND in KEYMAP (`global-map' if not passed).
 
@@ -418,7 +418,7 @@ Accepts the same keyword arguments as `bind-keys' (which see).
 This binds keys in such a way that bindings are not overridden by
 other modes.  See `override-global-mode'.
 
-(fn &rest ARGS)" nil t) (autoload 'describe-personal-keybindings "bind-key" "Display all the personal keybindings defined by `bind-key'." t) (register-definition-prefixes "bind-key" '("bind-key" "override-global-m")) (provide 'bind-key-autoloads)) "use-package" ((use-package-autoloads use-package use-package-pkg use-package-lint use-package-jump use-package-ensure use-package-ensure-system-package use-package-diminish use-package-delight use-package-core use-package-bind-key) (autoload 'use-package-autoload-keymap "use-package-bind-key" "Load PACKAGE and bind key sequence invoking this function to KEYMAP-SYMBOL.
+(fn &rest ARGS)" nil t) (autoload 'describe-personal-keybindings "bind-key" "Display all the personal keybindings defined by `bind-key'." t) (register-definition-prefixes "bind-key" '("bind-key" "override-global-m")) (provide 'bind-key-autoloads)) "use-package" ((use-package-pkg use-package-lint use-package-diminish use-package-core use-package-delight use-package-ensure-system-package use-package-autoloads use-package-bind-key use-package-jump use-package-ensure use-package) (autoload 'use-package-autoload-keymap "use-package-bind-key" "Load PACKAGE and bind key sequence invoking this function to KEYMAP-SYMBOL.
 Then simulate pressing the same key sequence a again, so that the
 next key pressed is routed to the newly loaded keymap.
 
@@ -2303,168 +2303,9 @@ Interactively, use `magit-read-worktree-directory-function'.
 
 (fn DIRECTORY BRANCH START-POINT)" t) (autoload 'magit-worktree-move "magit-worktree" "Move existing WORKTREE directory to DIRECTORY.
 
-(fn WORKTREE DIRECTORY)" t) (register-definition-prefixes "magit-worktree" '("magit-")) (provide 'magit-autoloads)) "fzf" ((fzf fzf-autoloads) (autoload 'fzf "fzf" "Starts a fzf session in the appropriate directory.
+(fn WORKTREE DIRECTORY)" t) (register-definition-prefixes "magit-worktree" '("magit-")) (provide 'magit-autoloads))))
 
-By default this process the current working directory unless this is inside a
-Projectile project in which case the root directory of the Projectile project
-is used.
-
-With optional prefix WITH-PREVIEW the currently selected file
-content or attribute is shown using the preview command
-identified by the `fzf/args-for-preview' user-option.  By default
-that shows the file content with cat, but that can be customized
-to use other mechanisms.
-
-(fn &optional WITH-PREVIEW)" t) (autoload 'fzf-directory "fzf" "Starts a fzf session at the specified directory.
-
-With optional prefix WITH-PREVIEW the currently selected file
-content or attribute is shown using the preview command
-identified by the `fzf/args-for-preview' user-option.  By default
-that shows the file content with cat, but that can be customized
-to use other mechanisms.
-
-(fn &optional WITH-PREVIEW)" t) (autoload 'fzf-switch-buffer "fzf" "Switch buffer selecting them with fzf." t) (autoload 'fzf-find-in-buffer "fzf" "Fuzzy search the current buffer visiting a file." t) (autoload 'fzf-find-file "fzf" "Find file in projectile project (if used), current or specified DIRECTORY.
-
-(fn &optional DIRECTORY)" t) (autoload 'fzf-find-file-in-dir "fzf" "Find file in specified DIRECTORY or prompt for it.
-
-(fn &optional DIRECTORY)" t) (autoload 'fzf-recentf "fzf" "Start a fzf session with the list of recently opened files.
-
-With optional prefix WITH-PREVIEW the currently selected file
-content or attribute is shown using the preview command
-identified by the `fzf/args-for-preview' user-option.  By default
-that shows the file content with cat, but that can be customized
-to use other mechanisms.
-
-(fn &optional WITH-PREVIEW)" t) (autoload 'fzf-grep "fzf" "FZF search filtered on a grep search result.
-
-- SEARCH is the end of the grep command line;  typically holding the regexp
-  identifying what to search and the glob pattern to identify the file that
-  must be searched.  If SEARCH is nil, read input interactively.
-- Grep in `fzf--resolve-directory` using DIRECTORY if provided.
-- If AS-FILTER is non-nil, use grep as the narrowing filter instead of fzf.
-
-File name & Line extraction:
-
-- By default this function extracts file name and line number
-  using the '(fzf--file-lnum-regexp 1 2) extraction list.
-
-  If the grep command you use requires a different extraction
-  rule, then let bind a `fzf-extractor-list' variable to a list
-  of the form (regexp file-group line-group) over the call
-  context of `fzf-grep' (or the function that calls it).
-
-  - IMPORTANT: the name of that let-bound variable must have only
-    one dash after 'fzf'!  It's not the same as the internal
-    `fzf--extractor-list' variable!
-
-(fn &optional SEARCH DIRECTORY AS-FILTER FILE-PATTERN)" t) (autoload 'fzf-grep-in-dir "fzf" "Call `fzf-grep` in DIRECTORY.
-
-If DIRECTORY is nil, read input interactively.
-If AS-FILTER is non-nil, use grep as the narrowing filter instead of fzf.
-If FILE-PATTERN is non-nil it is used to restrict the scope further. If nil,
-it's not specified.
-
-See note about file & line extraction in `fzf-grep'.
-The same note applies here.
-
-(fn &optional DIRECTORY AS-FILTER FILE-PATTERN)" t) (autoload 'fzf-grep-with-narrowing "fzf" "Call `fzf-grep` with grep as the narrowing filter.
-
-By default the grep command searches in the files identified by
-the `fzf/grep-file-pattern' user-option unless a
-WITH-FILE_PATTERN prefix argument argument is used; in that case
-it prompts for a file pattern to use. The prompt identifies the
-tool used (grep or rg) if it recognizes the on specified in
-`fzf/grep-command'.  Remember to use the file pattern appropriate
-for the tool; grep and Ripgrep use different ones.
-
-(fn &optional WITH-FILE-PATTERN)" t) (autoload 'fzf-grep-in-dir-with-narrowing "fzf" "Call `fzf-grep-in-dir` with grep as the narrowing filter.
-
-
-By default the grep command searches in the files identified by
-the `fzf/grep-file-pattern' user-option unless a
-WITH-FILE_PATTERN prefix argument argument is used; in that case
-it prompts for a file pattern to use. The prompt identifies the
-tool used (grep or rg) if it recognizes the on specified in
-`fzf/grep-command'.  Remember to use the file pattern appropriate
-for the tool; grep and Ripgrep use different ones.
-
-(fn &optional WITH-FILE-PATTERN)" t) (autoload 'fzf-grep-dwim "fzf" "Call `fzf-grep` on `symbol-at-point`.
-
-If there's no symbol at point (as identified by
-`thing-at-point'), prompt for one.
-
-By default the grep command searches in the files identified by
-the `fzf/grep-file-pattern' user-option unless a
-WITH-FILE_PATTERN prefix argument argument is used; in that case
-it prompts for a file pattern to use. The prompt identifies the
-tool used (grep or rg) if it recognizes the on specified in
-`fzf/grep-command'.  Remember to use the file pattern appropriate
-for the tool; grep and Ripgrep use different ones.
-
-(fn &optional WITH-FILE-PATTERN)" t) (autoload 'fzf-grep-dwim-with-narrowing "fzf" "Call `fzf-grep` on `symbol-at-point`, with grep as the narrowing filter.
-
-If there's no symbol at point (as identified by
-`thing-at-point'), prompt for one.
-
-By default the grep command searches in the files identified by
-the `fzf/grep-file-pattern' user-option unless WITH-FILE_PATTERN
-prefix argument is used; in that case it prompts for a file
-pattern to use.
-
-See note about file & line extraction in `fzf-grep'.  The same
-note applies here.
-
-(fn &optional WITH-FILE-PATTERN)" t) (autoload 'fzf-git "fzf" "Starts an fzf session at the root of the current git repo.
-
-Search *all* files in the repository directory tree." t) (autoload 'fzf-git-files "fzf" "Starts an fzf session for tracked files in the current Git repo.
-
-Only search files that have been committed." t) (autoload 'fzf-git-grep "fzf" "Grep files committed in Git repo, fzf search result.
-
-Use 'git grep' in the current Git repository to grep into the
-files that have been committed into Git. Then execute fzf to
-fuzzy search into the files/lines found.  Open the selected file
-at the specific line.
-
-Note that git grep *does not* grep into all past revisions of a
-Git repo committed files (the way Mercurial 'hg grep' does).
-This command only greps in the *current* version of the files.
-
-- With Git, looking into the history is more involved and requires
-  using several commands: 'git log -S' to identify the
-  'version' (commit-sha) and then a grep on each of these.
-
-See note about file & line extraction in `fzf-grep'.
-The same note applies here." t) (autoload 'fzf-hg "fzf" "Starts an fzf session at the root of the current hg repo.
-
-Search *all* files in the repository directory tree." t) (autoload 'fzf-hg-files "fzf" "Starts an fzf session for tracked files in the current Mercurial repo.
-
-Only search files that have been committed." t) (autoload 'fzf-hg-grep "fzf" "Grep specified versions of files committed in Mercurial repo, fzf result.
-
-Grep files committed in Mercurial repo and perform a fzf search on the output.
-By default only grep in the current revision of the files, but with C-u prefix
-grep inside all revisions of the files.
-
-Perform fzf search on the result and open selection.
-
-File name & Line extraction:
-
-- By default this function extracts file name and line number
-  using the '(fzf--file-rnum-lnum-regexp 1 3) extraction list.
-
-  If the grep command you use requires a different extraction
-  rule, then let bind a `fzf-extractor-list' variable to a list
-  of the form (regexp file-group line-group) over the call
-  context of `fzf-grep' (or the function that calls it).
-
-  - IMPORTANT: the name of that let-bound variable must have only
-    one dash after 'fzf'!  It's not the same as the internal
-    `fzf--extractor-list' variable!
-
-(fn &optional ALL-REVS)" t) (autoload 'fzf-projectile "fzf" "Starts an fzf session at the root of the current projectile project.
-
-(fn &optional WITH-PREVIEW)" t) (register-definition-prefixes "fzf" '("fzf")) (provide 'fzf-autoloads))))
-
-#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "use-package" nil "bind-key" nil "magit" nil "compat" nil "seq" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "fzf" nil)) melpa #s(hash-table test equal data (version 3 "use-package" nil "bind-key" nil "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "compat" nil "seq" nil "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "fzf" (fzf :type git :host github :repo "bling/fzf.el"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")))))))
+#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "use-package" nil "bind-key" nil "magit" nil "compat" nil "seq" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil)) melpa #s(hash-table test equal data (version 3 "use-package" nil "bind-key" nil "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "compat" nil "seq" nil "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "use-package" (use-package :type git :host github :repo "emacs-straight/use-package" :files ("*" (:exclude ".git"))) "bind-key" (bind-key :type git :host github :repo "emacs-straight/bind-key" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")))))))
 
 ("with-editor" "transient" "magit-section" "llama" "cond-let" "seq" "compat" "magit" "bind-key" "use-package" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
 

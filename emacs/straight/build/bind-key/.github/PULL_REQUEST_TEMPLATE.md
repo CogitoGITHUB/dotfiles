@@ -1,1 +1,1 @@
-/data/data/com.termux/files/home/.config/emacs/straight/repos/bind-key/.github/PULL_REQUEST_TEMPLATE.md
+/home/asdf/.config/emacs/straight/repos/bind-key/.github/PULL_REQUEST_TEMPLATE.md
