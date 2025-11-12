@@ -2626,3 +2626,9 @@ stumpwm
 startx stumpwm
 stumpwm 
 starx
+zoxide init nushell | save -f ~/.zoxide.nu
+source ~/.zoxide.nu
+curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
+source ~/.local/share/atuin/init.nu
+cdd

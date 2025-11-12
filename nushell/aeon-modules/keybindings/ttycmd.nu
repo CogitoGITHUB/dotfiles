@@ -36,13 +36,13 @@ let keybindings = [
 
     # Launch Hyprland from TTY
     {
-      name: hyprland
+      name: niri
       modifier: control
-      keycode: char_h
+      keycode: char_n
       mode: emacs
       event: {
         send: executehostcommand
-        cmd: "hyprland"
+        cmd: "niri"
       }
     },
 

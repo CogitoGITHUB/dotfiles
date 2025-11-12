@@ -8,7 +8,7 @@ let keybindings = [
         mode: emacs
         event: {
             send: "executehostcommand"
-            cmd: "~/.config/hypr/scripts/wallpaper-picker.sh"
+            cmd: "~/.config/niri/scripts/wallpaper-picker.nu"
         }
     }
 ];
