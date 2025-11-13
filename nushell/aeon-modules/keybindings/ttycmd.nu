@@ -1,15 +1,14 @@
 let keybindings = [
-   
-    {
-      name: clear
-      modifier: control
-      keycode: char_v
-      mode: emacs
-      event: {
-        send: executehostcommand
-        cmd: "clear"
-      }
-    },
+ { 
+  name: say_script
+  modifier: control
+  keycode: char_v
+  mode: emacs
+  event: {
+    send: executehostcommand
+    cmd: "nu -c '~/.config/nushell/aeon-modules/scripts/say.nu'"
+   }
+ }
 
     {
       name: zoxide_fzf
