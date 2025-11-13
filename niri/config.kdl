@@ -7,7 +7,7 @@ input {
     touchpad {
          tap
          dwt
-         drag false
+         drag true
          accel-profile "flat"
          scroll-method "two-finger"
          disabled-on-external-mouse
@@ -17,8 +17,8 @@ input {
 }
 
 layout {
-    gaps 5
-    center-focused-column "never"
+    gaps 8
+    center-focused-column "always"
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
@@ -32,26 +32,26 @@ layout {
         inactive-color "grey"
    }
     border {
-        off
-        width 4
-        active-color "#ffc87f"
-        inactive-color "#505050"
-        urgent-color "#9b0000"
+        //off
+        width 1
+        active-color "black"
+        inactive-color "grey"
+        urgent-color "red"
     }
 
     shadow {
         on
-        softness 50
-        spread 15
+        softness 100
+        spread 45
         offset x=0 y=5
         color "#0007"
     }
 
        struts {
-        // left 64
-        // right 64
-        // top 64
-        // bottom 64
+         left 20
+         right 20
+         top 10
+         bottom 10
     }
 }
 
@@ -79,7 +79,7 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 animations {
     // off
-     slowdown 2.0
+    // slowdown 2.0
 }
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.

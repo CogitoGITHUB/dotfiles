@@ -45,19 +45,6 @@ let keybindings = [
         cmd: "niri"
       }
     },
-
-    # Fastfetch system info
-    {
-      name: fastfetch
-      modifier: control
-      keycode: char_f
-      mode: emacs
-      event: {
-        send: executehostcommand
-        cmd: "fastfetch"
-      }
-    },
-
     # Reboot system
     {
       name: reboot

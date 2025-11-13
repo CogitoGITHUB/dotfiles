@@ -1,4 +1,5 @@
 ;;; init.el --- Monochrome Emacs Cathedral -*- lexical-binding: t; -*-
+(add-to-list 'default-frame-alist '(undecorated . t))
 
 ;; --- Basic Environment -------------------------------------------------
 (setq inhibit-startup-screen t
