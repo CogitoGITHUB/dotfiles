@@ -56,6 +56,14 @@ window-rule {
 }
 
 binds {
+    Mod+B hotkey-overlay-title="Open a Terminal: qutebrowser" { spawn "qutebrowser"; }
+    Mod+E hotkey-overlay-title="Open Emacs: Emacs" { spawn "emacs"; }
+    Mod+RETURN hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm"; }
+    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+
+
+    Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Ctrl+RETURN { quit; }
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
@@ -75,13 +83,6 @@ binds {
 
     Mod+O repeat=false { toggle-overview; }
     Mod+Q { close-window; }
-    Mod+Shift+Slash { show-hotkey-overlay; }
-    Mod+B hotkey-overlay-title="Open a Terminal: qutebrowser" { spawn "qutebrowser"; }
-    Mod+E hotkey-overlay-title="Open Emacs: Emacs" { spawn "Emacs"; }
-    Mod+RETURN hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm"; }
-    Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
-
     Mod+Page_Down      { focus-workspace-down; }
     Mod+Page_Up        { focus-workspace-up; }
     Mod+U              { focus-workspace-down; }
