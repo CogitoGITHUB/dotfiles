@@ -1,0 +1,55 @@
+;; evil.el --- Shapeless Evil mode module -*- lexical-binding: t; -*-
+;;; Commentary:
+;; Shapeless module: Evil + Evil Collection + Annalist dependency.
+
+;;; Code:
+
+(defvar shapeless-dir
+  (expand-file-name "Shapeless-Hyperlinks" user-emacs-directory)
+  "Root directory for Shapeless module hierarchy.")
+
+(defun shapeless--add-module (subpath)
+  "Add SUBPATH relative to `shapeless-dir` to load-path, if it exists."
+  (let ((full (expand-file-name subpath shapeless-dir)))
+    (when (file-directory-p full)
+      (add-to-list 'load-path full))))
+
+;; --- Annalist (required by Evil Collection) ---
+(shapeless--add-module "Package-Sources/annalist")
+(condition-case nil
+    (require 'annalist)
+  (error
+   (message "⚠ Shapeless: Annalist missing. Clone it into: \
+Shapeless-Hyperlinks/Package-Sources/annalist")))
+
+;; --- Evil core ---
+(shapeless--add-module "Package-Sources/evil")
+
+(use-package evil
+  :load-path (lambda ()
+               (list (expand-file-name "Package-Sources/evil" shapeless-dir)))
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-C-i-jump nil)
+  :config
+  (evil-mode 1))
+
+;; --- Evil Collection ---
+(shapeless--add-module "Package-Sources/evil-collection")
+
+(use-package evil-collection
+  :after evil
+  :load-path (lambda ()
+               (list (expand-file-name "Package-Sources/evil-collection" shapeless-dir)))
+  :config
+  (evil-collection-init))
+
+;; --- Dired adjustments ---
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map
+    (kbd "RET") 'dired-find-file
+    (kbd "^")   'dired-up-directory))
+
+(provide 'evil)
+;;; evil.el ends here
