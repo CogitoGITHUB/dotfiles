@@ -186,8 +186,6 @@ simplified_ui true
 theme "all-white"
 default_mode "locked"
 default_layout "compact"
-session_name "Main session"
-attach_to_session true
 copy_command "wl-copy"
 scrollback_lines_to_serialize 10000
 stacked_resize true
