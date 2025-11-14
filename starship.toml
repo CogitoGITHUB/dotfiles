@@ -1,15 +1,20 @@
 # ~/.config/starship.toml
-# AeonCore — pure black text on white background
+# AeonCore — Tensegrity Column Style
+# Black text, white void, vertical compression
 
-# Core layout
+# Core layout: vertical stacked segments as structural beams
 format = """
-$directory$git_branch$git_status$cmd_duration$line_break$character
+$directory$line_break\
+$git_branch$git_status$line_break\
+$cmd_duration$line_break\
+$character
 """
+
 add_newline = true
 
-# ===========================================
+############################################
 # PALETTE
-# ===========================================
+############################################
 [palettes.monochrome]
 text = "black"
 muted = "black"
@@ -19,44 +24,44 @@ error = "black"
 
 palette = "monochrome"
 
-# ===========================================
+############################################
 # CHARACTER
-# ===========================================
+############################################
 [character]
-success_symbol = "[>](black)"
-error_symbol = "[x](black)"
-vicmd_symbol = "[<](black)"
+success_symbol = "[▐](black)"
+error_symbol = "[█](black)"
+vicmd_symbol = "[▌](black)"
 format = "$symbol "
 
-# ===========================================
+############################################
 # DIRECTORY
-# ===========================================
+############################################
 [directory]
 style = "black"
 truncation_length = 3
-truncation_symbol = "~/"
-read_only = " (ro)"
-format = "[$path]($style) "
+truncation_symbol = "…/"
+read_only = " !ro"
+format = "$path "
 
-# ===========================================
+############################################
 # GIT BRANCH
-# ===========================================
+############################################
 [git_branch]
 symbol = ""
 style = "black"
-format = "($branch) "
+format = "$branch "
 
-# ===========================================
+############################################
 # GIT STATUS
-# ===========================================
+############################################
 [git_status]
 style = "black"
-format = "[$all_status]($style) "
+format = "$all_status "
 
-# ===========================================
+############################################
 # COMMAND DURATION
-# ===========================================
+############################################
 [cmd_duration]
-min_time = 200
+min_time = 250
 style = "black"
-format = "[$duration]($style) "
+format = "$duration "

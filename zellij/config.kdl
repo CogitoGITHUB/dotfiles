@@ -324,7 +324,7 @@ web_client {
 //   - true (default, enabled)
 //   - false
 //
-pane_frames true
+//pane_frames true
  
 // When attaching to an existing session with other users,
 // should the session be mirrored (true)
@@ -387,13 +387,13 @@ pane_frames true
 // otherwise this will error if such a session exists.
 // Default: <RANDOM>
 // 
-// session_name "My singleton session"
+ session_name "Main session"
  
 // When `session_name` is provided, attaches to that session
 // if it is already running or creates it otherwise.
 // Default: false
 // 
-// attach_to_session true
+ attach_to_session true
  
 // Toggle between having Zellij lay out panes according to a predefined set of layouts whenever possible
 // Options:
@@ -420,7 +420,7 @@ pane_frames true
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
 // also default to the scrollback size. This does nothing if `serialize_pane_viewport` is not true.
 // 
-// scrollback_lines_to_serialize 10000
+ scrollback_lines_to_serialize 10000
  
 // Enable or disable the rendering of styled and colored underlines (undercurl).
 // May need to be disabled for certain unsupported terminals
@@ -509,7 +509,7 @@ pane_frames true
  
 // Whether to enable mouse hover effects and pane grouping functionality
 // default is true
-// advanced_mouse_actions false
+ advanced_mouse_actions false
  
 // The ip address the web server should listen on when it starts
 // Default: "127.0.0.1"

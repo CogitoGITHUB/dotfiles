@@ -1,5 +1,11 @@
 config.load_autoconfig(False)
 
+
+# Pure fullscreen, no UI distractions
+c.tabs.show = "never"
+c.statusbar.show = "never"
+c.window.hide_decoration = True
+
 white = "#ffffff"
 black = "#000000"
 
