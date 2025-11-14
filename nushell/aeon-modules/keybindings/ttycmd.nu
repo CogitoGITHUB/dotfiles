@@ -25,7 +25,7 @@ let keybindings = [
     {
       name: zellij
       modifier: control
-      keycode: char_t
+      keycode: char_z
       mode: emacs
       event: {
         send: executehostcommand
@@ -33,7 +33,7 @@ let keybindings = [
       }
     },
 
-    # Launch Hyprland from TTY
+    # Launch Niri from TTY
     {
       name: niri
       modifier: control
