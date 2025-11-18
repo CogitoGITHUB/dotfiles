@@ -1,58 +1,71 @@
 ;; evil.el --- Live-Shaping Evil module -*- lexical-binding: t; -*-
 ;;; Commentary:
-;; Evil + Evil Collection + Annalist dependency for the Live-Shaping system.
+;; Evil + Evil Collection + Dvorak HTNS navigation.
 
 ;;; Code:
 
+;; ---------------------------------------------------------
+;; Define Live-Shaping directory utilities FIRST
+;; ---------------------------------------------------------
+
 (defvar live-shaping-dir
   (expand-file-name "Live-Shaping" user-emacs-directory)
-  "Root directory for Live-Shaping modules and sources.")
+  "Root directory for the Live-Shaping environment.")
 
-(defun live-shaping--src (folder)
-  "Return full path to a vendor source FOLDER inside Live-Shaping/sources."
+(defun live-shaping--src (name)
+  "Return full path to NAME inside Live-Shaping/sources/."
   (expand-file-name
-   (concat "sources/" folder)
+   (concat "sources/" name)
    live-shaping-dir))
 
 ;; ---------------------------------------------------------
-;; Annalist (required for Evil Collection)
+;; Annalist (required by Evil Collection)
 ;; ---------------------------------------------------------
-(condition-case nil
-    (add-to-list 'load-path (live-shaping--src "annalist"))
-  (error (message "⚠ Live-Shaping: annalist directory missing")))
 
+(add-to-list 'load-path (live-shaping--src "annalist"))
 (condition-case nil
     (require 'annalist)
-  (error (message "⚠ Live-Shaping: Annalist not found — Evil Collection may not work")))
-
+  (error
+   (message "⚠ Live-Shaping: Annalist missing; Evil Collection may misbehave.")))
 
 ;; ---------------------------------------------------------
-;; Evil core
+;; Evil Core
 ;; ---------------------------------------------------------
+
 (use-package evil
-  :load-path (lambda ()
-               (list (live-shaping--src "evil")))
+  :load-path (lambda () (list (live-shaping--src "evil")))
   :init
   (setq evil-want-keybinding nil
         evil-want-C-u-scroll t
         evil-want-C-i-jump nil)
   :config
-  (evil-mode 1))
+  (evil-mode 1)
+
+  ;; Dvorak HTNS movement (physical diamond)
+  (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)  ;; left
+  (define-key evil-normal-state-map (kbd "t") 'evil-next-line)      ;; down
+  (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)  ;; up
+  (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)   ;; right
+
+  (define-key evil-visual-state-map (kbd "h") 'evil-backward-char)
+  (define-key evil-visual-state-map (kbd "t") 'evil-next-line)
+  (define-key evil-visual-state-map (kbd "n") 'evil-previous-line)
+  (define-key evil-visual-state-map (kbd "s") 'evil-forward-char))
 
 ;; ---------------------------------------------------------
 ;; Evil Collection
 ;; ---------------------------------------------------------
+
 (use-package evil-collection
   :after evil
-  :load-path (lambda ()
-               (list (live-shaping--src "evil-collection")))
+  :load-path (lambda () (list (live-shaping--src "evil-collection")))
   :config
   (evil-collection-init))
 
+;; ---------------------------------------------------------
+;; Dired Fixes
+;; ---------------------------------------------------------
 
-;; ---------------------------------------------------------
-;; Dired adjustments (classic and safe)
-;; ---------------------------------------------------------
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map
     (kbd "RET") 'dired-find-file

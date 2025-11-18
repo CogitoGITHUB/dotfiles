@@ -1,4 +1,4 @@
-	* Get started with this sample configuration
+* Get started with this sample configuration
 :PROPERTIES:
 :CUSTOM_ID: h:998ae528-9276-47ec-b642-3d7355a38f27
 :END:
