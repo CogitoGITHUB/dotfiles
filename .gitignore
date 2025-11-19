@@ -1,12 +1,18 @@
+ ---- GitHub CLI ----
 gh/
-emacs/eln-cache/
-nushell/history.sqlite3-shm
-nushell/history.sqlite3-wal
+
 # ---- Emacs runtime ----
 emacs/history
 emacs/eln-cache/
 emacs/var/
 emacs/auto-save-list/
-emacs/straght/
+
+# Straight.el (correct spelling)
+emacs/straight/
+
+# You *also* want to ignore the straight build cache:
+emacs/straight-build/
+emacs/straight-build-cache.el
+
 # ---- Nushell runtime ----
 nushell/history.sqlite3*
