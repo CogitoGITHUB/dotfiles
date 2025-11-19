@@ -1,0 +1,60 @@
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(setq straight-use-package-by-default t)
+
+(defun live-shaping/auto-tangle-and-reload ()
+  "When Emacs.org is saved, tangle it and reload init.el."
+  (when (string-equal (buffer-file-name)
+                      (expand-file-name "~/.config/emacs/Emacs.org"))
+    (message "🔧 Live-Shaping: Tangling & Reloading...")
+    (org-babel-tangle)
+    (load-file "~/.config/emacs/init.el")
+    (message "⚡ Live-Shaping: Reload complete.")))
+
+(add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
+
+(use-package evil
+  :straight (evil :type git :host github :repo "emacs-evil/evil")
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-C-i-jump nil)
+  :config
+  (evil-mode 1)
+
+  (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
+  (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
+  (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
+  (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
+
+  (define-key evil-visual-state-map (kbd "h") 'evil-backward-char)
+  (define-key evil-visual-state-map (kbd "t") 'evil-next-line)
+  (define-key evil-visual-state-map (kbd "n") 'evil-previous-line)
+  (define-key evil-visual-state-map (kbd "s") 'evil-forward-char))
+
+(use-package evil-collection
+  :after evil
+  :straight (evil-collection :type git :host github :repo "emacs-evil/evil-collection")
+  :config (evil-collection-init))
+
+(use-package denote
+  :straight (denote :type git :host github :repo "protesilaos/denote")
+  :init
+  (setq denote-directory (expand-file-name "~/Shapeless-Links")
+        denote-sort-keywords t
+        denote-file-type 'org
+        denote-known-keywords '("emacs" "manual" "lisp" "shaping" "core"))
+  :config
+  ;; Modern Denote loads Org + Dired integration automatically.
+  )

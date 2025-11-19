@@ -7,6 +7,6 @@ emacs/history
 emacs/eln-cache/
 emacs/var/
 emacs/auto-save-list/
-
+emacs/straght/
 # ---- Nushell runtime ----
 nushell/history.sqlite3*

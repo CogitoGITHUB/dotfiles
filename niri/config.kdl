@@ -1,7 +1,7 @@
 layout {
     empty-workspace-above-first
     background-color "white"
-    gaps 15
+    gaps 5
     center-focused-column "always"
     focus-ring {
         width 1
