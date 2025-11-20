@@ -159,7 +159,7 @@ environment {
      QT_QPA_PLATFORM "wayland"
 
     // Remove a variable by using null as the value:
-    // DISPLAY null
+     DISPLAY null
 }
 
 animations {
