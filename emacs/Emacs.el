@@ -68,3 +68,18 @@
   :after evil
   :straight (evil-collection :type git :host github :repo "emacs-evil/evil-collection")
   :config (evil-collection-init))
+
+(defun tmp-f-timestamp (s backend info)
+  (replace-regexp-in-string "&[lg]t;\\|[][]" "" s))
+(defun tmp-f-strike-through (s backend info) "")
+
+(use-package denote
+   :straight (denote :type git :host github :repo "protesilaos/denote")
+   :init
+   (setq denote-directory (expand-file-name "~/Shapeless-Links")
+         denote-sort-keywords t
+         denote-file-type 'org
+         denote-known-keywords '("emacs" "manual" "lisp" "shaping" "core"))
+(denote-rename-buffer-mode 1)
+   :config
+   )
