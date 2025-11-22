@@ -1,7 +1,7 @@
 layout {
     empty-workspace-above-first
     background-color "white"
-    gaps 5
+    gaps 10
     center-focused-column "always"
     focus-ring {
         width 1
@@ -15,13 +15,13 @@ layout {
         urgent-color "red"
     }
     shadow {
-        // on
+        //  on
     }
     struts {
-      left 10
-      right 10
-         top 5
-         bottom 5
+        left 10
+       right 10
+         top 10
+      bottom 10
     }
 }
 
@@ -83,15 +83,15 @@ input {
         // drag false
         // drag-lock
         natural-scroll
-        // accel-speed 0.2
-        // accel-profile "flat"
+         accel-speed 0.2
+         accel-profile "flat"
         // scroll-factor 1.0
-        // scroll-method "two-finger"
+        scroll-method "two-finger"
         // scroll-button 273
         // tap-button-map "left-middle-right"
         // click-method "clickfinger"
         // left-handed
-        // disabled-on-external-mouse
+         disabled-on-external-mouse
         // middle-emulation
     }
 
@@ -168,7 +168,7 @@ animations {
     // off
 
     // Slow down all animations by this factor. Values below 1 speed them up instead.
-    // slowdown 3.0
+     slowdown 1.5
 
     // Individual animations.
 
@@ -215,7 +215,7 @@ animations {
 overview {
     backdrop-color "white"
     workspace-shadow {
-        off
+         off
     }
 }
 
