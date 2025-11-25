@@ -1,5 +1,9 @@
-((buffer-size . 517) (buffer-checksum . "b1d771554cfc991b317246544d00328f2a630215"))
-((emacs-buffer-undo-list nil ("
+((buffer-size . 541) (buffer-checksum . "8690c1006773e595c5d9eb411fffd8305ad528cf"))
+((emacs-buffer-undo-list nil (nil rear-nonsticky nil 541 . 542) (nil fontified nil 517 . 542) (517 . 542) (t 26917 61131 939829 241000) nil ("
+(setq-default left-margin-width 0
+              right-margin-width 0)
+(set-window-buffer nil (current-buffer))
+" . 517) ((marker . 517) . -112) ((marker . 517) . -1) ((marker . 517) . -1) ((marker . 517) . -1) ((marker . 517) . -1) ((marker . 517) . -1) ((marker . 517) . -112) ((marker . 517) . -112) ((marker . 517) . -112) ((marker . 517) . -112) ((marker . 542) . -112) ((marker . 517) . -112) ((marker . 517) . -112) ((marker . 517) . -1) ((marker . 517) . -112) ((marker . 541) . -111) 629 (t 26917 61106 745860 792000) nil (nil rear-nonsticky nil 628 . 629) (nil fontified nil 518 . 629) (518 . 629) (t 26917 54891 562578 213000) nil ("
 ;; Absolute minimal monochrome text
 (setq frame-background-mode 'light) ;; or 'dark if you prefer reverse
 (set-face-attribute 'default nil :foreground \"black\" :background \"white\")
@@ -20,6 +24,47 @@
 (set-fringe-mode 0)
 (setq-default cursor-type 'hbar) ;; or 'bar or nil
 (set-cursor-color \"black\")
-" . 518) ((marker . 518) . -686) ((marker . 518) . -588) ((marker . 518) . -1) ((marker . 158) . -686) ((marker . 518) . -686) ((marker . 518) . -685) (t 26917 53876 647457 167000) nil (nil rear-nonsticky nil 1203 . 1204) (nil fontified nil 1106 . 1204) (1106 . 1204) nil (nil rear-nonsticky nil 1105 . 1106) (nil fontified nil 519 . 1106) (519 . 1106) nil (517 . 519) (t 26917 52263 16118 567000) nil ("(tool-bar-mode -1)
+" . 518) (t 26917 53876 647457 167000) nil (nil rear-nonsticky nil 1203 . 1204) (nil fontified nil 1106 . 1204) (1106 . 1204) nil (nil rear-nonsticky nil 1105 . 1106) (nil fontified nil 519 . 1106) (519 . 1106) nil (517 . 519) (t 26917 52263 16118 567000) nil ("(tool-bar-mode -1)
 " . 68) (49 . 68) ("(menu-bar-mode -1)
-" . 30) (49 . 68) 54 (t 26917 52081 726031 844000)) (emacs-pending-undo-list . t) (emacs-undo-equiv-table))
+" . 30) (49 . 68) 54 (t 26917 52081 726031 844000)) (emacs-pending-undo-list (nil rear-nonsticky nil 7285367 . 7285368) (nil fontified nil 7283671 . 7285368) (7283671 . 7285368) nil ("#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'gray-background
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t)
+
+  ;; Drown everything in black
+  (custom-set-faces
+   '(default ((t (:foreground \"#000000\" :background \"#ffffff\"))))
+   '(font-lock-comment-face ((t (:foreground \"#000000\"))))
+   '(font-lock-string-face ((t (:foreground \"#000000\"))))
+   '(font-lock-keyword-face ((t (:foreground \"#000000\"))))
+   '(font-lock-builtin-face ((t (:foreground \"#000000\"))))
+   '(font-lock-type-face ((t (:foreground \"#000000\"))))
+   '(font-lock-constant-face ((t (:foreground \"#000000\"))))
+   '(font-lock-variable-name-face ((t (:foreground \"#000000\"))))
+   '(font-lock-function-name-face ((t (:foreground \"#000000\"))))
+   '(org-level-1 ((t (:foreground \"#000000\"))))
+   '(org-level-2 ((t (:foreground \"#000000\"))))
+   '(org-level-3 ((t (:foreground \"#000000\"))))
+   '(org-level-4 ((t (:foreground \"#000000\"))))
+   '(org-link ((t (:foreground \"#000000\" :underline nil))))))
+#+end_src
+
+" . 7283672) ((marker . 324) . -1181) ((marker* . 324) . 1) ((marker . 324) . -1181) ((marker . 324) . -1181) ((marker . 324) . -1182) (t 26917 54259 911320 749000) nil (nil rear-nonsticky nil 7284852 . 7284853) (nil fontified nil 7283672 . 7284853) (7283672 . 7284853) nil ("
+#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'grayscale
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t))
+#+end_src
+" . 7283672) ((marker . 324) . -323) ((marker . 324) . -1) ((marker . 324) . -323) ((marker . 324) . -1) ((marker . 324) . -323) ((marker . 324) . -324) (t 26917 54180 274011 738000) nil (" " . 7283657) ((marker . 324) . -1) ((marker . 324) . -1) nil (nil rear-nonsticky nil 7283671 . 7283672) (nil fontified nil 7283658 . 7283672) (7283658 . 7283672) 7283657 nil (nil rear-nonsticky nil 7283982 . 7283983) (nil fontified nil 7283660 . 7283983) (7283660 . 7283983) nil (7283659 . 7283661) nil (7283656 . 7283658) (7283655 . 7283657) (t 26917 53708 488519 147000)) (emacs-undo-equiv-table))

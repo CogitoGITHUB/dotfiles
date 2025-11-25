@@ -1,7 +1,6 @@
 (add-to-list 'load-path "~/.config/emacs/lib/leaf")
-(require 'leaf)
+  (require 'leaf)
 
- 
 ;; You can also configure builtin package via leaf!
 (leaf cus-start
   :doc "define customization properties of builtins"
@@ -13,7 +12,10 @@
            (menu-bar-mode . nil)
            (tool-bar-mode . nil)
            (scroll-bar-mode . nil)
-           (indent-tabs-mode . nil)))
+           (indent-tabs-mode . nil)
+           (window-divider-mode . nil)
+           (window-divider-default-right-width . 1)
+           (window-divider-default-bottom-width . 1)))
 
 ;; Cursor moves through wrapped segments naturally
 (setq line-move-visual t)
@@ -35,24 +37,36 @@
   (setq evil-want-keybinding nil
         evil-want-C-u-scroll t)
   :config
-  (evil-mode 1))
+  (evil-mode 1)
 
-(leaf annalist
-  :load-path "~/.config/emacs/lib/annalist"
-  :require annalist)
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
+    (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
+    (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
+    (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
 
-(leaf evil-collection
-  :load-path "~/.config/emacs/lib/evil-collection"
-  :after evil
-  :require evil-collection
-  :config
-  (evil-collection-init))
+    (define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
+    (define-key evil-motion-state-map (kbd "t") 'evil-next-line)
+    (define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
+    (define-key evil-motion-state-map (kbd "s") 'evil-forward-char)))
 
-(leaf evil-surround
-  :load-path "~/.config/emacs/lib/evil-surround"
-  :require evil-surround
-  :config
-  (global-evil-surround-mode 1))
+  
+  (leaf annalist
+    :load-path "~/.config/emacs/lib/annalist"
+    :require annalist)
+
+  (leaf evil-collection
+    :load-path "~/.config/emacs/lib/evil-collection"
+    :after evil
+    :require evil-collection
+    :config
+    (evil-collection-init))
+
+  (leaf evil-surround
+    :load-path "~/.config/emacs/lib/evil-surround"
+    :require evil-surround
+    :config
+    (global-evil-surround-mode 1))
 
 (defun tmp-f-timestamp (s backend info)
   (replace-regexp-in-string "&[lg]t;\\|[][]" "" s))
@@ -142,8 +156,8 @@
   :require ace-jump-mode
   :init
   ;; Before any jump, announce movement / integrate with visual pulse systems
-  (add-hook 'ace-jump-mode-before-jump-hook
-            (lambda () (message "shapeshift — jump engaged")))
+  ;; (add-hook 'ace-jump-mode-before-jump-hook
+            ;; (lambda () (message "shapeshift — jump engaged")))
   :config
   ;; target search across all windows
   (setq ace-jump-mode-scope 'global)
@@ -152,11 +166,11 @@
   (setq ace-jump-mode-gray-background nil)
 
   ;; do not ignore case in words
-  (setq ace-jump-mode-case-fold nil)
+  (setq ace-jump-mode-case-fold t)
 
   ;; Dvorak home-row jump keys (optional, uncomment if desired)
-  ;; (setq ace-jump-mode-move-keys
-  ;;       (string-to-list "aoeuidhtns"))
+  (setq ace-jump-mode-move-keys
+        (string-to-list "aoeuidhtns"))
 
   ;; Evil modal bindings — spacebar becomes teleport
   (define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
@@ -592,6 +606,28 @@
    '(dired-perm-write ((t (:foreground "#000000"))))
    '(dired-special ((t (:foreground "#000000"))))
    '(dired-warning ((t (:foreground "#000000" :weight bold))))))
+
+(leaf writeroom-mode
+  :load-path "/home/asdf/.config/emacs/lib/writeroom-mode"
+  :global-minor-mode global-writeroom-mode
+  :config
+
+  ;; disable all frame/global side-effects
+  (setq writeroom-global-effects nil)
+  (setq writeroom-maximize-window nil)
+  (setq writeroom-mode-line nil)
+  (setq writeroom-bottom-divider-width 0)
+
+
+  ;; evil-style width control bindings
+  (with-eval-after-load 'writeroom-mode
+    (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+    (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+    (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)))
+
+(leaf centered-cursor-mode
+  :load-path "/home/asdf/.config/emacs/lib/centered-cursor-mode"
+  :global-minor-mode t)
 
 (defun live-shaping/auto-tangle-and-reload ()
   "When Emacs.org is saved, tangle it and reload init.el."

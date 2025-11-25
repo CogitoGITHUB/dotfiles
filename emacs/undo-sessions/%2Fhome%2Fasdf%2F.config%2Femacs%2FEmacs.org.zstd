@@ -1,84 +1,185 @@
-((buffer-size . 7285892) (buffer-checksum . "d12927ac656d44e951786ca18f15d42486978aa7"))
-((emacs-buffer-undo-list nil (7192270 . 7192271) ("u" . -7192270) ((marker . 7192270) . -1) ((marker . 7192270) . -1) ((marker . 7192270) . -1) ((marker) . -1) 7192271 (7192268 . 7192271) ("y" . -7192268) ((marker . 7192270) . -1) ((marker) . -1) ("e" . -7192269) ((marker . 7192270) . -1) ((marker) . -1) ("l" . -7192270) ((marker . 7192270) . -1) ((marker) . -1) ("l" . -7192271) ((marker . 7192270) . -1) ((marker) . -1) ("o" . -7192272) ((marker . 7192270) . -1) ((marker) . -1) ("w" . -7192273) ((marker . 7192270) . -1) ((marker) . -1) 7192274 (7192313 . 7192316) ("m" . -7192313) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker . 7192310) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("a" . -7192314) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("g" . -7192315) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("e" . -7192316) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("n" . -7192317) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("t" . -7192318) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("a" . -7192319) ((marker . 7192270) . -1) ((marker) . -1) 7192320 (t 26917 54403 779578 347000) nil (7192231 . 7192232) ("i" . -7192231) ((marker . 7192270) . -1) 7192232 (7192231 . 7192232) ("u" . -7192231) ((marker . 7192270) . -1) 7192232 (7192231 . 7192232) (7192229 . 7192231) ("g" . -7192229) ((marker . 7192270) . -1) ("r" . -7192230) ((marker . 7192270) . -1) ("e" . -7192231) ((marker . 7192270) . -1) ("e" . -7192232) ((marker . 7192270) . -1) ("n" . -7192233) ((marker . 7192270) . -1) 7192234 (t 26917 54333 341495 904000) nil (7192229 . 7192234) ("p." . 7192229) (7192229 . 7192231) ("red" . 7192229) (7192266 . 7192274) nil ("r" . -7192266) ((marker . 7192270) . -1) ("-" . -7192267) ((marker . 7192270) . -1) ("y" . -7192268) ((marker . 7192270) . -1) ("e" . -7192269) ((marker . 7192270) . -1) ("l" . -7192270) ((marker . 7192270) . -1) ("l" . -7192271) ((marker . 7192270) . -1) ("o" . -7192272) ((marker . 7192270) . -1) ("w" . -7192273) ((marker . 7192270) . -1) 7192274 (7192229 . 7192232) ("p" . -7192229) ((marker . 7192270) . -1) ("." . -7192230) ((marker . 7192270) . -1) 7192231 (7192229 . 7192231) ("g" . -7192229) ((marker . 7192270) . -1) ("r" . -7192230) ((marker . 7192270) . -1) ("e" . -7192231) ((marker . 7192270) . -1) ("e" . -7192232) ((marker . 7192270) . -1) ("n" . -7192233) ((marker . 7192270) . -1) 7192234 (t 26917 54333 341495 904000) nil (nil rear-nonsticky nil 7285367 . 7285368) (nil fontified nil 7283671 . 7285368) (7283671 . 7285368) nil ("#+begin_src emacs-lisp
-(leaf modus-themes
-  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+((buffer-size . 7287522) (buffer-checksum . "ac84a149b8ff30afb1fc9b9eee4651bd18ceb93a"))
+((emacs-buffer-undo-list nil (7206983 . 7207901) ("(leaf ace-jump-mode
+  :load-path \"~/.config/emacs/lib/ace-jump-mode\"
+  :require ace-jump-mode
   :init
-  (setq modus-themes-bold-constructs t
-        modus-themes-italic-constructs t
-        modus-themes-org-blocks 'gray-background
-        modus-themes-fringes 'intense)
+  ;; Before any jump, announce movement / integrate with visual pulse systems
+  ;; (add-hook 'ace-jump-mode-before-jump-hook
+            ;; (lambda () (message \"shapeshift — jump engaged\")))
   :config
-  (load-theme 'modus-operandi t)
+  ;; target search across all windows
+  (setq ace-jump-mode-scope 'global)
 
-  ;; Drown everything in black
-  (custom-set-faces
-   '(default ((t (:foreground \"#000000\" :background \"#ffffff\"))))
-   '(font-lock-comment-face ((t (:foreground \"#000000\"))))
-   '(font-lock-string-face ((t (:foreground \"#000000\"))))
-   '(font-lock-keyword-face ((t (:foreground \"#000000\"))))
-   '(font-lock-builtin-face ((t (:foreground \"#000000\"))))
-   '(font-lock-type-face ((t (:foreground \"#000000\"))))
-   '(font-lock-constant-face ((t (:foreground \"#000000\"))))
-   '(font-lock-variable-name-face ((t (:foreground \"#000000\"))))
-   '(font-lock-function-name-face ((t (:foreground \"#000000\"))))
-   '(org-level-1 ((t (:foreground \"#000000\"))))
-   '(org-level-2 ((t (:foreground \"#000000\"))))
-   '(org-level-3 ((t (:foreground \"#000000\"))))
-   '(org-level-4 ((t (:foreground \"#000000\"))))
-   '(org-link ((t (:foreground \"#000000\" :underline nil))))))
-#+end_src
+  ;; disable gray background (clean screen)
+  (setq ace-jump-mode-gray-background nil)
 
-" . 7283672) ((marker . 7283647) . -1181) ((marker* . 7192271) . 1) ((marker . 7285358) . -1181) ((marker . 7285360) . -1181) ((marker . 7285360) . -1182) (t 26917 54259 911320 749000) nil (nil rear-nonsticky nil 7284852 . 7284853) (nil fontified nil 7283672 . 7284853) (7283672 . 7284853) nil ("
-#+begin_src emacs-lisp
-(leaf modus-themes
-  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  ;; do not ignore case in words
+  (setq ace-jump-mode-case-fold t)
+
+  ;; Dvorak home-row jump keys (optional, uncomment if desired)
+  (setq ace-jump-mode-move-keys
+  ;;       (string-to-list \"aoeuidhtns\"))
+
+  ;; Evil modal bindings — spacebar becomes teleport
+  (define-key evil-normal-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-visual-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-motion-state-map (kbd \"SPC\") 'ace-jump-mode))
+" . 7206983) ((marker . 7207617) . -634) ((marker . 7206983) . -602) ((marker . 7206983) . -921) ((marker . 7206983) . -602) ((marker . 7206983) . -634) ((marker) . -634) ((marker) . -634) 7207617 nil (7206983 . 7207904) ("(leaf ace-jump-mode
+  :load-path \"~/.config/emacs/lib/ace-jump-mode\"
+  :require ace-jump-mode
   :init
-  (setq modus-themes-bold-constructs t
-        modus-themes-italic-constructs t
-        modus-themes-org-blocks 'grayscale
-        modus-themes-fringes 'intense)
+  ;; Before any jump, announce movement / integrate with visual pulse systems
+  ;; (add-hook 'ace-jump-mode-before-jump-hook
+            ;; (lambda () (message \"shapeshift — jump engaged\")))
   :config
-  (load-theme 'modus-operandi t))
-#+end_src
-" . 7283672) ((marker . 7283647) . -323) ((marker . 7285360) . -1) ((marker . 7285358) . -323) ((marker . 7285360) . -1) ((marker . 7285360) . -323) ((marker . 7285360) . -324) (t 26917 54180 274011 738000) nil (" " . 7283657) ((marker . 7283647) . -1) ((marker . 7283648) . -1) nil (nil rear-nonsticky nil 7283671 . 7283672) (nil fontified nil 7283658 . 7283672) (7283658 . 7283672) 7283657 nil (nil rear-nonsticky nil 7283982 . 7283983) (nil fontified nil 7283660 . 7283983) (7283660 . 7283983) nil (7283659 . 7283661) nil (7283656 . 7283658) (7283655 . 7283657) (t 26917 53708 488519 147000)) (emacs-pending-undo-list (nil rear-nonsticky nil 7285367 . 7285368) (nil fontified nil 7283671 . 7285368) (7283671 . 7285368) nil ("#+begin_src emacs-lisp
-(leaf modus-themes
-  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
-  :init
-  (setq modus-themes-bold-constructs t
-        modus-themes-italic-constructs t
-        modus-themes-org-blocks 'gray-background
-        modus-themes-fringes 'intense)
-  :config
-  (load-theme 'modus-operandi t)
+  ;; target search across all windows
+  (setq ace-jump-mode-scope 'global)
 
-  ;; Drown everything in black
-  (custom-set-faces
-   '(default ((t (:foreground \"#000000\" :background \"#ffffff\"))))
-   '(font-lock-comment-face ((t (:foreground \"#000000\"))))
-   '(font-lock-string-face ((t (:foreground \"#000000\"))))
-   '(font-lock-keyword-face ((t (:foreground \"#000000\"))))
-   '(font-lock-builtin-face ((t (:foreground \"#000000\"))))
-   '(font-lock-type-face ((t (:foreground \"#000000\"))))
-   '(font-lock-constant-face ((t (:foreground \"#000000\"))))
-   '(font-lock-variable-name-face ((t (:foreground \"#000000\"))))
-   '(font-lock-function-name-face ((t (:foreground \"#000000\"))))
-   '(org-level-1 ((t (:foreground \"#000000\"))))
-   '(org-level-2 ((t (:foreground \"#000000\"))))
-   '(org-level-3 ((t (:foreground \"#000000\"))))
-   '(org-level-4 ((t (:foreground \"#000000\"))))
-   '(org-link ((t (:foreground \"#000000\" :underline nil))))))
-#+end_src
+  ;; disable gray background (clean screen)
+  (setq ace-jump-mode-gray-background nil)
 
-" . 7283672) ((marker . 7283647) . -1181) ((marker* . 7192271) . 1) ((marker . 7285358) . -1181) ((marker . 7285360) . -1181) ((marker . 7285360) . -1182) (t 26917 54259 911320 749000) nil (nil rear-nonsticky nil 7284852 . 7284853) (nil fontified nil 7283672 . 7284853) (7283672 . 7284853) nil ("
-#+begin_src emacs-lisp
-(leaf modus-themes
-  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  ;; do not ignore case in words
+  (setq ace-jump-mode-case-fold t)
+
+  ;; Dvorak home-row jump keys (optional, uncomment if desired)
+  ;; (setq ace-jump-mode-move-keys
+  ;;       (string-to-list \"aoeuidhtns\"))
+
+  ;; Evil modal bindings — spacebar becomes teleport
+  (define-key evil-normal-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-visual-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-motion-state-map (kbd \"SPC\") 'ace-jump-mode))
+" . 7206983) ((marker . 7206983) . -602) ((marker . 7206983) . -547) ((marker* . 7207901) . 248) ((marker . 7206983) . -675) ((marker . 7206983) . -547) ((marker . 7207617) . -602) ((marker . 7206983) . -675) ((marker . 7206983) . -547) ((marker . 7206983) . -547) ((marker . 7206983) . -547) ((marker . 7206983) . -602) ((marker . 7206983) . -602) ((marker . 7206983) . -602) ((marker . 7206983) . -602) ((marker) . -602) ((marker) . -602) 7207585 (t 26917 64062 569918 612000) nil (7206983 . 7207907) ("(leaf ace-jump-mode
+  :load-path \"~/.config/emacs/lib/ace-jump-mode\"
+  :require ace-jump-mode
   :init
-  (setq modus-themes-bold-constructs t
-        modus-themes-italic-constructs t
-        modus-themes-org-blocks 'grayscale
-        modus-themes-fringes 'intense)
+  ;; Before any jump, announce movement / integrate with visual pulse systems
+  ;; (add-hook 'ace-jump-mode-before-jump-hook
+            (lambda () (message \"shapeshift — jump engaged\")))
   :config
-  (load-theme 'modus-operandi t))
-#+end_src
-" . 7283672) ((marker . 7283647) . -323) ((marker . 7285360) . -1) ((marker . 7285358) . -323) ((marker . 7285360) . -1) ((marker . 7285360) . -323) ((marker . 7285360) . -324) (t 26917 54180 274011 738000) nil (" " . 7283657) ((marker . 7283647) . -1) ((marker . 7283648) . -1) nil (nil rear-nonsticky nil 7283671 . 7283672) (nil fontified nil 7283658 . 7283672) (7283658 . 7283672) 7283657 nil (nil rear-nonsticky nil 7283982 . 7283983) (nil fontified nil 7283660 . 7283983) (7283660 . 7283983) nil (7283659 . 7283661) nil (7283656 . 7283658) (7283655 . 7283657) (t 26917 53708 488519 147000)) (emacs-undo-equiv-table (3 . -1)))
+  ;; target search across all windows
+  (setq ace-jump-mode-scope 'global)
+
+  ;; disable gray background (clean screen)
+  (setq ace-jump-mode-gray-background nil)
+
+  ;; do not ignore case in words
+  (setq ace-jump-mode-case-fold t)
+
+  ;; Dvorak home-row jump keys (optional, uncomment if desired)
+  ;; (setq ace-jump-mode-move-keys
+  ;;       (string-to-list \"aoeuidhtns\"))
+
+  ;; Evil modal bindings — spacebar becomes teleport
+  (define-key evil-normal-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-visual-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-motion-state-map (kbd \"SPC\") 'ace-jump-mode))
+" . 7206983) ((marker . 7207617) . -229) 7207212 nil (7206983 . 7207904) ("(leaf ace-jump-mode
+  :load-path \"~/.config/emacs/lib/ace-jump-mode\"
+  :require ace-jump-mode
+  :init
+  ;; Before any jump, announce movement / integrate with visual pulse systems
+  (add-hook 'ace-jump-mode-before-jump-hook
+            (lambda () (message \"shapeshift — jump engaged\")))
+  :config
+  ;; target search across all windows
+  (setq ace-jump-mode-scope 'global)
+
+  ;; disable gray background (clean screen)
+  (setq ace-jump-mode-gray-background nil)
+
+  ;; do not ignore case in words
+  (setq ace-jump-mode-case-fold t)
+
+  ;; Dvorak home-row jump keys (optional, uncomment if desired)
+  ;; (setq ace-jump-mode-move-keys
+  ;;       (string-to-list \"aoeuidhtns\"))
+
+  ;; Evil modal bindings — spacebar becomes teleport
+  (define-key evil-normal-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-visual-state-map (kbd \"SPC\") 'ace-jump-mode)
+  (define-key evil-motion-state-map (kbd \"SPC\") 'ace-jump-mode))
+" . 7206983) ((marker . 7206983) . -228) ((marker . 7206983) . -526) ((marker . 7206983) . -526) ((marker . 7206983) . -526) ((marker . 7206983) . -526) ((marker . 7206983) . -526) ((marker . 7207617) . -182) 7207165 (t 26917 63899 499774 502000) nil (690133 . 690706) nil ("with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd \"h\") 'evil-backward-char)
+    (define-key evil-normal-state-map (kbd \"t\") 'evil-next-line)
+    (define-key evil-normal-state-map (kbd \"n\") 'evil-previous-line)
+    (define-key evil-normal-state-map (kbd \"s\") 'evil-forward-char)
+
+    (define-key evil-motion-state-map (kbd \"h\") 'evil-backward-char)
+    (define-key evil-motion-state-map (kbd \"t\") 'evil-next-line)
+    (define-key evil-motion-state-map (kbd \"n\") 'evil-previous-line)
+    (define-key evil-motion-state-map (kbd \"s\") 'evil-forward-char)))
+
+" . 690133) ((marker . 7206983) . -572) ((marker . 7206983) . -572) ((marker . 690705) . -572) ((marker* . 690705) . 1) ((marker . 7207617) . -572) ((marker . 690230) . -97) 690705 (t 26917 63899 499774 502000) nil ("#+begin_src emacs-lisp
+" . 689939) ((marker . 7206983) . -23) ((marker . 7206983) . -23) ((marker . 7206983) . -23) ((marker . 690705) . -22) ((marker . 689939) . -23) ((marker . 689939) . -23) nil ("#+end_src
+" . 690728) ((marker . 690705) . -9) nil (nil rear-nonsticky nil 690737 . 690738) (nil fontified nil 689963 . 690738) (689963 . 690738) nil (689964 . 689966) ("  " . 689963) ((marker . 7207617) . -2) (689963 . 689966) (689964 . 689966) (689979 . 689981) (690025 . 690027) (690045 . 690047) (690067 . 690068) (690069 . 690070) (690118 . 690119) (690120 . 690121) (690132 . 690134) (690161 . 690163) (690169 . 690171) (690196 . 690198) (690216 . 690217) (690218 . 690219) (690265 . 690266) (690267 . 690268) (690290 . 690291) (690292 . 690293) (690300 . 690302) 689962 (689962 . 689963) nil ("(leaf evil
+  :load-path \"~/.config/emacs/lib/evil\"
+  :require evil
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t)
+  :config
+  (evil-mode 1))
+" . 689962) ((marker . 7206983) . -166) ((marker . 7206983) . -166) ((marker . 690705) . -166) ((marker . 7207617) . -166) 690128 (t 26917 63471 947789 602000) nil (689962 . 690499) nil ("(leaf evil
+  :load-path \"~/.config/emacs/lib/evil\"
+  :require evil
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t)
+  :config
+  (evil-mode 1))
+
+(leaf annalist
+  :load-path \"~/.config/emacs/lib/annalist\"
+  :require annalist)
+
+(leaf evil-collection
+  :load-path \"~/.config/emacs/lib/evil-collection\"
+  :after evil
+  :require evil-collection
+  :config
+  (evil-collection-init))
+
+(leaf evil-surround
+  :load-path \"~/.config/emacs/lib/evil-surround\"
+  :require evil-surround
+  :config
+  (global-evil-surround-mode 1))
+" . 689962) ((marker . 7206983) . -536) ((marker . 7206983) . -536) ((marker . 690705) . -536) (t 26917 63471 947789 602000) nil (803993 . 803994) nil ("
+" . 803993) (t 26917 63471 947789 602000)) (emacs-pending-undo-list ("#+begin_src emacs-lisp
+" . 689939) ((marker . 7206983) . -23) ((marker . 7206983) . -23) ((marker . 7206983) . -23) ((marker . 690705) . -22) ((marker . 689939) . -23) ((marker . 689939) . -23) nil ("#+end_src
+" . 690728) ((marker . 690705) . -9) nil (nil rear-nonsticky nil 690737 . 690738) (nil fontified nil 689963 . 690738) (689963 . 690738) nil (689964 . 689966) ("  " . 689963) ((marker . 7207617) . -2) (689963 . 689966) (689964 . 689966) (689979 . 689981) (690025 . 690027) (690045 . 690047) (690067 . 690068) (690069 . 690070) (690118 . 690119) (690120 . 690121) (690132 . 690134) (690161 . 690163) (690169 . 690171) (690196 . 690198) (690216 . 690217) (690218 . 690219) (690265 . 690266) (690267 . 690268) (690290 . 690291) (690292 . 690293) (690300 . 690302) 689962 (689962 . 689963) nil ("(leaf evil
+  :load-path \"~/.config/emacs/lib/evil\"
+  :require evil
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t)
+  :config
+  (evil-mode 1))
+" . 689962) ((marker . 7206983) . -166) ((marker . 7206983) . -166) ((marker . 690705) . -166) ((marker . 7207617) . -166) 690128 (t 26917 63471 947789 602000) nil (689962 . 690499) nil ("(leaf evil
+  :load-path \"~/.config/emacs/lib/evil\"
+  :require evil
+  :init
+  (setq evil-want-keybinding nil
+        evil-want-C-u-scroll t)
+  :config
+  (evil-mode 1))
+
+(leaf annalist
+  :load-path \"~/.config/emacs/lib/annalist\"
+  :require annalist)
+
+(leaf evil-collection
+  :load-path \"~/.config/emacs/lib/evil-collection\"
+  :after evil
+  :require evil-collection
+  :config
+  (evil-collection-init))
+
+(leaf evil-surround
+  :load-path \"~/.config/emacs/lib/evil-surround\"
+  :require evil-surround
+  :config
+  (global-evil-surround-mode 1))
+" . 689962) ((marker . 7206983) . -536) ((marker . 7206983) . -536) ((marker . 690705) . -536) (t 26917 63471 947789 602000) nil (803993 . 803994) nil ("
+" . 803993) (t 26917 63471 947789 602000)) (emacs-undo-equiv-table (5 . -1) (-6 . -8) (-8 . t)))

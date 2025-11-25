@@ -2,130 +2,82 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Tue Nov 25 18:16:51 2025
+;; Created Tue Nov 25 20:52:17 2025
 ;; Desktop file format version 208
 ;; Emacs version 30.2
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (26917 54899 440522 376000) (desktop . "208") "@nixos" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font . "-PfEd-DejaVu Sans Mono-regular-normal-normal-*-13-*-*-*-m-0-iso10646-1") (border-width . 0) (internal-border-width . 24) (child-frame-border-width) (right-divider-width . 24) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#000000") (background-color . "#ffffff") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 0) (right-fringe . 0) (no-special-glyphs) (scroll-bar-foreground . "#9f9f9f") (scroll-bar-background . "#f2f2f2") (menu-bar-lines . 0) (tab-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 16) (scroll-bar-height . 16) (alpha) (alpha-background) (no-focus-on-map) (no-accept-focus) (fullscreen . fullheight) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "#000000") (font-parameter) (sticky) (environment) (last-focus-update . t) (undecorated-round . t) (drag-internal-border . 1) (window-divider-width . 0) (frameset--id . "33EC-A526-FB8D-02A6") (frameset--mini t . t) (modeline . t) (unsplittable) (icon-name) (display . "wayland-1") (explicit-name) (user-size . t) (min-width . 1) (min-height . 1) (height . 58) (width . 157) (left . 0) (top . 0)) ((min-height . 4) (min-width . 10) (min-height-ignore . 1) (min-width-ignore . 2) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 80) (min-pixel-height-ignore . 17) (min-pixel-width-ignore . 16) (min-pixel-height-safe . 17) (min-pixel-width-safe . 16)) leaf (pixel-width . 1263) (pixel-height . 973) (total-width . 158) (total-height . 57) (normal-height . 1.0) (normal-width . 1.0) (buffer ".gitignore" (selected . t) (hscroll . 0) (fringes 0 0 nil nil) (margins nil) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 166) (start . 1)) (prev-buffers (".config" 1 632) ("emacs" 1 128) ("Emacs.org" 1 474995) ("~" 1 511) ("Shapeless-Links" 1 123) ("20251122T211657==yyyy--aaa__eee.org" 1 1) ("lib" 1 1846) ("early-init.el" 1 518) ("init.el" 1 22) ("*scratch*" 1 1))))])
+(setq desktop-saved-frameset [frameset 1 (26917 64225 733801 193000) (desktop . "208") "@nixos" nil nil ((((minibuffer . t) (undecorated . t) (override-redirect) (font . "-PfEd-DejaVu Sans Mono-regular-normal-normal-*-13-*-*-*-m-0-iso10646-1") (border-width . 0) (internal-border-width . 0) (child-frame-border-width) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#000000") (background-color . "#ffffff") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 0) (right-fringe . 0) (no-special-glyphs) (scroll-bar-foreground . "#9f9f9f") (scroll-bar-background . "#f2f2f2") (menu-bar-lines . 0) (tab-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 16) (scroll-bar-height . 16) (alpha 100 100) (alpha-background) (no-focus-on-map) (no-accept-focus) (fullscreen . fullheight) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "#000000") (font-parameter) (sticky) (environment) (last-focus-update) (writeroom-fullscreen . fullheight) (writeroom-alpha) (writeroom-menu-bar-lines . 0) (writeroom-tool-bar-lines . 0) (writeroom-vertical-scroll-bars) (writeroom-bottom-divider-width . 0) (undecorated-round . t) (drag-internal-border . 1) (window-divider-width . 0) (frameset--id . "33EC-A526-FB8D-02A6") (frameset--mini t . t) (modeline . t) (unsplittable) (icon-name) (display . "wayland-1") (explicit-name) (user-size . t) (min-width . 1) (min-height . 1) (tabs (current-tab (name . "Emacs.org") (explicit-name))) (height . 61) (width . 187) (left . 0) (top . 0)) ((min-height . 4) (min-width . 10) (min-height-ignore . 1) (min-width-ignore . 2) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 68) (min-pixel-width . 80) (min-pixel-height-ignore . 17) (min-pixel-width-ignore . 16) (min-pixel-height-safe . 17) (min-pixel-width-safe . 16)) leaf (pixel-width . 1499) (pixel-height . 1021) (total-width . 187) (total-height . 60) (normal-height . 1.0) (normal-width . 1.0) (buffer "Emacs.org" (selected . t) (hscroll . 0) (fringes 0 0 t nil) (margins 38 . 39) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 90892) (start . 1)) (prev-buffers ("20251122T211657==yyyy--aaa__eee.org" 1 1) ("Emacs.org" 7206833 7206983) ("~" 1 511) (".config" 1 632) (".gitignore" 1 166) ("lib" 1 1511) ("Shapeless-Links" 1 207) ("emacs" 1 528) ("early-init.el" 1 517) ("init.el" 1 22) ("COMMIT_EDITMSG" 1 2003) (".git" 1 238) ("*scratch*" 1 1))))])
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
-(setq search-ring '(#("tool" 0 4 (isearch-case-fold-search t isearch-regexp-function nil))))
-(setq regexp-search-ring nil)
-(setq register-alist '((48 . #("\n" 0 1 (yank-handler (evil-yank-line-handler nil t) fontified t)))))
-(setq file-name-history '("~/.config/emacs/" "~/" "~/.config/emacs/Emacs.org" "~/.config/emacs/early-init.el"))
+(setq search-ring '(#("evil" 0 4 (isearch-case-fold-search t isearch-regexp-function nil)) #("evvvvvv" 0 7 (isearch-case-fold-search t isearch-regexp-function nil)) #("tool" 0 4 (isearch-case-fold-search t isearch-regexp-function nil))))
+(setq regexp-search-ring '(#("\\<\n\\>" 0 5 (isearch-case-fold-search nil))))
+(setq register-alist '((48 . "")))
+(setq file-name-history '("~/.config/emacs/" "~/.config/.git/" "~/.config/.git/COMMIT_EDITMSG" "~/.config/emacs/" "~/" "~/.config/emacs/Emacs.org" "~/.config/emacs/early-init.el"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
-(desktop-create-buffer 208
-  "/home/asdf/.config/.gitignore"
-  ".gitignore"
-  'fundamental-mode
-  '(visual-line-mode evil-local-mode evil-collection-unimpaired-mode evil-surround-mode undo-fu-session-mode yas-minor-mode pulsar-mode)
-  166
-  '(nil nil)
-  nil
-  nil
-  '((buffer-display-time 26917 54891 572102 471000) (buffer-file-coding-system . undecided-unix) (overwrite-mode) (truncate-lines))
-  '((mark-ring nil)))
-
-(desktop-create-buffer 208
-  nil
-  ".config"
-  'dired-mode
-  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
-  632
-  '(632 nil)
-  t
-  '("/home/asdf/.config/")
-  '((buffer-display-time 26917 54861 655847 827000) (overwrite-mode) (truncate-lines))
-  '((mark-ring (368 115 368 368 368))))
-
 (desktop-create-buffer 208
   "/home/asdf/.config/emacs/Emacs.org"
   "Emacs.org"
   'org-mode
-  '(pdf-view-restore-mode flycheck-mode yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode evil-local-mode font-lock-mode pulsar-mode undo-fu-session-mode)
-  474995
-  '(474995 nil)
+  '(centered-cursor-mode visual-fill-column-mode writeroom-mode pdf-view-restore-mode flycheck-mode yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode evil-local-mode font-lock-mode pulsar-mode undo-fu-session-mode)
+  90892
+  '(7207486 nil)
   nil
   nil
-  '((tab-width . 8) (buffer-display-time 26917 54542 782798 486000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines))
-  '((mark-ring (474995 116 116 7192270 7283647 7285359 7283662 7283662 7285360 7285360 7285360 7285360 7283648 7283648 7285360 7283646))))
-
-(desktop-create-buffer 208
-  nil
-  "emacs"
-  'dired-mode
-  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
-  128
-  '(128 nil)
-  t
-  '("/home/asdf/.config/emacs/")
-  '((buffer-display-time 26917 54859 1419 987000) (overwrite-mode) (truncate-lines))
-  '((mark-ring (528 128 528 128 529 529 529 529 529 529 529 643 529 299 529 587))))
-
-(desktop-create-buffer 208
-  nil
-  "~"
-  'dired-mode
-  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
-  511
-  '(511 nil)
-  t
-  '("/home/asdf/")
-  '((buffer-display-time 26917 54533 835803 556000) (overwrite-mode) (truncate-lines))
-  '((mark-ring (1638 511 511))))
-
-(desktop-create-buffer 208
-  "/home/asdf/Shapeless-Links/20251122T211657==yyyy--aaa__eee.org"
-  "20251122T211657==yyyy--aaa__eee.org"
-  'org-mode
-  '(visual-line-mode evil-local-mode evil-collection-unimpaired-mode evil-surround-mode undo-fu-session-mode yas-minor-mode flycheck-mode pulsar-mode)
-  1
-  '(1 nil)
-  nil
-  nil
-  '((tab-width . 8) (buffer-display-time 26917 54530 792082 963000) (buffer-file-coding-system . undecided-unix) (overwrite-mode) (truncate-lines))
-  '((mark-ring nil)))
+  '((tab-width . 8) (buffer-display-time 26917 64169 9998 92000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring (7207617 7206983 214404 115 690705 690230 689940 690709 804600 804600 804600 804600 804600 804600 505346 536677))))
 
 (desktop-create-buffer 208
   nil
   "Shapeless-Links"
   'dired-mode
-  '(visual-line-mode evil-local-mode evil-collection-unimpaired-mode evil-surround-mode undo-fu-session-mode yas-minor-mode pulsar-mode)
-  123
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode font-lock-mode evil-local-mode undo-fu-session-mode pulsar-mode)
+  207
   '(123 nil)
   t
   '("/home/asdf/Shapeless-Links/")
-  '((buffer-display-time 26917 54533 23077 611000) (overwrite-mode) (truncate-lines))
+  '((buffer-display-time 26917 61970 565330 834000) (overwrite-mode) (truncate-lines))
   '((mark-ring (171))))
 
 (desktop-create-buffer 208
   nil
   "lib"
   'dired-mode
-  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode evil-local-mode undo-fu-session-mode pulsar-mode)
-  1846
-  '(1846 nil)
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode font-lock-mode evil-local-mode undo-fu-session-mode pulsar-mode)
+  1511
+  '(1511 nil)
   t
   '("/home/asdf/.config/emacs/lib/")
-  '((buffer-display-time 26917 54075 195783 211000) (overwrite-mode) (truncate-lines))
-  '((mark-ring (1846))))
+  '((buffer-display-time 26917 61977 943495 238000) (overwrite-mode) (truncate-lines))
+  '((mark-ring (1511 1511 1846 1846))))
 
-(desktop-append-buffer-args 208
+(desktop-create-buffer 208
+  nil
+  "emacs"
+  'dired-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
+  528
+  '(528 nil)
+  t
+  '("/home/asdf/.config/emacs/")
+  '((buffer-display-time 26917 61321 595453 178000) (overwrite-mode) (truncate-lines))
+  '((mark-ring (298 528 586 128 528 128 528 128 529 529 529 529 529 529 529 643))))
+
+(desktop-create-buffer 208
   "/home/asdf/.config/emacs/early-init.el"
   "early-init.el"
   'emacs-lisp-mode
   '(flycheck-mode yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode eldoc-mode font-lock-mode)
-  518
-  '(518 nil)
+  517
+  '(517 nil)
   nil
   nil
-  '((buffer-display-time 26917 54883 450807 320000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines))
-  '((mark-ring (518 518 518 150 517 517 517 517 1 1 1 1 1 1 1 1))))
+  '((buffer-display-time 26917 61302 863708 514000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring (517 517 517 517 517 517 517 517 150 517 517 517 517 1 1 1))))
 
-(desktop-append-buffer-args 208
+(desktop-create-buffer 208
   "/home/asdf/.config/emacs/init.el"
   "init.el"
   'emacs-lisp-mode
@@ -134,6 +86,78 @@
   '(22 nil)
   nil
   nil
-  '((buffer-display-time 26917 53457 982496 271000) (buffer-file-coding-system . prefer-utf-8-unix) (overwrite-mode) (truncate-lines))
-  '((mark-ring (1 75 25 75 1))))
+  '((buffer-display-time 26917 60927 264980 914000) (buffer-file-coding-system . prefer-utf-8-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring (22 22 1 75 25 75 1))))
+
+(desktop-create-buffer 208
+  "/home/asdf/.config/.git/COMMIT_EDITMSG"
+  "COMMIT_EDITMSG"
+  'fundamental-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
+  2003
+  '(2003 nil)
+  nil
+  nil
+  '((buffer-display-time 26917 60916 678037 865000) (buffer-file-coding-system . undecided-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring (237))))
+
+(desktop-create-buffer 208
+  nil
+  ".git"
+  'dired-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
+  238
+  '(238 nil)
+  t
+  '("/home/asdf/.config/.git/")
+  '((buffer-display-time 26917 63494 239907 216000) (overwrite-mode) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-append-buffer-args 208
+  "/home/asdf/.config/.gitignore"
+  ".gitignore"
+  'fundamental-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode font-lock-mode evil-local-mode undo-fu-session-mode pulsar-mode)
+  166
+  '(nil nil)
+  nil
+  nil
+  '((buffer-display-time 26917 60895 360540 743000) (buffer-file-coding-system . undecided-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring nil)))
+
+(desktop-append-buffer-args 208
+  nil
+  ".config"
+  'dired-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
+  632
+  '(632 nil)
+  t
+  '("/home/asdf/.config/")
+  '((buffer-display-time 26917 61722 556258 500000) (overwrite-mode) (truncate-lines))
+  '((mark-ring (368 115 368 368 368))))
+
+(desktop-append-buffer-args 208
+  nil
+  "~"
+  'dired-mode
+  '(yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode pulsar-mode undo-fu-session-mode evil-local-mode font-lock-mode)
+  511
+  '(511 nil)
+  t
+  '("/home/asdf/")
+  '((buffer-display-time 26917 60549 5785 465000) (overwrite-mode) (truncate-lines))
+  '((mark-ring (1638 511 511))))
+
+(desktop-append-buffer-args 208
+  "/home/asdf/Shapeless-Links/20251122T211657==yyyy--aaa__eee.org"
+  "20251122T211657==yyyy--aaa__eee.org"
+  'org-mode
+  '(visual-fill-column-mode writeroom-mode flycheck-mode yas-minor-mode evil-surround-mode evil-collection-unimpaired-mode visual-line-mode font-lock-mode evil-local-mode undo-fu-session-mode pulsar-mode)
+  1
+  '(1 nil)
+  nil
+  nil
+  '((tab-width . 8) (buffer-display-time 26917 60957 894424 684000) (buffer-file-coding-system . undecided-unix) (overwrite-mode) (truncate-lines))
+  '((mark-ring nil)))
 

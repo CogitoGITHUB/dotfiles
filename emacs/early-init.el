@@ -19,4 +19,4 @@
         (horizontal-scroll-bars . nil)
         (menu-bar-lines . 0)
         (tool-bar-lines . 0)))
-
+(window-divider-mode -1)
