@@ -1,0 +1,84 @@
+((buffer-size . 7285892) (buffer-checksum . "d12927ac656d44e951786ca18f15d42486978aa7"))
+((emacs-buffer-undo-list nil (7192270 . 7192271) ("u" . -7192270) ((marker . 7192270) . -1) ((marker . 7192270) . -1) ((marker . 7192270) . -1) ((marker) . -1) 7192271 (7192268 . 7192271) ("y" . -7192268) ((marker . 7192270) . -1) ((marker) . -1) ("e" . -7192269) ((marker . 7192270) . -1) ((marker) . -1) ("l" . -7192270) ((marker . 7192270) . -1) ((marker) . -1) ("l" . -7192271) ((marker . 7192270) . -1) ((marker) . -1) ("o" . -7192272) ((marker . 7192270) . -1) ((marker) . -1) ("w" . -7192273) ((marker . 7192270) . -1) ((marker) . -1) 7192274 (7192313 . 7192316) ("m" . -7192313) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker . 7192310) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("a" . -7192314) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("g" . -7192315) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("e" . -7192316) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("n" . -7192317) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("t" . -7192318) ((marker . 7192270) . -1) ((marker . 7192310) . -1) ((marker) . -1) ("a" . -7192319) ((marker . 7192270) . -1) ((marker) . -1) 7192320 (t 26917 54403 779578 347000) nil (7192231 . 7192232) ("i" . -7192231) ((marker . 7192270) . -1) 7192232 (7192231 . 7192232) ("u" . -7192231) ((marker . 7192270) . -1) 7192232 (7192231 . 7192232) (7192229 . 7192231) ("g" . -7192229) ((marker . 7192270) . -1) ("r" . -7192230) ((marker . 7192270) . -1) ("e" . -7192231) ((marker . 7192270) . -1) ("e" . -7192232) ((marker . 7192270) . -1) ("n" . -7192233) ((marker . 7192270) . -1) 7192234 (t 26917 54333 341495 904000) nil (7192229 . 7192234) ("p." . 7192229) (7192229 . 7192231) ("red" . 7192229) (7192266 . 7192274) nil ("r" . -7192266) ((marker . 7192270) . -1) ("-" . -7192267) ((marker . 7192270) . -1) ("y" . -7192268) ((marker . 7192270) . -1) ("e" . -7192269) ((marker . 7192270) . -1) ("l" . -7192270) ((marker . 7192270) . -1) ("l" . -7192271) ((marker . 7192270) . -1) ("o" . -7192272) ((marker . 7192270) . -1) ("w" . -7192273) ((marker . 7192270) . -1) 7192274 (7192229 . 7192232) ("p" . -7192229) ((marker . 7192270) . -1) ("." . -7192230) ((marker . 7192270) . -1) 7192231 (7192229 . 7192231) ("g" . -7192229) ((marker . 7192270) . -1) ("r" . -7192230) ((marker . 7192270) . -1) ("e" . -7192231) ((marker . 7192270) . -1) ("e" . -7192232) ((marker . 7192270) . -1) ("n" . -7192233) ((marker . 7192270) . -1) 7192234 (t 26917 54333 341495 904000) nil (nil rear-nonsticky nil 7285367 . 7285368) (nil fontified nil 7283671 . 7285368) (7283671 . 7285368) nil ("#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'gray-background
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t)
+
+  ;; Drown everything in black
+  (custom-set-faces
+   '(default ((t (:foreground \"#000000\" :background \"#ffffff\"))))
+   '(font-lock-comment-face ((t (:foreground \"#000000\"))))
+   '(font-lock-string-face ((t (:foreground \"#000000\"))))
+   '(font-lock-keyword-face ((t (:foreground \"#000000\"))))
+   '(font-lock-builtin-face ((t (:foreground \"#000000\"))))
+   '(font-lock-type-face ((t (:foreground \"#000000\"))))
+   '(font-lock-constant-face ((t (:foreground \"#000000\"))))
+   '(font-lock-variable-name-face ((t (:foreground \"#000000\"))))
+   '(font-lock-function-name-face ((t (:foreground \"#000000\"))))
+   '(org-level-1 ((t (:foreground \"#000000\"))))
+   '(org-level-2 ((t (:foreground \"#000000\"))))
+   '(org-level-3 ((t (:foreground \"#000000\"))))
+   '(org-level-4 ((t (:foreground \"#000000\"))))
+   '(org-link ((t (:foreground \"#000000\" :underline nil))))))
+#+end_src
+
+" . 7283672) ((marker . 7283647) . -1181) ((marker* . 7192271) . 1) ((marker . 7285358) . -1181) ((marker . 7285360) . -1181) ((marker . 7285360) . -1182) (t 26917 54259 911320 749000) nil (nil rear-nonsticky nil 7284852 . 7284853) (nil fontified nil 7283672 . 7284853) (7283672 . 7284853) nil ("
+#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'grayscale
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t))
+#+end_src
+" . 7283672) ((marker . 7283647) . -323) ((marker . 7285360) . -1) ((marker . 7285358) . -323) ((marker . 7285360) . -1) ((marker . 7285360) . -323) ((marker . 7285360) . -324) (t 26917 54180 274011 738000) nil (" " . 7283657) ((marker . 7283647) . -1) ((marker . 7283648) . -1) nil (nil rear-nonsticky nil 7283671 . 7283672) (nil fontified nil 7283658 . 7283672) (7283658 . 7283672) 7283657 nil (nil rear-nonsticky nil 7283982 . 7283983) (nil fontified nil 7283660 . 7283983) (7283660 . 7283983) nil (7283659 . 7283661) nil (7283656 . 7283658) (7283655 . 7283657) (t 26917 53708 488519 147000)) (emacs-pending-undo-list (nil rear-nonsticky nil 7285367 . 7285368) (nil fontified nil 7283671 . 7285368) (7283671 . 7285368) nil ("#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'gray-background
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t)
+
+  ;; Drown everything in black
+  (custom-set-faces
+   '(default ((t (:foreground \"#000000\" :background \"#ffffff\"))))
+   '(font-lock-comment-face ((t (:foreground \"#000000\"))))
+   '(font-lock-string-face ((t (:foreground \"#000000\"))))
+   '(font-lock-keyword-face ((t (:foreground \"#000000\"))))
+   '(font-lock-builtin-face ((t (:foreground \"#000000\"))))
+   '(font-lock-type-face ((t (:foreground \"#000000\"))))
+   '(font-lock-constant-face ((t (:foreground \"#000000\"))))
+   '(font-lock-variable-name-face ((t (:foreground \"#000000\"))))
+   '(font-lock-function-name-face ((t (:foreground \"#000000\"))))
+   '(org-level-1 ((t (:foreground \"#000000\"))))
+   '(org-level-2 ((t (:foreground \"#000000\"))))
+   '(org-level-3 ((t (:foreground \"#000000\"))))
+   '(org-level-4 ((t (:foreground \"#000000\"))))
+   '(org-link ((t (:foreground \"#000000\" :underline nil))))))
+#+end_src
+
+" . 7283672) ((marker . 7283647) . -1181) ((marker* . 7192271) . 1) ((marker . 7285358) . -1181) ((marker . 7285360) . -1181) ((marker . 7285360) . -1182) (t 26917 54259 911320 749000) nil (nil rear-nonsticky nil 7284852 . 7284853) (nil fontified nil 7283672 . 7284853) (7283672 . 7284853) nil ("
+#+begin_src emacs-lisp
+(leaf modus-themes
+  :load-path \"/home/asdf/.config/emacs/lib/modus-themes\"
+  :init
+  (setq modus-themes-bold-constructs t
+        modus-themes-italic-constructs t
+        modus-themes-org-blocks 'grayscale
+        modus-themes-fringes 'intense)
+  :config
+  (load-theme 'modus-operandi t))
+#+end_src
+" . 7283672) ((marker . 7283647) . -323) ((marker . 7285360) . -1) ((marker . 7285358) . -323) ((marker . 7285360) . -1) ((marker . 7285360) . -323) ((marker . 7285360) . -324) (t 26917 54180 274011 738000) nil (" " . 7283657) ((marker . 7283647) . -1) ((marker . 7283648) . -1) nil (nil rear-nonsticky nil 7283671 . 7283672) (nil fontified nil 7283658 . 7283672) (7283658 . 7283672) 7283657 nil (nil rear-nonsticky nil 7283982 . 7283983) (nil fontified nil 7283660 . 7283983) (7283660 . 7283983) nil (7283659 . 7283661) nil (7283656 . 7283658) (7283655 . 7283657) (t 26917 53708 488519 147000)) (emacs-undo-equiv-table (3 . -1)))

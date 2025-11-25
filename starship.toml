@@ -10,7 +10,6 @@ format = """
 ┃ IP:     $localip
 ┃ SHELL:  $shell
 ┃ LVL:    $shlvl
-┃ DIR:    $directory
 ┃ MEM:    $memory_usage
 ┃ LOAD:   $cmd_duration
 ┃ BAT:    $battery
@@ -21,6 +20,7 @@ format = """
 ┃ CONTAINER: $container
 ┃ GIT:    $git_branch $git_status $git_state
 ┃ SUDO:   $sudo
+┃ DIR:    $directory
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 $character
 """
@@ -140,13 +140,13 @@ symbol = ""
 
 [kubernetes]
 disabled = false
-format = "KUBE: [$context]($style) "
+format = "[$context]($style) "
 symbol = ""
 style = "bold black"
 
 [container]
 disabled = false
-format = "CONTAINER: [$symbol$name]($style) "
+format = "[$symbol$name]($style) "
 symbol = "⬢"
 style = "bold red"
 
@@ -162,7 +162,7 @@ style = "bold black"
 disabled = false
 min_time = 0
 show_milliseconds = false
-format = "LOAD: [$duration]($style) "
+format = "[$duration]($style) "
 style = "bold black"
 
 [battery]

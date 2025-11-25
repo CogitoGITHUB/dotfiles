@@ -1,14 +1,2 @@
-;; init.el — generated and ruled by Emacs.org
-(org-babel-load-file "~/.config/emacs/Emacs.org")
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(warning-suppress-log-types '((native-compiler) (native-compiler))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(org-babel-load-file
+  (expand-file-name "Emacs.org" "~/.config/emacs/"))

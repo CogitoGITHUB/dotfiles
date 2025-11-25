@@ -26,7 +26,6 @@ layout {
 }
 
 spawn-at-startup "qutebrowser"
-spawn-at-startup "emacs-daemon"
 spawn-at-startup "wezterm"
 
 prefer-no-csd

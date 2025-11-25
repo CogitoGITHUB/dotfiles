@@ -1,0 +1,25 @@
+((buffer-size . 517) (buffer-checksum . "b1d771554cfc991b317246544d00328f2a630215"))
+((emacs-buffer-undo-list nil ("
+;; Absolute minimal monochrome text
+(setq frame-background-mode 'light) ;; or 'dark if you prefer reverse
+(set-face-attribute 'default nil :foreground \"black\" :background \"white\")
+
+;; Disable all syntax highlighting
+(global-font-lock-mode -1)
+
+;; Disable underline, bold, italics — nothing but raw glyphs
+(set-face-attribute 'bold nil :weight 'normal)
+(set-face-attribute 'italic nil :slant 'normal)
+(set-face-attribute 'underline nil :underline nil)
+
+;; Turn off any theme that might lurk
+(disable-theme 't)
+
+;; Prevent themes from enabling themselves again
+(setq custom-safe-themes t)
+(set-fringe-mode 0)
+(setq-default cursor-type 'hbar) ;; or 'bar or nil
+(set-cursor-color \"black\")
+" . 518) ((marker . 518) . -686) ((marker . 518) . -588) ((marker . 518) . -1) ((marker . 158) . -686) ((marker . 518) . -686) ((marker . 518) . -685) (t 26917 53876 647457 167000) nil (nil rear-nonsticky nil 1203 . 1204) (nil fontified nil 1106 . 1204) (1106 . 1204) nil (nil rear-nonsticky nil 1105 . 1106) (nil fontified nil 519 . 1106) (519 . 1106) nil (517 . 519) (t 26917 52263 16118 567000) nil ("(tool-bar-mode -1)
+" . 68) (49 . 68) ("(menu-bar-mode -1)
+" . 30) (49 . 68) 54 (t 26917 52081 726031 844000)) (emacs-pending-undo-list . t) (emacs-undo-equiv-table))
