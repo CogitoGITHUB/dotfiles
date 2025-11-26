@@ -1,5 +1,0 @@
-((buffer-size . 8220) (buffer-checksum . "bdc85f60fb9371f6348e22d04b10a7c4ecda16de"))
-((emacs-buffer-undo-list nil ("spawn-at-startup \"emacs-daemon\"
-" . 487) ((marker . 501) . -14) ((marker . 487) . -14) ((marker . 487) . -14) ((marker . 487) . -14) ((marker . 487) . -14) ((marker . 487) . -14) ((marker) . -14) ((marker . 487) . -14) ((marker . 487) . -14) ((marker) . -32) ((marker . 487) . -31) 501 (t 26913 39257 21932 182000)) (emacs-pending-undo-list ("(tool-bar-mode -1)
-" . 68) (49 . 68) ("(menu-bar-mode -1)
-" . 30) (49 . 68) 54 (t 26917 52081 726031 844000)) (emacs-undo-equiv-table))

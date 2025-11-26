@@ -1,7 +1,6 @@
 (add-to-list 'load-path "~/.config/emacs/lib/leaf")
   (require 'leaf)
-
-;; You can also configure builtin package via leaf!
+ ;; You can also configure builtin package via leaf!
 (leaf cus-start
   :doc "define customization properties of builtins"
   :tag "builtin" "internal"
@@ -17,18 +16,31 @@
            (window-divider-default-right-width . 1)
            (window-divider-default-bottom-width . 1)))
 
-;; Cursor moves through wrapped segments naturally
-(setq line-move-visual t)
+(leaf org-superstar
+  :load-path "~/.config/emacs/lib/org-superstar-mode"
+  :after org
+  :hook (org-mode . org-superstar-mode)
+  :custom
+  ((org-superstar-headline-bullets-list . '(?Ⅰ ?Ⅱ ?Ⅲ ?Ⅳ ?Ⅴ ?Ⅵ ?Ⅶ ?Ⅷ))
+   (org-superstar-remove-leading-stars . t)
+   (org-superstar-leading-fallback . ?\s))
+  :config
+  (custom-set-faces
+   ;; bullets pure black — no hue, no compromise
+   '(org-superstar-header-bullet ((t (:foreground "#000000" :weight bold :height 1.3))))
+   '(org-superstar-item ((t (:foreground "#000000"))))
+   '(org-superstar-leading ((t (:foreground "#000000"))))))
 
-;; Enable visual wrapping globally
-(global-visual-line-mode 1)
-
-(leaf visual-fill-column
-  :load-path "~/.config/emacs/lib/visual-fill-column"
-  :hook (visual-line-mode . visual-fill-column-mode)
-  :init
-  (setq visual-fill-column-width 90
-        visual-fill-column-center-text t))
+(leaf font-config
+  :config
+  ;; Set main font - try these in order of preference
+  (cond
+   ((find-font (font-spec :name "DejaVu Sans Mono"))
+    (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 100)))
+  
+  ;; Set fallback font for Unicode symbols
+  (set-fontset-font t 'unicode "Symbola" nil 'prepend)
+  (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend))
 
 (leaf evil
   :load-path "~/.config/emacs/lib/evil"
@@ -68,10 +80,6 @@
     :config
     (global-evil-surround-mode 1))
 
-(defun tmp-f-timestamp (s backend info)
-  (replace-regexp-in-string "&[lg]t;\\|[][]" "" s))
-(defun tmp-f-strike-through (s backend info) "")
-
 ;; Where Emacs keeps the desktop session
 (setq desktop-dirname "~/.config/emacs/desktop/"
       desktop-path   '("~/.config/emacs/desktop/")
@@ -93,16 +101,6 @@
 
   ;; Actually turn it on
   (desktop-save-mode 1))
-
-(leaf denote
-  :load-path "~/.config/emacs/lib/denote"
-  :init
-  (setq denote-directory (expand-file-name "~/Shapeless-Links")
-        denote-sort-keywords t
-        denote-file-type 'org
-        denote-known-keywords '("emacs" "manual" "lisp" "shaping" "core"))
-  :config
-  )
 
 (leaf pulsar
   :load-path "~/.config/emacs/lib/pulsar"
@@ -131,16 +129,6 @@
 (add-hook 'imenu-after-jump-hook #'pulsar-recenter-top)
 (add-hook 'imenu-after-jump-hook #'pulsar-reveal-entry)
 
-(leaf casual
-  :load-path "~/.config/emacs/lib/casual/lisp"
-  :require casual
-  :bind
-  ("C-c d" . casual-dired-tmenu)
-  ("C-c b" . casual-bookmarks-tmenu)
-  ("C-c c" . casual-calc-tmenu)
-  ("C-c i" . casual-ibuffer-tmenu)
-  ("C-c p" . casual-project-tmenu))
-
 (leaf switch-window
   :load-path "~/.config/emacs/lib/switch-window"
   :require switch-window
@@ -161,7 +149,6 @@
   :config
   ;; target search across all windows
   (setq ace-jump-mode-scope 'global)
-
   ;; disable gray background (clean screen)
   (setq ace-jump-mode-gray-background nil)
 
@@ -176,52 +163,6 @@
   (define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
   (define-key evil-visual-state-map (kbd "SPC") 'ace-jump-mode)
   (define-key evil-motion-state-map (kbd "SPC") 'ace-jump-mode))
-
-(leaf orderless
-  :load-path "~/.config/emacs/lib/orderless"
-  :require orderless
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles partial-completion))))
-  :setq
-  (completion-pcm-leading-wildcard . t))
-
-(defun flex-if-twiddle (pattern _index _total)
-  (when (string-suffix-p "~" pattern)
-    `(orderless-flex . ,(substring pattern 0 -1))))
-
-(defun first-initialism (pattern index _total)
-  (if (= index 0) 'orderless-initialism))
-
-(defun not-if-bang (pattern _index _total)
-  (cond
-   ((equal "!" pattern)
-    #'ignore)
-   ((string-prefix-p "!" pattern)
-    `(orderless-not . ,(substring pattern 1)))))
-
-(setq orderless-matching-styles '(orderless-regexp)
-      orderless-style-dispatchers '(first-initialism
-                                    flex-if-twiddle
-                                    not-if-bang))
-
-(orderless-define-completion-style orderless+initialism
-  (orderless-matching-styles '(orderless-initialism
-                               orderless-literal
-                               orderless-regexp)))
-(setq completion-category-overrides
-      '((command (styles orderless+initialism))
-        (symbol (styles orderless+initialism))
-        (variable (styles orderless+initialism))))
-
-(defun my/match-components-literally ()
-  "Components match literally for the rest of the session."
-  (interactive)
-  (setq-local orderless-matching-styles '(orderless-literal)
-              orderless-style-dispatchers nil))
-
-(define-key minibuffer-local-completion-map (kbd "C-l")
-  #'my/match-components-literally)
 
 (leaf multiple-cursors
   :load-path "~/.config/emacs/lib/multiple-cursors"
@@ -345,13 +286,6 @@
   :config
   (setq aya-persist-snippets t
         aya-persist-directory (expand-file-name "auto-snippets" "~/.config/emacs/")))
-
-(leaf fix-word
-  :load-path "~/.config/emacs/lib/fix-word"
-  :require fix-word
-  :bind
-  ("M-;" . fix-word)            ;; fix the word under point
-  ("M-:" . fix-word-previous))  ;; fix the previous word
 
 (leaf evil-nerd-commenter
   :load-path "~/.config/emacs/lib/evil-nerd-commenter"
@@ -552,24 +486,6 @@
   :after ghub
   :load-path "~/.config/emacs/lib/forge/lisp")
 
-(leaf magit-todos
-  :load-path "~/.config/emacs/lib/magit-todos"
-  :after magit
-  :config
-  (magit-todos-mode 1)
-  (setq magit-todos-keywords '("TODO" "FIXME" "BUG" "NOTE"))
-  (setq magit-todos-exclude-globs '("node_modules/*" "vendor/*" "*.min.js"))
-  (define-key magit-status-mode-map (kbd "j T") #'magit-todos-list))
-
-(leaf magit-lfs
-  :load-path "~/.config/emacs/lib/magit-lfs"
-  :after magit
-  :config
-  (magit-lfs-mode 1)
-  (define-key magit-status-mode-map (kbd ": f") #'magit-lfs-fetch)
-  (define-key magit-status-mode-map (kbd ": F") #'magit-lfs-pull)
-  (define-key magit-status-mode-map (kbd ": P") #'magit-lfs-push))
-
 (leaf modus-themes
   :load-path "/home/asdf/.config/emacs/lib/modus-themes"
   :init
@@ -578,37 +494,63 @@
         modus-themes-org-blocks 'gray-background
         modus-themes-fringes 'intense)
   :config
-  (load-theme 'modus-operandi t)
+  (load-theme 'modus-operandi :no-confirm)
 
-  ;; World painted black
-  (custom-set-faces
-   '(default ((t (:foreground "#000000" :background "#ffffff"))))
-   ;; Org
-   '(org-level-1 ((t (:foreground "#000000" :weight bold))))
-   '(org-level-2 ((t (:foreground "#000000" :weight bold))))
-   '(org-level-3 ((t (:foreground "#000000"))))
-   '(org-link ((t (:foreground "#000000" :underline nil))))
-   ;; Syntax
-   '(font-lock-comment-face ((t (:foreground "#000000"))))
-   '(font-lock-string-face ((t (:foreground "#000000"))))
-   '(font-lock-keyword-face ((t (:foreground "#000000"))))
-   '(font-lock-function-name-face ((t (:foreground "#000000"))))
-   '(font-lock-variable-name-face ((t (:foreground "#000000"))))
-   '(font-lock-type-face ((t (:foreground "#000000"))))
-   '(font-lock-constant-face ((t (:foreground "#000000"))))
-   ;; Dired — purge all color
-   '(dired-directory ((t (:foreground "#000000" :weight bold))))
-   '(dired-symlink ((t (:foreground "#000000" :slant italic))))
-   '(dired-broken-symlink ((t (:foreground "#000000" :underline t))))
-   '(dired-flagged ((t (:foreground "#000000" :weight bold))))
-   '(dired-mark ((t (:foreground "#000000" :weight bold))))
-   '(dired-marked ((t (:foreground "#000000" :weight bold))))
-   '(dired-perm-write ((t (:foreground "#000000"))))
-   '(dired-special ((t (:foreground "#000000"))))
-   '(dired-warning ((t (:foreground "#000000" :weight bold))))))
+  (defun shapeshift/monochrome-world ()
+    "Force Emacs into strict black-on-white."
+    ;; canvas
+    (set-face-attribute 'default nil
+                        :foreground "#000000"
+                        :background "#ffffff")
+
+    ;; org headings big + bold + monochrome
+    (set-face-attribute 'org-level-1 nil :foreground "#000000" :weight 'bold :height 1.80 :inherit nil)
+    (set-face-attribute 'org-level-2 nil :foreground "#000000" :weight 'bold :height 1.60 :inherit nil)
+    (set-face-attribute 'org-level-3 nil :foreground "#000000" :weight 'bold :height 1.40 :inherit nil)
+    (set-face-attribute 'org-level-4 nil :foreground "#000000" :weight 'bold :height 1.25 :inherit nil)
+    (set-face-attribute 'org-level-5 nil :foreground "#000000" :weight 'bold :height 1.10 :inherit nil)
+    (set-face-attribute 'org-level-6 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
+    (set-face-attribute 'org-level-7 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
+    (set-face-attribute 'org-level-8 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
+    (set-face-attribute 'org-document-title nil :foreground "#000000" :weight 'bold :height 2.0 :inherit nil)
+
+    ;; links stripped
+    (set-face-attribute 'org-link nil :underline nil :inherit nil)
+
+    ;; syntax
+    (dolist (face '(font-lock-comment-face
+                    font-lock-string-face
+                    font-lock-keyword-face
+                    font-lock-function-name-face
+                    font-lock-variable-name-face
+                    font-lock-type-face
+                    font-lock-constant-face))
+      (set-face-attribute face nil :foreground "#000000"))
+
+    ;; dired — bold architecture for directories
+    (set-face-attribute 'dired-directory nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-symlink nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-mark nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-marked nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-flagged nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-warning nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'dired-perm-write nil :foreground "#000000" :inherit nil)
+    (set-face-attribute 'dired-special nil :foreground "#000000" :inherit nil))
+
+  ;; Apply immediately
+  (shapeshift/monochrome-world)
+
+  ;; Reapply after any theme reload
+  (advice-add 'load-theme :after
+              (lambda (&rest _)
+                (shapeshift/monochrome-world))))
+
+(leaf visual-fill-column
+  :load-path "~/.config/emacs/lib/visual-fill-column"
+  :require t)
 
 (leaf writeroom-mode
-  :load-path "/home/asdf/.config/emacs/lib/writeroom-mode"
+  :load-path "~/.config/emacs/lib/writeroom-mode"
   :global-minor-mode global-writeroom-mode
   :config
 
@@ -617,7 +559,6 @@
   (setq writeroom-maximize-window nil)
   (setq writeroom-mode-line nil)
   (setq writeroom-bottom-divider-width 0)
-
 
   ;; evil-style width control bindings
   (with-eval-after-load 'writeroom-mode
@@ -628,6 +569,36 @@
 (leaf centered-cursor-mode
   :load-path "/home/asdf/.config/emacs/lib/centered-cursor-mode"
   :global-minor-mode t)
+
+(leaf dash
+  :load-path "~/.config/emacs/lib/dash"
+  :require t)
+(leaf org-roam
+  :load-path "~/.config/emacs/lib/org-roam"
+  :after (org dash)
+  :require t
+  :custom
+  ((org-roam-directory . "~/Roam/")
+   (org-roam-db-location . "~/.config/emacs/org-roam.db")
+   (org-roam-completion-everywhere . t))
+  :config
+  (org-roam-db-autosync-enable)
+
+  (define-key global-map (kbd "C-c r f") #'org-roam-node-find)
+  (define-key global-map (kbd "C-c r i") #'org-roam-node-insert)
+  (define-key global-map (kbd "C-c r g") #'org-roam-graph)
+  (define-key global-map (kbd "C-c r d") #'org-roam-dailies-map)
+  (define-key global-map (kbd "C-c r t") #'org-roam-dailies-capture-today))
+
+(leaf org-roam-ui
+  :load-path "~/.config/emacs/lib/org-roam-ui"
+  :after org-roam
+  :require t
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 (defun live-shaping/auto-tangle-and-reload ()
   "When Emacs.org is saved, tangle it and reload init.el."
