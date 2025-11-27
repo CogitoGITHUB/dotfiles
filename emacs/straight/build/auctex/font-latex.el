@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/auctex/font-latex.el

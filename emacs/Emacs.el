@@ -1,111 +1,168 @@
-(add-to-list 'load-path "~/.config/emacs/lib/leaf")
-  (require 'leaf)
- ;; You can also configure builtin package via leaf!
+;;──────────────────────────────────────────────────────────
+;; Straight bootstrap (must be first)
+;;──────────────────────────────────────────────────────────
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        user-emacs-directory))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(setq straight-use-package-by-default t)
+(straight-use-package 'org)
+
+;;──────────────────────────────────────────────────────────
+;; Install leaf *before* leaf-keywords is used
+;;──────────────────────────────────────────────────────────
+(straight-use-package 'leaf)
+(straight-use-package 'leaf-keywords)
+
+(require 'leaf)
+(require 'leaf-keywords)
+(leaf-keywords-init)
+
+;;──────────────────────────────────────────────────────────
+;; Primitive built-in configuration with leaf
+;;──────────────────────────────────────────────────────────
+
 (leaf cus-start
-  :doc "define customization properties of builtins"
-  :tag "builtin" "internal"
-  :custom ((user-full-name . "")
-           (user-mail-address . "")
-           (user-login-name . "")
-           (truncate-lines . t)
+  :doc "builtin core configuration"
+  :tag "builtin"
+  :custom ((truncate-lines . t)
            (menu-bar-mode . nil)
            (tool-bar-mode . nil)
-           (scroll-bar-mode . nil)
-           (indent-tabs-mode . nil)
-           (window-divider-mode . nil)
-           (window-divider-default-right-width . 1)
-           (window-divider-default-bottom-width . 1)))
+           (scroll-bar-mode . nil)))
+
+(leaf center-lock
+  :config
+  (defvar shapeshift/center-lock-enabled t
+    "Whether the cursor should remain vertically centered.")
+
+  (defun shapeshift/recenter-maybe ()
+    (when (and shapeshift/center-lock-enabled
+               (not (eq this-command 'scroll-up-command))
+               (not (eq this-command 'scroll-down-command))
+               (not (minibufferp)))
+      (recenter)))
+
+  (define-minor-mode center-lock-mode
+    "Keep the cursor vertically centered at all times."
+    :global t
+    (if center-lock-mode
+        (add-hook 'post-command-hook #'shapeshift/recenter-maybe)
+      (remove-hook 'post-command-hook #'shapeshift/recenter-maybe)))
+
+  (center-lock-mode 1))
 
 (leaf org-superstar
-  :load-path "~/.config/emacs/lib/org-superstar-mode"
+  :straight (org-superstar
+             :type git
+             :host github
+             :repo "integral-dw/org-superstar-mode")
   :after org
-  :hook (org-mode . org-superstar-mode)
+  :hook (org-mode-hook . org-superstar-mode)
   :custom
   ((org-superstar-headline-bullets-list . '(?Ⅰ ?Ⅱ ?Ⅲ ?Ⅳ ?Ⅴ ?Ⅵ ?Ⅶ ?Ⅷ))
    (org-superstar-remove-leading-stars . t)
    (org-superstar-leading-fallback . ?\s))
   :config
   (custom-set-faces
-   ;; bullets pure black — no hue, no compromise
    '(org-superstar-header-bullet ((t (:foreground "#000000" :weight bold :height 1.3))))
    '(org-superstar-item ((t (:foreground "#000000"))))
    '(org-superstar-leading ((t (:foreground "#000000"))))))
 
 (leaf font-config
   :config
-  ;; Set main font - try these in order of preference
-  (cond
-   ((find-font (font-spec :name "DejaVu Sans Mono"))
-    (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 100)))
-  
-  ;; Set fallback font for Unicode symbols
+  ;; primary monospaced font
+  (when (find-font (font-spec :name "DejaVu Sans Mono"))
+    (set-face-attribute 'default nil
+                        :family "DejaVu Sans Mono"
+                        :height 110))
+
+  ;; unicode fallback matrix
   (set-fontset-font t 'unicode "Symbola" nil 'prepend)
   (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend))
 
 (leaf evil
-  :load-path "~/.config/emacs/lib/evil"
-  :require evil
+  :straight (evil :type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t)
   :init
   (setq evil-want-keybinding nil
         evil-want-C-u-scroll t)
   :config
   (evil-mode 1)
 
-  (with-eval-after-load 'evil
-    (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
-    (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
-    (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
-    (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
+  (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
+  (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
+  (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
+  (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
 
-    (define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
-    (define-key evil-motion-state-map (kbd "t") 'evil-next-line)
-    (define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
-    (define-key evil-motion-state-map (kbd "s") 'evil-forward-char)))
+  (define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
+  (define-key evil-motion-state-map (kbd "t") 'evil-next-line)
+  (define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
+  (define-key evil-motion-state-map (kbd "s") 'evil-forward-char))
 
-  
-  (leaf annalist
-    :load-path "~/.config/emacs/lib/annalist"
-    :require annalist)
 
-  (leaf evil-collection
-    :load-path "~/.config/emacs/lib/evil-collection"
-    :after evil
-    :require evil-collection
-    :config
-    (evil-collection-init))
 
-  (leaf evil-surround
-    :load-path "~/.config/emacs/lib/evil-surround"
-    :require evil-surround
-    :config
-    (global-evil-surround-mode 1))
+(leaf annalist
+  :straight (annalist
+             :type git
+             :host github
+             :repo "noctuid/annalist.el"
+             :fetch t))
 
-;; Where Emacs keeps the desktop session
+(leaf evil-collection
+  :straight (evil-collection :type git :host github :repo "emacs-evil/evil-collection" :fetch t)
+  :after evil
+  :config
+  (evil-collection-init))
+
+
+(leaf evil-surround
+  :straight (evil-surround :type git :host github :repo "timcharper/evil-surround" :fetch t)
+  :config
+  (global-evil-surround-mode 1))
+
+;;──────────────────────────────────────────────────────────
+;; Desktop save location setup
+;;──────────────────────────────────────────────────────────
 (setq desktop-dirname "~/.config/emacs/desktop/"
       desktop-path   '("~/.config/emacs/desktop/")
       desktop-base-file-name "emacs-desktop")
 
-;; Make sure the directory exists (safe even if it already does)
-(make-directory desktop-dirname t)
+(make-directory desktop-dirname t) ;; ensure directory exists
 
+
+;;──────────────────────────────────────────────────────────
+;; Desktop Mode
+;;──────────────────────────────────────────────────────────
 (leaf desktop
-  :require desktop
+  :require t
   :config
-  ;; Save the desktop automatically on exit
+  ;; auto-save session when closing Emacs
   (add-hook 'kill-emacs-hook #'desktop-save-in-desktop-dir)
 
-  ;; How eager to restore (higher = more buffers at once)
+  ;; restore behavior tuning
   (setq desktop-restore-eager 8
         desktop-lazy-idle-delay 0.5
         desktop-load-locked-desktop t)
 
-  ;; Actually turn it on
   (desktop-save-mode 1))
 
 (leaf pulsar
-  :load-path "~/.config/emacs/lib/pulsar"
-  :require pulsar
-  :after pulsar
+  :straight (pulsar
+             :type git
+             :host github
+             :repo "protesilaos/pulsar"
+             :fetch t)
   :bind
   ("C-x l" . pulsar-pulse-line)
   ("C-x L" . pulsar-highlight-permanently-dwim)
@@ -115,6 +172,7 @@
         pulsar-face 'pulsar-red
         pulsar-region-face 'pulsar-red
         pulsar-highlight-face 'pulsar-red)
+
   (pulsar-global-mode 1))
 
 (add-hook 'next-error-hook #'pulsar-pulse-line)
@@ -130,8 +188,11 @@
 (add-hook 'imenu-after-jump-hook #'pulsar-reveal-entry)
 
 (leaf switch-window
-  :load-path "~/.config/emacs/lib/switch-window"
-  :require switch-window
+  :straight (switch-window
+             :type git
+             :host github
+             :repo "dimitri/switch-window"
+             :fetch t)
   :bind
   ("C-x w" . switch-window)
   :config
@@ -139,202 +200,128 @@
         switch-window-timeout nil
         switch-window-threshold 2))
 
-(leaf ace-jump-mode
-  :load-path "~/.config/emacs/lib/ace-jump-mode"
-  :require ace-jump-mode
-  :init
-  ;; Before any jump, announce movement / integrate with visual pulse systems
-  ;; (add-hook 'ace-jump-mode-before-jump-hook
-            ;; (lambda () (message "shapeshift — jump engaged")))
+(leaf avy
+  :straight (avy
+             :type git
+             :host github
+             :repo "abo-abo/avy"
+             :fetch t)
   :config
-  ;; target search across all windows
-  (setq ace-jump-mode-scope 'global)
-  ;; disable gray background (clean screen)
-  (setq ace-jump-mode-gray-background nil)
+  ;; core behavior
+  (setq avy-background nil
+        avy-all-windows t
+        avy-style 'at-full
+        avy-timeout-seconds 0.4)
 
-  ;; do not ignore case in words
-  (setq ace-jump-mode-case-fold t)
+  (setq avy-keys (string-to-list "aoeuidhtns"))
 
-  ;; Dvorak home-row jump keys (optional, uncomment if desired)
-  (setq ace-jump-mode-move-keys
-        (string-to-list "aoeuidhtns"))
+  ;; dispatch operations
+  (setq avy-dispatch-alist
+        '((?k . avy-kill-region)
+          (?y . avy-copy-region)
+          (?c . avy-kill-ring-save)))
 
-  ;; Evil modal bindings — spacebar becomes teleport
-  (define-key evil-normal-state-map (kbd "SPC") 'ace-jump-mode)
-  (define-key evil-visual-state-map (kbd "SPC") 'ace-jump-mode)
-  (define-key evil-motion-state-map (kbd "SPC") 'ace-jump-mode))
+  ;; bind teleport
+  (define-key evil-normal-state-map (kbd "SPC") #'avy-goto-char-timer)
+  (define-key evil-visual-state-map (kbd "SPC") #'avy-goto-char-timer)
+  (define-key evil-motion-state-map (kbd "SPC") #'avy-goto-char-timer))
 
 (leaf multiple-cursors
-  :load-path "~/.config/emacs/lib/multiple-cursors"
-  :require multiple-cursors
+  :straight (multiple-cursors
+             :type git
+             :host github
+             :repo "magnars/multiple-cursors.el"
+             :fetch t)
   :config
-  ;; Evil + MC Movement
-  (define-key evil-normal-state-map (kbd "g m n") 'mc/mark-next-like-this)
-  (define-key evil-normal-state-map (kbd "g m p") 'mc/mark-previous-like-this)
-  (define-key evil-normal-state-map (kbd "g m a") 'mc/mark-all-like-this)
+  ;; evil + mc movement bindings
+  (define-key evil-normal-state-map (kbd "g m n") #'mc/mark-next-like-this)
+  (define-key evil-normal-state-map (kbd "g m p") #'mc/mark-previous-like-this)
+  (define-key evil-normal-state-map (kbd "g m a") #'mc/mark-all-like-this)
 
-  (define-key evil-visual-state-map (kbd "g m n") 'mc/mark-next-like-this)
-  (define-key evil-visual-state-map (kbd "g m p") 'mc/mark-previous-like-this)
+  (define-key evil-visual-state-map (kbd "g m n") #'mc/mark-next-like-this)
+  (define-key evil-visual-state-map (kbd "g m p") #'mc/mark-previous-like-this)
 
-  ;; Edit multiple lines simultaneously
-  (define-key evil-normal-state-map (kbd "g m l") 'mc/edit-lines)
+  ;; edit multiple lines
+  (define-key evil-normal-state-map (kbd "g m l") #'mc/edit-lines)
 
-  ;; Escape multiple cursors
-  (define-key evil-normal-state-map (kbd "<escape>") 'mc/keyboard-quit)
-  (define-key evil-visual-state-map (kbd "<escape>") 'mc/keyboard-quit))
+  ;; escape mode
+  (define-key evil-normal-state-map (kbd "<escape>") #'mc/keyboard-quit)
+  (define-key evil-visual-state-map (kbd "<escape>") #'mc/keyboard-quit))
 
 (leaf move-text
-  :load-path "~/.config/emacs/lib/move-text"
-  :require move-text
+  :straight (move-text
+             :type git
+             :host github
+             :repo "emacsfodder/move-text"
+             :fetch t)
   :bind
   ("M-<up>"   . move-text-up)
   ("M-<down>" . move-text-down)
   :config
   ;; Evil integration
-  (define-key evil-normal-state-map (kbd "M-<up>")   'move-text-up)
-  (define-key evil-normal-state-map (kbd "M-<down>") 'move-text-down)
-  (define-key evil-visual-state-map (kbd "M-<up>")   'move-text-up)
-  (define-key evil-visual-state-map (kbd "M-<down>") 'move-text-down))
-
-(defun indent-region-advice (&rest _ignored)
-  (let ((deactivate deactivate-mark))
-    (if (region-active-p)
-        (indent-region (region-beginning) (region-end))
-      (indent-region (line-beginning-position) (line-end-position)))
-    (setq deactivate-mark deactivate)))
-
-(advice-add 'move-text-down :after #'indent-region-advice)
-(advice-add 'move-text-up   :after #'indent-region-advice)
-
-(leaf undo-fu
-  :load-path "~/.config/emacs/lib/undo-fu"
-  :require undo-fu
-  :init
-  ;; Make Evil use undo-fu instead of built-in diff-based undo
-  (setq evil-undo-system 'undo-fu)
-  :config
-  ;; Clear default binding
-  (global-unset-key (kbd "C-z"))
-
-  ;; Undo & Redo
-  (global-set-key (kbd "C-z")   #'undo-fu-only-undo)
-  (global-set-key (kbd "C-S-z") #'undo-fu-only-redo))
-
-(define-key evil-normal-state-map (kbd "u") #'undo-fu-only-undo)
-(define-key evil-normal-state-map (kbd "U") #'undo-fu-only-redo)
-
-(use-package undo-fu-session
-  :ensure t
-  :config
-  ;; Enable for all buffers by default
-  (undo-fu-session-global-mode)
-
-  ;; Customize storage directory
-  (setq undo-fu-session-directory
-        (expand-file-name "undo-sessions/" user-emacs-directory))
-
-  ;; Limit number of session files to avoid clutter
-  (setq undo-fu-session-file-limit 100)
-
-  ;; Exclude specific files/modes
-  (setq undo-fu-session-incompatible-major-modes
-        '(magit-status-mode
-          dired-mode))
-  (setq undo-fu-session-incompatible-files
-        '("/COMMIT_EDITMSG\\'"
-          "\\.tmp\\'"))
-
-  ;; Choose compression
-  (setq undo-fu-session-compression 'zstd)  ;; or 'gz, 'bz2, nil
-
-  ;; Use linear undo history only (optional)
-  ;; (setq undo-fu-session-linear t)
-  )
-
-(leaf undo-fu-session
-  :load-path "~/.config/emacs/lib/undo-fu-session"
-  :require undo-fu-session
-  :custom
-  (undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'"
-                                        "/git-rebase-todo\\'"))
-  :config
-  (undo-fu-session-global-mode 1))
+  (define-key evil-normal-state-map (kbd "M-<up>")   #'move-text-up)
+  (define-key evil-normal-state-map (kbd "M-<down>") #'move-text-down)
+  (define-key evil-visual-state-map (kbd "M-<up>")   #'move-text-up)
+  (define-key evil-visual-state-map (kbd "M-<down>") #'move-text-down))
 
 (leaf yasnippet
-  :load-path "~/.config/emacs/lib/yasnippet"
-  :require yasnippet
+  :straight t
+  :hook (after-init . yas-global-mode)
   :config
-  ;; Snippet directory configuration
+  ;; snippet roots
   (setq yas-snippet-dirs
         (list (expand-file-name "snippets" "~/.config/emacs/")
               (expand-file-name "snippets"
                                 (file-name-directory (locate-library "yasnippet")))))
 
-  ;; Enable globally
-  (yas-reload-all)
-  (yas-global-mode 1)
+  ;; use AFTER load so warnings vanish
+  (with-eval-after-load 'yasnippet
+    (yas-reload-all))
 
-  ;; Expansion trigger
-  (define-key yas-minor-mode-map (kbd "TAB") 'yas-expand))
+  ;; expansion key
+  (define-key yas-minor-mode-map (kbd "TAB") #'yas-expand))
 
 (leaf auto-yasnippet
-  :load-path "~/.config/emacs/lib/auto-yasnippet"
-  :require auto-yasnippet
+  :straight (auto-yasnippet
+             :type git
+             :host github
+             :repo "abo-abo/auto-yasnippet")
   :bind
-  ("C-c y w" . aya-create)  ;; create snippet from region
-  ("C-c y e" . aya-expand)  ;; expand created snippet
+  ("C-c y w" . aya-create)
+  ("C-c y e" . aya-expand)
   :config
   (setq aya-persist-snippets t
         aya-persist-directory (expand-file-name "auto-snippets" "~/.config/emacs/")))
 
 (leaf evil-nerd-commenter
-  :load-path "~/.config/emacs/lib/evil-nerd-commenter"
-  :require evil-nerd-commenter
+  :straight (evil-nerd-commenter
+             :type git
+             :host github
+             :repo "redguardtoo/evil-nerd-commenter")
   :after evil
   :config
-  ;; text object for comment
+  (declare-function web-mode-comment-or-uncomment-region "web-mode")
   (setq evilnc-comment-text-object "c")
-
-  ;; default hotkeys provided by package
   (evilnc-default-hotkeys)
-
-  ;; manual evil bindings
-  (define-key evil-normal-state-map (kbd "gc")
-              'evilnc-comment-or-uncomment-lines)
-  (define-key evil-visual-state-map (kbd "gc")
-              'evilnc-comment-or-uncomment-lines)
-  (define-key evil-normal-state-map (kbd "gC")
-              'evilnc-copy-and-comment-lines))
-
-(leaf treesit-auto
-  :load-path "~/.config/emacs/lib/treesit-auto"
-  :require treesit-auto
-  :config
-  ;; Auto-install grammar (prompt each time)
-  (setq treesit-auto-install 'prompt)
-
-  ;; Add tree-sitter modes to auto-mode-alist intelligently
-  (treesit-auto-add-to-auto-mode-alist 'all)
-
-  ;; Enable global treesit handler
-  (global-treesit-auto-mode 1))
+  (define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
+  (define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
+  (define-key evil-normal-state-map (kbd "gC") #'evilnc-copy-and-comment-lines))
 
 (leaf dap-mode
-  :load-path "~/.config/emacs/lib/dap-mode"
-  :require dap-mode
+  :straight (dap-mode
+             :host github
+             :repo "emacs-lsp/dap-mode")
   :after lsp-mode
   :config
-  ;; Enable core debugging infrastructure
+  ;; core engine
   (dap-mode 1)
-
-  ;; Debug UI overlays and controls
   (dap-ui-mode 1)
 
-  ;; Auto configuration
+  ;; auto configuration
   (setq dap-auto-configure-mode t
         dap-auto-configure-features '(sessions locals controls tooltip))
 
-  ;; Keybindings — home-row friendly
+  ;; muscle-memory debugging keys
   (define-key dap-mode-map (kbd "C-c d d") #'dap-debug)
   (define-key dap-mode-map (kbd "C-c d b") #'dap-breakpoint-toggle)
   (define-key dap-mode-map (kbd "C-c d n") #'dap-continue)
@@ -342,152 +329,108 @@
   (define-key dap-mode-map (kbd "C-c d o") #'dap-step-out))
 
 (leaf which-key
-  :load-path "~/.config/emacs/lib/which-key"
-  :require which-key
+  :straight (which-key
+             :host github
+             :repo "justbur/emacs-which-key")
   :config
-  (which-key-mode 1))
+  (which-key-mode 1)
+  (setq which-key-idle-delay 0.4
+        which-key-max-description-length 40))
 
 (leaf flycheck
-  :load-path "~/.config/emacs/lib/flycheck"
-  :hook (after-init-hook . global-flycheck-mode)
+  :straight (flycheck
+             :host github
+             :repo "flycheck/flycheck")
+  :hook (after-init . global-flycheck-mode)
   :config
-  (global-flycheck-mode +1))
+  (global-flycheck-mode 1)
+
+  ;; Monochrome diagnosis
+  (custom-set-faces
+   '(flycheck-error   ((t (:underline (:style wave :color "#000000")))))
+   '(flycheck-warning ((t (:underline (:style wave :color "#000000")))))
+   '(flycheck-info    ((t (:underline (:style wave :color "#000000")))))))
 
 (leaf projectile
-  :load-path "~/.config/emacs/lib/projectile"
-  :load-path "~/.config/emacs/lib/projectile/lisp"
+  :straight (projectile
+             :host github
+             :repo "bbatsov/projectile")
+  :init
+  ;; Prefix before loading
+  (setq projectile-keymap-prefix (kbd "C-c p"))
   :config
-  (require 'projectile)
   (projectile-mode +1)
 
-  (setq projectile-keymap-prefix (kbd "C-c p"))
+  ;; Search realms in your universe
+  (setq projectile-project-search-path
+        '("~/Projects"
+          "~/Shapeless-Links"
+          "~/AeonCore"))
 
-  (setq projectile-project-search-path '("~/Projects" "~/Shapeless-Links" "~/AeonCore"))
-  (setq projectile-completion-system 'default)
-  (setq projectile-enable-caching t)
+  (setq projectile-enable-caching t
+        projectile-completion-system 'default)
 
+  ;; Use ripgrep for indexing if available
   (when (executable-find "rg")
-    (setq projectile-generic-command "rg -0 --files --color=never"))
+    (setq projectile-generic-command
+          "rg -0 --files --color=never --hidden --ignore-vcs"))
 
+  ;; Bindings forged for motion
   (define-key projectile-mode-map (kbd "C-c p f") #'projectile-find-file)
   (define-key projectile-mode-map (kbd "C-c p p") #'projectile-switch-project)
-  (define-key projectile-mode-map (kbd "C-c p b") #'projectile-switch-to-buffer))
+  (define-key projectile-mode-map (kbd "C-c p b") #'projectile-switch-to-buffer)
+
+  ;; monochrome modeline segment
+  (custom-set-faces
+   '(projectile-mode-line ((t (:foreground "#000000" :weight bold)))))
+
+  )
 
 (leaf compat
-  :load-path "~/.config/emacs/lib/compat"
-  :require t)
+  :straight (compat
+             :type git
+             :host github
+             :repo "emacs-straight/compat")
+  :require compat)
 
 (leaf org-timeblock
+  :straight (org-timeblock
+             :type git
+             :host github
+             :repo "ichernyshovvv/org-timeblock")
   :after org
-  :load-path "~/.config/emacs/lib/org-timeblock"
-  :require t
-  :commands org-timeblock
+  :commands (org-timeblock)
   :config
   (setq org-timeblock-files '("~/Shapeless-Links/"
                               "~/Projects/"))
   (setq org-timeblock-span 3))
 
-(leaf dslide
-  :load-path "~/.config/emacs/lib/dslide"
-  :require t
-  :commands (dslide-deck-start dslide-deck-forward dslide-deck-backward)
+(leaf magit-todos
+  :straight (magit-todos
+             :type git
+             :host github
+             :repo "alphapapa/magit-todos")
+  :after magit
   :config
-  ;; Keybindings for slide navigation
-  (define-key dslide-mode-map (kbd "<right>") #'dslide-deck-forward)
-  (define-key dslide-mode-map (kbd "<left>")  #'dslide-deck-backward)
-  (define-key dslide-mode-map (kbd "<up>")    #'dslide-deck-start)
-  (define-key dslide-mode-map (kbd "<down>")  #'dslide-deck-stop)
+  (magit-todos-mode 1)
 
-  ;; Ritual mode: invocation when the deck opens
-  (add-hook 'dslide-start-hook
-            (lambda ()
-              (visual-fill-column-mode 1)
-              (variable-pitch-mode 1)))
-  )
+  ;; keyword spectrum
+  (setq magit-todos-keywords '("TODO" "FIXME" "BUG" "NOTE"))
 
-(leaf pdf-tools
-  :load-path "~/.config/emacs/lib/pdf-tools/lisp"
-  :require t
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook (pdf-view-mode . pdf-tools-install)
-  :config
-  (setq pdf-tools-handle-upgrades t)
-  (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
+  ;; ignore noise
+  (setq magit-todos-exclude-globs '("node_modules/*"
+                                    "vendor/*"
+                                    "*.min.js"))
 
-  ;; Navigation bindings
-  (define-key pdf-view-mode-map (kbd "h") #'pdf-view-previous-page)
-  (define-key pdf-view-mode-map (kbd "l") #'pdf-view-next-page)
-  (define-key pdf-view-mode-map (kbd "SPC") #'pdf-view-scroll-up-or-next-page)
-  (define-key pdf-view-mode-map (kbd "b") #'pdf-view-scroll-down-or-previous-page))
-
-(leaf pdf-view-restore
-  :load-path "~/.config/emacs/lib/pdf-view-restore"
-  :after pdf-tools
-  :require t
-  :config
-  (pdf-view-restore-mode 1)
-  (setq pdf-view-restore-data-file
-        (expand-file-name "pdf-view-restore-data.el"
-                          user-emacs-directory)))
-
-(leaf auctex
-  :load-path "~/.config/emacs/lib/auctex"
-  :hook
-  (LaTeX-mode . LaTeX-math-mode)
-  (LaTeX-mode . turn-on-reftex)
-  (LaTeX-mode . visual-line-mode)
-  (LaTeX-mode . flyspell-mode)
-  :config
-  (setq TeX-PDF-mode t)
-  (setq TeX-auto-save t
-        TeX-parse-self t
-        TeX-save-query nil
-        TeX-source-correlate-mode t
-        TeX-source-correlate-method 'synctex
-        LaTeX-indent-environment-check nil
-        TeX-engine 'luatex
-        reftex-plug-into-AUCTeX t))
-
-(leaf latex-preview-pane
-  :load-path "~/.config/emacs/lib/latex-preview-pane"
-  :hook
-  (latex-mode . latex-preview-pane-enable)
-  :config
-  (setq latex-preview-pane-multifile-mode t
-        latex-preview-pane-use-ac-math t)
-  (latex-preview-pane-enable))
-
-(leaf math-preview
-  :load-path "~/.config/emacs/lib/math-preview"
-  :commands (math-preview-all math-preview-region math-preview-at-point)
-  :config
-  (setq math-preview-command "/usr/local/bin/math-preview")
-  (define-key org-mode-map   (kbd "SPC m p") #'math-preview-at-point)
-  (define-key latex-mode-map (kbd "SPC m p") #'math-preview-at-point))
-
-(leaf s
-  :load-path "~/.config/emacs/lib/s")
-
-(leaf ht
-  :load-path "~/.config/emacs/lib/ht")
-
-(leaf treepy
-  :load-path "~/.config/emacs/lib/treepy")
-
-(leaf closql
-  :load-path "~/.config/emacs/lib/closql")
-
-(leaf ghub
-  :after (s ht closql)
-  :load-path "~/.config/emacs/lib/ghub/lisp")
-
-(leaf forge
-  :after ghub
-  :load-path "~/.config/emacs/lib/forge/lisp")
+  ;; carve a motion into magit-status
+  (define-key magit-status-mode-map (kbd "j T")
+    #'magit-todos-list))
 
 (leaf modus-themes
-  :load-path "/home/asdf/.config/emacs/lib/modus-themes"
+  :straight (modus-themes
+             :type git
+             :host github
+             :repo "protesilaos/modus-themes")
   :init
   (setq modus-themes-bold-constructs t
         modus-themes-italic-constructs t
@@ -497,27 +440,21 @@
   (load-theme 'modus-operandi :no-confirm)
 
   (defun shapeshift/monochrome-world ()
-    "Force Emacs into strict black-on-white."
     ;; canvas
     (set-face-attribute 'default nil
                         :foreground "#000000"
                         :background "#ffffff")
 
-    ;; org headings big + bold + monochrome
+    ;; org hierarchy — titanic black mono
+    (set-face-attribute 'org-document-title nil :foreground "#000000" :weight 'bold :height 2.0 :inherit nil)
     (set-face-attribute 'org-level-1 nil :foreground "#000000" :weight 'bold :height 1.80 :inherit nil)
     (set-face-attribute 'org-level-2 nil :foreground "#000000" :weight 'bold :height 1.60 :inherit nil)
     (set-face-attribute 'org-level-3 nil :foreground "#000000" :weight 'bold :height 1.40 :inherit nil)
-    (set-face-attribute 'org-level-4 nil :foreground "#000000" :weight 'bold :height 1.25 :inherit nil)
-    (set-face-attribute 'org-level-5 nil :foreground "#000000" :weight 'bold :height 1.10 :inherit nil)
-    (set-face-attribute 'org-level-6 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
-    (set-face-attribute 'org-level-7 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
-    (set-face-attribute 'org-level-8 nil :foreground "#000000" :weight 'bold :height 1.05 :inherit nil)
-    (set-face-attribute 'org-document-title nil :foreground "#000000" :weight 'bold :height 2.0 :inherit nil)
 
     ;; links stripped
-    (set-face-attribute 'org-link nil :underline nil :inherit nil)
+    (set-face-attribute 'org-link nil :underline nil :inherit nil :foreground "#000000")
 
-    ;; syntax
+    ;; syntax, pure black
     (dolist (face '(font-lock-comment-face
                     font-lock-string-face
                     font-lock-keyword-face
@@ -527,86 +464,114 @@
                     font-lock-constant-face))
       (set-face-attribute face nil :foreground "#000000"))
 
-    ;; dired — bold architecture for directories
-    (set-face-attribute 'dired-directory nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-symlink nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-mark nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-marked nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-flagged nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-warning nil :foreground "#000000" :weight 'bold :inherit nil)
-    (set-face-attribute 'dired-perm-write nil :foreground "#000000" :inherit nil)
-    (set-face-attribute 'dired-special nil :foreground "#000000" :inherit nil))
+    ;; Dired faces — only apply after Dired loads
+    (with-eval-after-load 'dired
+      (dolist (face '(dired-directory
+                      dired-symlink
+                      dired-mark
+                      dired-marked
+                      dired-flagged
+                      dired-warning
+                      dired-perm-write
+                      dired-special))
+        (set-face-attribute face nil :foreground "#000000" :weight 'bold :inherit nil))))
 
   ;; Apply immediately
   (shapeshift/monochrome-world)
 
-  ;; Reapply after any theme reload
+  ;; persist after theme reload
   (advice-add 'load-theme :after
-              (lambda (&rest _)
-                (shapeshift/monochrome-world))))
+              (lambda (&rest _) (shapeshift/monochrome-world))))
 
 (leaf visual-fill-column
-  :load-path "~/.config/emacs/lib/visual-fill-column"
-  :require t)
+  :straight (visual-fill-column
+             :type git
+             :host github
+             :repo "joostkremers/visual-fill-column")
+  :require visual-fill-column)
 
 (leaf writeroom-mode
-  :load-path "~/.config/emacs/lib/writeroom-mode"
+  :straight (writeroom-mode
+             :type git
+             :host github
+             :repo "joostkremers/writeroom-mode")
   :global-minor-mode global-writeroom-mode
+  :after visual-fill-column
   :config
+  ;; No fullscreen or rewriting windows
+  (setq writeroom-global-effects nil
+        writeroom-maximize-window nil
+        writeroom-mode-line nil
+        writeroom-bottom-divider-width 0)
 
-  ;; disable all frame/global side-effects
-  (setq writeroom-global-effects nil)
-  (setq writeroom-maximize-window nil)
-  (setq writeroom-mode-line nil)
-  (setq writeroom-bottom-divider-width 0)
-
-  ;; evil-style width control bindings
+  ;; Evil-width precision bindings
   (with-eval-after-load 'writeroom-mode
     (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
     (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
     (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)))
 
-(leaf centered-cursor-mode
-  :load-path "/home/asdf/.config/emacs/lib/centered-cursor-mode"
-  :global-minor-mode t)
+(leaf org-id
+  :after org
+  :config
+  ;; Auto-generate IDs for all headings when saving
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
-(leaf dash
-  :load-path "~/.config/emacs/lib/dash"
-  :require t)
 (leaf org-roam
-  :load-path "~/.config/emacs/lib/org-roam"
-  :after (org dash)
-  :require t
-  :custom
-  ((org-roam-directory . "~/Roam/")
-   (org-roam-db-location . "~/.config/emacs/org-roam.db")
-   (org-roam-completion-everywhere . t))
+  :straight (org-roam
+             :type git
+             :host github
+             :repo "org-roam/org-roam")
+  :after org
+  :init
+  (setq org-roam-v2-ack t)
+  (setq org-roam-directory (file-truename "~/Shapeless-Links/"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n j" . org-roam-dailies-capture-today))
   :config
-  (org-roam-db-autosync-enable)
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:10}" 'face 'org-tag)))
 
-  (define-key global-map (kbd "C-c r f") #'org-roam-node-find)
-  (define-key global-map (kbd "C-c r i") #'org-roam-node-insert)
-  (define-key global-map (kbd "C-c r g") #'org-roam-graph)
-  (define-key global-map (kbd "C-c r d") #'org-roam-dailies-map)
-  (define-key global-map (kbd "C-c r t") #'org-roam-dailies-capture-today))
+  (org-roam-db-autosync-mode 1)
 
-(leaf org-roam-ui
-  :load-path "~/.config/emacs/lib/org-roam-ui"
-  :after org-roam
-  :require t
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+  ;; enable capture link protocol
+  (require 'org-roam-protocol))
 
 (defun live-shaping/auto-tangle-and-reload ()
-  "When Emacs.org is saved, tangle it and reload init.el."
+  "When Emacs.org is saved, tangle it and reload init.el.
+Handles errors gracefully and provides feedback."
   (when (string-equal (buffer-file-name)
                       (expand-file-name "~/.config/emacs/Emacs.org"))
-    (message "Live-Shaping: Tangling & Reloading...")
-    (org-babel-tangle)
-    (load-file "~/.config/emacs/init.el")
-    (message "Live-Shaping: Reload complete.")))
+    (message "Live-Shaping: Tangling...")
+    (condition-case tangle-err
+        (progn
+          ;; Attempt to tangle the org file
+          (let ((tangle-result (org-babel-tangle)))
+            (if tangle-result
+                (progn
+                  (message "Live-Shaping: Tangle successful. Reloading...")
+                  (condition-case reload-err
+                      (progn
+                        (load-file "~/.config/emacs/init.el")
+                        (message "Live-Shaping: Reload complete ✓"))
+                    (error
+                     (message "Live-Shaping: Reload failed: %s" 
+                              (error-message-string reload-err))
+                     (display-warning 'live-shaping
+                                      (format "Failed to reload init.el: %s" 
+                                              (error-message-string reload-err))
+                                      :error))))
+              (message "Live-Shaping: Tangle returned no files (check your source blocks)"))))
+      (error
+       (message "Live-Shaping: Tangle failed: %s" 
+                (error-message-string tangle-err))
+       (display-warning 'live-shaping
+                        (format "Failed to tangle Emacs.org: %s" 
+                                (error-message-string tangle-err))
+                        :error)))))
 
 (add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)

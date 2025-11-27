@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/auto-yasnippet/auto-yasnippet.el

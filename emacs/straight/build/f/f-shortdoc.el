@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/f.el/f-shortdoc.el

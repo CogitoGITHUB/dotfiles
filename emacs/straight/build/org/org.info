@@ -1,0 +1,638 @@
+This is org.info, produced by makeinfo version 7.2 from org.texi.
+
+This manual is for Org version 9.8.
+
+   Copyright © 2004-2025 Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, with the Front-Cover Texts
+     being "A GNU Manual," and with the Back-Cover Texts as in (a)
+     below.  A copy of the license is included in the section entitled
+     "GNU Free Documentation License."
+
+     (a) The FSF's Back-Cover Text is: "You have the freedom to copy and
+     modify this GNU manual."
+
+INFO-DIR-SECTION Emacs editing modes
+START-INFO-DIR-ENTRY
+* Org Mode: (org).      Outline-based notes management and organizer.
+END-INFO-DIR-ENTRY
+
+
+Indirect:
+org.info-1: 868
+org.info-2: 302831
+org.info-3: 600925
+org.info-4: 989629
+
+Tag Table:
+(Indirect)
+Node: Top868
+Node: Introduction23267
+Node: Summary23729
+Node: Installation26878
+Ref: Using Emacs packaging system27799
+Ref: Using Org's git repository28683
+Ref: Installing Org's contributed packages29631
+Node: Activation30254
+Ref: Activation-Footnote-131926
+Node: Feedback32054
+Ref: How to create a useful backtrace35261
+Ref: How to profile Org performance36375
+Ref: Feedback-Footnote-138598
+Node: Conventions38724
+Ref: TODO keywords, tags, properties, etc38895
+Ref: Key bindings and commands39792
+Node: Document Structure40422
+Node: Headlines41594
+Ref: Headlines-Footnote-142909
+Node: Visibility Cycling43188
+Node: Global and local cycling43578
+Ref: Global and local cycling-Footnote-146290
+Ref: Global and local cycling-Footnote-246352
+Node: Initial visibility46656
+Ref: Initial visibility-Footnote-147846
+Node: Catching invisible edits48039
+Node: Motion48781
+Node: Structure Editing50245
+Node: Sparse Trees56827
+Ref: Sparse Trees-Footnote-159424
+Ref: Sparse Trees-Footnote-259544
+Node: Plain Lists59620
+Ref: Plain Lists-Footnote-167203
+Ref: Plain Lists-Footnote-267567
+Ref: Plain Lists-Footnote-367667
+Ref: Plain Lists-Footnote-467924
+Ref: Plain Lists-Footnote-568099
+Ref: Plain Lists-Footnote-668203
+Ref: Plain Lists-Footnote-768309
+Node: Drawers68379
+Ref: Drawers-Footnote-170067
+Node: Blocks70179
+Node: Tables70772
+Node: Built-in Table Editor71455
+Ref: Creation and conversion73189
+Ref: Re-aligning and field motion74127
+Ref: Column and row editing75062
+Ref: Regions77492
+Ref: Calculations78887
+Ref: Miscellaneous (1)79700
+Ref: Built-in Table Editor-Footnote-182177
+Node: Column Width and Alignment82285
+Node: Column Groups85620
+Node: Orgtbl Mode87187
+Node: The Spreadsheet88002
+Node: References89474
+Ref: Field references89933
+Ref: Range references92364
+Ref: Field coordinates in formulas93623
+Ref: Named references94608
+Ref: Remote references95575
+Ref: References-Footnote-196497
+Ref: References-Footnote-296725
+Ref: References-Footnote-396828
+Node: Formula syntax for Calc97153
+Ref: Formula syntax for Calc-Footnote-1103015
+Node: Formula syntax for Lisp103338
+Node: Durations and time values105868
+Node: Field and range formulas107255
+Node: Column formulas109723
+Node: Lookup functions111836
+Node: Editing and debugging formulas113805
+Ref: Using multiple TBLFM lines118321
+Ref: Debugging formulas119164
+Node: Updating the table119582
+Node: Advanced features120954
+Ref: Advanced features-Footnote-1125405
+Node: Org Plot125513
+Ref: Graphical plots using Gnuplot125714
+Ref: Plot options128235
+Ref: ASCII bar plots131140
+Node: Hyperlinks132389
+Node: Link Format133253
+Ref: Link Format-Footnote-1135416
+Ref: Link Format-Footnote-2135648
+Node: Internal Links135779
+Ref: Internal Links-Footnote-1138337
+Ref: Internal Links-Footnote-2138577
+Node: Radio Targets138718
+Node: External Links139435
+Ref: External Links-Footnote-1145434
+Ref: External Links-Footnote-2145527
+Node: Handling Links145951
+Ref: Handling Links-Footnote-1154466
+Ref: Handling Links-Footnote-2154662
+Ref: Handling Links-Footnote-3154796
+Ref: Handling Links-Footnote-4155092
+Ref: Handling Links-Footnote-5155354
+Ref: Handling Links-Footnote-6155476
+Node: Using Links Outside Org155551
+Node: Link Abbreviations156026
+Node: Search Options158988
+Ref: Search Options-Footnote-1161134
+Node: Custom Searches161215
+Node: TODO Items162249
+Ref: TODO Items-Footnote-1163374
+Node: TODO Basics163488
+Node: TODO Extensions166117
+Node: Workflow states167170
+Ref: Workflow states-Footnote-1168569
+Node: TODO types168685
+Ref: TODO types-Footnote-1170494
+Node: Multiple sets in one file170566
+Node: Fast access to TODO states172514
+Ref: Fast access to TODO states-Footnote-1173394
+Node: Per-file keywords173501
+Ref: Per-file keywords-Footnote-1174969
+Node: Faces for TODO keywords175173
+Node: TODO dependencies176246
+Node: Progress Logging178735
+Node: Closing items179870
+Ref: Closing items-Footnote-1180870
+Ref: Closing items-Footnote-2180944
+Node: Tracking TODO state changes181022
+Ref: Tracking TODO state changes-Footnote-1184160
+Ref: Tracking TODO state changes-Footnote-2184222
+Ref: Tracking TODO state changes-Footnote-3184379
+Node: Tracking your habits184657
+Node: Priorities189172
+Ref: Priorities-Footnote-1191675
+Node: Breaking Down Tasks191748
+Ref: Breaking Down Tasks-Footnote-1193777
+Node: Checkboxes193884
+Ref: Checkboxes-Footnote-1199593
+Ref: Checkboxes-Footnote-2199710
+Ref: Checkboxes-Footnote-3199890
+Node: Tags200004
+Node: Tag Inheritance201097
+Ref: Tag Inheritance-Footnote-1202618
+Node: Setting Tags202722
+Ref: Setting Tags-Footnote-1209493
+Ref: Setting Tags-Footnote-2209671
+Node: Tag Hierarchy209749
+Node: Tag Searches213346
+Node: Properties and Columns214571
+Node: Property Syntax215960
+Node: Special Properties220558
+Ref: Special Properties-Footnote-1222307
+Node: Property Searches222603
+Node: Property Inheritance223989
+Node: Column View225861
+Node: Defining columns227100
+Node: Scope of column definitions227485
+Node: Column attributes228544
+Ref: Summaries in deeply nested hierarchy233503
+Ref: Column attributes-Footnote-1234697
+Ref: Column attributes-Footnote-2235095
+Ref: Column attributes-Footnote-3235293
+Node: Using column view235432
+Ref: Turning column view on or off235598
+Ref: Editing values236639
+Ref: Modifying column view on-the-fly238043
+Node: Capturing column view238738
+Ref: Capturing column view-Footnote-1242713
+Node: Dates and Times242849
+Node: Timestamps244018
+Ref: Timestamps-Footnote-1246982
+Ref: Timestamps-Footnote-2247278
+Node: Creating Timestamps248066
+Node: The date/time prompt251080
+Ref: The date/time prompt-Footnote-1256031
+Ref: The date/time prompt-Footnote-2256202
+Ref: The date/time prompt-Footnote-3256313
+Ref: The date/time prompt-Footnote-4256564
+Node: Custom time format256662
+Node: Deadlines and Scheduling258430
+Ref: Deadlines and Scheduling-Footnote-1261998
+Node: Inserting deadline/schedule262161
+Ref: Inserting deadline/schedule-Footnote-1264152
+Ref: Inserting deadline/schedule-Footnote-2264313
+Ref: Inserting deadline/schedule-Footnote-3264439
+Node: Repeated tasks264565
+Ref: Repeated tasks-Footnote-1269281
+Ref: Repeated tasks-Footnote-2269364
+Ref: Repeated tasks-Footnote-3269647
+Node: Clocking Work Time269869
+Ref: Clocking Work Time-Footnote-1271072
+Ref: Clocking Work Time-Footnote-2271225
+Node: Clocking commands271367
+Ref: Clocking commands-Footnote-1276598
+Ref: Clocking commands-Footnote-2276709
+Ref: Clocking commands-Footnote-3276791
+Ref: Clocking commands-Footnote-4276854
+Node: The clock table276937
+Ref: The clock table-Footnote-1285046
+Ref: The clock table-Footnote-2285155
+Ref: The clock table-Footnote-3285253
+Node: Resolving idle time285378
+Ref: Resolving idle time (1)285574
+Ref: Continuous clocking288754
+Ref: Clocking out automatically after some idle time289260
+Ref: Resolving idle time-Footnote-1289891
+Node: Effort Estimates290338
+Ref: Effort Estimates-Footnote-1293293
+Node: Timers293404
+Node: Refiling and Archiving295617
+Node: Refile and Copy296180
+Ref: Refile and Copy-Footnote-1299010
+Node: Archiving299124
+Node: Moving subtrees299837
+Node: Internal archiving302831
+Node: Capture and Attachments305559
+Node: Capture306364
+Node: Setting up capture306884
+Node: Using capture307247
+Node: Capture templates309583
+Node: Template elements311624
+Ref: Template elements-Footnote-1320951
+Ref: Template elements-Footnote-2321284
+Ref: Template elements-Footnote-3321629
+Node: Template expansion321724
+Ref: Template expansion-Footnote-1326118
+Ref: Template expansion-Footnote-2326209
+Ref: Template expansion-Footnote-3326399
+Node: Templates in contexts326498
+Node: Attachments327337
+Node: Attachment defaults and dispatcher328378
+Ref: Attachment defaults and dispatcher-Footnote-1331720
+Node: Attachment options331871
+Node: Attachment links335877
+Node: Automatic version-control with Git336524
+Node: Attach from Dired337033
+Node: RSS Feeds338397
+Node: Agenda Views339848
+Node: Agenda Files342255
+Ref: Agenda Files-Footnote-1345164
+Ref: Agenda Files-Footnote-2345308
+Node: Agenda Dispatcher345506
+Ref: Agenda Dispatcher-Footnote-1348382
+Node: Built-in Agenda Views348480
+Node: Weekly/daily agenda349077
+Ref: Calendar/Diary integration350532
+Ref: Anniversaries from BBDB352606
+Ref: Appointment reminders354395
+Ref: Weekly/daily agenda-Footnote-1354945
+Ref: Weekly/daily agenda-Footnote-2355189
+Node: Global TODO list355409
+Node: Matching tags and properties358260
+Ref: Matching tags and properties-Footnote-1366743
+Node: Search view366848
+Node: Stuck projects368495
+Node: Presentation and Sorting370622
+Node: Categories371599
+Node: Time-of-day specifications372345
+Ref: Time-of-day specifications-Footnote-1374334
+Node: Sorting of agenda items374457
+Node: Filtering/limiting agenda items376045
+Ref: Filtering in the agenda376750
+Ref: Computed tag filtering380884
+Ref: Setting limits for the agenda382376
+Ref: Filtering/limiting agenda items-Footnote-1383925
+Node: Agenda Commands384476
+Ref: Motion (1)385205
+Ref: View/Go to Org file385408
+Ref: Change display386914
+Ref: Remote editing394680
+Ref: Bulk remote editing selected entries400038
+Ref: Calendar commands403126
+Ref: Quit and exit405006
+Ref: Agenda Commands-Footnote-1405368
+Ref: Agenda Commands-Footnote-2405444
+Ref: Agenda Commands-Footnote-3405548
+Node: Custom Agenda Views405635
+Node: Storing searches406287
+Ref: Storing searches-Footnote-1409238
+Ref: Storing searches-Footnote-2409355
+Node: Block agenda409601
+Node: Setting options410930
+Node: Exporting Agenda Views414542
+Ref: Exporting Agenda Views-Footnote-1419080
+Ref: Exporting Agenda Views-Footnote-2419297
+Ref: Exporting Agenda Views-Footnote-3419447
+Ref: Exporting Agenda Views-Footnote-4419634
+Node: Agenda Column View419716
+Node: Markup for Rich Contents423057
+Node: Paragraphs424364
+Node: Emphasis and Monospace425499
+Ref: Emphasis and Monospace-Footnote-1427080
+Node: Subscripts and Superscripts427166
+Ref: Subscripts and Superscripts-Footnote-1428920
+Node: Special Symbols429037
+Ref: Special Symbols-Footnote-1430947
+Ref: Special Symbols-Footnote-2431113
+Node: Embedded LaTeX431210
+Ref: Embedded LaTeX-Footnote-1432058
+Node: LaTeX fragments432248
+Ref: LaTeX fragments-Footnote-1434704
+Node: Previewing LaTeX fragments434897
+Ref: Previewing LaTeX fragments-Footnote-1436379
+Node: CDLaTeX mode436628
+Ref: CDLaTeX mode-Footnote-1439366
+Node: Literal Examples439513
+Ref: Literal Examples-Footnote-1444635
+Ref: Literal Examples-Footnote-2445091
+Ref: Literal Examples-Footnote-3445269
+Ref: Literal Examples-Footnote-4445423
+Ref: Literal Examples-Footnote-5445651
+Ref: Literal Examples-Footnote-6445836
+Node: Images and link previews445934
+Ref: Images and link previews-Footnote-1448659
+Node: Images448826
+Ref: Images-Footnote-1452330
+Ref: Images-Footnote-2452453
+Node: Captions452539
+Node: Horizontal Rules453255
+Node: Creating Footnotes453511
+Ref: Creating Footnotes-Footnote-1456638
+Ref: Creating Footnotes-Footnote-2456744
+Node: Exporting456851
+Node: The Export Dispatcher459619
+Node: Export Settings463066
+Ref: Export Settings-Footnote-1471842
+Ref: Export Settings-Footnote-2471954
+Ref: Export Settings-Footnote-3472054
+Node: Table of Contents472250
+Ref: Table of Contents-Footnote-1474909
+Node: Include Files475230
+Ref: Include Files-Footnote-1478320
+Node: Macro Replacement478498
+Ref: Macro Replacement-Footnote-1482378
+Ref: Macro Replacement-Footnote-2482490
+Node: Comment Lines482707
+Ref: Comment Lines-Footnote-1483571
+Node: ASCII/Latin-1/UTF-8 export483675
+Ref: ASCII export commands484529
+Ref: ASCII specific export settings485066
+Ref: Header and sectioning structure485509
+Ref: Quoting ASCII text485783
+Ref: ASCII specific attributes486153
+Ref: ASCII special blocks486429
+Node: Beamer Export486775
+Node: Beamer export commands487715
+Node: Beamer specific export settings488420
+Node: Frames and Blocks in Beamer490322
+Ref: Frames and Blocks in Beamer-Footnote-1493858
+Node: Beamer specific syntax494017
+Node: Editing support495990
+Node: A Beamer example496461
+Node: HTML Export497738
+Node: HTML export commands498926
+Node: HTML specific export settings499468
+Node: HTML doctypes501678
+Node: HTML preamble and postamble503848
+Node: Bare HTML504901
+Node: Quoting HTML tags505489
+Node: Headlines in HTML export506170
+Node: Links in HTML export506973
+Node: Tables in HTML export508430
+Node: Images in HTML export509883
+Node: Math formatting in HTML export511371
+Ref: Math formatting in HTML export-Footnote-1512864
+Ref: Math formatting in HTML export-Footnote-2513056
+Node: Text areas in HTML export513339
+Node: CSS support514480
+Ref: CSS support-Footnote-1518110
+Node: JavaScript support518290
+Node: LaTeX Export521469
+Ref: LaTeX Export-Footnote-1523752
+Node: LaTeX/PDF export commands523900
+Ref: LaTeX/PDF export commands-Footnote-1525401
+Node: LaTeX specific export settings525599
+Node: LaTeX header and sectioning529212
+Node: Quoting LaTeX code533025
+Node: Tables in LaTeX export533909
+Node: Images in LaTeX export539161
+Node: Plain lists in LaTeX export541810
+Node: Source blocks in LaTeX export542829
+Ref: Source blocks in LaTeX export-Footnote-1544955
+Node: Example blocks in LaTeX export545113
+Node: Special blocks in LaTeX export545838
+Node: Horizontal rules in LaTeX export547097
+Node: Verse blocks in LaTeX export547533
+Node: Quote blocks in LaTeX export550256
+Node: Controlling the way the table of contents is generated551437
+Node: Markdown Export552510
+Ref: Markdown export commands553239
+Ref: Header and sectioning structure (1)553676
+Node: OpenDocument Text Export554220
+Ref: OpenDocument Text Export-Footnote-1555325
+Node: Pre-requisites for ODT export555475
+Node: ODT export commands555852
+Node: ODT specific export settings557032
+Node: Extending ODT export558077
+Ref: Automatically exporting to other formats558885
+Ref: Converting between document formats559310
+Node: Applying custom styles559850
+Ref: Applying custom styles the easy way560381
+Ref: Using third-party styles and templates561335
+Node: Links in ODT export561631
+Node: Tables in ODT export562293
+Node: Images in ODT export564299
+Ref: Embedding images564503
+Ref: Embedding clickable images564819
+Ref: Sizing and scaling of embedded images565153
+Ref: Anchoring of images566831
+Node: Math formatting in ODT export567152
+Node: LaTeX math snippets567581
+Ref: LaTeX math snippets-Footnote-1569830
+Ref: LaTeX math snippets-Footnote-2569889
+Node: MathML and OpenDocument formula files569935
+Node: Labels and captions in ODT export570443
+Node: Literal examples in ODT export571711
+Node: Advanced topics in ODT export572550
+Ref: Configuring a document converter572859
+Ref: Working with OpenDocument style files573797
+Ref: x-orgodtstyles-xml574263
+Ref: x-orgodtcontenttemplate-xml574605
+Ref: x-overriding-factory-styles575249
+Ref: Creating one-off styles576493
+Ref: Customizing tables in ODT export578494
+Ref: Validating OpenDocument XML583354
+Ref: Advanced topics in ODT export-Footnote-1584148
+Ref: Advanced topics in ODT export-Footnote-2584253
+Ref: Advanced topics in ODT export-Footnote-3584346
+Node: Org Export584694
+Ref: Org export commands585048
+Node: Texinfo Export585354
+Node: Texinfo export commands586394
+Node: Texinfo specific export settings587019
+Node: Texinfo file header588727
+Node: Texinfo title and copyright page589707
+Node: Info directory file591070
+Node: Headings and sectioning structure591784
+Node: Indices593805
+Node: Quoting Texinfo code594831
+Node: Plain lists in Texinfo export595329
+Node: Tables in Texinfo export600925
+Node: Images in Texinfo export601420
+Node: Quotations in Texinfo export602057
+Node: Key bindings in Texinfo export603009
+Node: Special blocks in Texinfo export603810
+Node: A Texinfo example604643
+Node: iCalendar Export606734
+Ref: iCalendar Export-Footnote-1612193
+Node: Other Built-in Backends612376
+Node: Advanced Export Configuration613002
+Ref: Export hooks613201
+Ref: Filters614421
+Ref: Defining filters for individual files616921
+Ref: Summary of the export process617726
+Ref: Extending an existing backend623127
+Ref: Advanced Export Configuration-Footnote-1625462
+Ref: Advanced Export Configuration-Footnote-2625818
+Ref: Advanced Export Configuration-Footnote-3625967
+Node: Export Region626053
+Node: Publishing627111
+Node: Configuration627985
+Node: Project alist628767
+Node: Sources and destinations629905
+Node: Selecting files631224
+Node: Publishing action632177
+Ref: Publishing action-Footnote-1634010
+Node: Publishing options634173
+Ref: Generic properties634925
+Ref: ASCII specific properties637613
+Ref: Beamer specific properties639213
+Ref: HTML specific properties639845
+Ref: LaTeX specific properties645081
+Ref: Markdown specific properties648589
+Ref: ODT specific properties648965
+Ref: Texinfo specific properties650037
+Node: Publishing links651465
+Node: Site map652915
+Node: Generating an index655741
+Node: Uploading Files656533
+Node: Sample Configuration658314
+Node: Simple example658812
+Node: Complex example659528
+Node: Triggering Publication661616
+Node: Citation handling662642
+Node: Citations665684
+Node: Citation export processors668046
+Node: Bibliography printing671522
+Node: Bibliography options in the biblatex and csl export processors672670
+Node: Working with Source Code674787
+Node: Features Overview677092
+Node: Structure of Code Blocks679837
+Node: Using Header Arguments682780
+Ref: System-wide header arguments683505
+Ref: Header arguments in Org mode properties685176
+Ref: Code block specific header arguments687000
+Ref: Header arguments in function calls688499
+Node: Environment of a Code Block689173
+Ref: Passing arguments689387
+Ref: Using sessions697926
+Ref: Choosing a working directory699325
+Ref: Inserting headers and footers701625
+Node: Evaluating Code Blocks702134
+Ref: How to evaluate source code702587
+Ref: Limit code block evaluation705533
+Ref: Cache results of evaluation706519
+Ref: Evaluating Code Blocks-Footnote-1709030
+Ref: Evaluating Code Blocks-Footnote-2709164
+Node: Results of Evaluation709322
+Ref: Collection710129
+Ref: Type711588
+Ref: Format715610
+Ref: Handling718203
+Ref: Post-processing719594
+Ref: Results of Evaluation-Footnote-1721344
+Node: Exporting Code Blocks721502
+Node: Extracting Source Code725173
+Ref: Header arguments726154
+Ref: Functions730381
+Ref: Tangle hooks730632
+Ref: Jumping between code and Org731408
+Node: Languages731917
+Node: Editing Source Code732918
+Node: Noweb Reference Syntax735894
+Ref: Noweb Reference Syntax-Footnote-1742621
+Ref: Noweb Reference Syntax-Footnote-2742712
+Ref: Noweb Reference Syntax-Footnote-3743325
+Node: Library of Babel743445
+Node: Key bindings and Useful Functions744159
+Node: Batch Execution746584
+Node: Miscellaneous747365
+Node: Completion748889
+Node: Structure Templates750812
+Ref: Structure Templates-Footnote-1752562
+Node: Speed Keys752654
+Node: Clean View753821
+Node: Org Indent Mode755021
+Ref: Org Indent Mode-Footnote-1756227
+Node: Hard indentation756451
+Ref: Hard indentation-Footnote-1757932
+Ref: Hard indentation-Footnote-2758038
+Node: Execute commands in the active region758182
+Node: Dynamic Headline Numbering759194
+Node: The Very Busy C-c C-c Key760360
+Node: In-buffer Settings762347
+Ref: In-buffer Settings-Footnote-1772285
+Node: Regular Expressions772483
+Node: Org Syntax773105
+Node: Documentation Access774722
+Node: Escape Character775139
+Node: Code Evaluation Security775999
+Node: Interaction778864
+Node: Cooperation779285
+Node: Conflicts782351
+Node: TTY Keys786934
+Node: Protocols788571
+Node: The store-link protocol790032
+Node: The capture protocol791191
+Node: The open-source protocol792845
+Node: Org Crypt796066
+Node: Org Mobile797939
+Node: Setting up the staging area799324
+Ref: Setting up the staging area-Footnote-1800564
+Ref: Setting up the staging area-Footnote-2800771
+Node: Pushing to the mobile application800943
+Ref: Pushing to the mobile application-Footnote-1801954
+Ref: Pushing to the mobile application-Footnote-2802045
+Ref: Pushing to the mobile application-Footnote-3802412
+Node: Pulling from the mobile application802488
+Ref: Pulling from the mobile application-Footnote-1804801
+Node: Drag and Drop & yank-media804854
+Ref: Drag and Drop & yank-media-Footnote-1806671
+Node: Repeating commands806817
+Node: Hacking808959
+Node: Hooks809982
+Node: Add-on Packages810257
+Node: Adding Hyperlink Types810713
+Node: Adding Hyperlink preview814527
+Node: Adding Export Backends817269
+Node: Tables in Arbitrary Syntax818514
+Node: Radio tables819778
+Node: A LaTeX example821908
+Ref: A LaTeX example-Footnote-1825759
+Ref: A LaTeX example-Footnote-2825802
+Ref: A LaTeX example-Footnote-3825963
+Node: Translator functions826415
+Node: Dynamic Blocks828597
+Node: Special Agenda Views830841
+Ref: Special Agenda Views-Footnote-1834552
+Ref: Special Agenda Views-Footnote-2834758
+Node: Speeding Up Your Agendas834890
+Node: Extracting Agenda Information836113
+Node: Using the Property API839920
+Node: Using the Mapping API843269
+Node: History and Acknowledgments847299
+Ref: From Carsten847497
+Ref: From Bastien850925
+Ref: List of Contributions853448
+Node: GNU Free Documentation License862118
+Ref: ADDENDUM How to use this License for your documents885879
+Node: Main Index887268
+Node: Key Index989629
+Node: Command and Function Index1047059
+Node: Variable Index1096416
+
+End Tag Table
+
+
+Local Variables:
+coding: utf-8
+Info-documentlanguage: en
+End:

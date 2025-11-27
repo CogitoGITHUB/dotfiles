@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/evil-collection/modes/pass/evil-collection-pass.el

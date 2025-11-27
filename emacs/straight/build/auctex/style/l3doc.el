@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/auctex/style/l3doc.el
