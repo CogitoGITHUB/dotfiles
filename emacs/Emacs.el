@@ -1,46 +1,52 @@
 ;;──────────────────────────────────────────────────────────
-;; Straight bootstrap (must be first)
-;;──────────────────────────────────────────────────────────
+  ;; Straight bootstrap (must be first)
+  ;;──────────────────────────────────────────────────────────
 
-(defvar bootstrap-version)
+  (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        user-emacs-directory))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+         (expand-file-name
+          "straight/repos/straight.el/bootstrap.el"
+          user-emacs-directory))
+        (bootstrap-version 7))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
 
-(setq straight-use-package-by-default t)
-(straight-use-package 'org)
+  (setq straight-use-package-by-default t)
+  (straight-use-package 'org)
+  (require 'org)  ;; Force load immediately
+  ;;──────────────────────────────────────────────────────────
+  ;; Install leaf *before* leaf-keywords is used
+  ;;──────────────────────────────────────────────────────────
+  (straight-use-package 'leaf)
+  (straight-use-package 'leaf-keywords)
 
-;;──────────────────────────────────────────────────────────
-;; Install leaf *before* leaf-keywords is used
-;;──────────────────────────────────────────────────────────
-(straight-use-package 'leaf)
-(straight-use-package 'leaf-keywords)
-
-(require 'leaf)
-(require 'leaf-keywords)
-(leaf-keywords-init)
+  (require 'leaf)
+  (require 'leaf-keywords)
+  (leaf-keywords-init)
 
 ;;──────────────────────────────────────────────────────────
 ;; Primitive built-in configuration with leaf
 ;;──────────────────────────────────────────────────────────
-
 (leaf cus-start
   :doc "builtin core configuration"
   :tag "builtin"
   :custom ((truncate-lines . t)
            (menu-bar-mode . nil)
            (tool-bar-mode . nil)
-           (scroll-bar-mode . nil)))
+           (scroll-bar-mode . nil)
+           (inhibit-startup-screen . t)
+           (initial-scratch-message . nil)
+           (ring-bell-function . 'ignore)
+           (use-dialog-box . nil)
+           (cursor-in-non-selected-windows . nil)
+           (frame-title-format . "%b")
+           (fringe-mode . 0)))
 
 (leaf center-lock
   :config
@@ -86,7 +92,7 @@
   (when (find-font (font-spec :name "DejaVu Sans Mono"))
     (set-face-attribute 'default nil
                         :family "DejaVu Sans Mono"
-                        :height 110))
+                        :height 100))
 
   ;; unicode fallback matrix
   (set-fontset-font t 'unicode "Symbola" nil 'prepend)
@@ -208,19 +214,24 @@
              :fetch t)
   :config
   ;; core behavior
-  (setq avy-background nil
+  (setq avy-background nil  ; No background dimming
         avy-all-windows t
         avy-style 'at-full
         avy-timeout-seconds 0.4)
-
   (setq avy-keys (string-to-list "aoeuidhtns"))
-
+  
+  ;; clean grey theme
+  (custom-set-faces
+   '(avy-lead-face ((t (:foreground "#000000" :background "#cccccc" :weight normal))))
+   '(avy-lead-face-0 ((t (:foreground "#000000" :background "#cccccc" :weight normal))))
+   '(avy-lead-face-1 ((t (:foreground "#000000" :background "#cccccc" :weight normal))))
+   '(avy-lead-face-2 ((t (:foreground "#000000" :background "#cccccc" :weight normal)))))
+  
   ;; dispatch operations
   (setq avy-dispatch-alist
         '((?k . avy-kill-region)
           (?y . avy-copy-region)
           (?c . avy-kill-ring-save)))
-
   ;; bind teleport
   (define-key evil-normal-state-map (kbd "SPC") #'avy-goto-char-timer)
   (define-key evil-visual-state-map (kbd "SPC") #'avy-goto-char-timer)
@@ -516,30 +527,7 @@
   ;; Auto-generate IDs for all headings when saving
   (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
-(leaf org-roam
-  :straight (org-roam
-             :type git
-             :host github
-             :repo "org-roam/org-roam")
-  :after org
-  :init
-  (setq org-roam-v2-ack t)
-  (setq org-roam-directory (file-truename "~/Shapeless-Links/"))
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ("C-c n j" . org-roam-dailies-capture-today))
-  :config
-  (setq org-roam-node-display-template
-        (concat "${title:*} "
-                (propertize "${tags:10}" 'face 'org-tag)))
 
-  (org-roam-db-autosync-mode 1)
-
-  ;; enable capture link protocol
-  (require 'org-roam-protocol))
 
 (defun live-shaping/auto-tangle-and-reload ()
   "When Emacs.org is saved, tangle it and reload init.el.

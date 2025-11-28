@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/let-alist/.github/PULL_REQUEST_TEMPLATE.md

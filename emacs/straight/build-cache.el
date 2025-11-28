@@ -3,7 +3,7 @@
 
 "30.2"
 
-#s(hash-table test equal data ("straight" ("2025-11-27 18:29:13" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-27 18:29:13" nil (:local-repo nil :package "org-elpa" :type git)) "melpa" ("2025-11-27 18:29:22" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "leaf" ("2025-11-27 18:29:23" ("emacs") (:type git :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el")) "leaf-keywords" ("2025-11-27 18:29:24" ("emacs" "leaf") (:type git :host github :repo "conao3/leaf-keywords.el" :package "leaf-keywords" :local-repo "leaf-keywords.el")) "org-superstar" ("2025-11-27 18:30:45" ("org" "emacs") (:type git :host github :repo "integral-dw/org-superstar-mode" :fetch t :package "org-superstar" :local-repo "org-superstar-mode")) "org" ("2025-11-27 18:30:45" ("emacs") (:type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "evil" ("2025-11-27 18:31:05" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :package "evil" :local-repo "evil")) "gnu-elpa-mirror" ("2025-11-27 18:30:58" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2025-11-27 18:30:59" nil (:type git :repo "https://github.com/emacsmirror/nongnu_elpa.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-11-27 18:31:01" nil (:type git :host github :repo "dimitri/el-get" :build nil :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-11-27 18:31:02" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "goto-chg" ("2025-11-27 18:31:03" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "annalist" ("2025-11-27 18:31:07" ("emacs" "cl-lib") (:type git :host github :repo "noctuid/annalist.el" :fetch t :package "annalist" :local-repo "annalist.el")) "evil-collection" ("2025-11-27 18:31:11" ("emacs" "evil" "annalist") (:type git :host github :repo "emacs-evil/evil-collection" :fetch t :files (:defaults "modes" "evil-collection-pkg.el") :package "evil-collection" :local-repo "evil-collection")) "evil-surround" ("2025-11-27 18:31:12" ("evil") (:type git :host github :repo "timcharper/evil-surround" :fetch t :package "evil-surround" :local-repo "evil-surround")) "pulsar" ("2025-11-27 18:31:13" ("emacs") (:type git :host github :repo "protesilaos/pulsar" :fetch t :files ("*" (:exclude ".git")) :package "pulsar" :local-repo "pulsar")) "switch-window" ("2025-11-27 18:31:14" ("emacs") (:type git :host github :repo "dimitri/switch-window" :fetch t :package "switch-window" :local-repo "switch-window")) "avy" ("2025-11-27 18:31:16" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :fetch t :package "avy" :local-repo "avy")) "multiple-cursors" ("2025-11-27 18:31:17" ("cl-lib") (:type git :host github :repo "magnars/multiple-cursors.el" :fetch t :package "multiple-cursors" :local-repo "multiple-cursors.el")) "move-text" ("2025-11-27 18:31:18" nil (:type git :host github :repo "emacsfodder/move-text" :fetch t :package "move-text" :local-repo "move-text")) "yasnippet" ("2025-11-27 18:31:21" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "auto-yasnippet" ("2025-11-27 18:31:22" ("yasnippet" "emacs") (:type git :host github :repo "abo-abo/auto-yasnippet" :package "auto-yasnippet" :local-repo "auto-yasnippet")) "polymode" ("2025-11-27 18:41:30" ("emacs") (:type git :host github :repo "polymode/polymode" :package "polymode" :local-repo "polymode")) "poly-org" ("2025-11-27 18:41:31" ("emacs" "polymode") (:type git :host github :repo "polymode/poly-org" :package "poly-org" :local-repo "poly-org")) "treesit-auto" ("2025-11-27 18:54:27" ("emacs") (:host github :repo "renzmann/treesit-auto" :package "treesit-auto" :type git :local-repo "treesit-auto")) "dap-mode" ("2025-11-27 18:56:14" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:host github :repo "emacs-lsp/dap-mode" :files (:defaults "icons" "dap-mode-pkg.el") :package "dap-mode" :type git :local-repo "dap-mode")) "dash" ("2025-11-27 18:54:33" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "lsp-mode" ("2025-11-27 18:55:50" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "f" ("2025-11-27 18:55:38" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "s" ("2025-11-27 18:55:38" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "ht" ("2025-11-27 18:55:39" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2025-11-27 18:55:40" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "markdown-mode" ("2025-11-27 18:55:44" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lv" ("2025-11-27 18:55:45" nil (:type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra" :package "lv" :local-repo "hydra")) "eldoc" ("2025-11-27 18:55:46" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "bui" ("2025-11-27 18:55:52" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2025-11-27 18:56:07" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2025-11-27 18:56:06" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2025-11-27 18:55:58" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "pfuture" ("2025-11-27 18:55:59" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "hydra" ("2025-11-27 18:55:59" ("cl-lib" "lv") (:files (:defaults (:exclude "lv.el") "hydra-pkg.el") :package "hydra" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "cfrs" ("2025-11-27 18:56:02" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2025-11-27 18:56:02" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2025-11-27 18:56:12" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2025-11-27 18:56:12" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "which-key" ("2025-11-27 18:56:15" ("emacs") (:host github :repo "justbur/emacs-which-key" :package "which-key" :type git :local-repo "emacs-which-key")) "flycheck" ("2025-11-27 18:56:25" ("emacs" "seq") (:host github :repo "flycheck/flycheck" :package "flycheck" :type git :local-repo "flycheck")) "seq" ("2025-11-27 18:56:24" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "projectile" ("2025-11-27 18:56:30" ("emacs") (:host github :repo "bbatsov/projectile" :package "projectile" :type git :local-repo "projectile")) "compat" ("2025-11-27 18:56:31" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "org-timeblock" ("2025-11-27 18:56:34" ("emacs" "compat" "org" "svg") (:type git :host github :repo "ichernyshovvv/org-timeblock" :package "org-timeblock" :local-repo "org-timeblock")) "svg" ("2025-11-27 18:56:33" ("emacs") (:type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git")) :package "svg" :local-repo "svg")) "pdf-tools" ("2025-11-27 18:56:39" ("emacs" "tablist" "let-alist") (:type git :host github :repo "vedang/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :package "pdf-tools" :local-repo "pdf-tools")) "tablist" ("2025-11-27 18:56:37" ("emacs") (:type git :host github :repo "emacsorphanage/tablist" :package "tablist" :local-repo "tablist")) "let-alist" ("2025-11-27 18:56:38" ("emacs") (:type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist")) "pdf-view-restore" ("2025-11-27 18:56:40" ("pdf-tools" "emacs") (:type git :host github :repo "007kevin/pdf-view-restore" :package "pdf-view-restore" :local-repo "pdf-view-restore")) "auctex" ("2025-11-27 18:56:47" ("emacs") (:type git :host github :repo "emacs-straight/auctex" :files ("*" (:exclude ".git")) :package "auctex" :local-repo "auctex")) "magit-todos" ("2025-11-27 18:57:16" ("emacs" "async" "dash" "f" "hl-todo" "magit" "pcre2el" "s" "transient") (:type git :host github :repo "alphapapa/magit-todos" :package "magit-todos" :local-repo "magit-todos")) "async" ("2025-11-27 18:56:52" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "hl-todo" ("2025-11-27 18:56:53" ("emacs" "compat") (:type git :host github :repo "tarsius/hl-todo" :package "hl-todo" :local-repo "hl-todo")) "magit" ("2025-11-27 18:57:13" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "cond-let" ("2025-11-27 18:57:05" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-27 18:57:06" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-27 18:57:07" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-27 18:57:09" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-27 18:57:10" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "pcre2el" ("2025-11-27 18:57:15" ("emacs") (:type git :host github :repo "joddie/pcre2el" :package "pcre2el" :local-repo "pcre2el")) "modus-themes" ("2025-11-27 18:57:24" ("emacs") (:type git :host github :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes")) "visual-fill-column" ("2025-11-27 18:57:26" ("emacs") (:type git :host github :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "writeroom-mode" ("2025-11-27 18:57:27" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "centered-cursor-mode" ("2025-11-27 18:57:28" nil (:type git :host github :repo "andre-r/centered-cursor-mode.el" :package "centered-cursor-mode" :local-repo "centered-cursor-mode.el")) "evil-nerd-commenter" ("2025-11-27 19:22:50" ("emacs") (:type git :host github :repo "redguardtoo/evil-nerd-commenter" :package "evil-nerd-commenter" :local-repo "evil-nerd-commenter")) "olivetti" ("2025-11-27 19:38:38" ("emacs") (:type git :host github :repo "rnkn/olivetti" :package "olivetti" :local-repo "olivetti")) "org-roam" ("2025-11-27 19:54:14" ("emacs" "compat" "dash" "org" "emacsql" "magit-section") (:type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam" :package "org-roam" :local-repo "org-roam")) "emacsql" ("2025-11-27 19:54:12" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql"))))
+#s(hash-table test equal data ("straight" ("2025-11-27 21:54:37" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-27 21:54:37" nil (:local-repo nil :package "org-elpa" :type git)) "org" ("2025-11-27 21:55:53" ("emacs") (:type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "melpa" ("2025-11-27 21:56:01" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "leaf" ("2025-11-27 21:56:03" ("emacs") (:type git :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el")) "leaf-keywords" ("2025-11-27 21:56:05" ("emacs" "leaf") (:type git :host github :repo "conao3/leaf-keywords.el" :package "leaf-keywords" :local-repo "leaf-keywords.el")) "org-superstar" ("2025-11-27 21:56:07" ("org" "emacs") (:type git :host github :repo "integral-dw/org-superstar-mode" :package "org-superstar" :local-repo "org-superstar-mode")) "evil" ("2025-11-27 21:56:24" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :package "evil" :local-repo "evil")) "gnu-elpa-mirror" ("2025-11-27 21:56:17" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2025-11-27 21:56:18" nil (:type git :repo "https://github.com/emacsmirror/nongnu_elpa.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-11-27 21:56:20" nil (:type git :host github :repo "dimitri/el-get" :build nil :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-11-27 21:56:21" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "goto-chg" ("2025-11-27 21:56:22" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "annalist" ("2025-11-27 21:56:26" ("emacs" "cl-lib") (:type git :host github :repo "noctuid/annalist.el" :fetch t :package "annalist" :local-repo "annalist.el")) "evil-collection" ("2025-11-27 21:56:30" ("emacs" "evil" "annalist") (:type git :host github :repo "emacs-evil/evil-collection" :fetch t :files (:defaults "modes" "evil-collection-pkg.el") :package "evil-collection" :local-repo "evil-collection")) "evil-surround" ("2025-11-27 21:56:31" ("evil") (:type git :host github :repo "timcharper/evil-surround" :fetch t :package "evil-surround" :local-repo "evil-surround")) "pulsar" ("2025-11-27 21:56:33" ("emacs") (:type git :host github :repo "protesilaos/pulsar" :fetch t :files ("*" (:exclude ".git")) :package "pulsar" :local-repo "pulsar")) "switch-window" ("2025-11-27 21:56:34" ("emacs") (:type git :host github :repo "dimitri/switch-window" :fetch t :package "switch-window" :local-repo "switch-window")) "avy" ("2025-11-27 21:56:35" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :fetch t :package "avy" :local-repo "avy")) "multiple-cursors" ("2025-11-27 21:56:37" ("cl-lib") (:type git :host github :repo "magnars/multiple-cursors.el" :fetch t :package "multiple-cursors" :local-repo "multiple-cursors.el")) "move-text" ("2025-11-27 21:56:38" nil (:type git :host github :repo "emacsfodder/move-text" :fetch t :package "move-text" :local-repo "move-text")) "yasnippet" ("2025-11-27 21:56:40" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "auto-yasnippet" ("2025-11-27 21:56:42" ("yasnippet" "emacs") (:type git :host github :repo "abo-abo/auto-yasnippet" :package "auto-yasnippet" :local-repo "auto-yasnippet")) "evil-nerd-commenter" ("2025-11-27 21:56:43" ("emacs") (:type git :host github :repo "redguardtoo/evil-nerd-commenter" :package "evil-nerd-commenter" :local-repo "evil-nerd-commenter")) "dap-mode" ("2025-11-27 21:58:30" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:host github :repo "emacs-lsp/dap-mode" :files (:defaults "icons" "dap-mode-pkg.el") :package "dap-mode" :type git :local-repo "dap-mode")) "dash" ("2025-11-27 21:56:49" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "lsp-mode" ("2025-11-27 21:58:07" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "f" ("2025-11-27 21:57:53" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "s" ("2025-11-27 21:57:53" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "ht" ("2025-11-27 21:57:54" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2025-11-27 21:57:56" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "markdown-mode" ("2025-11-27 21:58:00" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lv" ("2025-11-27 21:58:01" nil (:type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra" :package "lv" :local-repo "hydra")) "eldoc" ("2025-11-27 21:58:03" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "bui" ("2025-11-27 21:58:08" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2025-11-27 21:58:23" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2025-11-27 21:58:22" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2025-11-27 21:58:14" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "pfuture" ("2025-11-27 21:58:15" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "hydra" ("2025-11-27 21:58:15" ("cl-lib" "lv") (:files (:defaults (:exclude "lv.el") "hydra-pkg.el") :package "hydra" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "cfrs" ("2025-11-27 21:58:17" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2025-11-27 21:58:17" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2025-11-27 21:58:28" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2025-11-27 21:58:27" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "which-key" ("2025-11-27 21:58:34" ("emacs") (:host github :repo "justbur/emacs-which-key" :package "which-key" :type git :local-repo "emacs-which-key")) "flycheck" ("2025-11-27 21:58:43" ("emacs" "seq") (:host github :repo "flycheck/flycheck" :package "flycheck" :type git :local-repo "flycheck")) "seq" ("2025-11-27 21:58:42" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "projectile" ("2025-11-27 21:58:48" ("emacs") (:host github :repo "bbatsov/projectile" :package "projectile" :type git :local-repo "projectile")) "compat" ("2025-11-27 21:58:49" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "org-timeblock" ("2025-11-27 21:58:52" ("emacs" "compat" "org" "svg") (:type git :host github :repo "ichernyshovvv/org-timeblock" :package "org-timeblock" :local-repo "org-timeblock")) "svg" ("2025-11-27 21:58:51" ("emacs") (:type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git")) :package "svg" :local-repo "svg")) "magit-todos" ("2025-11-27 21:59:18" ("emacs" "async" "dash" "f" "hl-todo" "magit" "pcre2el" "s" "transient") (:type git :host github :repo "alphapapa/magit-todos" :package "magit-todos" :local-repo "magit-todos")) "async" ("2025-11-27 21:58:54" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "hl-todo" ("2025-11-27 21:58:55" ("emacs" "compat") (:type git :host github :repo "tarsius/hl-todo" :package "hl-todo" :local-repo "hl-todo")) "magit" ("2025-11-27 21:59:15" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "cond-let" ("2025-11-27 21:59:07" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-27 21:59:08" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-27 21:59:09" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-27 21:59:11" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-27 21:59:12" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "pcre2el" ("2025-11-27 21:59:17" ("emacs") (:type git :host github :repo "joddie/pcre2el" :package "pcre2el" :local-repo "pcre2el")) "modus-themes" ("2025-11-27 21:59:27" ("emacs") (:type git :host github :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes")) "visual-fill-column" ("2025-11-27 21:59:30" ("emacs") (:type git :host github :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "writeroom-mode" ("2025-11-27 21:59:31" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "org-roam" ("2025-11-27 21:59:43" ("emacs" "compat" "dash" "org" "emacsql" "magit-section") (:type git :host github :repo "org-roam/org-roam" :files (:defaults "extensions/*" "org-roam-pkg.el") :package "org-roam" :local-repo "org-roam")) "emacsql" ("2025-11-27 21:59:42" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql"))))
 
 #s(hash-table test equal data ("straight" ((straight straight-ert-print-hack straight-x straight-autoloads) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
 A repo is considered \"unused\" if it was not explicitly requested via
@@ -352,7 +352,7 @@ instead of strings they will be lists whose cars are the dependents and
 whose cdrs are the recursive dependents in the same format returned from
 `straight-dependents'.
 
-(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "leaf" ((leaf-autoloads leaf) (autoload 'leaf-available-keywords "leaf" "Return current available `leaf' keywords list." t) (autoload 'leaf-pp-to-string "leaf" "Return format string of `leaf' SEXP like `pp-to-string'.
+(fn &optional PACKAGE)" t) (register-definition-prefixes "straight" '("straight-")) (register-definition-prefixes "straight-ert-print-hack" '("+without-print-limits")) (defvar straight-x-pinned-packages nil "List of pinned packages.") (register-definition-prefixes "straight-x" '("straight-x-")) (provide 'straight-autoloads)) "org" ((org-goto ob-exp ob-csharp ob-groovy ol-rmail ob-gnuplot ob-java ob-js org-element ob-lisp ol-irc ob-dot org-table ox-texinfo org-id org-agenda ob-lilypond org-capture ob-ditaa ol-info ox-ascii ob-makefile org-footnote ob-core org-fold-core org-persist org-fold org-tempo ob ol-mhe org-refile ob-R org-archive ob-ref org-element-ast ob-ocaml ob-sass ol org-mobile ob-perl ob-org oc-natbib ob-calc org-feed org-keys ox-md org-attach-git org ob-sql org-plot ox-beamer ob-python ob-table ob-css ox-icalendar oc-bibtex ob-latex org-ctags org-lint ob-sqlite org-loaddefs ob-lua oc-basic ol-docview oc-biblatex ob-C org-crypt org-entities ob-fortran ob-julia ol-man ol-eshell ol-eww ob-forth oc oc-csl ob-shell ob-clojure ob-sed ob-screen ox-publish ob-eshell ol-bbdb ob-processing org-list ox-html ob-matlab ox-man ob-octave org-compat ob-maxima ob-lob ol-gnus org-version ol-doi org-timer org-colview org-protocol org-cycle org-macs ol-w3m org-num org-faces org-duration ob-awk org-habit org-datetree ob-haskell ol-bibtex ob-tangle ob-plantuml org-mouse ob-ruby ox-latex ob-comint ob-emacs-lisp ox ox-odt org-attach org-src ob-eval ob-scheme org-pcomplete org-indent ox-koma-letter ox-org org-clock org-inlinetask org-macro)) "leaf" ((leaf-autoloads leaf) (autoload 'leaf-available-keywords "leaf" "Return current available `leaf' keywords list." t) (autoload 'leaf-pp-to-string "leaf" "Return format string of `leaf' SEXP like `pp-to-string'.
 
 (fn SEXP)" nil t) (autoload 'leaf-pp "leaf" "Output the pretty-printed representation of leaf SEXP.
 
@@ -390,7 +390,7 @@ NOTE: BIND can also accept list of these.
 (fn BIND)" nil t) (autoload 'leaf-keywords-init "leaf-keywords" "Add additional keywords to `leaf'.
 If RENEW is non-nil, renew leaf-{keywords, normalize} cache.
 
-(fn &optional RENEW)") (register-definition-prefixes "leaf-keywords" '("leaf-")) (provide 'leaf-keywords-autoloads)) "org" ((org-goto ob-exp ob-csharp ob-groovy ol-rmail ob-gnuplot ob-java ob-js org-element ob-lisp ol-irc ob-dot org-table ox-texinfo org-id org-agenda ob-lilypond org-capture ob-ditaa ol-info ox-ascii ob-makefile org-footnote ob-core org-fold-core org-persist org-fold org-tempo ob ol-mhe org-refile ob-R org-archive ob-ref org-element-ast ob-ocaml ob-sass ol org-mobile ob-perl ob-org oc-natbib ob-calc org-feed org-keys ox-md org-attach-git org ob-sql org-plot ox-beamer ob-python ob-table ob-css ox-icalendar oc-bibtex ob-latex org-ctags org-lint ob-sqlite org-loaddefs ob-lua oc-basic ol-docview oc-biblatex ob-C org-crypt org-entities ob-fortran ob-julia ol-man ol-eshell ol-eww ob-forth oc oc-csl ob-shell ob-clojure ob-sed ob-screen ox-publish ob-eshell ol-bbdb ob-processing org-list ox-html ob-matlab ox-man ob-octave org-compat ob-maxima ob-lob ol-gnus org-version ol-doi org-timer org-colview org-protocol org-cycle org-macs ol-w3m org-num org-faces org-duration ob-awk org-habit org-datetree ob-haskell ol-bibtex ob-tangle ob-plantuml org-mouse ob-ruby ox-latex ob-comint ob-emacs-lisp ox ox-odt org-attach org-src ob-eval ob-scheme org-pcomplete org-indent ox-koma-letter ox-org org-clock org-inlinetask org-macro)) "org-superstar" ((org-superstar-autoloads org-superstar) (put 'org-superstar-leading-bullet 'safe-local-variable #'char-or-string-p) (autoload 'org-superstar-toggle-lightweight-lists "org-superstar" "Toggle syntax checking for plain list items.
+(fn &optional RENEW)") (register-definition-prefixes "leaf-keywords" '("leaf-")) (provide 'leaf-keywords-autoloads)) "org-superstar" ((org-superstar-autoloads org-superstar) (put 'org-superstar-leading-bullet 'safe-local-variable #'char-or-string-p) (autoload 'org-superstar-toggle-lightweight-lists "org-superstar" "Toggle syntax checking for plain list items.
 
 Disabling syntax checking will cause Org Superstar to display
 lines looking like plain lists (for example in code) like plain
@@ -1115,146 +1115,68 @@ by the next snippet in history, or blank if no other history items
 are available." t) (autoload 'aya-open-line "auto-yasnippet" "Call `open-line', unless there are abbrevs or snippets at point.
 In that case expand them.  If there's a snippet expansion in progress,
 move to the next field.  Call `open-line' if nothing else applies." t) (autoload 'aya-yank-snippet "auto-yasnippet" "Insert current snippet at point.
-To save a snippet permanently, create an empty file and call this." t) (autoload 'aya-yank-snippet-from-history "auto-yasnippet" "Insert snippet from history at point." t) (register-definition-prefixes "auto-yasnippet" '("aya-")) (provide 'auto-yasnippet-autoloads)) "polymode" ((polymode-classes polymode-tangle polymode-compat polymode polymode-base polymode-core poly-lock polymode-methods polymode-test-utils polymode-autoloads polymode-export polymode-debug polymode-weave) (register-definition-prefixes "poly-lock" '("poly-lock-")) (autoload 'define-polymode "polymode" "Define a new polymode MODE.
-This macro defines command MODE and an indicator variable MODE
-which becomes t when MODE is active and nil otherwise.
+To save a snippet permanently, create an empty file and call this." t) (autoload 'aya-yank-snippet-from-history "auto-yasnippet" "Insert snippet from history at point." t) (register-definition-prefixes "auto-yasnippet" '("aya-")) (provide 'auto-yasnippet-autoloads)) "evil-nerd-commenter" ((evil-nerd-commenter evil-nerd-commenter-operator evil-nerd-commenter-sdk evil-nerd-commenter-autoloads) (autoload 'evilnc-comment-or-uncomment-region-internal "evil-nerd-commenter" "Comment or uncomment region from START to END.
 
-MODE command can be used as both major and minor mode. Using
-polymodes as minor modes makes sense when :hostmode (see below)
-is not specified, in which case polymode installs only inner
-modes and doesn't touch current major mode.
+(fn START END)") (autoload 'evilnc-comment-or-uncomment-region "evil-nerd-commenter" "Comment or uncomment region from START to END.
 
-Standard hook MODE-hook is run at the end of the initialization
-of each polymode buffer (both indirect and base buffers).
+(fn START END)") (autoload 'evilnc-comment-or-uncomment-paragraphs "evil-nerd-commenter" "Comment or uncomment NUM paragraph(s).
+A paragraph is a continuation non-empty lines.
+Paragraphs are separated by empty lines.
 
-This macro also defines the MODE-map keymap from the :keymap
-argument and PARENT-map (see below) and poly-[MODE-NAME]-polymode
-variable which holds an object of class `pm-polymode' which holds
-the entire configuration for this polymode.
+(fn &optional NUM)" t) (autoload 'evilnc-comment-or-uncomment-to-the-line "evil-nerd-commenter" "Comment or uncomment from current line to LINE-NUM line.
 
-PARENT is either the polymode configuration object or a polymode
-mode (there is 1-to-1 correspondence between config
-objects (`pm-polymode') and mode functions). The new polymode
-MODE inherits alll the behavior from PARENT except for the
-overwrites specified by the keywords (see below). The new MODE
-runs all the hooks from the PARENT-mode and inherits its MODE-map
-from PARENT-map.
+(fn &optional LINE-NUM)" t) (autoload 'evilnc-quick-comment-or-uncomment-to-the-line "evil-nerd-commenter" "Comment/uncomment to line number by LAST-DIGITS.
+For example, you can use either \\<M-53>\\[evilnc-quick-comment-or-uncomment-to-the-line] or \\<M-3>\\[evilnc-quick-comment-or-uncomment-to-the-line] to comment to the line 6453
 
-DOC is an optional documentation string. If present PARENT must
-be provided, but can be nil.
+(fn &optional LAST-DIGITS)" t) (autoload 'evilnc-toggle-invert-comment-line-by-line "evil-nerd-commenter" "Please note this command may NOT work on complex evil text objects." t) (autoload 'evilnc-toggle-comment-empty-lines "evil-nerd-commenter" "Toggle the flag which decide if empty line will be commented." t) (autoload 'evilnc-comment-or-uncomment-lines "evil-nerd-commenter" "Comment or uncomment NUM lines.  NUM could be negative.
 
-BODY is executed after the complete initialization of the
-polymode but before MODE-hook. It is executed once for each
-polymode buffer - host buffer on initialization and every inner
-buffer subsequently created.
+Case 1: If no region selected, comment/uncomment on current line.
+If NUM>1, comment/uncomment extra N-1 lines from next line.
 
-Before the BODY code keyword arguments (i.e. alternating keywords
-and values) are allowed. The following special keywords
-controlling the behavior of the new MODE are supported:
+Case 2: Selected region is expanded to make it contain whole lines.
+Then we comment/uncomment the expanded region.  NUM is ignored.
 
-:lighter Optional LIGHTER is displayed in the mode line when the
-   mode is on. If omitted, it defaults to the :lighter slot of
-   CONFIG object.
+Case 3: If a region inside of ONE line is selected,
+we comment/uncomment that region.
+CORRECT comment syntax will be used for C++/Java/Javascript.
 
-:keymap If nil, a new MODE-map keymap is created what directly
-  inherits from the PARENT's keymap. The last keymap in the
-  inheritance chain is always `polymode-minor-mode-map'. If a
-  keymap it is used directly as it is. If a list of binding of
-  the form (KEY . BINDING) it is merged the bindings are added to
-  the newly create keymap.
+(fn &optional NUM)" t) (autoload 'evilnc-copy-and-comment-lines "evil-nerd-commenter" "Copy&paste NUM lines and comment out original lines.
+NUM could be negative.
 
-:after-hook A single form which is evaluated after the mode hooks
-  have been run. It should not be quoted.
+Case 1: If no region selected, operate on current line.
+if NUM>1, comment/uncomment extra N-1 lines from next line
 
-Other keywords are added to the `pm-polymode' configuration
-object and should be valid slots in PARENT config object or the
-root config `pm-polymode' object if PARENT is nil. By far the
-most frequently used slots are:
+Case 2: Selected region is expanded to make it contain whole lines.
+Then we operate the expanded region.  NUM is ignored.
 
-:hostmode Symbol pointing to a `pm-host-chunkmode' object
-  specifying the behavior of the hostmode. If missing or nil,
-  MODE will behave as a minor-mode in the sense that it will
-  reuse the currently installed major mode and will install only
-  the inner modes.
+(fn &optional NUM)" t) (autoload 'evilnc-comment-and-kill-ring-save "evil-nerd-commenter" "Comment lines save origin lines into `kill-ring'.
+NUM could be negative.
 
-:innermodes List of symbols pointing to `pm-inner-chunkmode'
-  objects which specify the behavior of inner modes (or submodes).
+Case 1: If no region selected, operate on current line.
+;; if NUM>1, comment/uncomment extra N-1 lines from next line
 
-(fn MODE &optional PARENT DOC &rest BODY)" nil t) (function-put 'define-polymode 'lisp-indent-function 'defun) (function-put 'define-polymode 'doc-string-elt 3) (register-definition-prefixes "polymode" '("pm-" "poly")) (register-definition-prefixes "polymode-base" '("poly-")) (register-definition-prefixes "polymode-classes" '("pm-")) (register-definition-prefixes "polymode-compat" '("pm-" "polymode-")) (defvar-local polymode-default-inner-mode nil "Inner mode for chunks with unspecified modes.
-Intended to be used as local variable in polymode buffers. A
-special value `host' means use the host mode.") (put 'polymode-default-inner-mode 'safe-local-variable #'symbolp) (autoload 'define-hostmode "polymode-core" "Define a hostmode with name NAME.
-Optional PARENT is a name of a hostmode to be derived (cloned)
-from. If missing, the optional documentation string DOC is
-generated automatically. KEY-ARGS is a list of key-value pairs.
-See the documentation of the class `pm-host-chunkmode' for
-possible values.
+Case 2: Selected region is expanded to make it contain whole lines.
+Then we operate the expanded region.  NUM is ignored.
 
-(fn NAME &optional PARENT DOC &rest KEY-ARGS)" nil t) (function-put 'define-hostmode 'doc-string-elt 3) (function-put 'define-hostmode 'lisp-indent-function 'defun) (autoload 'define-innermode "polymode-core" "Ddefine an innermode with name NAME.
-Optional PARENT is a name of a innermode to be derived (cloned)
-from. If missing the optional documentation string DOC is
-generated automatically. KEY-ARGS is a list of key-value pairs.
-See the documentation of the class `pm-inner-chunkmode' for
-possible values.
+(fn &optional NUM)" t) (autoload 'evilnc-copy-to-line "evil-nerd-commenter" "Copy from current line to LINENUM line.  For non-evil user only.
 
-(fn NAME &optional PARENT DOC &rest KEY-ARGS)" nil t) (function-put 'define-innermode 'doc-string-elt 3) (function-put 'define-innermode 'lisp-indent-function 'defun) (autoload 'define-auto-innermode "polymode-core" "Ddefine an auto innermode with name NAME.
-Optional PARENT is a name of an auto innermode to be
-derived (cloned) from. If missing the optional documentation
-string DOC is generated automatically. KEY-ARGS is a list of
-key-value pairs. See the documentation of the class
-`pm-inner-auto-chunkmode' for possible values.
+(fn &optional LINENUM)" t) (autoload 'evilnc-kill-to-line "evil-nerd-commenter" "Kill from the current line to the LINENUM line.  For non-evil user only.
 
-(fn NAME &optional PARENT DOC &rest KEY-ARGS)" nil t) (function-put 'define-auto-innermode 'doc-string-elt 3) (function-put 'define-auto-innermode 'lisp-indent-function 'defun) (register-definition-prefixes "polymode-core" '("*span*" "polymode-")) (autoload 'pm-debug-minor-mode "polymode-debug" "Turns on/off useful facilities for debugging polymode.
+(fn &optional LINENUM)" t) (autoload 'evilnc-version "evil-nerd-commenter" "The version number." t) (autoload 'evilnc-default-hotkeys "evil-nerd-commenter" "Setup the key bindings of evil-nerd-comment.
+If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL,
+if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode.
 
-Key bindings:
-\\{pm-debug-minor-mode-map}
+(fn &optional NO-EVIL-KEYBINDINGS NO-EMACS-KEYBINDINGS)" t) (autoload 'evilnc-imenu-create-index-function "evil-nerd-commenter" "Imenu function find comments.") (autoload 'evilnc-comment-or-uncomment-html-tag "evil-nerd-commenter" "Comment or uncomment html tag(s).
+If no region is selected, current tag under focus is automatically selected.
+In this case, only one tag is selected.
+If users manually select region, the region could cross multiple sibling tags
+and automatically expands to include complete tags.
+Users can press \"v\" key in evil mode to select multiple tags.
+This command is not dependent on any 3rd party package." t) (autoload 'evilnc-comment-or-uncomment-html-paragraphs "evil-nerd-commenter" "Comment or uncomment NUM paragraphs contain html tag.
+A paragraph is a continuation non-empty lines.
+Paragraphs are separated by empty lines.
 
-This is a minor mode.  If called interactively, toggle the `Pm-Debug
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pm-debug-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pm-debug-minor-mode-on "polymode-debug") (put 'pm-debug-mode 'globalized-minor-mode t) (defvar pm-debug-mode nil "Non-nil if Pm-Debug mode is enabled.
-See the `pm-debug-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `pm-debug-mode'.") (custom-autoload 'pm-debug-mode "polymode-debug" nil) (autoload 'pm-debug-mode "polymode-debug" "Toggle Pm-Debug minor mode in all buffers.
-With prefix ARG, enable Pm-Debug mode if ARG is positive; otherwise,
-disable it.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.
-Enable the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-Pm-Debug minor mode is enabled in all buffers where
-`pm-debug-minor-mode-on' would do it.
-
-See `pm-debug-minor-mode' for more information on Pm-Debug minor
-mode.
-
-(fn &optional ARG)" t) (autoload 'pm-toggle-tracing "polymode-debug" "Toggle polymode tracing.
-With numeric prefix toggle tracing for that LEVEL. Currently
-universal argument toggles maximum level of tracing (15). See
-`pm-traced-functions'. Default level is 4.
-
-(fn LEVEL)" t) (autoload 'pm-trace "polymode-debug" "Trace function FN.
-Use `untrace-function' to untrace or `untrace-all' to untrace all
-currently traced functions.
-
-(fn FN)" t) (autoload 'pm-debug-relevant-variables "polymode-debug" "Get the relevant polymode variables.
-If OUT-TYPE is `buffer', print the variables in the dedicated buffer,
-if `message' issue a message, if nil just return a list of values.
-
-(fn &optional OUT-TYPE)" t) (register-definition-prefixes "polymode-debug" '("pm-")) (register-definition-prefixes "polymode-export" '("pm-" "poly")) (register-definition-prefixes "polymode-methods" '("pm-")) (register-definition-prefixes "polymode-test-utils" '("pm-")) (register-definition-prefixes "polymode-weave" '("pm-" "polymode-")) (provide 'polymode-autoloads)) "poly-org" ((poly-org poly-org-autoloads) (autoload 'poly-org-mode "poly-org") (add-to-list 'auto-mode-alist '("\\.org\\'" . poly-org-mode)) (register-definition-prefixes "poly-org" '("poly-org-")) (provide 'poly-org-autoloads)) "treesit-auto" ((treesit-auto-autoloads treesit-auto) (register-definition-prefixes "treesit-auto" '("global-treesit-auto-mode" "treesit-auto-")) (provide 'treesit-auto-autoloads)) "dash" ((dash dash-autoloads) (autoload 'dash-fontify-mode "dash" "Toggle fontification of Dash special variables.
+(fn &optional NUM)" t) (register-definition-prefixes "evil-nerd-commenter" '("evilnc-")) (register-definition-prefixes "evil-nerd-commenter-operator" '("evilnc-")) (register-definition-prefixes "evil-nerd-commenter-sdk" '("evilnc-")) (provide 'evil-nerd-commenter-autoloads)) "dash" ((dash dash-autoloads) (autoload 'dash-fontify-mode "dash" "Toggle fontification of Dash special variables.
 
 Dash-Fontify mode is a buffer-local minor mode intended for Emacs
 Lisp buffers.  Enabling it causes the special variables bound in
@@ -2590,8 +2512,6 @@ evaluate `(default-value \\='which-key-mode)'.
 The mode's hook is called both when the mode is enabled and when it is
 disabled.
 
-\\{which-key-mode-map}
-
 (fn &optional ARG)" t) (autoload 'which-key-setup-side-window-right "which-key" "Set up side-window on right." t) (autoload 'which-key-setup-side-window-right-bottom "which-key" "Set up side-window on right if space allows.
 Otherwise, use bottom." t) (autoload 'which-key-setup-side-window-bottom "which-key" "Set up side-window that opens on bottom." t) (autoload 'which-key-setup-minibuffer "which-key" "Set up minibuffer display.
 Do not use this setup if you use the paging commands.  Instead use
@@ -3374,601 +3294,7 @@ Otherwise behave as if called interactively.
 
 \\{projectile-mode-map}
 
-(fn &optional ARG)" t) (define-obsolete-function-alias 'projectile-global-mode 'projectile-mode "1.0") (register-definition-prefixes "projectile" '("compilation-find-file-projectile-find-compilation-buffer" "def-projectile-commander-method" "delete-file-projectile-remove-from-cache" "projectile-" "savehist-additional-variables")) (provide 'projectile-autoloads)) "compat" ((compat-autoloads compat-26 compat-25 compat-28 compat-30 compat-pkg compat compat-29 compat-27 compat-macs) (register-definition-prefixes "compat" '("compat-")) (register-definition-prefixes "compat-macs" '("compat-")) (provide 'compat-autoloads)) "svg" ((svg-autoloads svg svg-pkg) (register-definition-prefixes "svg" '("svg-")) (provide 'svg-autoloads)) "org-timeblock" ((org-timeblock org-timeblock-autoloads) (autoload 'org-timeblock-list "org-timeblock" "Enter `org-timeblock-list-mode'." t) (autoload 'org-timeblock "org-timeblock" "Enter `org-timeblock-mode'." t) (register-definition-prefixes "org-timeblock" '("org-timeblock-")) (provide 'org-timeblock-autoloads)) "tablist" ((tablist-filter tablist tablist-autoloads) (autoload 'tablist-minor-mode "tablist" "Toggle tablist minor mode.
-
-This is a minor mode.  If called interactively, toggle the `Tablist
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `tablist-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'tablist-mode "tablist" "
-
-(fn)" t) (register-definition-prefixes "tablist" '("tablist-")) (register-definition-prefixes "tablist-filter" '("tablist-filter-")) (provide 'tablist-autoloads)) "let-alist" ((let-alist-pkg let-alist-autoloads let-alist) (autoload 'let-alist "let-alist" "Let-bind dotted symbols to their cdrs in ALIST and execute BODY.
-Dotted symbol is any symbol starting with a `.'.  Only those present
-in BODY are let-bound and this search is done at compile time.
-A number will result in a list index.
-
-For instance, the following code
-
-  (let-alist alist
-    (if (and .title.0 .body)
-        .body
-      .site
-      .site.contents))
-
-essentially expands to
-
-  (let ((.title (nth 0 (cdr (assq \\='title alist))))
-        (.body  (cdr (assq \\='body alist)))
-        (.site  (cdr (assq \\='site alist)))
-        (.site.contents (cdr (assq \\='contents (cdr (assq \\='site alist))))))
-    (if (and .title.0 .body)
-        .body
-      .site
-      .site.contents))
-
-If you nest `let-alist' invocations, the inner one can't access
-the variables of the outer one.  You can, however, access alists
-inside the original alist by using dots inside the symbol, as
-displayed in the example above.
-
-To refer to a non-`let-alist' variable starting with a dot in BODY, use
-two dots instead of one.  For example, in the following form `..foo'
-refers to the variable `.foo' bound outside of the `let-alist':
-
-    (let ((.foo 42)) (let-alist \\='((foo . nil)) ..foo))
-
-Note that there is no way to differentiate the case where a key
-is missing from when it is present, but its value is nil.  Thus,
-the following form evaluates to nil:
-
-    (let-alist \\='((some-key . nil))
-      .some-key)
-
-(fn ALIST &rest BODY)" nil t) (function-put 'let-alist 'lisp-indent-function 1) (register-definition-prefixes "let-alist" '("let-alist--")) (provide 'let-alist-autoloads)) "pdf-tools" ((pdf-isearch pdf-history pdf-misc pdf-sync pdf-util pdf-cache pdf-occur pdf-annot pdf-virtual pdf-outline pdf-loader pdf-view pdf-info pdf-dev pdf-tools-autoloads pdf-macs pdf-tools pdf-links) (autoload 'pdf-annot-minor-mode "pdf-annot" "Support for PDF Annotations.
-
-\\{pdf-annot-minor-mode-map}
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Annot
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-annot-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-annot" '("pdf-annot-")) (register-definition-prefixes "pdf-cache" '("boundingbox" "define-pdf-cache-function" "page" "pdf-cache-" "textregions")) (register-definition-prefixes "pdf-dev" '("pdf-dev-")) (autoload 'pdf-history-minor-mode "pdf-history" "Keep a history of previously visited pages.
-
-This is a simple stack-based history.  Turning the page or
-following a link pushes the left-behind page on the stack, which
-may be navigated with the following keys.
-
-\\{pdf-history-minor-mode-map}
-
-This is a minor mode.  If called interactively, toggle the `Pdf-History
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-history-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-history" '("pdf-history-")) (register-definition-prefixes "pdf-info" '("pdf-info-")) (autoload 'pdf-isearch-minor-mode "pdf-isearch" "Isearch mode for PDF buffer.
-
-When this mode is enabled \\[isearch-forward], among other keys,
-starts an incremental search in this PDF document.  Since this mode
-uses external programs to highlight found matches via
-image-processing, proceeding to the next match may be slow.
-
-Therefore two isearch behaviours have been defined: Normal isearch and
-batch mode.  The later one is a minor mode
-(`pdf-isearch-batch-mode'), which when activated inhibits isearch
-from stopping at and highlighting every single match, but rather
-display them batch-wise.  Here a batch means a number of matches
-currently visible in the selected window.
-
-The kind of highlighting is determined by three faces
-`pdf-isearch-match' (for the current match), `pdf-isearch-lazy'
-(for all other matches) and `pdf-isearch-batch' (when in batch
-mode), which see.
-
-Colors may also be influenced by the minor-mode
-`pdf-view-dark-minor-mode'.  If this is minor mode enabled, each face's
-dark colors, are used (see e.g. `frame-background-mode'), instead
-of the light ones.
-
-\\{pdf-isearch-minor-mode-map}
-While in `isearch-mode' the following keys are available. Note
-that not every isearch command work as expected.
-
-\\{pdf-isearch-active-mode-map}
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Isearch
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-isearch-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-isearch" '("pdf-isearch-")) (autoload 'pdf-links-minor-mode "pdf-links" "Handle links in PDF documents.\\<pdf-links-minor-mode-map>
-
-If this mode is enabled, most links in the document may be
-activated by clicking on them or by pressing \\[pdf-links-action-perform] and selecting
-one of the displayed keys, or by using isearch limited to
-links via \\[pdf-links-isearch-link].
-
-\\{pdf-links-minor-mode-map}
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Links
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-links-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-links-action-perform "pdf-links" "Follow LINK, depending on its type.
-
-This may turn to another page, switch to another PDF buffer or
-invoke `pdf-links-browse-uri-function'.
-
-Interactively, link is read via `pdf-links-read-link-action'.
-This function displays characters around the links in the current
-page and starts reading characters (ignoring case).  After a
-sufficient number of characters have been read, the corresponding
-link's link is invoked.  Additionally, SPC may be used to
-scroll the current page.
-
-(fn LINK)" t) (register-definition-prefixes "pdf-links" '("pdf-links-")) (autoload 'pdf-loader-install "pdf-loader" "Prepare Emacs for using PDF Tools.
-
-This function acts as a replacement for `pdf-tools-install' and
-makes Emacs load and use PDF Tools as soon as a PDF file is
-opened, but not sooner.
-
-The arguments are passed verbatim to `pdf-tools-install', which
-see.
-
-(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)") (register-definition-prefixes "pdf-loader" '("pdf-loader--")) (register-definition-prefixes "pdf-macs" '("pdf-view-")) (autoload 'pdf-misc-minor-mode "pdf-misc" "FIXME:  Not documented.
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Misc
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-misc-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-misc-size-indication-minor-mode "pdf-misc" "Provide a working size indication in the mode-line.
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-Misc-Size-Indication minor mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable the
-mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-misc-size-indication-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-misc-menu-bar-minor-mode "pdf-misc" "Display a PDF Tools menu in the menu-bar.
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-Misc-Menu-Bar minor mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable the
-mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-misc-menu-bar-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-misc-context-menu-minor-mode "pdf-misc" "Provide a right-click context menu in PDF buffers.
-
-\\{pdf-misc-context-menu-minor-mode-map}
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-Misc-Context-Menu minor mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable the
-mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-misc-context-menu-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-misc" '("pdf-misc-")) (autoload 'pdf-occur "pdf-occur" "List lines matching STRING or PCRE.
-
-Interactively search for a regexp. Unless a prefix arg was given,
-in which case this functions performs a string search.
-
-If `pdf-occur-prefer-string-search' is non-nil, the meaning of
-the prefix-arg is inverted.
-
-(fn STRING &optional REGEXP-P)" t) (autoload 'pdf-occur-multi-command "pdf-occur" "Perform `pdf-occur' on multiple buffer.
-
-For a programmatic search of multiple documents see
-`pdf-occur-search'." t) (defvar pdf-occur-global-minor-mode nil "Non-nil if Pdf-Occur-Global minor mode is enabled.
-See the `pdf-occur-global-minor-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `pdf-occur-global-minor-mode'.") (custom-autoload 'pdf-occur-global-minor-mode "pdf-occur" nil) (autoload 'pdf-occur-global-minor-mode "pdf-occur" "Enable integration of Pdf Occur with other modes.
-
-This global minor mode enables (or disables)
-`pdf-occur-ibuffer-minor-mode' and `pdf-occur-dired-minor-mode'
-in all current and future ibuffer/dired buffer.
-
-This is a global minor mode.  If called interactively, toggle the
-`Pdf-Occur-Global minor mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='pdf-occur-global-minor-mode)'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-occur-ibuffer-minor-mode "pdf-occur" "Hack into ibuffer's do-occur binding.
-
-This mode remaps `ibuffer-do-occur' to
-`pdf-occur-ibuffer-do-occur', which will start the PDF Tools
-version of `occur', if all marked buffer's are in `pdf-view-mode'
-and otherwise fallback to `ibuffer-do-occur'.
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-Occur-Ibuffer minor mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable the
-mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-occur-ibuffer-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-occur-dired-minor-mode "pdf-occur" "Hack into dired's `dired-do-search' binding.
-
-This mode remaps `dired-do-search' to
-`pdf-occur-dired-do-search', which will start the PDF Tools
-version of `occur', if all marked buffer's are in `pdf-view-mode'
-and otherwise fallback to `dired-do-search'.
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-Occur-Dired minor mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-occur-dired-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-occur" '("pdf-occur-")) (autoload 'pdf-outline-minor-mode "pdf-outline" "Display an outline of a PDF document.
-
-This provides a PDF's outline on the menu bar via imenu.
-Additionally the same outline may be viewed in a designated
-buffer.
-
-\\{pdf-outline-minor-mode-map}
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Outline
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-outline-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-outline "pdf-outline" "Display an PDF outline of BUFFER.
-
-BUFFER defaults to the current buffer.  Select the outline
-buffer, unless NO-SELECT-WINDOW-P is non-nil.
-
-(fn &optional BUFFER NO-SELECT-WINDOW-P)" t) (autoload 'pdf-outline-imenu-enable "pdf-outline" "Enable imenu in the current PDF buffer." t) (register-definition-prefixes "pdf-outline" '("pdf-outline")) (autoload 'pdf-sync-minor-mode "pdf-sync" "Correlate a PDF position with the TeX file.
-
-\\<pdf-sync-minor-mode-map>
-This works via SyncTeX, which means the TeX sources need to have
-been compiled with `--synctex=1'.  In AUCTeX this can be done by
-setting `TeX-source-correlate-method' to `synctex' (before AUCTeX
-is loaded) and enabling `TeX-source-correlate-mode'.
-
-Then \\[pdf-sync-backward-search-mouse] in the PDF buffer will
-open the corresponding TeX location.
-
-If AUCTeX is your preferred tex-mode, this library arranges to
-bind `pdf-sync-forward-display-pdf-key' (the default is `C-c C-g')
-to `pdf-sync-forward-search' in `TeX-source-correlate-map'.  This
-function displays the PDF page corresponding to the current
-position in the TeX buffer.  This function only works together
-with AUCTeX.
-
-This is a minor mode.  If called interactively, toggle the `Pdf-Sync
-minor mode' mode.  If the prefix argument is positive, enable the mode,
-and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-sync-minor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-sync" '("pdf-sync-")) (defvar pdf-tools-handle-upgrades t "Whether PDF Tools should handle upgrading itself.") (custom-autoload 'pdf-tools-handle-upgrades "pdf-tools" t) (autoload 'pdf-tools-install "pdf-tools" "Install PDF-Tools in all current and future PDF buffers.
-
-If the `pdf-info-epdfinfo-program' is not running or does not
-appear to be working, attempt to rebuild it.  If this build
-succeeded, continue with the activation of the package.
-Otherwise fail silently, i.e. no error is signaled.
-
-Build the program (if necessary) without asking first, if
-NO-QUERY-P is non-nil.
-
-Don't attempt to install system packages, if SKIP-DEPENDENCIES-P
-is non-nil.
-
-Do not signal an error in case the build failed, if NO-ERROR-P is
-non-nil.
-
-Attempt to install system packages (even if it is deemed
-unnecessary), if FORCE-DEPENDENCIES-P is non-nil.
-
-Note that SKIP-DEPENDENCIES-P and FORCE-DEPENDENCIES-P are
-mutually exclusive.
-
-Note further, that you can influence the installation directory
-by setting `pdf-info-epdfinfo-program' to an appropriate
-value (e.g. ~/bin/epdfinfo) before calling this function.
-
-See `pdf-view-mode' and `pdf-tools-enabled-modes'.
-
-(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)" t) (autoload 'pdf-tools-enable-minor-modes "pdf-tools" "Enable MODES in the current buffer.
-
-MODES defaults to `pdf-tools-enabled-modes'.
-
-(fn &optional MODES)" t) (autoload 'pdf-tools-help "pdf-tools" "Show a Help buffer for `pdf-tools'." t) (register-definition-prefixes "pdf-tools" '("pdf-tools-")) (register-definition-prefixes "pdf-util" '("display-buffer-split-below-and-attach" "pdf-util-")) (autoload 'pdf-view-bookmark-jump-handler "pdf-view" "The bookmark handler-function interface for bookmark BMK.
-
-See also `pdf-view-bookmark-make-record'.
-
-(fn BMK)") (register-definition-prefixes "pdf-view" '("cua-copy-region--pdf-view-advice" "pdf-view-")) (autoload 'pdf-virtual-edit-mode "pdf-virtual" "Major mode when editing a virtual PDF buffer.
-
-(fn)" t) (autoload 'pdf-virtual-view-mode "pdf-virtual" "Major mode in virtual PDF buffers.
-
-(fn)" t) (defvar pdf-virtual-global-minor-mode nil "Non-nil if Pdf-Virtual-Global minor mode is enabled.
-See the `pdf-virtual-global-minor-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `pdf-virtual-global-minor-mode'.") (custom-autoload 'pdf-virtual-global-minor-mode "pdf-virtual" nil) (autoload 'pdf-virtual-global-minor-mode "pdf-virtual" "Enable recognition and handling of VPDF files.
-
-This is a global minor mode.  If called interactively, toggle the
-`Pdf-Virtual-Global minor mode' mode.  If the prefix argument is
-positive, enable the mode, and if it is zero or negative, disable the
-mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate `(default-value \\='pdf-virtual-global-minor-mode)'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (autoload 'pdf-virtual-buffer-create "pdf-virtual" "
-
-(fn &optional FILENAMES BUFFER-NAME DISPLAY-P)" t) (register-definition-prefixes "pdf-virtual" '("pdf-virtual-")) (provide 'pdf-tools-autoloads)) "pdf-view-restore" ((pdf-view-restore pdf-view-restore-autoloads) (autoload 'pdf-view-restore-mode "pdf-view-restore" "Automatically restore last known pdf position
-
-This is a minor mode.  If called interactively, toggle the
-`Pdf-View-Restore mode' mode.  If the prefix argument is positive,
-enable the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `pdf-view-restore-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "pdf-view-restore" '("pdf-view-restore" "use-file-base-name-flag")) (provide 'pdf-view-restore-autoloads)) "auctex" ((auctex-autoloads latex-flymake auctex-pkg auctex texmathp tex-site toolbar-x context-en bib-cite font-latex tex-fold latex context tex-wizard plain-tex tex tex-font tex-style context-nl tex-jp tex-ispell multi-prompt tex-info preview tex-bar tex-mik) (register-definition-prefixes "auctex" '("AUCTeX-version")) (autoload 'bib-cite-minor-mode "bib-cite" "Toggle bib-cite mode.
-When bib-cite mode is enabled, citations, labels and refs are highlighted
-when the mouse is over them.  Clicking on these highlights with [mouse-2]
-runs `bib-find', and [mouse-3] runs `bib-display'.
-
-(fn ARG)" t) (autoload 'turn-on-bib-cite "bib-cite" "Unconditionally turn on Bib Cite mode.") (register-definition-prefixes "bib-cite" '("LaTeX-find-label-hist-alist" "bib-" "create-alist-from-list" "member-cis" "psg-" "search-directory-tree")) (defalias 'context-mode #'ConTeXt-mode) (autoload 'ConTeXt-mode "context" "Major mode in AUCTeX for editing ConTeXt files.
-
-Entering `ConTeXt-mode' calls the value of `text-mode-hook',
-then the value of `TeX-mode-hook', and then the value
-of `ConTeXt-mode-hook'.
-
-(fn)" t) (register-definition-prefixes "context" '("ConTeXt-" "TeX-ConTeXt-sentinel" "context-guess-current-interface")) (register-definition-prefixes "context-en" '("ConTeXt-")) (register-definition-prefixes "context-nl" '("ConTeXt-")) (autoload 'font-latex-setup "font-latex" "Setup this buffer for LaTeX font-lock.  Usually called from a hook.") (register-definition-prefixes "font-latex" '("font-latex-")) (autoload 'BibTeX-auto-store "latex" "This function should be called from `bibtex-mode-hook'.
-It will setup BibTeX to store keys in an auto file.") (add-to-list 'auto-mode-alist '("\\.drv\\'" . LaTeX-mode) t) (add-to-list 'auto-mode-alist '("\\.hva\\'" . LaTeX-mode)) (if (eq (symbol-function 'LaTeX-mode) 'latex-mode) (defalias 'LaTeX-mode nil)) (autoload 'LaTeX-mode "latex" "Major mode in AUCTeX for editing LaTeX files.
-See info under AUCTeX for full documentation.
-
-Entering LaTeX mode calls the value of `text-mode-hook',
-then the value of `TeX-mode-hook', and then the value
-of `LaTeX-mode-hook'.
-
-(fn)" t) (put 'LaTeX-mode 'auctex-function-definition (symbol-function 'LaTeX-mode)) (autoload 'docTeX-mode "latex" "Major mode in AUCTeX for editing .dtx files derived from `LaTeX-mode'.
-Runs `LaTeX-mode', sets a few variables and
-runs the hooks in `docTeX-mode-hook'.
-
-(fn)" t) (register-definition-prefixes "latex" '("Bib" "LaTeX-" "TeX-" "docTeX-" "latex-math-mode")) (register-definition-prefixes "latex-flymake" '("LaTeX-")) (autoload 'multi-prompt "multi-prompt" "Completing prompt for a list of strings.
-The first argument SEPARATOR should be the string (of length 1) to
-separate the elements in the list.  The second argument UNIQUE should
-be non-nil, if each element must be unique.  The remaining elements
-are the arguments to `completing-read'.  See that.
-
-(fn SEPARATOR UNIQUE PROMPT TABLE &optional MP-PREDICATE REQUIRE-MATCH INITIAL HISTORY)") (autoload 'multi-prompt-key-value "multi-prompt" "Read multiple strings, with completion and key=value support.
-PROMPT is a string to prompt with, usually ending with a colon
-and a space.
-
-TABLE is an alist where each entry is a list.  The first element
-of each list is a string representing a key and the optional
-second element is a list with strings to be used as values for
-the key.  The second element can also be a variable returning a
-list of strings.
-
-See the documentation for `completing-read' for details on the
-other arguments: PREDICATE, REQUIRE-MATCH, INITIAL-INPUT, HIST,
-DEF, and INHERIT-INPUT-METHOD.
-
-The return value is the string as entered in the minibuffer.
-
-(fn PROMPT TABLE &optional PREDICATE REQUIRE-MATCH INITIAL-INPUT HIST DEF INHERIT-INPUT-METHOD)") (register-definition-prefixes "multi-prompt" '("multi-prompt-")) (if (eq (symbol-function 'plain-TeX-mode) 'plain-tex-mode) (defalias 'plain-TeX-mode nil)) (autoload 'plain-TeX-mode "plain-tex" "Major mode in AUCTeX for editing plain TeX files.
-See info under AUCTeX for documentation.
-
-Entering `plain-TeX-mode' calls the value of `text-mode-hook',
-then the value of `TeX-mode-hook', and then the value
-of `plain-TeX-mode-hook'.
-
-(fn)" t) (put 'plain-TeX-mode 'auctex-function-definition (symbol-function 'plain-TeX-mode)) (autoload 'AmSTeX-mode "plain-tex" "Major mode in AUCTeX for editing AmSTeX files.
-See info under AUCTeX for documentation.
-
-Entering `AmSTeX-mode' calls the value of `text-mode-hook', then
-the value of `TeX-mode-hook', `plain-TeX-mode-hook' and then the
-value of `AmSTeX-mode-hook'.
-
-(fn)" t) (defalias 'ams-tex-mode #'AmSTeX-mode) (register-definition-prefixes "plain-tex" '("AmSTeX-" "plain-TeX-")) (put 'preview-scale-function 'safe-local-variable (lambda (x) (and (numberp x) (<= 0.1 x 10)))) (autoload 'desktop-buffer-preview "preview" "Hook function for restoring persistent previews into a buffer.
-
-(fn FILE-NAME BUFFER-NAME MISC)") (add-to-list 'desktop-buffer-mode-handlers '(LaTeX-mode . desktop-buffer-preview)) (autoload 'preview-install-styles "preview" "Install the TeX style files into a permanent location DIR.
-This must be in the TeX search path.  If FORCE-OVERWRITE is greater
-than 1, files will get overwritten without query, if it is less
-than 1 or nil, the operation will fail.  The default of 1 for interactive
-use will query.
-
-Similarly FORCE-SAVE can be used for saving
-`preview-TeX-style-dir' to record the fact that the uninstalled
-files are no longer needed in the search path.
-
-(fn DIR &optional FORCE-OVERWRITE FORCE-SAVE)" t) (autoload 'LaTeX-preview-setup "preview" "Hook function for embedding the preview package into AUCTeX.
-This is called by `LaTeX-mode-hook' and changes AUCTeX variables
-to add the preview functionality.") (autoload 'preview-report-bug "preview" "Report a bug in the preview-latex package." t) (register-definition-prefixes "preview" '("TeX-" "desktop-buffer-preview-misc-data" "preview-")) (autoload 'TeX-tex-mode "tex" "Call suitable AUCTeX major mode for editing TeX or LaTeX files.
-Tries to guess whether this file is for plain TeX or LaTeX.
-
-The algorithm is as follows:
-
-   1) If the file is empty or `TeX-force-default-mode' is not set to nil,
-      `TeX-default-mode' is chosen.
-   2) If non-commented out content matches with regular expression in
-      `TeX-format-list', use the associated major mode.  For example,
-      if \\documentclass or \\begin{, \\section{, \\part{ or \\chapter{ is
-      found, `LaTeX-mode' is selected.
-   3) Otherwise, use `TeX-default-mode'.
-
-By default, `TeX-format-list' has a fallback entry for
-`plain-TeX-mode', thus non-empty file which didn't match any
-other entries will enter `plain-TeX-mode'." t) (if (eq (symbol-function 'TeX-mode) 'tex-mode) (defalias 'TeX-mode nil)) (put 'TeX-mode 'auctex-function-definition (symbol-function 'TeX-mode)) (autoload 'TeX-auto-generate "tex" "Generate style file for TEX and store it in AUTO.
-If TEX is a directory, generate style files for all files in the directory.
-
-(fn TEX AUTO)" t) (autoload 'TeX-auto-generate-global "tex" "Create global auto directory for global TeX macro definitions." t) (autoload 'TeX-submit-bug-report "tex" "Submit a bug report on AUCTeX via mail.
-
-Don't hesitate to report any problems or inaccurate documentation.
-
-If you don't have setup sending mail from Emacs, please copy the
-output buffer into your mail program, as it gives us important
-information about your AUCTeX version and AUCTeX configuration." t) (register-definition-prefixes "tex" '("Bib" "ConTeXt-" "LaTeX-" "TeX-" "docTeX-default-extension" "plain-TeX-auto-regexp-list" "tex-")) (autoload 'TeX-install-toolbar "tex-bar" "Install toolbar buttons for TeX mode." t) (autoload 'LaTeX-install-toolbar "tex-bar" "Install toolbar buttons for LaTeX mode." t) (register-definition-prefixes "tex-bar" '("TeX-bar-")) (autoload 'TeX-fold-mode "tex-fold" "Minor mode for hiding and revealing macros and environments.
-
-Called interactively, with no prefix argument, toggle the mode.
-With universal prefix ARG (or if ARG is nil) turn mode on.
-With zero or negative ARG turn mode off.
-
-(fn &optional ARG)" t) (defalias 'tex-fold-mode #'TeX-fold-mode) (register-definition-prefixes "tex-fold" '("TeX-fold-")) (autoload 'tex-font-setup "tex-font" "Setup font lock support for TeX.") (register-definition-prefixes "tex-font" '("tex-font-lock-")) (autoload 'Texinfo-mode "tex-info" "Major mode in AUCTeX for editing Texinfo files.
-
-Entering Texinfo mode calls the value of `text-mode-hook' and then the
-value of `Texinfo-mode-hook'.
-
-(fn)" t) (register-definition-prefixes "tex-info" '("Texinfo-" "texinfo-environment-regexp")) (register-definition-prefixes "tex-ispell" '("TeX-ispell-")) (autoload 'japanese-plain-TeX-mode "tex-jp" "Major mode in AUCTeX for editing Japanese plain TeX files.
-
-(fn)" t) (defalias 'japanese-plain-tex-mode #'japanese-plain-TeX-mode) (autoload 'japanese-LaTeX-mode "tex-jp" "Major mode in AUCTeX for editing Japanese LaTeX files.
-
-(fn)" t) (defalias 'japanese-latex-mode #'japanese-LaTeX-mode) (register-definition-prefixes "tex-jp" '("TeX-japanese-process-" "japanese-")) (require 'tex-site) (register-definition-prefixes "tex-site" '("TeX-" "preview-TeX-style-dir" "tex-site-unload-function")) (register-definition-prefixes "tex-style" '("LaTeX-" "TeX-TikZ-point-name-regexp")) (register-definition-prefixes "tex-wizard" '("TeX-wizard")) (autoload 'texmathp "texmathp" "Determine if point is inside (La)TeX math mode.
-Returns t or nil.  Additional info is placed into `texmathp-why'.
-The functions assumes that you have (almost) syntactically correct (La)TeX in
-the buffer.
-See the variable `texmathp-tex-commands' about which commands are checked." t) (autoload 'texmathp-match-switch "texmathp" "Search backward for any of the math switches.
-Limit searched to BOUND.
-
-(fn BOUND)") (register-definition-prefixes "texmathp" '("texmathp-")) (autoload 'toolbarx-install-toolbar "toolbar-x") (register-definition-prefixes "toolbar-x" '("toolbarx-")) (provide 'auctex-autoloads)) "async" ((dired-async async-bytecomp async async-autoloads async-package smtpmail-async) (autoload 'async-start-process "async" "Start the executable PROGRAM asynchronously named NAME.  See `async-start'.
+(fn &optional ARG)" t) (define-obsolete-function-alias 'projectile-global-mode 'projectile-mode "1.0") (register-definition-prefixes "projectile" '("compilation-find-file-projectile-find-compilation-buffer" "def-projectile-commander-method" "delete-file-projectile-remove-from-cache" "projectile-" "savehist-additional-variables")) (provide 'projectile-autoloads)) "compat" ((compat-autoloads compat-26 compat-25 compat-28 compat-30 compat-pkg compat compat-29 compat-27 compat-macs) (register-definition-prefixes "compat" '("compat-")) (register-definition-prefixes "compat-macs" '("compat-")) (provide 'compat-autoloads)) "svg" ((svg-autoloads svg svg-pkg) (register-definition-prefixes "svg" '("svg-")) (provide 'svg-autoloads)) "org-timeblock" ((org-timeblock org-timeblock-autoloads) (autoload 'org-timeblock-list "org-timeblock" "Enter `org-timeblock-list-mode'." t) (autoload 'org-timeblock "org-timeblock" "Enter `org-timeblock-mode'." t) (register-definition-prefixes "org-timeblock" '("org-timeblock-")) (provide 'org-timeblock-autoloads)) "async" ((dired-async async-bytecomp async async-autoloads async-package smtpmail-async) (autoload 'async-start-process "async" "Start the executable PROGRAM asynchronously named NAME.  See `async-start'.
 PROGRAM is passed PROGRAM-ARGS, calling FINISH-FUNC with the
 process object when done.  If FINISH-FUNC is nil, the future
 object will return the process object when the program is
@@ -6156,124 +5482,7 @@ Writeroom mode is enabled in all buffers where
 
 See `writeroom-mode' for more information on Writeroom mode.
 
-(fn &optional ARG)" t) (register-definition-prefixes "writeroom-mode" '("alpha" "bottom-divider-width" "define-writeroom-global-effect" "fullscreen" "internal-border-width" "menu-bar-lines" "sticky" "tool-bar-lines" "turn-on-writeroom-mode" "vertical-scroll-bars" "writeroom-")) (provide 'writeroom-mode-autoloads)) "centered-cursor-mode" ((centered-cursor-mode-autoloads centered-cursor-mode) (autoload 'ccm-visible-text-lines "centered-cursor-mode" "Visible text lines") (autoload 'centered-cursor-mode "centered-cursor-mode" "Makes the cursor stay vertically in a defined
-
-position (usually centered).
-
-This is a minor mode.  If called interactively, toggle the
-`Centered-Cursor mode' mode.  If the prefix argument is positive, enable
-the mode, and if it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `centered-cursor-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (put 'global-centered-cursor-mode 'globalized-minor-mode t) (defvar global-centered-cursor-mode nil "Non-nil if Global Centered-Cursor mode is enabled.
-See the `global-centered-cursor-mode' command
-for a description of this minor mode.
-Setting this variable directly does not take effect;
-either customize it (see the info node `Easy Customization')
-or call the function `global-centered-cursor-mode'.") (custom-autoload 'global-centered-cursor-mode "centered-cursor-mode" nil) (autoload 'global-centered-cursor-mode "centered-cursor-mode" "Toggle Centered-Cursor mode in all buffers.
-With prefix ARG, enable Global Centered-Cursor mode if ARG is
-positive; otherwise, disable it.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.
-Enable the mode if ARG is nil, omitted, or is a positive number.
-Disable the mode if ARG is a negative number.
-
-Centered-Cursor mode is enabled in all buffers where
-`centered-cursor-mode' would do it.
-
-See `centered-cursor-mode' for more information on Centered-Cursor
-mode.
-
-(fn &optional ARG)" t) (register-definition-prefixes "centered-cursor-mode" '("animate-first-start-p" "ccm-" "recenter-sequence")) (provide 'centered-cursor-mode-autoloads)) "evil-nerd-commenter" ((evil-nerd-commenter evil-nerd-commenter-operator evil-nerd-commenter-sdk evil-nerd-commenter-autoloads) (autoload 'evilnc-comment-or-uncomment-region-internal "evil-nerd-commenter" "Comment or uncomment region from START to END.
-
-(fn START END)") (autoload 'evilnc-comment-or-uncomment-region "evil-nerd-commenter" "Comment or uncomment region from START to END.
-
-(fn START END)") (autoload 'evilnc-comment-or-uncomment-paragraphs "evil-nerd-commenter" "Comment or uncomment NUM paragraph(s).
-A paragraph is a continuation non-empty lines.
-Paragraphs are separated by empty lines.
-
-(fn &optional NUM)" t) (autoload 'evilnc-comment-or-uncomment-to-the-line "evil-nerd-commenter" "Comment or uncomment from current line to LINE-NUM line.
-
-(fn &optional LINE-NUM)" t) (autoload 'evilnc-quick-comment-or-uncomment-to-the-line "evil-nerd-commenter" "Comment/uncomment to line number by LAST-DIGITS.
-For example, you can use either \\<M-53>\\[evilnc-quick-comment-or-uncomment-to-the-line] or \\<M-3>\\[evilnc-quick-comment-or-uncomment-to-the-line] to comment to the line 6453
-
-(fn &optional LAST-DIGITS)" t) (autoload 'evilnc-toggle-invert-comment-line-by-line "evil-nerd-commenter" "Please note this command may NOT work on complex evil text objects." t) (autoload 'evilnc-toggle-comment-empty-lines "evil-nerd-commenter" "Toggle the flag which decide if empty line will be commented." t) (autoload 'evilnc-comment-or-uncomment-lines "evil-nerd-commenter" "Comment or uncomment NUM lines.  NUM could be negative.
-
-Case 1: If no region selected, comment/uncomment on current line.
-If NUM>1, comment/uncomment extra N-1 lines from next line.
-
-Case 2: Selected region is expanded to make it contain whole lines.
-Then we comment/uncomment the expanded region.  NUM is ignored.
-
-Case 3: If a region inside of ONE line is selected,
-we comment/uncomment that region.
-CORRECT comment syntax will be used for C++/Java/Javascript.
-
-(fn &optional NUM)" t) (autoload 'evilnc-copy-and-comment-lines "evil-nerd-commenter" "Copy&paste NUM lines and comment out original lines.
-NUM could be negative.
-
-Case 1: If no region selected, operate on current line.
-if NUM>1, comment/uncomment extra N-1 lines from next line
-
-Case 2: Selected region is expanded to make it contain whole lines.
-Then we operate the expanded region.  NUM is ignored.
-
-(fn &optional NUM)" t) (autoload 'evilnc-comment-and-kill-ring-save "evil-nerd-commenter" "Comment lines save origin lines into `kill-ring'.
-NUM could be negative.
-
-Case 1: If no region selected, operate on current line.
-;; if NUM>1, comment/uncomment extra N-1 lines from next line
-
-Case 2: Selected region is expanded to make it contain whole lines.
-Then we operate the expanded region.  NUM is ignored.
-
-(fn &optional NUM)" t) (autoload 'evilnc-copy-to-line "evil-nerd-commenter" "Copy from current line to LINENUM line.  For non-evil user only.
-
-(fn &optional LINENUM)" t) (autoload 'evilnc-kill-to-line "evil-nerd-commenter" "Kill from the current line to the LINENUM line.  For non-evil user only.
-
-(fn &optional LINENUM)" t) (autoload 'evilnc-version "evil-nerd-commenter" "The version number." t) (autoload 'evilnc-default-hotkeys "evil-nerd-commenter" "Setup the key bindings of evil-nerd-comment.
-If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL,
-if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode.
-
-(fn &optional NO-EVIL-KEYBINDINGS NO-EMACS-KEYBINDINGS)" t) (autoload 'evilnc-imenu-create-index-function "evil-nerd-commenter" "Imenu function find comments.") (autoload 'evilnc-comment-or-uncomment-html-tag "evil-nerd-commenter" "Comment or uncomment html tag(s).
-If no region is selected, current tag under focus is automatically selected.
-In this case, only one tag is selected.
-If users manually select region, the region could cross multiple sibling tags
-and automatically expands to include complete tags.
-Users can press \"v\" key in evil mode to select multiple tags.
-This command is not dependent on any 3rd party package." t) (autoload 'evilnc-comment-or-uncomment-html-paragraphs "evil-nerd-commenter" "Comment or uncomment NUM paragraphs contain html tag.
-A paragraph is a continuation non-empty lines.
-Paragraphs are separated by empty lines.
-
-(fn &optional NUM)" t) (register-definition-prefixes "evil-nerd-commenter" '("evilnc-")) (register-definition-prefixes "evil-nerd-commenter-operator" '("evilnc-")) (register-definition-prefixes "evil-nerd-commenter-sdk" '("evilnc-")) (provide 'evil-nerd-commenter-autoloads)) "olivetti" ((olivetti olivetti-autoloads) (autoload 'olivetti-mode "olivetti" "Olivetti provides a nice writing environment.
-
-Window margins are set to relative widths to accomodate a text
-body width set with `olivetti-body-width'.
-
-This is a minor mode.  If called interactively, toggle the `Olivetti
-mode' mode.  If the prefix argument is positive, enable the mode, and if
-it is zero or negative, disable the mode.
-
-If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
-mode if ARG is nil, omitted, or is a positive number.  Disable the mode
-if ARG is a negative number.
-
-To check whether the minor mode is enabled in the current buffer,
-evaluate the variable `olivetti-mode'.
-
-The mode's hook is called both when the mode is enabled and when it is
-disabled.
-
-(fn &optional ARG)" t) (register-definition-prefixes "olivetti" '("olivetti-")) (provide 'olivetti-autoloads)) "emacsql" ((emacsql-compiler emacsql-psql emacsql-sqlite emacsql-sqlite-builtin emacsql emacsql-autoloads emacsql-sqlite-module emacsql-mysql emacsql-pg) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
+(fn &optional ARG)" t) (register-definition-prefixes "writeroom-mode" '("alpha" "bottom-divider-width" "define-writeroom-global-effect" "fullscreen" "internal-border-width" "menu-bar-lines" "sticky" "tool-bar-lines" "turn-on-writeroom-mode" "vertical-scroll-bars" "writeroom-")) (provide 'writeroom-mode-autoloads)) "emacsql" ((emacsql-compiler emacsql-psql emacsql-sqlite emacsql-sqlite-builtin emacsql emacsql-autoloads emacsql-sqlite-module emacsql-mysql emacsql-pg) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
 A prefix argument causes the SQL to be printed into the current buffer.
 
 (fn &optional PREFIX)" t) (register-definition-prefixes "emacsql" '("emacsql-")) (register-definition-prefixes "emacsql-compiler" '("emacsql-")) (register-definition-prefixes "emacsql-mysql" '("emacsql-mysql-")) (register-definition-prefixes "emacsql-pg" '("emacsql-pg-connection")) (register-definition-prefixes "emacsql-psql" '("emacsql-psql-")) (register-definition-prefixes "emacsql-sqlite" '("emacsql-")) (register-definition-prefixes "emacsql-sqlite-builtin" '("emacsql-sqlite-builtin-connection")) (register-definition-prefixes "emacsql-sqlite-module" '("emacsql-sqlite-module-connection")) (provide 'emacsql-autoloads)) "org-roam" ((org-roam-utils org-roam-node org-roam-mode org-roam-capture org-roam-db org-roam-dailies org-roam-migrate org-roam-overlay org-roam-graph org-roam-autoloads org-roam-compat org-roam-protocol org-roam-id org-roam-export org-roam-log org-roam) (autoload 'org-roam-list-files "org-roam" "Return a list of all Org-roam files under `org-roam-directory'.
@@ -6453,8 +5662,8 @@ Interactively, or when MESSAGE is non-nil, show in the echo area.
 
 (fn &optional MESSAGE)" t) (autoload 'org-roam-diagnostics "org-roam-utils" "Collect and print info for `org-roam' issues." t) (register-definition-prefixes "org-roam-utils" '("org-roam-")) (provide 'org-roam-autoloads))))
 
-#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "leaf" nil "leaf-keywords" nil "org-superstar" nil "org" (org :type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "evil" nil "cl-lib" nil "goto-chg" nil "annalist" nil "evil-collection" nil "evil-surround" nil "pulsar" nil "switch-window" nil "avy" nil "multiple-cursors" nil "move-text" nil "undo-fu" nil "undo-fu-session" nil "yasnippet" nil "auto-yasnippet" nil "polymode" nil "poly-org" nil "fix-word" nil "evil-nerd-commenter" nil "treesit-auto" nil "dap-mode" nil "dash" nil "lsp-mode" nil "f" nil "s" nil "ht" nil "spinner" nil "markdown-mode" nil "lv" nil "eldoc" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "pfuture" nil "hydra" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "which-key" nil "flycheck" nil "seq" nil "projectile" nil "compat" nil "org-timeblock" nil "svg" nil "dslide" nil "pdf-tools" nil "tablist" nil "let-alist" nil "pdf-view-restore" nil "auctex" nil "latex-preview-pane" nil "math-preview" nil "magit-todos" nil "async" nil "hl-todo" nil "magit" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "pcre2el" nil "modus-themes" nil "visual-fill-column" nil "writeroom-mode" nil "centered-cursor-mode" nil "centered-window-mode" nil "olivetti" nil "org-roam" nil "emacsql" nil)) melpa #s(hash-table test equal data (version 3 "leaf" (leaf :type git :host github :repo "conao3/leaf.el") "leaf-keywords" (leaf-keywords :type git :host github :repo "conao3/leaf-keywords.el") "org-superstar" (org-superstar :type git :host github :repo "integral-dw/org-superstar-mode") "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "annalist" (annalist :type git :host github :repo "noctuid/annalist.el") "evil-collection" (evil-collection :type git :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection") "evil-surround" (evil-surround :type git :host github :repo "emacs-evil/evil-surround") "pulsar" nil "switch-window" (switch-window :type git :host github :repo "dimitri/switch-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "multiple-cursors" (multiple-cursors :type git :host github :repo "magnars/multiple-cursors.el") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "undo-fu" (undo-fu :type git :host codeberg :repo "ideasman42/emacs-undo-fu") "undo-fu-session" (undo-fu-session :type git :host codeberg :repo "ideasman42/emacs-undo-fu-session") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "auto-yasnippet" (auto-yasnippet :type git :host github :repo "abo-abo/auto-yasnippet") "polymode" (polymode :type git :host github :repo "polymode/polymode") "poly-org" (poly-org :type git :host github :repo "polymode/poly-org") "fix-word" (fix-word :type git :host github :repo "mrkkrp/fix-word") "evil-nerd-commenter" (evil-nerd-commenter :type git :host github :repo "redguardtoo/evil-nerd-commenter") "treesit-auto" (treesit-auto :type git :host github :repo "renzmann/treesit-auto") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "f" (f :type git :host github :repo "rejeep/f.el") "s" (s :type git :host github :repo "magnars/s.el") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "eldoc" nil "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "seq" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "compat" nil "org-timeblock" (org-timeblock :type git :host github :repo "ichernyshovvv/org-timeblock") "svg" nil "dslide" (dslide :type git :host github :repo "positron-solutions/dslide") "pdf-tools" (pdf-tools :type git :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :host github :repo "vedang/pdf-tools") "tablist" (tablist :type git :host github :repo "emacsorphanage/tablist") "let-alist" nil "pdf-view-restore" (pdf-view-restore :type git :host github :repo "007kevin/pdf-view-restore") "auctex" nil "latex-preview-pane" (latex-preview-pane :type git :files ("*.el" "*.txt" "latex-preview-pane-pkg.el") :host github :repo "jsinglet/latex-preview-pane") "math-preview" (math-preview :type git :host gitlab :repo "matsievskiysv/math-preview") "magit-todos" (magit-todos :type git :host github :repo "alphapapa/magit-todos") "async" (async :type git :host github :repo "jwiegley/emacs-async") "hl-todo" (hl-todo :type git :host github :repo "tarsius/hl-todo") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "pcre2el" (pcre2el :type git :host github :repo "joddie/pcre2el") "modus-themes" (modus-themes :type git :host github :repo "protesilaos/modus-themes") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "centered-cursor-mode" (centered-cursor-mode :type git :host github :repo "andre-r/centered-cursor-mode.el") "centered-window-mode" nil "olivetti" (olivetti :type git :host github :repo "rnkn/olivetti") "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "cl-lib" nil "pulsar" (pulsar :type git :host github :repo "emacs-straight/pulsar" :files ("*" (:exclude ".git"))) "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "svg" (svg :type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git"))) "let-alist" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git"))) "auctex" (auctex :type git :host github :repo "emacs-straight/auctex" :files ("*" (:exclude ".git"))) "centered-window-mode" nil)) nongnu-elpa #s(hash-table test equal data (version (5 "https://github.com/emacsmirror/nongnu_elpa.git") "cl-lib" nil "centered-window-mode" nil)) el-get #s(hash-table test equal data (version 2 "cl-lib" nil "centered-window-mode" `(centered-window-mode :type git :host github :repo "ikame/centered-window-mode" :files (:defaults)))) emacsmirror-mirror #s(hash-table test equal data (version 2 "cl-lib" nil))))
+#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "org" (org :type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "leaf" nil "leaf-keywords" nil "org-superstar" nil "evil" nil "cl-lib" nil "goto-chg" nil "annalist" nil "evil-collection" nil "evil-surround" nil "pulsar" nil "switch-window" nil "avy" nil "multiple-cursors" nil "move-text" nil "yasnippet" nil "auto-yasnippet" nil "evil-nerd-commenter" nil "dap-mode" nil "dash" nil "lsp-mode" nil "f" nil "s" nil "ht" nil "spinner" nil "markdown-mode" nil "lv" nil "eldoc" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "pfuture" nil "hydra" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "which-key" nil "flycheck" nil "seq" nil "projectile" nil "compat" nil "org-timeblock" nil "svg" nil "magit-todos" nil "async" nil "hl-todo" nil "magit" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "pcre2el" nil "modus-themes" nil "visual-fill-column" nil "writeroom-mode" nil "org-roam" nil "emacsql" nil)) melpa #s(hash-table test equal data (version 3 "leaf" (leaf :type git :host github :repo "conao3/leaf.el") "leaf-keywords" (leaf-keywords :type git :host github :repo "conao3/leaf-keywords.el") "org-superstar" (org-superstar :type git :host github :repo "integral-dw/org-superstar-mode") "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "annalist" (annalist :type git :host github :repo "noctuid/annalist.el") "evil-collection" (evil-collection :type git :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection") "evil-surround" (evil-surround :type git :host github :repo "emacs-evil/evil-surround") "pulsar" nil "switch-window" (switch-window :type git :host github :repo "dimitri/switch-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "multiple-cursors" (multiple-cursors :type git :host github :repo "magnars/multiple-cursors.el") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "auto-yasnippet" (auto-yasnippet :type git :host github :repo "abo-abo/auto-yasnippet") "evil-nerd-commenter" (evil-nerd-commenter :type git :host github :repo "redguardtoo/evil-nerd-commenter") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "f" (f :type git :host github :repo "rejeep/f.el") "s" (s :type git :host github :repo "magnars/s.el") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "eldoc" nil "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "seq" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "compat" nil "org-timeblock" (org-timeblock :type git :host github :repo "ichernyshovvv/org-timeblock") "svg" nil "magit-todos" (magit-todos :type git :host github :repo "alphapapa/magit-todos") "async" (async :type git :host github :repo "jwiegley/emacs-async") "hl-todo" (hl-todo :type git :host github :repo "tarsius/hl-todo") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "pcre2el" (pcre2el :type git :host github :repo "joddie/pcre2el") "modus-themes" (modus-themes :type git :host github :repo "protesilaos/modus-themes") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "cl-lib" nil "pulsar" (pulsar :type git :host github :repo "emacs-straight/pulsar" :files ("*" (:exclude ".git"))) "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "svg" (svg :type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git"))))) nongnu-elpa #s(hash-table test equal data (version (5 "https://github.com/emacsmirror/nongnu_elpa.git") "cl-lib" nil)) el-get #s(hash-table test equal data (version 2 "cl-lib" nil)) emacsmirror-mirror #s(hash-table test equal data (version 2 "cl-lib" nil))))
 
-("emacsql" "org-roam" "writeroom-mode" "visual-fill-column" "modus-themes" "pcre2el" "with-editor" "transient" "magit-section" "llama" "cond-let" "magit" "hl-todo" "async" "magit-todos" "svg" "org-timeblock" "compat" "projectile" "seq" "flycheck" "which-key" "yaml" "lsp-docker" "posframe" "cfrs" "hydra" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "eldoc" "lv" "markdown-mode" "spinner" "ht" "s" "f" "lsp-mode" "dash" "dap-mode" "evil-nerd-commenter" "auto-yasnippet" "yasnippet" "move-text" "multiple-cursors" "avy" "switch-window" "pulsar" "evil-surround" "evil-collection" "annalist" "nadvice" "goto-chg" "cl-lib" "evil" "org-superstar" "leaf-keywords" "leaf" "org" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
+("writeroom-mode" "visual-fill-column" "modus-themes" "pcre2el" "with-editor" "transient" "magit-section" "llama" "cond-let" "magit" "hl-todo" "async" "magit-todos" "svg" "org-timeblock" "compat" "projectile" "seq" "flycheck" "which-key" "yaml" "lsp-docker" "posframe" "cfrs" "hydra" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "eldoc" "lv" "markdown-mode" "spinner" "ht" "s" "f" "lsp-mode" "dash" "dap-mode" "evil-nerd-commenter" "auto-yasnippet" "yasnippet" "move-text" "multiple-cursors" "avy" "switch-window" "pulsar" "evil-surround" "evil-collection" "annalist" "nadvice" "goto-chg" "cl-lib" "evil" "org-superstar" "leaf-keywords" "leaf" "org" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
 
 t
