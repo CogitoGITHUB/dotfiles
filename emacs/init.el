@@ -738,15 +738,17 @@
   "Return t if FILE has unstaged changes according to Git.
 Returns nil if git command fails or file is unchanged."
   (condition-case nil
-      (eq (call-process "git" nil nil nil
-                        "diff" "--quiet" "--" file)
-          1)
+      (let ((default-directory (or (vc-root-dir) default-directory)))
+        (eq (call-process "git" nil nil nil
+                          "diff" "--quiet" "--" file)
+            1))
     (error nil)))
 
 (defun shapeshifter-in-git-repo-p ()
   "Return t if current buffer is in a Git repository."
   (condition-case nil
-      (and (vc-root-dir)
+      (and (buffer-file-name)
+           (vc-root-dir)
            (eq (vc-backend (buffer-file-name)) 'Git))
     (error nil)))
 
@@ -762,17 +764,24 @@ Only stages and commits the current file, not all modified files."
                (y-or-n-p "Commit this change with Magit? "))
       (condition-case err
           (let* ((default-directory (vc-root-dir))
+                 (relative-file (file-relative-name file default-directory))
                  (msg (read-string "Commit message: ")))
             (when (and msg (not (string-empty-p msg)))
-              ;; Stage only the current file
-              (magit-stage-file file)
-              ;; Commit with message
-              (magit-run-git "commit" "-m" msg)
-              ;; Refresh Magit buffers
-              (magit-refresh)
+              ;; Stage only the current file using git directly
+              (unless (zerop (call-process "git" nil nil nil "add" relative-file))
+                (error "Failed to stage file"))
+              
+              ;; Commit with message using git directly
+              (unless (zerop (call-process "git" nil nil nil "commit" "-m" msg))
+                (error "Failed to commit"))
+              
+              ;; Refresh Magit buffers if any are open
+              (when (fboundp 'magit-refresh-all)
+                (magit-refresh-all))
+              
               (message "Committed: %s" msg)))
         (error
-         (message "Magit commit failed: %s" (error-message-string err)))))))
+         (message "Commit failed: %s" (error-message-string err)))))))
 
 ;; Add to after-save-hook (always active)
 (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
