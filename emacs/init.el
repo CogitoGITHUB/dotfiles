@@ -730,28 +730,55 @@
     (pdf-tools-install))
   (setq pdf-view-display-size 'fit-page))
 
+;;; Enhanced Magit Commit on Save with Error Handling
+;;; This version includes robust error handling, better file checking,
+;;; and commits only the current file rather than all modified files.
+
 (defun shapeshifter-file-changed-p (file)
-  "Return t if FILE has unstaged changes according to Git."
-  (eq (call-process "git" nil nil nil
-                    "diff" "--quiet" "--" file)
-      1))
+  "Return t if FILE has unstaged changes according to Git.
+Returns nil if git command fails or file is unchanged."
+  (condition-case nil
+      (eq (call-process "git" nil nil nil
+                        "diff" "--quiet" "--" file)
+          1)
+    (error nil)))
+
+(defun shapeshifter-in-git-repo-p ()
+  "Return t if current buffer is in a Git repository."
+  (condition-case nil
+      (and (vc-root-dir)
+           (eq (vc-backend (buffer-file-name)) 'Git))
+    (error nil)))
 
 (defun shapeshifter-magit-commit-with-message ()
   "Commit on save using Magit, but ONLY if this file actually changed in Git.
-This prevents duplicate commits caused by Org-mode rewriting the file."
+This prevents duplicate commits caused by Org-mode rewriting the file.
+Only stages and commits the current file, not all modified files."
   (let ((file (buffer-file-name)))
     (when (and file
-               (vc-root-dir)
-               (shapeshifter-file-changed-p file) ;; <--- THE KEY LINE
+               (file-exists-p file)
+               (shapeshifter-in-git-repo-p)
+               (shapeshifter-file-changed-p file)
                (y-or-n-p "Commit this change with Magit? "))
-      (let* ((default-directory (vc-root-dir))
-             (msg (read-string "Commit message: ")))
-        (magit-stage-modified)
-        (magit-run-git "commit" "-m" msg)
-        (magit-refresh)
-        (message "Committed: %s" msg)))))
+      (condition-case err
+          (let* ((default-directory (vc-root-dir))
+                 (msg (read-string "Commit message: ")))
+            (when (and msg (not (string-empty-p msg)))
+              ;; Stage only the current file
+              (magit-stage-file file)
+              ;; Commit with message
+              (magit-run-git "commit" "-m" msg)
+              ;; Refresh Magit buffers
+              (magit-refresh)
+              (message "Committed: %s" msg)))
+        (error
+         (message "Magit commit failed: %s" (error-message-string err)))))))
 
+;; Add to after-save-hook (always active)
 (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
+
+;;; Optional Minor Mode for Toggling Commit-on-Save
+;;; Uncomment the section below to enable the minor mode functionality
 
 ;; (define-minor-mode shapeshifter-commit-on-save-mode
 ;;   "Toggle automatic Magit commit prompt after saving a file.
@@ -759,11 +786,16 @@ This prevents duplicate commits caused by Org-mode rewriting the file."
 ;;   :lighter " CommitSave"
 ;;   :global t
 ;;   (if shapeshifter-commit-on-save-mode
-;;       (add-hook 'after-save-hook #'shapeshifter-magit-commit-on-save)
-;;     (remove-hook 'after-save-hook #'shapeshifter-magit-commit-on-save)))
+;;       (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
+;;     (remove-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)))
 ;;
 ;; Usage:
-;;   M-x shapeshifter-commit-on-save-mode
+;;   M-x shapeshifter-commit-on-save-mode  ; Toggle on/off
+;;
+;; Note: If using the minor mode, comment out the add-hook line above
+;; to avoid having the hook active by default.
+
+(provide 'shapeshifter-magit-commit-save)
 
 (defun live-shaping/auto-tangle-and-reload ()
   "Safely tangle Emacs.org and reload cleanly."
