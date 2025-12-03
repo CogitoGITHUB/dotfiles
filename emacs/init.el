@@ -730,31 +730,26 @@
     (pdf-tools-install))
   (setq pdf-view-display-size 'fit-page))
 
-(defvar shapeshifter--last-saved-file nil
-  "Tracks the last file saved to prevent double-commit triggers.")
+(defun shapeshifter-file-changed-p (file)
+  "Return t if FILE has unstaged changes according to Git."
+  (eq (call-process "git" nil nil nil
+                    "diff" "--quiet" "--" file)
+      1))
 
 (defun shapeshifter-magit-commit-with-message ()
-  "Commit on save using Magit, preventing double triggers and requiring real changes."
-  (when (and (buffer-file-name)
-             (vc-root-dir)
-             ;; prevent double-trigger on same file save
-             (not (equal shapeshifter--last-saved-file (buffer-file-name))))
-    (setq shapeshifter--last-saved-file (buffer-file-name))
-    ;; refresh state so Magit sees correct diff
-    (magit-refresh-all)
-    ;; only commit if real modifications exist
-    (when (magit-anything-modified-p)
-      (when (y-or-n-p "Commit this change with Magit? ")
-        (let* ((default-directory (vc-root-dir))
-               (msg (read-string "Commit message: ")))
-          (magit-stage-modified)
-          (magit-run-git "commit" "-m" msg)
-          (magit-refresh)
-          (message "Committed: %s" msg))))
-    ;; reset after 1 second (Org sometimes re-saves after commit)
-    (run-at-time "1 sec" nil
-                 (lambda ()
-                   (setq shapeshifter--last-saved-file nil)))))
+  "Commit on save using Magit, but ONLY if this file actually changed in Git.
+This prevents duplicate commits caused by Org-mode rewriting the file."
+  (let ((file (buffer-file-name)))
+    (when (and file
+               (vc-root-dir)
+               (shapeshifter-file-changed-p file) ;; <--- THE KEY LINE
+               (y-or-n-p "Commit this change with Magit? "))
+      (let* ((default-directory (vc-root-dir))
+             (msg (read-string "Commit message: ")))
+        (magit-stage-modified)
+        (magit-run-git "commit" "-m" msg)
+        (magit-refresh)
+        (message "Committed: %s" msg)))))
 
 (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
 
