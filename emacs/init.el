@@ -734,54 +734,82 @@
 ;;; This version includes robust error handling, better file checking,
 ;;; and commits only the current file rather than all modified files.
 
+(defvar shapeshifter-commit-on-save-debug nil
+  "When non-nil, print debug messages for commit-on-save.")
+
+(defun shapeshifter-debug-message (format-string &rest args)
+  "Print debug message if debugging is enabled."
+  (when shapeshifter-commit-on-save-debug
+    (apply #'message (concat "[Commit-on-Save] " format-string) args)))
+
 (defun shapeshifter-file-changed-p (file)
   "Return t if FILE has unstaged changes according to Git.
 Returns nil if git command fails or file is unchanged."
-  (condition-case nil
+  (condition-case err
       (let ((default-directory (or (vc-root-dir) default-directory)))
-        (eq (call-process "git" nil nil nil
-                          "diff" "--quiet" "--" file)
-            1))
-    (error nil)))
+        (shapeshifter-debug-message "Checking if %s changed..." file)
+        (let ((result (call-process "git" nil nil nil
+                                    "diff" "--quiet" "--" file)))
+          (shapeshifter-debug-message "Git diff result: %s" result)
+          (eq result 1)))
+    (error 
+     (shapeshifter-debug-message "Error checking file changes: %s" err)
+     nil)))
 
 (defun shapeshifter-in-git-repo-p ()
   "Return t if current buffer is in a Git repository."
-  (condition-case nil
+  (condition-case err
       (and (buffer-file-name)
            (vc-root-dir)
            (eq (vc-backend (buffer-file-name)) 'Git))
-    (error nil)))
+    (error 
+     (shapeshifter-debug-message "Error checking git repo: %s" err)
+     nil)))
 
 (defun shapeshifter-magit-commit-with-message ()
   "Commit on save using Magit, but ONLY if this file actually changed in Git.
 This prevents duplicate commits caused by Org-mode rewriting the file.
 Only stages and commits the current file, not all modified files."
   (let ((file (buffer-file-name)))
-    (when (and file
-               (file-exists-p file)
-               (shapeshifter-in-git-repo-p)
-               (shapeshifter-file-changed-p file)
-               (y-or-n-p "Commit this change with Magit? "))
-      (condition-case err
-          (let* ((default-directory (vc-root-dir))
-                 (relative-file (file-relative-name file default-directory))
-                 (msg (read-string "Commit message: ")))
-            (when (and msg (not (string-empty-p msg)))
-              ;; Stage only the current file using git directly
-              (unless (zerop (call-process "git" nil nil nil "add" relative-file))
-                (error "Failed to stage file"))
-              
-              ;; Commit with message using git directly
-              (unless (zerop (call-process "git" nil nil nil "commit" "-m" msg))
-                (error "Failed to commit"))
-              
-              ;; Refresh Magit buffers if any are open
-              (when (fboundp 'magit-refresh-all)
-                (magit-refresh-all))
-              
-              (message "Committed: %s" msg)))
-        (error
-         (message "Commit failed: %s" (error-message-string err)))))))
+    (condition-case err
+        (when (and file
+                   (file-exists-p file)
+                   (shapeshifter-in-git-repo-p))
+          (shapeshifter-debug-message "In git repo, checking for changes...")
+          
+          (when (shapeshifter-file-changed-p file)
+            (shapeshifter-debug-message "File has changes, prompting user...")
+            
+            (when (y-or-n-p "Commit this change with Magit? ")
+              (let* ((default-directory (vc-root-dir))
+                     (relative-file (file-relative-name file default-directory))
+                     (msg (read-string "Commit message: ")))
+                
+                (when (and msg (not (string-empty-p msg)))
+                  (shapeshifter-debug-message "Staging file: %s" relative-file)
+                  
+                  ;; Stage the file
+                  (let ((add-result (call-process "git" nil nil nil "add" relative-file)))
+                    (if (zerop add-result)
+                        (shapeshifter-debug-message "File staged successfully")
+                      (error "Failed to stage file (exit code: %s)" add-result)))
+                  
+                  (shapeshifter-debug-message "Committing with message: %s" msg)
+                  
+                  ;; Commit with message
+                  (let ((commit-result (call-process "git" nil nil nil "commit" "-m" msg)))
+                    (if (zerop commit-result)
+                        (progn
+                          (shapeshifter-debug-message "Commit successful")
+                          
+                          ;; Refresh Magit buffers if any are open
+                          (when (fboundp 'magit-refresh-all)
+                            (magit-refresh-all))
+                          
+                          (message "Committed: %s" msg))
+                      (error "Failed to commit (exit code: %s)" commit-result))))))))
+      (error
+       (message "Commit-on-save error: %s" (error-message-string err))))))
 
 ;; Add to after-save-hook (always active)
 (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
@@ -803,6 +831,12 @@ Only stages and commits the current file, not all modified files."
 ;;
 ;; Note: If using the minor mode, comment out the add-hook line above
 ;; to avoid having the hook active by default.
+
+;;; Debugging
+;; To enable debug messages:
+;;   (setq shapeshifter-commit-on-save-debug t)
+;; To disable:
+;;   (setq shapeshifter-commit-on-save-debug nil)
 
 (provide 'shapeshifter-magit-commit-save)
 
