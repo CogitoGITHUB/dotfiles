@@ -1,0 +1,94 @@
+#+TITLE: Test Scroll
+#+LATEX_CLASS: article
+#+LATEX_CLASS_OPTIONS: [12pt]
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{amssymb}
+#+LATEX_HEADER: \usepackage{physics}
+#+LATEX_HEADER: \usepackage{tikz}
+#+LATEX_HEADER: \usepackage{listings}
+#+OPTIONS: toc:nil num:nil
+
+*  Qustios
+for the next chapter
+- What is the shape of time?
+- Can a mind become a manifold?
+- What structure survives collapse?
+* Code as incantation — Emacs Lisp
+
+#+begin_src emacs-lisp
+(defun shapeshift/echo-reality ()
+  (message "Ink becomes geometry. Geometry becomes law."))
+(shapeshift/echo-reality)
+#+end_src
+
+* Opening — Physics as poetry
+The first breath of structure.
+
+\[
+E = mc^2
+\]
+
+A definition as sharp as a blade:
+
+\[
+\Delta S \ge 0
+\]
+
+Entropy never sleeps.
+
+* Continuation — Geometry of thought
+
+A tensor, folded like a cathedral vault:
+
+\[
+T^\mu_\nu =
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & -1 & 0 & 0 \\
+0 & 0 & -1 & 0 \\
+0 & 0 & 0 & -1
+\end{pmatrix}
+\]
+
+* Shell as steel
+#+begin_src bash
+echo "Awaken the forge"
+uptime
+#+end_src
+
+* Python shaping numbers
+#+begin_src python
+import math
+print(math.sqrt(2))
+#+end_src
+
+* Diagram — TikZ vector ritual
+Here ink becomes geometry:
+
+\[
+\begin{tikzpicture}
+  \draw[->, thick] (0,0) -- (2,1);
+  \draw[->, thick] (0,0) -- (-1,2);
+  \node at (2.2,1) { $\vec{a}$ };
+  \node at (-1.2,2) { $\vec{b}$ };
+\end{tikzpicture}
+\]
+
+* Algorithm as scripture
+#+begin_src latex
+\[
+f(x) = 
+\begin{cases}
+x^2 & x \ge 0\\
+-x & x < 0
+\end{cases}
+\]
+#+end_src
+
+* Axioms as stone tablets
+#+begin_quote
+What is written here is not description,
+but declaration.
+Reality is shaped rather than observed.
+#+end_quote
+

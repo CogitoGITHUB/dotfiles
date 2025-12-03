@@ -92,20 +92,33 @@
   :config
   (defun shapeshift/apply-fonts ()
     (when (display-graphic-p)
-      ;; primary monospaced font
-      (when (find-font (font-spec :name "DejaVu Sans Mono"))
+
+      ;; ---------------------------------
+      ;; PURE CALLIGRAPHY – THE ONE FONT
+      ;; ---------------------------------
+      (when (find-font (font-spec :name "Tangerine"))
         (set-face-attribute 'default nil
-                            :family "DejaVu Sans Mono"
-                            :height 100))
-      ;; unicode fallback matrix
-      (set-fontset-font t 'unicode "Symbola" nil 'prepend)
-      (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend)))
+                            :family "Tangerine"
+                            :height 110)
+        (set-face-attribute 'variable-pitch nil
+                            :family "Tangerine"
+                            :height 110)
+        (set-face-attribute 'fixed-pitch nil
+                            :family "Tangerine"
+                            :height 110)))
+
+      ;; ---------------------------------
+      ;; LIVING UNICODE FALLBACKS
+      ;; ---------------------------------
+      (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend)
+      (set-fontset-font t 'unicode "Noto Sans" nil 'append)
+      (set-fontset-font t 'unicode "Noto Sans Mono" nil 'append)
+      (set-fontset-font t 'unicode "Noto Color Emoji" nil 'append)))
 
   (add-hook 'after-make-frame-functions
             (lambda (_frame) (shapeshift/apply-fonts)))
 
-  ;; apply immediately if already graphical
-  (shapeshift/apply-fonts))
+  (shapeshift/apply-fonts)
 
 (leaf evil
   :straight (evil :type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t)
@@ -554,53 +567,176 @@
     (define-key org-mode-map (kbd "C-c t a") #'org-transclusion-add)
     (define-key org-mode-map (kbd "C-c t u") #'org-transclusion-refresh)))
 
-(leaf denote
-  :straight (denote
+;;────────────────────────────────────────────────────────────
+;; Denote — Clean configuration, no inline templates
+;;────────────────────────────────────────────────────────────
+;;────────────────────────────────────────────────────────────
+;; Org-ID — persistent identity
+;;────────────────────────────────────────────────────────────
+(leaf org-id
+  :after org
+  :config
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+
+;;────────────────────────────────────────────────────────────
+;; Org-Roam — neural map engine
+;;────────────────────────────────────────────────────────────
+(leaf org-roam
+  :straight (org-roam
              :type git
              :host github
-             :repo "protesilaos/denote")
+             :repo "org-roam/org-roam")
   :after org
   :init
+  ;; CRITICAL: Point Org-Roam to your Denote directory
+  (setq org-roam-directory (file-truename "~/denote"))
+  (setq find-file-visit-truename t)
+  (setq org-roam-v2-ack t)
+  :config
+  ;; Awaken the database watcher
+  (org-roam-db-autosync-mode))
+
+;;────────────────────────────────────────────────────────────
+;; Denote Configuration (updated)
+;;────────────────────────────────────────────────────────────
+ (leaf denote
+  :straight (denote :type git :host github :repo "protesilaos/denote")
+  :after org
+  :init
+  ;; Base directory for all notes (shared with Org-Roam)
   (setq denote-directory (expand-file-name "~/denote"))
-  (setq denote-silo-extras-directories
-        (list
-         (expand-file-name "~/denote/work")
-         (expand-file-name "~/denote/personal")
-         (expand-file-name "~/denote/research")
-         (expand-file-name "~/denote/manuscripts")))
+  ;; File format + naming
   (setq denote-file-type 'org)
   (setq denote-date-format "%Y-%m-%d--%H-%M")
-  (setq denote-prompts '(title keywords subdirectory))
-  (setq denote-keywords-join-title t)
-
+  ;; Prompts: title, keywords, subdirectory, signature
+  (setq denote-prompts '(title keywords subdirectory signature))
+  ;; Org appearance
   (setq org-startup-with-inline-images nil)
   (setq org-startup-folded 'showall)
   :config
+  ;; Ensure directory exists
+  (unless (file-directory-p denote-directory)
+    (make-directory denote-directory t))
+
+  ;; Auto rename buffers to meaningful Denote names
   (denote-rename-buffer-mode 1)
+
+  ;; Backlinks rendering behavior
   (setq denote-link-backlinks-display-buffer-action
         '((display-buffer-reuse-window display-buffer-below-selected)
-          (window-height . fit-window-to-buffer))))
+          (window-height . fit-window-to-buffer)))
+
+  ;;────────── Subdirectory creation logic ──────────
+  (defun my/denote-subdirectory-prompt ()
+    "Prompt for a Denote subdirectory, creating it if needed."
+    (let* ((subdirs (mapcar (lambda (dir)
+                              (file-relative-name dir denote-directory))
+                            (seq-filter #'file-directory-p
+                                        (directory-files denote-directory t "^[^.]"))))
+           (subdir (completing-read "Subdirectory (new or existing): "
+                                    subdirs nil nil)))
+      (let ((full-path (expand-file-name subdir denote-directory)))
+        (unless (file-directory-p full-path)
+          (when (yes-or-no-p (format "Create directory %s? " full-path))
+            (make-directory full-path t)))
+        full-path)))
+
+  (advice-add 'denote-subdirectory-prompt :override #'my/denote-subdirectory-prompt)
+
+  ;;────────── Helper function for capture (Org-roam compatible) ──────────
+  (defun my/denote-capture-create-file ()
+    "Create a Denote file as a valid Org-roam node and return its path for org-capture."
+    (let* ((title (read-string "Title: "))
+           (keywords (denote-keywords-prompt))
+           (subdir (my/denote-subdirectory-prompt))
+           (signature (read-string "Signature (optional): " nil nil ""))
+           (date (current-time))
+           ;; Denote ID (timestamp-style)
+           (id (format-time-string denote-date-format date))
+           (date-formatted (format-time-string denote-date-format date))
+           (ext ".org")
+           (kws (if keywords (concat "_" (mapconcat #'downcase keywords "_")) ""))
+           (sig (if (string-empty-p signature) "" (concat "==" signature)))
+           (slug (replace-regexp-in-string "[^[:alnum:][:digit:]]" "-" (downcase title)))
+           (filename (concat id "--" slug kws sig ext))
+           (path (expand-file-name filename subdir))
+           ;; Org-roam UUID for the node
+           (org-id (org-id-new))
+           (frontmatter
+            (concat
+             "#+title:      " title "\n"
+             "#+date:       " date-formatted "\n"
+             "#+AUTHOR:     Shapeshifter\n"
+             "#+identifier: " id "\n"
+             "#+filetags:   "
+             (if keywords (mapconcat #'identity keywords " ") "")
+             "\n"
+             (unless (string-empty-p signature)
+               (concat "#+signature:  " signature "\n"))
+             "\n"
+             "* " title "\n"
+             ":PROPERTIES:\n"
+             ":ID:       " org-id "\n"
+             ":END:\n\n")))
+      ;; write file
+      (write-region frontmatter nil path)
+      path)))
+
+;;────────────────────────────────────────────────────────────
+;; Org-Capture Templates
+;;────────────────────────────────────────────────────────────
 (with-eval-after-load 'denote
-;; Create new note
-(define-key evil-normal-state-map (kbd "SPC n n") #'denote)
-;; Create note from region
-(define-key evil-visual-state-map (kbd "SPC n n") #'denote-region)
-;; Rename note
-(define-key evil-normal-state-map (kbd "SPC n r") #'denote-rename-file)
-;; Open notes directory
-(define-key evil-normal-state-map (kbd "SPC n d") #'denote-open-or-create)
-;; Search notes & backlinks
-(define-key evil-normal-state-map (kbd "SPC n s") #'denote-search)
-;; Link to existing note
-(define-key evil-normal-state-map (kbd "SPC n l") #'denote-link)
-;; Insert link to multiple notes
-(define-key evil-normal-state-map (kbd "SPC n L") #'denote-link-add-links)
-;; View backlinks buffer
-(define-key evil-normal-state-map (kbd "SPC n b") #'denote-backlinks)
-;; Explore silo tree
-(define-key evil-normal-state-map (kbd "SPC n e") #'denote-dired)
-;; Kill note buffer (declutter)
-(define-key evil-normal-state-map (kbd "SPC n k") #'kill-current-buffer))
+  (with-eval-after-load 'org-capture
+    (setq org-capture-templates
+          '(("n" "New Denote Note" plain
+             (file my/denote-capture-create-file)
+             ""
+             :empty-lines 1
+             :jump-to-captured t)))))
+
+;;────────────────────────────────────────────────────────────
+;; Leader Keybindings (Denote + Org-Roam)
+;;────────────────────────────────────────────────────────────
+(with-eval-after-load 'denote
+  (with-eval-after-load 'evil
+    ;; DENOTE keybindings
+    (define-key evil-normal-state-map (kbd "SPC n n")
+      (lambda () (interactive) (org-capture nil "n")))
+    (define-key evil-normal-state-map (kbd "SPC n c") #'denote)
+    (define-key evil-visual-state-map (kbd "SPC n R") #'denote-region)
+    (define-key evil-normal-state-map (kbd "SPC n r") #'denote-rename-file)
+    (define-key evil-normal-state-map (kbd "SPC n S")
+      #'denote-rename-file-using-front-matter)
+    (define-key evil-normal-state-map (kbd "SPC n d")
+      (lambda () (interactive) (dired denote-directory)))
+    (define-key evil-normal-state-map (kbd "SPC n s") #'denote-subdirectory)
+    
+    ;; LINKING: Use both Denote and Org-Roam
+    (define-key evil-normal-state-map (kbd "SPC n l") #'denote-link)
+    (define-key evil-normal-state-map (kbd "SPC n L") #'denote-link-add-links)
+    
+    ;; BACKLINKS: Denote backlinks
+    (define-key evil-normal-state-map (kbd "SPC n b") #'denote-backlinks)
+    
+    (define-key evil-normal-state-map (kbd "SPC n e")
+      (lambda () (interactive) (dired denote-directory)))
+    (define-key evil-normal-state-map (kbd "SPC n k") #'kill-current-buffer)))
+
+;; ORG-ROAM keybindings (separate prefix)
+(with-eval-after-load 'org-roam
+  (with-eval-after-load 'evil
+    ;; Find/insert Org-Roam node
+    (define-key evil-normal-state-map (kbd "SPC r f") #'org-roam-node-find)
+    (define-key evil-normal-state-map (kbd "SPC r i") #'org-roam-node-insert)
+    
+    ;; Org-Roam backlinks buffer (graph view)
+    (define-key evil-normal-state-map (kbd "SPC r b") #'org-roam-buffer-toggle)
+    
+    ;; Show graph UI
+    (define-key evil-normal-state-map (kbd "SPC r g") #'org-roam-ui-mode)
+    
+    ;; Sync database
+    (define-key evil-normal-state-map (kbd "SPC r s") #'org-roam-db-sync)))
 
 (leaf denote-explore
   :straight (denote-explore
@@ -625,24 +761,21 @@
   ;; Optional: narrow by keyword/tag quickly
   (global-set-key (kbd "C-c d F") #'consult-denote-file))
 
-(leaf org-id
-  :after org
-  :config
-  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
-
-(leaf org-roam
-  :straight (org-roam
+(leaf org-roam-ui
+  :straight (org-roam-ui
              :type git
              :host github
-             :repo "org-roam/org-roam")
-  :after org
-  :init
-  (setq org-roam-directory (file-truename "~/org-roam"))
-  (setq find-file-visit-truename t)
-  (setq org-roam-v2-ack t)
+             :repo "org-roam/org-roam-ui"
+             :files ("*.el" "out"))
+  :after org-roam  ;; ensure Roam loads first
   :config
-  ;; awaken the database watcher
-  (org-roam-db-autosync-mode))
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t)
+
+  ;; open UI immediately when Emacs finishes startup
+  (add-hook 'emacs-startup-hook #'org-roam-ui-mode))
 
 ;;──────────────────────────────────────────────────────────
 ;; LaTeX Manuscript Mode (Safe, Non-recursive, Precise)
@@ -730,149 +863,105 @@
     (pdf-tools-install))
   (setq pdf-view-display-size 'fit-page))
 
-;;; Enhanced Magit Commit on Save with Error Handling
-;;; This version includes robust error handling, better file checking,
-;;; and commits only the current file rather than all modified files.
+;; ───────────────────────────────────────────────────────────────
+;; CONSULT — the high-precision jump engine
+;; ───────────────────────────────────────────────────────────────
+(leaf consult
+  :straight (consult
+             :type git
+             :host github
+             :repo "minad/consult")
+  :bind
+  (("C-s"     . consult-line)              ;; search inside buffer
+   ("C-c f"   . consult-find)              ;; find files
+   ("C-c g"   . consult-git-grep)          ;; ripgrep
+   ("C-x b"   . consult-buffer)            ;; buffer switcher
+   ("C-x r b" . consult-bookmark)          ;; bookmarks
+   ))
 
-(defvar shapeshifter-commit-on-save-debug nil
-  "When non-nil, print debug messages for commit-on-save.")
+;; ───────────────────────────────────────────────────────────────
+;; EMBARK — the action layer (right-click for the keyboard age)
+;; ───────────────────────────────────────────────────────────────
+(leaf embark
+  :straight (embark
+             :type git
+             :host github
+             :repo "oantolin/embark")
+  :bind
+  (("C-." . embark-act)         ;; think: context menu, immediate action
+   ("C-;" . embark-dwim)        ;; run best action automatically
+   ("C-h B" . embark-bindings)) ;; see keymaps
 
-(defun shapeshifter-debug-message (format-string &rest args)
-  "Print debug message if debugging is enabled."
-  (when shapeshifter-commit-on-save-debug
-    (apply #'message (concat "[Commit-on-Save] " format-string) args)))
+  :config
+  ;; nicer popups
+  (setq embark-prompter 'embark-keymap-prompter))
 
-(defun shapeshifter-file-changed-p (file)
-  "Return t if FILE has unstaged changes according to Git.
-Returns nil if git command fails or file is unchanged."
-  (condition-case err
-      (let ((default-directory (or (vc-root-dir) default-directory)))
-        (shapeshifter-debug-message "Checking if %s changed..." file)
-        (let ((result (call-process "git" nil nil nil
-                                    "diff" "--quiet" "--" file)))
-          (shapeshifter-debug-message "Git diff result: %s" result)
-          (eq result 1)))
-    (error 
-     (shapeshifter-debug-message "Error checking file changes: %s" err)
-     nil)))
+;; live annotations for consult
+(leaf embark-consult
+  :straight (embark-consult
+             :type git
+             :host github
+             :repo "oantolin/embark")
+  :after (embark consult)
+  :config
+  (embark-consult-mode 1))
+(with-eval-after-load 'consult
+  (define-key shapeshifter-leader-map (kbd "u") #'consult-buffer)
+  (define-key shapeshifter-leader-map (kbd "f") #'consult-find)
+  (define-key shapeshifter-leader-map (kbd "b") #'consult-buffer)
+  (define-key shapeshifter-leader-map (kbd "s") #'consult-ripgrep)
+  (define-key shapeshifter-leader-map (kbd "l") #'consult-line))
 
-(defun shapeshifter-in-git-repo-p ()
-  "Return t if current buffer is in a Git repository."
-  (condition-case err
-      (and (buffer-file-name)
-           (vc-root-dir)
-           (eq (vc-backend (buffer-file-name)) 'Git))
-    (error 
-     (shapeshifter-debug-message "Error checking git repo: %s" err)
-     nil)))
+;; ───────────────────────────────────────────────────────────────
+;; ALL THE ICONS — full Git install, no MELPA, no missing files
+;; ───────────────────────────────────────────────────────────────
 
-(defun shapeshifter-magit-commit-with-message ()
-  "Commit on save using Magit, but ONLY if this file actually changed in Git.
-This prevents duplicate commits caused by Org-mode rewriting the file.
-Only stages and commits the current file, not all modified files."
-  (let ((file (buffer-file-name)))
-    (condition-case err
-        (when (and file
-                   (file-exists-p file)
-                   (shapeshifter-in-git-repo-p))
-          (shapeshifter-debug-message "In git repo, checking for changes...")
-          
-          (when (shapeshifter-file-changed-p file)
-            (shapeshifter-debug-message "File has changes, prompting user...")
-            
-            (when (y-or-n-p "Commit this change with Magit? ")
-              (let* ((default-directory (vc-root-dir))
-                     (relative-file (file-relative-name file default-directory))
-                     (msg (read-string "Commit message: ")))
-                
-                (when (and msg (not (string-empty-p msg)))
-                  (shapeshifter-debug-message "Staging file: %s" relative-file)
-                  
-                  ;; Stage the file
-                  (let ((add-result (call-process "git" nil nil nil "add" relative-file)))
-                    (if (zerop add-result)
-                        (shapeshifter-debug-message "File staged successfully")
-                      (error "Failed to stage file (exit code: %s)" add-result)))
-                  
-                  (shapeshifter-debug-message "Committing with message: %s" msg)
-                  
-                  ;; Commit with message
-                  (let ((commit-result (call-process "git" nil nil nil "commit" "-m" msg)))
-                    (if (zerop commit-result)
-                        (progn
-                          (shapeshifter-debug-message "Commit successful")
-                          
-                          ;; Refresh Magit buffers if any are open
-                          (when (fboundp 'magit-refresh-all)
-                            (magit-refresh-all))
-                          
-                          (message "Committed: %s" msg))
-                      (error "Failed to commit (exit code: %s)" commit-result))))))))
-      (error
-       (message "Commit-on-save error: %s" (error-message-string err))))))
+(leaf all-the-icons
+  :straight (all-the-icons
+             :type git
+             :host github
+             :repo "domtronn/all-the-icons.el")
+  :config
+  ;; Install the fonts automatically if missing
+  (unless (file-exists-p (expand-file-name "all-the-icons.ttf"
+                                           (concat user-emacs-directory "fonts/")))
+    (all-the-icons-install-fonts t)))
 
-;; Add to after-save-hook (always active)
-(add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
+(leaf all-the-icons-dired
+  :straight (all-the-icons-dired
+             :type git
+             :host github
+             :repo "wyuenho/all-the-icons-dired")
+  :hook (dired-mode . all-the-icons-dired-mode))
 
-;;; Optional Minor Mode for Toggling Commit-on-Save
-;;; Uncomment the section below to enable the minor mode functionality
-
-;; (define-minor-mode shapeshifter-commit-on-save-mode
-;;   "Toggle automatic Magit commit prompt after saving a file.
-;; When enabled, every save inside a Git repository will offer a commit prompt."
-;;   :lighter " CommitSave"
-;;   :global t
-;;   (if shapeshifter-commit-on-save-mode
-;;       (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
-;;     (remove-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)))
-;;
-;; Usage:
-;;   M-x shapeshifter-commit-on-save-mode  ; Toggle on/off
-;;
-;; Note: If using the minor mode, comment out the add-hook line above
-;; to avoid having the hook active by default.
-
-;;; Debugging
-;; To enable debug messages:
-;;   (setq shapeshifter-commit-on-save-debug t)
-;; To disable:
-;;   (setq shapeshifter-commit-on-save-debug nil)
-
-(provide 'shapeshifter-magit-commit-save)
+(leaf all-the-icons-completion
+  :straight (all-the-icons-completion
+             :type git
+             :host github
+             :repo "iyefrat/all-the-icons-completion")
+  :after (all-the-icons marginalia)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :config
+  (all-the-icons-completion-mode 1))
 
 (defun live-shaping/auto-tangle-and-reload ()
-  "Safely tangle Emacs.org and reload cleanly."
+  "Auto-tangle and reload when this Org file tangles to init.el."
   (when (and buffer-file-name
-             (string-equal (file-truename buffer-file-name)
-                           (file-truename "~/.config/emacs/Emacs.org")))
-    (message "Live-Shaping: Tangling...")
+             (save-excursion
+               (goto-char (point-min))
+               (re-search-forward ":tangle[ \t]+~/.config/emacs/init.el" nil t)))
+    (message "Live-Shaping: Tangling…")
     (condition-case err
-        (let* ((target "~/.config/emacs/init.el")
-               (temp   "~/.config/emacs/init.el.tmp")
-               (tangled-files (org-babel-tangle)))
-          
-          (when tangled-files
-            ;; Move tangled output atomically
-            (when (file-exists-p temp)
-              (delete-file temp))
+        (let ((target "~/.config/emacs/init.el")
+              (temp   "~/.config/emacs/init.el.tmp"))
+          (when (org-babel-tangle)
+            (when (file-exists-p temp) (delete-file temp))
             (rename-file target temp t)
             (rename-file temp target t)
-
-            (message "Live-Shaping: Tangle done. Reloading config...")
-
-            (condition-case load-err
-                (progn
-                  (load-file target)
-                  (message "Live-Shaping: Reload complete ✓"))
-              (error
-               (display-warning 'live-shaping
-                                (format "Reload failed: %s"
-                                        (error-message-string load-err))
-                                :error)))))
+            (load-file target)
+            (message "Live-Shaping: Reload complete ✓")))
       (error
-       (display-warning 'live-shaping
-                        (format "Tangle failed: %s"
-                                (error-message-string err))
-                        :error)))))
+       (display-warning
+        'live-shaping (format "%s" (error-message-string err)) :error)))))
 
 (add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
