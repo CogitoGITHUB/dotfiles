@@ -1,206 +1,49 @@
 "$schema" = 'https://starship.rs/config-schema.json'
-scan_timeout = 10
+
 add_newline = false
+scan_timeout = 10
 
 format = """
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ STATUS: $status  
-┃ USER:   $username
-┃ HOST:   $hostname
-┃ IP:     $localip
-┃ SHELL:  $shell
-┃ LVL:    $shlvl
-┃ MEM:    $memory_usage
-┃ LOAD:   $cmd_duration
-┃ BAT:    $battery
-┃ JOBS:   $jobs
-┃ TIME:   $time
-┃ DOCKER: $docker_context
-┃ KUBE:   $kubernetes
-┃ CONTAINER: $container
-┃ GIT:    $git_branch $git_status $git_state
-┃ SUDO:   $sudo
-┃ DIR:    $directory
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+$status$username${hostname}:${directory} $git_branch$git_status
 $character
 """
 
-
-############################################
-# PALETTE
-############################################
-[palettes.monochrome]
-text = "black"
-muted = "black"
-highlight = "black"
-success = "black"
-error = "black"
-
-palette = "monochrome"
-
-
-
 [status]
 disabled = false
-format = "[$symbol$status]($style) "
-symbol = "✖"              # failure mark, sharp like a blade tip
-success_symbol = "◆"      # victory, a clean diamond point
-not_found_symbol = "?"
-not_executable_symbol = "!"
-sigint_symbol = "∅"
-signal_symbol = "⚡"
-style = "bold black"
-success_style = "bold black"
-failure_style = "bold red"
-map_symbol = true
-recognize_signal_code = true
-
-[sudo]
-disabled = false
-format = "$symbol "
-symbol = "◆"
+format = "[$symbol]($style)"
+symbol = "✖"
+success_symbol = "◆"
 style = "bold red"
+success_style = "bold black"
 
 [username]
 disabled = false
 show_always = true
-format = "[$user]($style) "
 style_user = "bold black"
 style_root = "bold red"
 
 [hostname]
 disabled = false
-ssh_only = false
-format = "[$hostname]($style) "
+format = "[$hostname]($style)"
 style = "bold black"
 trim_at = "."
 
-[localip]
-disabled = false
-ssh_only = false
-format = "[$localipv4]($style) "
-style = "bold black"
-
-[shell]
-disabled = false
-format = "[$indicator]($style) "
-nu_indicator = "NU"
-style = "bold black"
-
-
-[shlvl]
-disabled = false
-threshold = 1
-format = "[$shlvl]($style) "
-style = "bold black"
-symbol = ""
-
-############################################
-# DIRECTORY — structural mass
-############################################
 [directory]
-style = "black"
+style = "bold black"
 truncation_length = 3
 truncation_symbol = "…/"
-read_only = " !ro"
-format = "$path "
+format = "[$path]($style)"
 
-############################################
-# GIT — forge mechanics
-############################################
 [git_branch]
-style = "black"
-symbol = "⟪"
-format = "$symbol$branch⟫ "
+style = "bold black"
+symbol = ""
+format = "⟪$branch⟫ "
 
 [git_status]
-style = "black"
-
-conflicted = "✎"
-modified   = "⚠"
-staged     = "●"
-renamed    = "➤"
-deleted    = "✘"
-untracked  = "…"
-stashed    = "⧖"
-
-format = "⟦$all_status⟧ "
-disabled = false
-
-[git_state]
-style = "black"
-format = "{ $state | $progress } "
-
-[docker_context]
-disabled = false
-format = "DOCKER: [$context]($style) "
-style = "bold black"
-only_with_files = false
-symbol = ""
-
-[kubernetes]
-disabled = false
-format = "[$context]($style) "
-symbol = ""
-style = "bold black"
-
-[container]
-disabled = false
-format = "[$symbol$name]($style) "
-symbol = "⬢"
 style = "bold red"
-
-[memory_usage]
-disabled = false
-threshold = 0
-format = "[$ram_pct]($style) "
-symbol = ""
-style = "bold black"
-
-
-[cmd_duration]
-disabled = false
-min_time = 0
-show_milliseconds = false
-format = "[$duration]($style) "
-style = "bold black"
-
-[battery]
-format = "[$symbol$percentage]($style) "
-full_symbol         = "100"
-charging_symbol     = "+"
-discharging_symbol  = "-"
-empty_symbol        = "0"
-disabled = false
-
-[[battery.display]]
-threshold = 100
-style = "black"
-
-[[battery.display]]
-threshold = 10
-style = "red"
-discharging_symbol = "10"
-
-
-[jobs]
-format = "[$symbol$number]($style) "
-symbol = ""
-style = "bold black"
-symbol_threshold = 0
-number_threshold = 0
-
-
-[time]
-disabled = false
-format = "[$time]($style) "
-time_format = "%H:%M:%S"
-style = "bold black"
-
-
+format = "⟦$all_status⟧"
 
 [character]
 success_symbol = "▮"
-error_symbol   = "▯"
-vicmd_symbol   = "▱"
-format = "$symbol "
+error_symbol = "▯"
+vicmd_symbol = "▱"

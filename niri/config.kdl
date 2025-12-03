@@ -4,12 +4,12 @@ layout {
     gaps 10
     center-focused-column "always"
     focus-ring {
-        width 1
+        width 0
         active-color "black"
         inactive-color "grey"
    }
     border {
-        width 1
+        width 0
         active-color "black"
         inactive-color "grey"
         urgent-color "red"
@@ -18,14 +18,14 @@ layout {
         //  on
     }
     struts {
-        left 10
+       left 10
        right 10
-         top 10
-      bottom 10
-    }
+       top 10
+       bottom 10
+     }
 }
 
-spawn-at-startup "qutebrowser"
+spawn-at-startup "nyxt"
 spawn-at-startup "wezterm"
 
 prefer-no-csd
@@ -39,7 +39,7 @@ prefer-no-csd
 // screenshot-path null
 
 window-rule {
-    geometry-corner-radius 2
+    geometry-corner-radius 0
     clip-to-geometry true
 }
 

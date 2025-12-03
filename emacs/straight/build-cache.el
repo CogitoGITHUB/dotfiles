@@ -3,7 +3,7 @@
 
 "30.2"
 
-#s(hash-table test equal data ("straight" ("2025-11-27 21:54:37" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-11-27 21:54:37" nil (:local-repo nil :package "org-elpa" :type git)) "org" ("2025-11-27 21:55:53" ("emacs") (:type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "melpa" ("2025-11-27 21:56:01" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "leaf" ("2025-11-27 21:56:03" ("emacs") (:type git :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el")) "leaf-keywords" ("2025-11-27 21:56:05" ("emacs" "leaf") (:type git :host github :repo "conao3/leaf-keywords.el" :package "leaf-keywords" :local-repo "leaf-keywords.el")) "org-superstar" ("2025-11-27 21:56:07" ("org" "emacs") (:type git :host github :repo "integral-dw/org-superstar-mode" :package "org-superstar" :local-repo "org-superstar-mode")) "evil" ("2025-11-27 21:56:24" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :package "evil" :local-repo "evil")) "gnu-elpa-mirror" ("2025-11-27 21:56:17" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2025-11-27 21:56:18" nil (:type git :repo "https://github.com/emacsmirror/nongnu_elpa.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-11-27 21:56:20" nil (:type git :host github :repo "dimitri/el-get" :build nil :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-11-27 21:56:21" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "goto-chg" ("2025-11-27 21:56:22" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "annalist" ("2025-11-27 21:56:26" ("emacs" "cl-lib") (:type git :host github :repo "noctuid/annalist.el" :fetch t :package "annalist" :local-repo "annalist.el")) "evil-collection" ("2025-11-27 21:56:30" ("emacs" "evil" "annalist") (:type git :host github :repo "emacs-evil/evil-collection" :fetch t :files (:defaults "modes" "evil-collection-pkg.el") :package "evil-collection" :local-repo "evil-collection")) "evil-surround" ("2025-11-27 21:56:31" ("evil") (:type git :host github :repo "timcharper/evil-surround" :fetch t :package "evil-surround" :local-repo "evil-surround")) "pulsar" ("2025-11-27 21:56:33" ("emacs") (:type git :host github :repo "protesilaos/pulsar" :fetch t :files ("*" (:exclude ".git")) :package "pulsar" :local-repo "pulsar")) "switch-window" ("2025-11-27 21:56:34" ("emacs") (:type git :host github :repo "dimitri/switch-window" :fetch t :package "switch-window" :local-repo "switch-window")) "avy" ("2025-11-27 21:56:35" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :fetch t :package "avy" :local-repo "avy")) "multiple-cursors" ("2025-11-27 21:56:37" ("cl-lib") (:type git :host github :repo "magnars/multiple-cursors.el" :fetch t :package "multiple-cursors" :local-repo "multiple-cursors.el")) "move-text" ("2025-11-27 21:56:38" nil (:type git :host github :repo "emacsfodder/move-text" :fetch t :package "move-text" :local-repo "move-text")) "yasnippet" ("2025-11-27 21:56:40" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "auto-yasnippet" ("2025-11-27 21:56:42" ("yasnippet" "emacs") (:type git :host github :repo "abo-abo/auto-yasnippet" :package "auto-yasnippet" :local-repo "auto-yasnippet")) "evil-nerd-commenter" ("2025-11-27 21:56:43" ("emacs") (:type git :host github :repo "redguardtoo/evil-nerd-commenter" :package "evil-nerd-commenter" :local-repo "evil-nerd-commenter")) "dap-mode" ("2025-11-27 21:58:30" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:host github :repo "emacs-lsp/dap-mode" :files (:defaults "icons" "dap-mode-pkg.el") :package "dap-mode" :type git :local-repo "dap-mode")) "dash" ("2025-11-27 21:56:49" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "lsp-mode" ("2025-11-27 21:58:07" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "f" ("2025-11-27 21:57:53" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "s" ("2025-11-27 21:57:53" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "ht" ("2025-11-27 21:57:54" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2025-11-27 21:57:56" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "markdown-mode" ("2025-11-27 21:58:00" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lv" ("2025-11-27 21:58:01" nil (:type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra" :package "lv" :local-repo "hydra")) "eldoc" ("2025-11-27 21:58:03" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "bui" ("2025-11-27 21:58:08" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2025-11-27 21:58:23" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2025-11-27 21:58:22" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2025-11-27 21:58:14" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "pfuture" ("2025-11-27 21:58:15" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "hydra" ("2025-11-27 21:58:15" ("cl-lib" "lv") (:files (:defaults (:exclude "lv.el") "hydra-pkg.el") :package "hydra" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "cfrs" ("2025-11-27 21:58:17" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2025-11-27 21:58:17" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2025-11-27 21:58:28" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2025-11-27 21:58:27" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "which-key" ("2025-11-27 21:58:34" ("emacs") (:host github :repo "justbur/emacs-which-key" :package "which-key" :type git :local-repo "emacs-which-key")) "flycheck" ("2025-11-27 21:58:43" ("emacs" "seq") (:host github :repo "flycheck/flycheck" :package "flycheck" :type git :local-repo "flycheck")) "seq" ("2025-11-27 21:58:42" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "projectile" ("2025-11-27 21:58:48" ("emacs") (:host github :repo "bbatsov/projectile" :package "projectile" :type git :local-repo "projectile")) "compat" ("2025-11-27 21:58:49" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "org-timeblock" ("2025-11-27 21:58:52" ("emacs" "compat" "org" "svg") (:type git :host github :repo "ichernyshovvv/org-timeblock" :package "org-timeblock" :local-repo "org-timeblock")) "svg" ("2025-11-27 21:58:51" ("emacs") (:type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git")) :package "svg" :local-repo "svg")) "magit-todos" ("2025-11-27 21:59:18" ("emacs" "async" "dash" "f" "hl-todo" "magit" "pcre2el" "s" "transient") (:type git :host github :repo "alphapapa/magit-todos" :package "magit-todos" :local-repo "magit-todos")) "async" ("2025-11-27 21:58:54" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "hl-todo" ("2025-11-27 21:58:55" ("emacs" "compat") (:type git :host github :repo "tarsius/hl-todo" :package "hl-todo" :local-repo "hl-todo")) "magit" ("2025-11-27 21:59:15" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "cond-let" ("2025-11-27 21:59:07" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-11-27 21:59:08" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-11-27 21:59:09" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-11-27 21:59:11" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-11-27 21:59:12" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "pcre2el" ("2025-11-27 21:59:17" ("emacs") (:type git :host github :repo "joddie/pcre2el" :package "pcre2el" :local-repo "pcre2el")) "modus-themes" ("2025-11-27 21:59:27" ("emacs") (:type git :host github :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes")) "visual-fill-column" ("2025-11-27 21:59:30" ("emacs") (:type git :host github :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "writeroom-mode" ("2025-11-27 21:59:31" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "org-roam" ("2025-11-27 21:59:43" ("emacs" "compat" "dash" "org" "emacsql" "magit-section") (:type git :host github :repo "org-roam/org-roam" :files (:defaults "extensions/*" "org-roam-pkg.el") :package "org-roam" :local-repo "org-roam")) "emacsql" ("2025-11-27 21:59:42" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql"))))
+#s(hash-table test equal data ("straight" ("2025-12-02 21:09:46" ("emacs") (:type git :host github :repo "radian-software/straight.el" :files ("straight*.el") :branch "main" :package "straight" :local-repo "straight.el")) "org-elpa" ("2025-12-02 21:09:46" nil (:local-repo nil :package "org-elpa" :type git)) "org" ("2025-12-02 21:11:05" ("emacs") (:type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org")) "melpa" ("2025-12-02 21:11:14" nil (:type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa")) "leaf" ("2025-12-02 21:11:17" ("emacs") (:type git :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el")) "leaf-keywords" ("2025-12-02 21:11:18" ("emacs" "leaf") (:type git :host github :repo "conao3/leaf-keywords.el" :package "leaf-keywords" :local-repo "leaf-keywords.el")) "org-superstar" ("2025-12-02 21:11:20" ("org" "emacs") (:type git :host github :repo "integral-dw/org-superstar-mode" :package "org-superstar" :local-repo "org-superstar-mode")) "evil" ("2025-12-02 21:11:37" ("emacs" "cl-lib" "goto-chg" "nadvice") (:type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :package "evil" :local-repo "evil")) "gnu-elpa-mirror" ("2025-12-02 21:11:30" nil (:type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror")) "nongnu-elpa" ("2025-12-02 21:11:31" nil (:type git :repo "https://github.com/emacsmirror/nongnu_elpa.git" :depth (full single-branch) :local-repo "nongnu-elpa" :build nil :package "nongnu-elpa")) "el-get" ("2025-12-02 21:11:33" nil (:type git :host github :repo "dimitri/el-get" :build nil :package "el-get" :local-repo "el-get")) "emacsmirror-mirror" ("2025-12-02 21:11:34" nil (:type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror")) "goto-chg" ("2025-12-02 21:11:35" ("emacs") (:type git :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg")) "annalist" ("2025-12-02 21:11:38" ("emacs" "cl-lib") (:type git :host github :repo "noctuid/annalist.el" :fetch t :package "annalist" :local-repo "annalist.el")) "evil-collection" ("2025-12-02 21:11:42" ("emacs" "evil" "annalist") (:type git :host github :repo "emacs-evil/evil-collection" :fetch t :files (:defaults "modes" "evil-collection-pkg.el") :package "evil-collection" :local-repo "evil-collection")) "evil-surround" ("2025-12-02 21:11:44" ("evil") (:type git :host github :repo "timcharper/evil-surround" :fetch t :package "evil-surround" :local-repo "evil-surround")) "pulsar" ("2025-12-02 21:11:45" ("emacs") (:type git :host github :repo "protesilaos/pulsar" :fetch t :files ("*" (:exclude ".git")) :package "pulsar" :local-repo "pulsar")) "switch-window" ("2025-12-02 21:11:47" ("emacs") (:type git :host github :repo "dimitri/switch-window" :fetch t :package "switch-window" :local-repo "switch-window")) "avy" ("2025-12-02 21:11:48" ("emacs" "cl-lib") (:type git :host github :repo "abo-abo/avy" :fetch t :package "avy" :local-repo "avy")) "multiple-cursors" ("2025-12-02 21:11:49" ("cl-lib") (:type git :host github :repo "magnars/multiple-cursors.el" :fetch t :package "multiple-cursors" :local-repo "multiple-cursors.el")) "move-text" ("2025-12-02 21:11:50" nil (:type git :host github :repo "emacsfodder/move-text" :fetch t :package "move-text" :local-repo "move-text")) "yasnippet" ("2025-12-02 21:11:53" ("cl-lib" "emacs") (:type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet")) "auto-yasnippet" ("2025-12-02 21:11:54" ("yasnippet" "emacs") (:type git :host github :repo "abo-abo/auto-yasnippet" :package "auto-yasnippet" :local-repo "auto-yasnippet")) "evil-nerd-commenter" ("2025-12-02 21:11:55" ("emacs") (:type git :host github :repo "redguardtoo/evil-nerd-commenter" :package "evil-nerd-commenter" :local-repo "evil-nerd-commenter")) "dap-mode" ("2025-12-02 21:13:40" ("emacs" "dash" "lsp-mode" "bui" "f" "s" "lsp-treemacs" "posframe" "ht" "lsp-docker") (:host github :repo "emacs-lsp/dap-mode" :files (:defaults "icons" "dap-mode-pkg.el") :package "dap-mode" :type git :local-repo "dap-mode")) "dash" ("2025-12-02 21:12:01" ("emacs") (:type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el")) "lsp-mode" ("2025-12-02 21:13:18" ("emacs" "dash" "f" "ht" "spinner" "markdown-mode" "lv" "eldoc") (:type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode" :package "lsp-mode" :local-repo "lsp-mode")) "f" ("2025-12-02 21:13:06" ("emacs" "s" "dash") (:type git :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el")) "s" ("2025-12-02 21:13:05" nil (:type git :host github :repo "magnars/s.el" :package "s" :local-repo "s.el")) "ht" ("2025-12-02 21:13:07" ("dash") (:type git :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el")) "spinner" ("2025-12-02 21:13:08" ("emacs") (:type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git")) :package "spinner" :local-repo "spinner")) "markdown-mode" ("2025-12-02 21:13:12" ("emacs") (:type git :host github :repo "jrblevin/markdown-mode" :package "markdown-mode" :local-repo "markdown-mode")) "lv" ("2025-12-02 21:13:13" nil (:type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra" :package "lv" :local-repo "hydra")) "eldoc" ("2025-12-02 21:13:14" ("emacs") (:type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git")) :package "eldoc" :local-repo "eldoc")) "bui" ("2025-12-02 21:13:19" ("emacs" "dash") (:type git :host github :repo "alezost/bui.el" :package "bui" :local-repo "bui.el")) "lsp-treemacs" ("2025-12-02 21:13:34" ("emacs" "dash" "f" "ht" "treemacs" "lsp-mode") (:type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs" :package "lsp-treemacs" :local-repo "lsp-treemacs")) "treemacs" ("2025-12-02 21:13:33" ("emacs" "cl-lib" "dash" "s" "ace-window" "pfuture" "hydra" "ht" "cfrs") (:type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs" :package "treemacs" :local-repo "treemacs")) "ace-window" ("2025-12-02 21:13:25" ("avy") (:type git :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window")) "pfuture" ("2025-12-02 21:13:26" ("emacs") (:type git :host github :repo "Alexander-Miller/pfuture" :package "pfuture" :local-repo "pfuture")) "hydra" ("2025-12-02 21:13:26" ("cl-lib" "lv") (:files (:defaults (:exclude "lv.el") "hydra-pkg.el") :package "hydra" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github)) "cfrs" ("2025-12-02 21:13:28" ("emacs" "dash" "s" "posframe") (:type git :host github :repo "Alexander-Miller/cfrs" :package "cfrs" :local-repo "cfrs")) "posframe" ("2025-12-02 21:13:28" ("emacs") (:type git :host github :repo "tumashu/posframe" :package "posframe" :local-repo "posframe")) "lsp-docker" ("2025-12-02 21:13:38" ("emacs" "dash" "lsp-mode" "f" "s" "yaml" "ht") (:type git :host github :repo "emacs-lsp/lsp-docker" :package "lsp-docker" :local-repo "lsp-docker")) "yaml" ("2025-12-02 21:13:38" ("emacs") (:type git :host github :repo "zkry/yaml.el" :package "yaml" :local-repo "yaml.el")) "which-key" ("2025-12-02 21:13:42" ("emacs") (:host github :repo "justbur/emacs-which-key" :package "which-key" :type git :local-repo "emacs-which-key")) "flycheck" ("2025-12-02 21:13:52" ("emacs" "seq") (:host github :repo "flycheck/flycheck" :package "flycheck" :type git :local-repo "flycheck")) "seq" ("2025-12-02 21:13:51" nil (:type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git")) :package "seq" :local-repo "seq")) "projectile" ("2025-12-02 21:13:58" ("emacs") (:host github :repo "bbatsov/projectile" :package "projectile" :type git :local-repo "projectile")) "compat" ("2025-12-02 21:13:59" ("emacs" "seq") (:type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git")) :package "compat" :local-repo "compat")) "org-timeblock" ("2025-12-02 21:14:01" ("emacs" "compat" "org" "svg") (:type git :host github :repo "ichernyshovvv/org-timeblock" :package "org-timeblock" :local-repo "org-timeblock")) "svg" ("2025-12-02 21:14:01" ("emacs") (:type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git")) :package "svg" :local-repo "svg")) "magit-todos" ("2025-12-02 21:14:27" ("emacs" "async" "dash" "f" "hl-todo" "magit" "pcre2el" "s" "transient") (:type git :host github :repo "alphapapa/magit-todos" :package "magit-todos" :local-repo "magit-todos")) "async" ("2025-12-02 21:14:04" ("emacs") (:type git :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async")) "hl-todo" ("2025-12-02 21:14:05" ("emacs" "compat") (:type git :host github :repo "tarsius/hl-todo" :package "hl-todo" :local-repo "hl-todo")) "magit" ("2025-12-02 21:14:24" ("emacs" "compat" "cond-let" "llama" "magit-section" "seq" "transient" "with-editor") (:type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit")) "cond-let" ("2025-12-02 21:14:16" ("emacs") (:type git :host github :repo "tarsius/cond-let" :package "cond-let" :local-repo "cond-let")) "llama" ("2025-12-02 21:14:18" ("emacs" "compat") (:type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama" :package "llama" :local-repo "llama")) "magit-section" ("2025-12-02 21:14:18" ("emacs" "compat" "cond-let" "llama" "seq") (:files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :package "magit-section" :local-repo "magit" :type git :repo "magit/magit" :host github)) "transient" ("2025-12-02 21:14:20" ("emacs" "compat" "cond-let" "seq") (:type git :host github :repo "magit/transient" :package "transient" :local-repo "transient")) "with-editor" ("2025-12-02 21:14:22" ("emacs" "compat") (:type git :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor")) "pcre2el" ("2025-12-02 21:14:26" ("emacs") (:type git :host github :repo "joddie/pcre2el" :package "pcre2el" :local-repo "pcre2el")) "modus-themes" ("2025-12-02 21:14:36" ("emacs") (:type git :host github :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes")) "visual-fill-column" ("2025-12-02 21:14:39" ("emacs") (:type git :host github :repo "joostkremers/visual-fill-column" :package "visual-fill-column" :local-repo "visual-fill-column")) "writeroom-mode" ("2025-12-02 21:14:40" ("emacs" "visual-fill-column") (:type git :host github :repo "joostkremers/writeroom-mode" :package "writeroom-mode" :local-repo "writeroom-mode")) "org-transclusion" ("2025-12-02 21:14:44" ("emacs" "org") (:type git :host github :repo "nobiot/org-transclusion" :files ("*" (:exclude ".git")) :package "org-transclusion" :local-repo "org-transclusion")) "org-roam" ("2025-12-02 21:14:55" ("emacs" "compat" "dash" "org" "emacsql" "magit-section") (:type git :host github :repo "org-roam/org-roam" :files (:defaults "extensions/*" "org-roam-pkg.el") :package "org-roam" :local-repo "org-roam")) "emacsql" ("2025-12-02 21:14:54" ("emacs") (:type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql" :package "emacsql" :local-repo "emacsql")) "denote-explore" ("2025-12-02 21:15:00" ("emacs" "denote" "dash" "denote-regexp") (:type git :host github :repo "pprevos/denote-explore" :files (:defaults "*.html" "denote-explore-pkg.el") :package "denote-explore" :local-repo "denote-explore")) "denote" ("2025-12-02 21:14:59" ("emacs") (:type git :host github :repo "emacs-straight/denote" :files ("*" (:exclude ".git")) :package "denote" :local-repo "denote")) "denote-regexp" ("2025-12-02 21:15:00" ("emacs" "denote") (:type git :host sourcehut :repo "swflint/denote-regexp" :package "denote-regexp" :local-repo "denote-regexp")) "consult-denote" ("2025-12-02 21:15:05" ("emacs" "denote" "consult") (:type git :host github :repo "protesilaos/consult-denote" :files ("*" (:exclude ".git")) :package "consult-denote" :local-repo "consult-denote")) "consult" ("2025-12-02 21:15:04" ("emacs" "compat") (:type git :host github :repo "minad/consult" :package "consult" :local-repo "consult")) "cdlatex" ("2025-12-02 21:15:06" nil (:type git :host github :repo "cdominik/cdlatex" :package "cdlatex" :local-repo "cdlatex")) "org-fragtog" ("2025-12-02 21:15:07" ("emacs") (:type git :host github :repo "io12/org-fragtog" :package "org-fragtog" :local-repo "org-fragtog")) "auctex" ("2025-12-02 21:15:13" ("emacs") (:type git :host github :repo "emacs-straight/auctex" :files ("*" (:exclude ".git")) :package "auctex" :local-repo "auctex")) "pdf-tools" ("2025-12-02 21:15:19" ("emacs" "tablist" "let-alist") (:type git :host github :repo "vedang/pdf-tools" :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :package "pdf-tools" :local-repo "pdf-tools")) "tablist" ("2025-12-02 21:15:17" ("emacs") (:type git :host github :repo "emacsorphanage/tablist" :package "tablist" :local-repo "tablist")) "let-alist" ("2025-12-02 21:15:18" ("emacs") (:type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist"))))
 
 #s(hash-table test equal data ("straight" ((straight straight-ert-print-hack straight-x straight-autoloads) (autoload 'straight-remove-unused-repos "straight" "Remove unused repositories from the repos and build directories.
 A repo is considered \"unused\" if it was not explicitly requested via
@@ -3831,12 +3831,12 @@ ignored) files.
 
 (fn &optional ALL)" t) (autoload 'magit-run-post-stage-hook "magit-apply") (autoload 'magit-unstage-files "magit-apply" "Read one or more files and unstage all changes to those files.
 
-(fn FILES)" t) (autoload 'magit-unstage-all "magit-apply" "Remove all changes from the staging area." t) (autoload 'magit-run-post-unstage-hook "magit-apply") (register-definition-prefixes "magit-apply" '("magit-")) (defun magit-custom-initialize-after-init (symbol value) (internal--define-uninitialized-variable symbol) (cond ((not after-init-time) (letrec ((f (apply-partially (lambda (symbol value) (ignore-errors (remove-hook 'after-init-hook f)) (custom-initialize-set symbol value)) symbol value))) (add-hook 'after-init-hook f))) ((not load-file-name) (custom-initialize-set symbol value)) ((letrec ((f (apply-partially (lambda (thisfile symbol value file) (when (equal file thisfile) (ignore-errors (remove-hook 'after-load-functions f)) (custom-initialize-set symbol value))) load-file-name symbol value))) (add-hook 'after-load-functions f))))) (put 'magit-auto-revert-mode 'globalized-minor-mode t) (defcustom magit-auto-revert-mode (not (or global-auto-revert-mode noninteractive)) "Non-nil if Magit-Auto-Revert mode is enabled.
+(fn FILES)" t) (autoload 'magit-unstage-all "magit-apply" "Remove all changes from the staging area." t) (autoload 'magit-run-post-unstage-hook "magit-apply") (register-definition-prefixes "magit-apply" '("magit-")) (defun magit-auto-revert-mode--initialize (symbol value) (internal--define-uninitialized-variable symbol) (if (not load-file-name) (custom-initialize-set symbol value) (defalias 'magit-auto-revert-mode--after-load (apply-partially (lambda (symbol value mode-file file) (when (equal file mode-file) (remove-hook 'after-load-functions 'magit-auto-revert-mode--after-load) (fmakunbound 'magit-auto-revert-mode--after-load) (if after-init-time (custom-initialize-set symbol value) (defalias 'magit-auto-revert-mode--after-init (apply-partially (lambda (symbol value) (remove-hook 'after-init-hook 'magit-auto-revert-mode--after-init) (fmakunbound 'magit-auto-revert-mode--after-init) (custom-initialize-set symbol value)) symbol value)) (add-hook 'after-init-hook 'magit-auto-revert-mode--after-init)))) symbol value load-file-name)) (add-hook 'after-load-functions 'magit-auto-revert-mode--after-load))) (put 'magit-auto-revert-mode 'globalized-minor-mode t) (defcustom magit-auto-revert-mode (not (or global-auto-revert-mode noninteractive)) "Non-nil if Magit-Auto-Revert mode is enabled.
 See the `magit-auto-revert-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
-or call the function `magit-auto-revert-mode'." :set #'custom-set-minor-mode :initialize #'magit-custom-initialize-after-init :type 'boolean :group 'magit-auto-revert :group 'magit-essentials :package-version '(magit . "2.4.0") :link '(info-link "(magit)Automatic Reverting of File-Visiting Buffers")) (custom-autoload 'magit-auto-revert-mode "magit-autorevert" nil) (autoload 'magit-auto-revert-mode "magit-autorevert" "Toggle Auto-Revert mode in all buffers.
+or call the function `magit-auto-revert-mode'." :set #'custom-set-minor-mode :initialize #'magit-auto-revert-mode--initialize :type 'boolean :group 'magit-auto-revert :group 'magit-essentials :package-version '(magit . "2.4.0") :link '(info-link "(magit)Automatic Reverting of File-Visiting Buffers")) (custom-autoload 'magit-auto-revert-mode "magit-autorevert" nil) (autoload 'magit-auto-revert-mode "magit-autorevert" "Toggle Auto-Revert mode in all buffers.
 With prefix ARG, enable Magit-Auto-Revert mode if ARG is positive;
 otherwise, disable it.
 
@@ -5482,7 +5482,95 @@ Writeroom mode is enabled in all buffers where
 
 See `writeroom-mode' for more information on Writeroom mode.
 
-(fn &optional ARG)" t) (register-definition-prefixes "writeroom-mode" '("alpha" "bottom-divider-width" "define-writeroom-global-effect" "fullscreen" "internal-border-width" "menu-bar-lines" "sticky" "tool-bar-lines" "turn-on-writeroom-mode" "vertical-scroll-bars" "writeroom-")) (provide 'writeroom-mode-autoloads)) "emacsql" ((emacsql-compiler emacsql-psql emacsql-sqlite emacsql-sqlite-builtin emacsql emacsql-autoloads emacsql-sqlite-module emacsql-mysql emacsql-pg) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
+(fn &optional ARG)" t) (register-definition-prefixes "writeroom-mode" '("alpha" "bottom-divider-width" "define-writeroom-global-effect" "fullscreen" "internal-border-width" "menu-bar-lines" "sticky" "tool-bar-lines" "turn-on-writeroom-mode" "vertical-scroll-bars" "writeroom-")) (provide 'writeroom-mode-autoloads)) "org-transclusion" ((org-transclusion-indent-mode org-transclusion-html org-transclusion-src-lines text-clone \.dir-locals org-transclusion-autoloads org-transclusion-font-lock org-transclusion) (autoload 'org-transclusion-mode "org-transclusion" "Toggle Org-transclusion minor mode.
+
+This is a minor mode.  If called interactively, toggle the
+`Org-Transclusion mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `org-transclusion-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'org-transclusion-activate "org-transclusion" "Activate Org-transclusion hooks and other setups in the current buffer.
+This function does not add transclusions; it merely sets up hooks
+and variables." t) (autoload 'org-transclusion-make-from-link "org-transclusion" "Make a transclusion keyword from a link at point.
+
+The resultant transclusion keyword will be placed in the first
+next empty line.  If there is no empty line until the bottom of
+the buffer, this function adds a new empty line.
+
+When minor-mode `org-transclusion-mode' is active, this function
+automatically transcludes the text content; when it is inactive,
+it simply adds the \"#+transclude\" keyword before the link and
+inserts the whole line.
+
+If you pass a `universal-argument', this function reverses this:
+if the mode is active, the keyword gets inserted; if the mode is
+inactive, the transclusion gets added.
+
+You can pass a prefix argument (ARG) with using
+`digit-argument' (e.g. C-1 or C-2; or \\[universal-argument] 3,
+so on) or `universal-argument' (\\[universal-argument]).
+
+If you pass a positive number 1-9 with `digit-argument', this
+function automatically puts the :level property to the resultant
+transclusion keyword.
+
+(fn &optional ARG)" t) (autoload 'org-transclusion-add "org-transclusion" "Transclude text content for the #+transclude at point.
+When minor-mode `org-transclusion-mode' is inactive in the
+current buffer, this function toggles it on.
+
+With using `universal-argument' (\\[universal-argument]) or
+non-nil COPY argument, you can copy the transcluded content into
+the buffer instead of transclusion.
+
+Examples of acceptable formats are as below:
+
+- \"#+transclude: [[file:path/file.org::search-option][desc]]:level n\"
+- \"#+transclude: [[id:uuid]] :level n :only-contents\"
+
+The file path or id in the transclude keyword value are
+translated to the normal Org Mode link format such as
+[[file:path/to/file.org::*Heading]] or [[id:uuid]] to copy a piece
+of text from the link target.
+
+TODO: id:uuid without brackets [[]] is a valid link within Org
+Mode. This is not supported yet.
+
+A transcluded text region is read-only. You can use a variety of
+commands on the transcluded region at point. Refer to the
+commands below. You can customize the keymap with
+using `org-transclusion-map'.
+
+For example, `org-transclusion-live-sync-start' lets you edit the
+part of the text at point.  This edit mode is analogous to Occur
+Edit for Occur Mode.
+
+TODO: that for transclusions of Org elements/buffer, live-sync
+does not support all the elements.
+
+\\{org-transclusion-map}
+
+(fn &optional COPY)" t) (autoload 'org-transclusion-add-all "org-transclusion" "Add all active transclusions in the current buffer.
+
+By default, this function temporarily widens the narrowed region
+you are in and works on the entire buffer.  Note that this
+behavior is important for `org-transclusion-after-save-buffer' in
+order to clear the underlying file of all the transcluded text.
+
+For interactive use, you can pass NARROWED with using
+`universal-argument' (\\[universal-argument]) to get this
+function to work only on the narrowed region you are in, leaving
+the rest of the buffer unchanged.
+
+(fn &optional NARROWED)" t) (register-definition-prefixes "org-transclusion" '("org-transclusion-")) (register-definition-prefixes "org-transclusion-font-lock" '("org-transclusion-font")) (register-definition-prefixes "org-transclusion-html" '("org-transclusion-")) (register-definition-prefixes "org-transclusion-indent-mode" '("org-trans")) (register-definition-prefixes "org-transclusion-src-lines" '("org-transclusion-")) (register-definition-prefixes "text-clone" '("text-clone-")) (provide 'org-transclusion-autoloads)) "emacsql" ((emacsql-compiler emacsql-psql emacsql-sqlite emacsql-sqlite-builtin emacsql emacsql-autoloads emacsql-sqlite-module emacsql-mysql emacsql-pg) (autoload 'emacsql-show-last-sql "emacsql" "Display the compiled SQL of the s-expression SQL expression before point.
 A prefix argument causes the SQL to be printed into the current buffer.
 
 (fn &optional PREFIX)" t) (register-definition-prefixes "emacsql" '("emacsql-")) (register-definition-prefixes "emacsql-compiler" '("emacsql-")) (register-definition-prefixes "emacsql-mysql" '("emacsql-mysql-")) (register-definition-prefixes "emacsql-pg" '("emacsql-pg-connection")) (register-definition-prefixes "emacsql-psql" '("emacsql-psql-")) (register-definition-prefixes "emacsql-sqlite" '("emacsql-")) (register-definition-prefixes "emacsql-sqlite-builtin" '("emacsql-sqlite-builtin-connection")) (register-definition-prefixes "emacsql-sqlite-module" '("emacsql-sqlite-module-connection")) (provide 'emacsql-autoloads)) "org-roam" ((org-roam-utils org-roam-node org-roam-mode org-roam-capture org-roam-db org-roam-dailies org-roam-migrate org-roam-overlay org-roam-graph org-roam-autoloads org-roam-compat org-roam-protocol org-roam-id org-roam-export org-roam-log org-roam) (autoload 'org-roam-list-files "org-roam" "Return a list of all Org-roam files under `org-roam-directory'.
@@ -5660,10 +5748,1778 @@ and when nil is returned the node will be filtered out.
 (fn &optional INITIAL-INPUT FILTER-FN)" t) (register-definition-prefixes "org-roam-node" '("org-roam-")) (register-definition-prefixes "org-roam-overlay" '("org-roam-overlay-")) (register-definition-prefixes "org-roam-protocol" '("org-roam-")) (autoload 'org-roam-version "org-roam-utils" "Return `org-roam' version.
 Interactively, or when MESSAGE is non-nil, show in the echo area.
 
-(fn &optional MESSAGE)" t) (autoload 'org-roam-diagnostics "org-roam-utils" "Collect and print info for `org-roam' issues." t) (register-definition-prefixes "org-roam-utils" '("org-roam-")) (provide 'org-roam-autoloads))))
+(fn &optional MESSAGE)" t) (autoload 'org-roam-diagnostics "org-roam-utils" "Collect and print info for `org-roam' issues." t) (register-definition-prefixes "org-roam-utils" '("org-roam-")) (provide 'org-roam-autoloads)) "denote" ((denote \.dir-locals denote-pkg denote-autoloads) (put 'denote-directory 'safe-local-variable (lambda (val) (or (stringp val) (listp val) (eq val 'local) (eq val 'default-directory)))) (put 'denote-known-keywords 'safe-local-variable #'listp) (put 'denote-infer-keywords 'safe-local-variable (lambda (val) (or val (null val)))) (autoload 'denote-sort-files "denote" "Returned sorted list of Denote FILES.
 
-#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "org" (org :type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "leaf" nil "leaf-keywords" nil "org-superstar" nil "evil" nil "cl-lib" nil "goto-chg" nil "annalist" nil "evil-collection" nil "evil-surround" nil "pulsar" nil "switch-window" nil "avy" nil "multiple-cursors" nil "move-text" nil "yasnippet" nil "auto-yasnippet" nil "evil-nerd-commenter" nil "dap-mode" nil "dash" nil "lsp-mode" nil "f" nil "s" nil "ht" nil "spinner" nil "markdown-mode" nil "lv" nil "eldoc" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "pfuture" nil "hydra" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "which-key" nil "flycheck" nil "seq" nil "projectile" nil "compat" nil "org-timeblock" nil "svg" nil "magit-todos" nil "async" nil "hl-todo" nil "magit" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "pcre2el" nil "modus-themes" nil "visual-fill-column" nil "writeroom-mode" nil "org-roam" nil "emacsql" nil)) melpa #s(hash-table test equal data (version 3 "leaf" (leaf :type git :host github :repo "conao3/leaf.el") "leaf-keywords" (leaf-keywords :type git :host github :repo "conao3/leaf-keywords.el") "org-superstar" (org-superstar :type git :host github :repo "integral-dw/org-superstar-mode") "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "annalist" (annalist :type git :host github :repo "noctuid/annalist.el") "evil-collection" (evil-collection :type git :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection") "evil-surround" (evil-surround :type git :host github :repo "emacs-evil/evil-surround") "pulsar" nil "switch-window" (switch-window :type git :host github :repo "dimitri/switch-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "multiple-cursors" (multiple-cursors :type git :host github :repo "magnars/multiple-cursors.el") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "auto-yasnippet" (auto-yasnippet :type git :host github :repo "abo-abo/auto-yasnippet") "evil-nerd-commenter" (evil-nerd-commenter :type git :host github :repo "redguardtoo/evil-nerd-commenter") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "f" (f :type git :host github :repo "rejeep/f.el") "s" (s :type git :host github :repo "magnars/s.el") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "eldoc" nil "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "seq" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "compat" nil "org-timeblock" (org-timeblock :type git :host github :repo "ichernyshovvv/org-timeblock") "svg" nil "magit-todos" (magit-todos :type git :host github :repo "alphapapa/magit-todos") "async" (async :type git :host github :repo "jwiegley/emacs-async") "hl-todo" (hl-todo :type git :host github :repo "tarsius/hl-todo") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "pcre2el" (pcre2el :type git :host github :repo "joddie/pcre2el") "modus-themes" (modus-themes :type git :host github :repo "protesilaos/modus-themes") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql"))) gnu-elpa-mirror #s(hash-table test equal data (version 3 "cl-lib" nil "pulsar" (pulsar :type git :host github :repo "emacs-straight/pulsar" :files ("*" (:exclude ".git"))) "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "svg" (svg :type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git"))))) nongnu-elpa #s(hash-table test equal data (version (5 "https://github.com/emacsmirror/nongnu_elpa.git") "cl-lib" nil)) el-get #s(hash-table test equal data (version 2 "cl-lib" nil)) emacsmirror-mirror #s(hash-table test equal data (version 2 "cl-lib" nil))))
+With COMPONENT as a symbol among `denote-sort-components',
+sort files based on the corresponding file name component.
 
-("writeroom-mode" "visual-fill-column" "modus-themes" "pcre2el" "with-editor" "transient" "magit-section" "llama" "cond-let" "magit" "hl-todo" "async" "magit-todos" "svg" "org-timeblock" "compat" "projectile" "seq" "flycheck" "which-key" "yaml" "lsp-docker" "posframe" "cfrs" "hydra" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "eldoc" "lv" "markdown-mode" "spinner" "ht" "s" "f" "lsp-mode" "dash" "dap-mode" "evil-nerd-commenter" "auto-yasnippet" "yasnippet" "move-text" "multiple-cursors" "avy" "switch-window" "pulsar" "evil-surround" "evil-collection" "annalist" "nadvice" "goto-chg" "cl-lib" "evil" "org-superstar" "leaf-keywords" "leaf" "org" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
+With COMPONENT as the symbol of a function, use it to perform the
+sorting.  In this case, the function is called with two arguments, as
+described by `sort'.
+
+With COMPONENT as a nil value keep the original date-based
+sorting which relies on the identifier of each file name.
+
+With optional REVERSE as a non-nil value, reverse the sort order.
+
+(fn FILES COMPONENT &optional REVERSE)") (autoload 'denote-sort-dired "denote" "Produce Dired buffer with sorted files from variable `denote-directory'.
+When called interactively, prompt for FILES-MATCHING-REGEXP and,
+depending on the value of the user option `denote-sort-dired-extra-prompts',
+also prompt for SORT-BY-COMPONENT, REVERSE, and EXCLUDE-REGEXP.
+
+1. FILES-MATCHING-REGEXP limits the list of Denote files to
+   those matching the provided regular expression.
+
+2. SORT-BY-COMPONENT sorts the files by their file name component (one
+   among `denote-sort-components').  If it is nil, sorting is performed
+   according to the user option `denote-sort-dired-default-sort-component',
+   falling back to the identifier.
+
+3. REVERSE is a boolean to reverse the order when it is a non-nil value.
+   If `denote-sort-dired-extra-prompts' is configured to skip this
+   prompt, then the sorting is done according to the user option
+   `denote-sort-dired-default-reverse-sort', falling back to
+   nil (i.e. no reverse sort).
+
+4. EXCLUDE-REGEXP excludes the files that match the given regular
+   expression.  This is done after FILES-MATCHING-REGEXP and
+   OMIT-CURRENT have been applied.
+
+When called from Lisp, the arguments are a string, a symbol among
+`denote-sort-components', a non-nil value, and a string, respectively.
+
+(fn FILES-MATCHING-REGEXP SORT-BY-COMPONENT REVERSE EXCLUDE-REGEXP)" t) (autoload 'denote "denote" "Create a new note with the appropriate metadata and file name.
+
+Run the `denote-after-new-note-hook' after creating the new note and
+return its path.  Before returning the path, determine what needs to be
+done to the buffer, in accordance with the user option `denote-kill-buffers'.
+
+When called interactively, the metadata and file name are prompted
+according to the value of `denote-prompts'.
+
+When called from Lisp, all arguments are optional.
+
+- TITLE is a string or a function returning a string.
+
+- KEYWORDS is a list of strings.  The list can be empty or the
+  value can be set to nil.
+
+- FILE-TYPE is a symbol among those described in the user option
+  `denote-file-type'.
+
+- DIRECTORY is a string representing the path to either the
+  value of the variable `denote-directory' or a subdirectory
+  thereof.  The subdirectory must exist: Denote will not create
+  it.  If DIRECTORY does not resolve to a valid path, the first
+  item in the variable `denote-directory' is used instead.
+
+- DATE is a string representing a date like 2022-06-30 or a date
+  and time like 2022-06-16 14:30.  A nil value or an empty string
+  is interpreted as the `current-time'.
+
+- IDENTIFIER is a string identifying the note.  It should have the
+  format of the variable `denote-date-identifier-format', like
+  20220630T1430000.
+
+- TEMPLATE is a symbol which represents the key of a cons cell in
+  the user option `denote-templates'.  The value of that key is
+  inserted to the newly created buffer after the front matter.
+
+- SIGNATURE is a string.
+
+(fn &optional TITLE KEYWORDS FILE-TYPE DIRECTORY DATE TEMPLATE SIGNATURE IDENTIFIER)" t) (autoload 'denote-type "denote" "Create note while prompting for a file type.
+
+This is the equivalent of calling `denote' when `denote-prompts'
+has the `file-type' prompt appended to its existing prompts." t) (function-put 'denote-type 'interactive-only 't) (autoload 'denote-date "denote" "Create note while prompting for a date.
+
+The date can be in YEAR-MONTH-DAY notation like 2022-06-30 or
+that plus the time: 2022-06-16 14:30.  When the user option
+`denote-date-prompt-use-org-read-date' is non-nil, the date
+prompt uses the more powerful Org+calendar system.
+
+This is the equivalent of calling `denote' when `denote-prompts'
+has the `date' prompt appended to its existing prompts." t) (function-put 'denote-date 'interactive-only 't) (autoload 'denote-subdirectory "denote" "Create note while prompting for a subdirectory.
+
+Available candidates include the value of the variable
+`denote-directory' and any subdirectory thereof.
+
+This is the equivalent of calling `denote' when `denote-prompts'
+has the `subdirectory' prompt appended to its existing prompts." t) (function-put 'denote-subdirectory 'interactive-only 't) (autoload 'denote-template "denote" "Create note while prompting for a template.
+
+Available candidates include the keys in the `denote-templates'
+alist.  The value of the selected key is inserted in the newly
+created note after the front matter.
+
+This is the equivalent of calling `denote' when `denote-prompts'
+has the `template' prompt appended to its existing prompts." t) (function-put 'denote-template 'interactive-only 't) (autoload 'denote-signature "denote" "Create note while prompting for a file signature.
+
+This is the equivalent of calling `denote' when `denote-prompts'
+has the `signature' prompt appended to its existing prompts." t) (function-put 'denote-signature 'interactive-only 't) (autoload 'denote-region "denote" "Call `denote' and insert therein the text of the active region.
+
+Note that, currently, `denote-save-buffers' and
+`denote-kill-buffers' are NOT respected.  The buffer is not
+saved or killed at the end of `denote-region'." t) (function-put 'denote-region 'interactive-only 't) (autoload 'denote-open-or-create "denote" "Visit TARGET file in variable `denote-directory'.
+If file does not exist, invoke `denote' to create a file.  In that case,
+use the last input at the file prompt as the default value of the title
+prompt.
+
+(fn TARGET)" t) (autoload 'denote-open-or-create-with-command "denote" "Like `denote-open-or-create' but use one of the `denote-commands-for-new-notes'." t) (function-put 'denote-open-or-create-with-command 'interactive-only 't) (autoload 'denote-rename-file "denote" "Rename file and update existing front matter if appropriate.
+
+Always rename the file where it is located in the file system:
+never move it to another directory.
+
+If in Dired, consider FILE to be the one at point, else the
+current file, else prompt with minibuffer completion for one.
+When called from Lisp, FILE is a file system path represented as
+a string.
+
+If FILE has a Denote-compliant identifier, retain it while
+updating components of the file name referenced by the user
+option `denote-prompts'.  By default, these are the TITLE and
+KEYWORDS.  The SIGNATURE is another one.  When called from Lisp,
+TITLE and SIGNATURE are strings, while KEYWORDS is a list of
+strings.
+
+The IDENTIFIER is a string that has the format of variable
+`denote-date-identifier-format'.
+
+If there is no identifier, create a new identifier using
+`denote-get-identifier-function'.  By default, it creates a new
+identifier using the date parameter, the date of last modification or
+the `current-time'.
+
+In interactive use, and assuming `denote-prompts' includes a
+title entry, make the TITLE prompt have prefilled text in the
+minibuffer that consists of the current title of FILE.  The
+current title is either retrieved from the front matter (such as
+the #+title in Org) or from the file name.
+
+Do the same for the SIGNATURE prompt, subject to `denote-prompts',
+by prefilling the minibuffer with the current signature of FILE,
+if any.
+
+Same principle for the KEYWORDS prompt: convert the keywords in
+the file name into a comma-separated string and prefill the
+minibuffer with it (the KEYWORDS prompt accepts more than one
+keywords, each separated by a comma, else the `crm-separator').
+
+For all prompts, interpret an empty input as an instruction to
+remove that file name component.  For example, if a TITLE prompt
+is available and FILE is 20240211T093531--some-title__keyword1.org
+then rename FILE to 20240211T093531__keyword1.org.
+
+In interactive use, if there is no entry for a file name
+component in `denote-prompts', keep it as-is.
+
+When called from Lisp, the special symbol `keep-current' can be
+used for the TITLE, KEYWORDS, SIGNATURE, DATE, and IDENTIFIER
+parameters to keep them as-is.
+
+[ NOTE: Please check with your minibuffer user interface how to
+  provide an empty input.  The Emacs default setup accepts the
+  empty minibuffer contents as they are, though popular packages
+  like `vertico' use the first available completion candidate
+  instead.  For `vertico', the user must either move one up to
+  select the prompt and then type RET there with empty contents,
+  or use the command `vertico-exit-input' with empty contents.
+  That Vertico command is bound to M-RET as of this writing on
+  2024-02-13 08:08 +0200. ]
+
+As a final step, ask for confirmation, showing the difference
+between old and new file names.  Do not ask for confirmation if
+the user option `denote-rename-confirmations' does not contain
+the symbol `modify-file-name'.
+
+If FILE has front matter for TITLE and KEYWORDS, ask to rewrite
+their values in order to reflect the new input, unless
+`denote-rename-confirmations' lacks `rewrite-front-matter'.  When
+the `denote-save-buffers' is nil (the default), do not save the
+underlying buffer, thus giving the user the option to
+double-check the result, such as by invoking the command
+`diff-buffer-with-file'.  The rewrite of the TITLE and KEYWORDS
+in the front matter should not affect the rest of the front
+matter.
+
+If the file does not have front matter but is among the supported file
+types (per the user option `denote-file-type'), add front matter to the
+top of it and leave the buffer unsaved for further inspection.  Save the
+buffer if `denote-save-buffers' is non-nil.
+
+When `denote-kill-buffers' is t or `on-rename', kill the buffer
+if it was not already being visited before the rename operation.
+
+For the front matter of each file type, refer to the variables:
+
+- `denote-org-front-matter'
+- `denote-text-front-matter'
+- `denote-toml-front-matter'
+- `denote-yaml-front-matter'
+
+Construct the file name in accordance with the user option
+`denote-file-name-components-order'.
+
+Run the `denote-after-rename-file-hook' after renaming FILE.
+
+This command is intended to (i) rename Denote files, (ii) convert
+existing supported file types to Denote notes, and (ii) rename
+non-note files (e.g. PDF) that can benefit from Denote's
+file-naming scheme.
+
+For a version of this command that works with multiple files
+one-by-one, use `denote-dired-rename-files'.
+
+(fn FILE TITLE KEYWORDS SIGNATURE DATE IDENTIFIER)" t) (autoload 'denote-dired-rename-files "denote" "Rename Dired marked files same way as `denote-rename-file'.
+Rename each file in sequence, making all the relevant prompts.
+Unlike `denote-rename-file', do not prompt for confirmation of
+the changes made to the file: perform them outright (same as
+setting `denote-rename-confirmations' to a nil value)." '(dired-mode)) (function-put 'denote-dired-rename-files 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-with-keywords "denote" "Rename marked files in Dired to a Denote file name by writing keywords.
+
+Specifically, do the following:
+
+- retain the file's existing name and make it the TITLE field,
+  per Denote's file-naming scheme;
+
+- sluggify the TITLE, according to our conventions (check the
+  user option `denote-file-name-slug-functions');
+
+- prepend an identifier to the TITLE;
+
+- preserve the file's extension, if any;
+
+- prompt once for KEYWORDS and apply the user's input to the
+  corresponding field in the file name, rewriting any keywords
+  that may exist while removing keywords that do exist if
+  KEYWORDS is empty;
+
+- add or rewrite existing front matter to the underlying file, if it is
+  recognized as a Denote note (per the user option `denote-file-type'),
+  such that it includes the new keywords.
+
+Construct the file name in accordance with the user option
+`denote-file-name-components-order'.
+
+Run the `denote-after-rename-file-hook' after renaming is done.
+
+Also see the specialized commands to only add or remove keywords:
+
+- `denote-dired-rename-marked-files-add-keywords'.
+- `denote-dired-rename-marked-files-remove-keywords'." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-with-keywords 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-add-keywords "denote" "Like `denote-dired-rename-marked-files-with-keywords' to only add keywords." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-add-keywords 'interactive-only 't) (autoload 'denote-dired-rename-marked-files-remove-keywords "denote" "Like `denote-dired-rename-marked-files-with-keywords' to only remove keywords." '(dired-mode)) (function-put 'denote-dired-rename-marked-files-remove-keywords 'interactive-only 't) (autoload 'denote-rename-file-using-front-matter "denote" "Rename FILE using its front matter as input.
+When called interactively, FILE is the variable `buffer-file-name' or
+the Dired file at point, which is subsequently inspected for the
+requisite front matter.  It is thus implied that the FILE has a file
+type that is supported by Denote, per the user option `denote-file-type'.
+
+The values of `denote-rename-confirmations',
+`denote-save-buffers' and `denote-kill-buffers' are respected.
+
+Only the front matter lines that appear in the front matter template (as
+defined in `denote-file-types') will be handled.
+
+To change the identifier (date) of the note with this command, the
+identifier line (if present) of the front matter must be modified.
+Modifying the date line has no effect.
+
+While this command generally does not modify the front matter, there are
+exceptions.  The value of the `date' line will follow that of the
+`identifier' line.  If they are both in the front matter template and
+the `date' line is missing, it will be added again.  Similarly, if they
+are both in the front matter template and the `date' line is present and
+the `identifier' line has been removed, the `date' line will be removed
+as well.  Also, if the keywords are out of order and
+`denote-sort-keywords' is non-nil, they will be sorted.  There will be a
+prompt for this if `denote-rename-confirmations' contains
+`rewrite-front-matter'.
+
+Construct the file name in accordance with the user option
+`denote-file-name-components-order'.
+
+(fn FILE)" t) (autoload 'denote-dired-rename-marked-files-using-front-matter "denote" "Call `denote-rename-file-using-front-matter' over the Dired marked files.
+Refer to the documentation of that command for the technicalities.
+
+Marked files must count as notes for the purposes of Denote, which means
+that they at least have an identifier in their file name and use a
+supported file type, per the user option `denote-file-type'.  Files that
+do not meet this criterion are ignored because Denote cannot know if
+they have front matter and what that may be." '(dired-mode)) (autoload 'denote-change-file-type-and-front-matter "denote" "Change file type of FILE and add an appropriate front matter.
+
+If in Dired, consider FILE to be the one at point, else the
+current file, else prompt with minibuffer completion for one.
+
+Add a front matter in the format of the NEW-FILE-TYPE at the
+beginning of the file.
+
+Retrieve the title of FILE from a line starting with a title
+field in its front matter, depending on the previous file
+type (e.g.  #+title for Org).  The same process applies for
+keywords.
+
+As a final step, ask for confirmation, showing the difference
+between old and new file names.
+
+Important note: No attempt is made to modify any other elements
+of the file.  This needs to be done manually.
+
+Construct the file name in accordance with the user option
+`denote-file-name-components-order'.
+
+(fn FILE NEW-FILE-TYPE)" t) (autoload 'denote-dired-mode "denote" "Fontify all Denote-style file names.
+
+Add this or `denote-dired-mode-in-directories' to
+`dired-mode-hook'.
+
+This is a minor mode.  If called interactively, toggle the `Denote-Dired
+mode' mode.  If the prefix argument is positive, enable the mode, and if
+it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `denote-dired-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'denote-dired-mode-in-directories "denote" "Enable `denote-dired-mode' in `denote-dired-directories'.
+Add this function to `dired-mode-hook'.
+
+If `denote-dired-directories-include-subdirectories' is non-nil,
+also enable it in all subdirectories.") (autoload 'denote-link "denote" "Create link to FILE note in variable `denote-directory' with DESCRIPTION.
+
+When called interactively, prompt for FILE using completion.  In this
+case, derive FILE-TYPE from the current buffer.  FILE-TYPE is used to
+determine the format of the link.
+
+Return the DESCRIPTION of the link in the format specified by
+`denote-link-description-format'.  The default is to return the text of
+the active region or the title of the note (plus the signature if
+present).
+
+With optional ID-ONLY as a non-nil argument, such as with a universal
+prefix (\\[universal-argument]), insert links with just the identifier
+and no further description.  In this case, the link format is always
+[[denote:IDENTIFIER]].
+
+If the DESCRIPTION is empty, format the link the same as with ID-ONLY.
+
+When called from Lisp, FILE is a string representing a full file system
+path.  FILE-TYPE is a symbol as described in the user option
+`denote-file-type'.  DESCRIPTION is a string.  Whether the caller treats
+the active region specially, is up to it.
+
+(fn FILE FILE-TYPE DESCRIPTION &optional ID-ONLY)" t) (autoload 'denote-find-link "denote" "Use minibuffer completion to visit linked file.
+Also see `denote-find-backlink'." t) (function-put 'denote-find-link 'interactive-only 't) (autoload 'denote-link-after-creating "denote" "Create new note in the background and link to it directly.
+
+Use `denote' interactively to produce the new note.  Its doc
+string explains which prompts will be used and under what
+conditions.
+
+With optional ID-ONLY as a prefix argument create a link that
+consists of just the identifier.  Else try to also include the
+file's title.  This has the same meaning as in `denote-link'.
+
+For a variant of this, see `denote-link-after-creating-with-command'.
+
+IMPORTANT NOTE: Normally, `denote' does not save the buffer it
+produces for the new note.  This is a safety precaution to not
+write to disk unless the user wants it (e.g. the user may choose
+to kill the buffer, thus cancelling the creation of the note).
+However, for this command the creation of the note happens in the
+background and the user may miss the step of saving their buffer.
+We thus have to save the buffer in order to (i) establish valid
+links, and (ii) retrieve whatever front matter from the target
+file.  Though see `denote-save-buffer-after-creation'.
+
+(fn &optional ID-ONLY)" t) (autoload 'denote-link-after-creating-with-command "denote" "Like `denote-link-after-creating' but prompt for note-making COMMAND.
+Use this to, for example, call `denote-signature' so that the
+newly created note has a signature as part of its file name.
+
+Optional ID-ONLY has the same meaning as in the command
+`denote-link-after-creating'.
+
+(fn COMMAND &optional ID-ONLY)" t) (autoload 'denote-link-or-create "denote" "Use `denote-link' on TARGET file, creating it if necessary.
+
+If TARGET file does not exist, call `denote-link-after-creating' which
+runs the `denote' command interactively to create the file.  The
+established link will then be targeting that new file.  In that case,
+use the last input at the file prompt as the default value of the title
+prompt.
+
+With optional ID-ONLY as a prefix argument create a link that
+consists of just the identifier.  Else try to also include the
+file's title.  This has the same meaning as in `denote-link'.
+
+(fn TARGET &optional ID-ONLY)" t) (autoload 'denote-grep "denote" "Search QUERY in the content of Denote files.
+QUERY should be a regular expression accepted by `xref-search-program'.
+
+The files to search for are those returned by `denote-directory-files'
+with a non-nil TEXT-ONLY argument.
+
+Results are put in a buffer which allows folding and further
+filtering (see the manual for details).
+
+You can insert a link to a grep search in any note by using the command
+`denote-query-contents-link'.
+
+(fn QUERY)" t) (autoload 'denote-grep-marked-dired-files "denote" "Do the equivalent of `denote-grep' for QUERY in marked Dired files.
+
+(fn QUERY)" t) (autoload 'denote-grep-files-referenced-in-region "denote" "Perform `denote-grep' QUERY in files referenced between START and END.
+When called interactively, prompt for QUERY.  Also get START and END as
+the buffer positions that delimit the marked region.  When called from
+Lisp, QUERY is a string, while START and END are buffer positions, as
+integers.
+
+Find references to files by their identifier.  This includes links with
+just the identifier (as described in `denote-link' and related), links
+written by an Org dynamic block (see the `denote-org' package), or even
+file listings such as those of `dired' and the command-line `ls' program.
+
+(fn QUERY START END)" t) (autoload 'denote-backlinks "denote" "Produce a buffer with backlinks to the current note.
+
+Show the names of files linking to the current file.
+
+Place the buffer below the current window or wherever the user option
+`denote-backlinks-display-buffer-action' specifies." t) (autoload 'denote-find-backlink "denote" "Use minibuffer completion to visit backlink to current file.
+Visit the file itself, not the location where the link is.  For a
+context-sensitive operation, use `denote-find-backlink-with-location'.
+
+Alo see `denote-find-link'." t) (function-put 'denote-find-backlink 'interactive-only 't) (autoload 'denote-find-backlink-with-location "denote" "Like `denote-find-backlink' but jump to the exact location of the link." t) (function-put 'denote-find-backlink-with-location 'interactive-only 't) (autoload 'denote-query-contents-link "denote" "Insert query link for file contents.
+Prompt for QUERY or use the text of the active region.  When the user
+follows this link, place any matches in a separate buffer (using the
+built-in Xref mechanism).  This is the equivalent of a Unix grep command
+across the variable `denote-directory'.
+
+(fn QUERY)" t) (autoload 'denote-query-filenames-link "denote" "Insert query link for file names.
+Prompt for QUERY or use the text of the active region.  When the user
+follows this link, place any matches in a separate buffer (using the
+built-in Dired mechanism).  This is the equivalent of a Unix find
+command across the variable `denote-directory'.
+
+(fn QUERY)" t) (autoload 'denote-fontify-links-mode-maybe "denote" "Enable `denote-fontify-links-mode' in a denote file unless in `org-mode'.") (autoload 'denote-fontify-links-mode "denote" "A minor mode to fontify and fold Denote links.
+
+Enabled this mode only when the current buffer is a Denote note and the
+major mode is not `org-mode' (or derived therefrom).  Consider using
+`denote-fontify-links-mode-maybe' for this purpose.
+
+This is a minor mode.  If called interactively, toggle the
+`Denote-Fontify-Links mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `denote-fontify-links-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'denote-add-links "denote" "Insert links to all files whose file names match REGEXP.
+Use this command to reference multiple files at once.  Particularly
+useful for the creation of metanotes (read the manual for more on the
+matter).
+
+Optional ID-ONLY has the same meaning as in `denote-link': it
+inserts links with just the identifier.
+
+(fn REGEXP &optional ID-ONLY)" t) (autoload 'denote-link-to-file-with-contents "denote" "Link to a file whose contents match QUERY.
+This is similar to `denote-link', except that the file prompt is limited
+to files matching QUERY.  Optional ID-ONLY has the same meaning as in
+`denote-link'.
+
+(fn QUERY &optional ID-ONLY)" t) (autoload 'denote-link-to-all-files-with-contents "denote" "Link to all files whose contents match QUERY.
+This is similar to `denote-add-links', except it searches inside file
+contents, not file names.  Optional ID-ONLY has the same meaning as in
+`denote-link' and `denote-add-links'.
+
+(fn QUERY &optional ID-ONLY)" t) (autoload 'denote-link-dired-marked-notes "denote" "Insert Dired marked FILES as links in BUFFER.
+
+FILES conform with the Denote file-naming scheme, such that they can be
+linked to using the `denote:' link type.
+
+The BUFFER is one which visits a Denote note file.  If there are
+multiple BUFFER candidates in buffers, prompt with completion for
+one among them.  If there is none, throw an error.
+
+With optional ID-ONLY as a prefix argument, insert links with
+just the identifier (same principle as with `denote-link').
+
+This command is meant to be used from a Dired buffer.
+
+(fn FILES BUFFER &optional ID-ONLY)" '(dired-mode)) (defvar denote-menu-bar-mode t "Non-nil if Denote-Menu-Bar mode is enabled.
+See the `denote-menu-bar-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `denote-menu-bar-mode'.") (custom-autoload 'denote-menu-bar-mode "denote" nil) (autoload 'denote-menu-bar-mode "denote" "Show Denote menu bar.
+
+This is a global minor mode.  If called interactively, toggle the
+`Denote-Menu-Bar mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='denote-menu-bar-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'denote-link-ol-follow "denote" "Find file of type `denote:' matching LINK.
+LINK is the identifier of the note, optionally followed by a file search
+option akin to that of standard Org `file:' link types.  Read Info
+node `(org) Query Options'.
+
+If LINK is not an identifier, then it is not pointing to a file but to a
+query of file contents or file names (see the commands
+`denote-query-contents-link' and `denote-query-filenames-link').
+
+Uses the function `denote-directory' to establish the path to the file.
+
+(fn LINK)") (autoload 'denote-link-ol-complete "denote" "Like `denote-link' but for Org integration.
+This lets the user complete a link through the `org-insert-link'
+interface by first selecting the `denote:' hyperlink type.") (autoload 'denote-link-ol-store "denote" "Handler for `org-store-link' adding support for denote: links.
+Optional INTERACTIVE? is used by `org-store-link'.
+
+Also see the user option `denote-org-store-link-to-heading'.
+
+(fn &optional INTERACTIVE?)") (autoload 'denote-link-ol-export "denote" "Export a `denote:' link from Org files.
+The LINK, DESCRIPTION, and FORMAT are handled by the export
+backend.
+
+(fn LINK DESCRIPTION FORMAT)") (eval-after-load 'org `(funcall ',(lambda nil (with-no-warnings (org-link-set-parameters "denote" :follow #'denote-link-ol-follow :face #'denote-get-link-face :help-echo #'denote-link-ol-help-echo :complete #'denote-link-ol-complete :store #'denote-link-ol-store :export #'denote-link-ol-export))))) (autoload 'denote-org-capture "denote" "Create new note through `org-capture-templates'.
+Use this as a function that returns the path to the new file.
+The file is populated with Denote's front matter.  It can then be
+expanded with the usual specifiers or strings that
+`org-capture-templates' supports.
+
+This function obeys `denote-prompts', but it ignores `file-type',
+if present: it always sets the Org file extension for the created
+note to ensure that the capture process works as intended,
+especially for the desired output of the
+`denote-org-capture-specifiers' (which can include arbitrary
+text).
+
+Consult the manual for template samples.") (autoload 'denote-org-capture-with-prompts "denote" "Like `denote-org-capture' but with optional prompt parameters.
+
+When called without arguments, do not prompt for anything.  Just
+return the front matter with title and keyword fields empty and
+the date and identifier fields specified.  Also make the file
+name consist of only the identifier plus the Org file name
+extension.
+
+Otherwise produce a minibuffer prompt for every non-nil value
+that corresponds to the TITLE, KEYWORDS, SUBDIRECTORY, DATE, and
+TEMPLATE arguments.  The prompts are those used by the standard
+`denote' command and all of its utility commands.
+
+When returning the contents that fill in the Org capture
+template, the sequence is as follows: front matter, TEMPLATE, and
+then the value of the user option `denote-org-capture-specifiers'.
+
+Important note: in the case of SUBDIRECTORY actual subdirectories
+must exist---Denote does not create them.  Same principle for
+TEMPLATE as templates must exist and are specified in the user
+option `denote-templates'.
+
+(fn &optional TITLE KEYWORDS SUBDIRECTORY DATE TEMPLATE)") (defvar denote-rename-buffer-mode nil "Non-nil if Denote-Rename-Buffer mode is enabled.
+See the `denote-rename-buffer-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `denote-rename-buffer-mode'.") (custom-autoload 'denote-rename-buffer-mode "denote" nil) (autoload 'denote-rename-buffer-mode "denote" "Automatically rename Denote buffers to be easier to read.
+
+A buffer is renamed upon visiting the underlying file.  This
+means that existing buffers are not renamed until they are
+visited again in a new buffer (files are visited with the command
+`find-file' or related).
+
+This is a global minor mode.  If called interactively, toggle the
+`Denote-Rename-Buffer mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='denote-rename-buffer-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "denote" '("denote-")) (provide 'denote-autoloads)) "denote-regexp" ((denote-regexp-autoloads denote-regexp) (register-definition-prefixes "denote-regexp" '("denote-regexp")) (provide 'denote-regexp-autoloads)) "denote-explore" ((denote-explore denote-explore-autoloads) (autoload 'denote-explore-count-notes "denote-explore" "Count number of Denote notes and attachments.
+A note is defined by `denote-file-types', anything else is an attachment.
+Count only ATTACHMENTS by prefixing with universal argument.
+
+(fn &optional ATTACHMENTS)" t) (autoload 'denote-explore-count-keywords "denote-explore" "Count distinct Denote keywords." t) (autoload 'denote-explore-barchart-timeline "denote-explore" "Draw a column chart with the number of notes per year." t) (autoload 'denote-explore-random-note "denote-explore" "Jump to a random Denote file and optionally INCLUDE-ATTACHMENTS.
+With universal argument the sample includes attachments.
+
+(fn &optional INCLUDE-ATTACHMENTS)" t) (autoload 'denote-explore-random-link "denote-explore" "Jump to a random linked from current buffer note.
+With universal argument the sample includes links to ATTACHMENTS.
+
+(fn &optional ATTACHMENTS)" t) (autoload 'denote-explore-random-keyword "denote-explore" "Jump to a random note with selected keyword(s).
+
+- Select one or more keywords from the active Denote buffer.
+- Override the completion option by adding free text
+- Use \"*\" to select all listed keywords.
+
+Selecting multiple keywords requires `denote-sort-keywords' to be non-nil
+or the target keywords are in the same order as the selection.
+
+With universal argument the sample will INCLUDE-ATTACHMENTS.
+
+(fn &optional INCLUDE-ATTACHMENTS)" t) (autoload 'denote-explore-random-regex "denote-explore" "Jump to a random not matching a regular expression REGEX.
+Use Universal Argument to INCLUDE-ATTACHMENTS
+
+(fn REGEX &optional INCLUDE-ATTACHMENTS)" t) (autoload 'denote-explore-duplicate-notes "denote-explore" "Identify duplicate Denote IDs and EXCLUDE-EXPORTS.
+
+If EXCLUDE-EXPORTS is nil, check Denote IDs, otherwise use file names without
+extension. Using the universal argument excludes exported Denote files from
+duplicate detection.
+
+Duplicate files are displayed in a temporary buffer with links to the
+suspected duplicates.
+
+(fn &optional EXCLUDE-EXPORTS)" t) (autoload 'denote-explore-duplicate-notes-dired "denote-explore" "Identify duplicate Denote IDs or FILENAMES.
+
+If FILENAMES is nil, check Denote IDs, otherwise use complete file names.
+Using the FILENAMES option (or using the universal argument) excludes
+exported Denote files from duplicate-detection.
+
+Duplicate files are displayed `find-dired'.
+
+(fn &optional FILENAMES)" t) (autoload 'denote-explore-single-keywords "denote-explore" "Select a note or attachment with a keyword that is only used once." t) (autoload 'denote-explore-zero-keywords "denote-explore" "Select a note or attachment without any keywords." t) (autoload 'denote-explore-rename-keyword "denote-explore" "Rename or remove keyword(s) across the Denote collection.
+
+Use an empty string as new keyword to remove the selection.
+
+When selecting more than one existing keyword, all selected terms are renamed
+to the new version or removed.
+
+The filename is taken as the source of truth for attchments and the front matter
+for notes.
+
+All open Denote note buffers should be saved for this function to work reliably." t) (autoload 'denote-explore-sync-metadata "denote-explore" "Synchronise filenames with the metadata for all Denote notes.
+
+The front matter is the source of truth.
+- Keywords are saved alphabetically.
+- The identifier remains unchanged
+
+All open Denote note buffers need to be saved before invoking this function." t) (autoload 'denote-explore-missing-links "denote-explore" "Display a read-only Org buffer with missing Denote and file links.
+
+Follow the links in the tables to review the suspect links." t) (autoload 'denote-explore-barchart-keywords "denote-explore" "Create a barchart with the top N most used Denote keywords.
+
+(fn N)" t) (autoload 'denote-explore-barchart-filetypes "denote-explore" "Visualise the Denote file types for notes and/or attachments.
+With universal argument only visualises ATTACHMENTS, which excludes file
+types listed in `denote-file-type-extensions'.
+
+(fn &optional ATTACHMENTS)" t) (autoload 'denote-explore-barchart-degree "denote-explore" "Visualise the degree for each Denote file (total links and backlinks).
+The universal argument includes TEXT-ONLY files in the analyis.
+
+(fn &optional TEXT-ONLY)" t) (autoload 'denote-explore-barchart-backlinks "denote-explore" "Visualise the number of backlinks for N nodes in the Denote network.
+
+(fn N)" t) (autoload 'denote-explore-isolated-files "denote-explore" "Identify Denote files without (back)links.
+Using the universal argument excludes attachments (TEXT-ONLY).
+
+Files which have keywords listed in
+`denote-explore-isolated-ignore-keywords' will not be included.
+
+(fn &optional TEXT-ONLY)" t) (autoload 'denote-explore-network "denote-explore" "Generate a network of Denote files or keywords by selecting a type.
+
+- Community: Network of notes matching a regular expression.
+  Links to notes not matching the regular expression are pruned.
+- Neighbourhood: Network of notes from a root at a given depth.
+  Depth = 1 notes linked to root; depth 2: notes linked to linked notes, etc.
+- Sequence: Hierarchy of signatures, split at the = symbol.
+- Keywords: Network of keywords.  Each note with two or more keywords
+  forms a complete graph, which are merged into a weighted undirected graph.
+
+Refer to the manual for a more detailed explanation.
+
+Using the universal argument excludes attachments from the analysis (TEXT-ONLY).
+
+The code generates a nested association list that holds all relevant metadata
+for the selected graph:
+
+- Meta data e.g.: `((directed . t) (type . \"Keywords\"))'
+- Association list of nodes and their degrees, e.g.:
+  `(((id . \"20210104T194405\") (name . \"Platonic Solids\") (keywords \"math\"'
+  `\"geometry\") (type . \"org\") (degree . 4)) ...)'.
+  In the context of Denote, the degree of a node is the unweighted sum of links
+  and backlinks from and to a note.
+- Association list of edges and their weights, e.g.:
+  `(((source . \"20220529T190246\") (target . \"20201229T143000\")'
+  `(weight . 1)) ...)'.
+  The weight of an edge indicates the number of time it occurs in the graph.
+
+This list is passed on to an encoding function to generate the desired graph
+format.  In the last step, a visualisation function displays the graph in the
+external web browser, except for the GEXF format.
+
+The parameters for the generated graph are stored in
+`denote-explore-network-previous', which is used to renegerate the same graph
+after making changes to notes with `denote-explore-network-regenerate'.
+
+The `denote-explore-graph-types' variable stores the functions required to
+generate and regenerate graphs.
+
+The `denote-explore-network-graph-formats' variable contains a list of functions
+to encode and display each graph format.
+
+(fn &optional TEXT-ONLY)" t) (autoload 'denote-explore-network-regenerate "denote-explore" "Recreate the most recent Denote graph with external software.
+Universal argument excludes attachments from the analysis (TEXT-ONLY).
+
+(fn &optional TEXT-ONLY)" t) (autoload 'denote-explore-list-keywords "denote-explore" "List all Denote keywords with the number of notes that use each keyword.
+
+This command:
+- Scans `denote-directory` and collects per-note keywords.
+- Builds a (KEYWORD . COUNT) table, where COUNT is the number of notes
+  that include KEYWORD (one count per note, even if repeated in metadata).
+- Sorts by COUNT descending, then KEYWORD ascending.
+- When called with universal argument, the table is sorted ALPHABETICALLY
+- When called interactively, displays a two-column table and appends
+  a footer with the total number of distinct keywords and the sum of counts.
+
+Returns a plist for programmatic use:
+  (:table ALIST :keywords N-DISTINCT :notes SUM-OF-COUNTS).
+
+(fn &optional ALPHABETICALLY)" t) (register-definition-prefixes "denote-explore" '("denote-explore-")) (provide 'denote-explore-autoloads)) "consult" ((consult-autoloads consult consult-register consult-imenu consult-xref consult-flymake consult-info consult-org consult-kmacro consult-compile) (autoload 'consult-completion-in-region "consult" "Use minibuffer completion as the UI for `completion-at-point'.
+
+The arguments START, END, COLLECTION and PREDICATE and expected return
+value are as specified for `completion-in-region'.  Use this function as
+a value for `completion-in-region-function'.
+
+(fn START END COLLECTION PREDICATE)") (autoload 'consult-outline "consult" "Jump to an outline heading, obtained by matching against `outline-regexp'.
+
+This command supports narrowing to a heading level and candidate
+preview.  The initial narrowing LEVEL can be given as prefix
+argument.  The symbol at point is added to the future history.
+
+(fn &optional LEVEL)" t) (autoload 'consult-mark "consult" "Jump to a marker in MARKERS list (defaults to buffer-local `mark-ring').
+
+The command supports preview of the currently selected marker position.
+The symbol at point is added to the future history.
+
+(fn &optional MARKERS)" t) (autoload 'consult-global-mark "consult" "Jump to a marker in MARKERS list (defaults to `global-mark-ring').
+
+The command supports preview of the currently selected marker position.
+The symbol at point is added to the future history.
+
+(fn &optional MARKERS)" t) (autoload 'consult-line "consult" "Search for a matching line.
+
+Depending on the setting `consult-point-placement' the command
+jumps to the beginning or the end of the first match on the line
+or the line beginning.  The default candidate is the non-empty
+line next to point.  This command obeys narrowing.  Optional
+INITIAL input can be provided.  The search starting point is
+changed if the START prefix argument is set.  The symbol at point
+and the last `isearch-string' is added to the future history.
+
+(fn &optional INITIAL START)" t) (autoload 'consult-line-multi "consult" "Search for a matching line in multiple buffers.
+
+By default search across all project buffers.  If the prefix
+argument QUERY is non-nil, all buffers are searched.  Optional
+INITIAL input can be provided.  The symbol at point and the last
+`isearch-string' is added to the future history.  In order to
+search a subset of buffers, QUERY can be set to a plist according
+to `consult--buffer-query'.
+
+(fn QUERY &optional INITIAL)" t) (autoload 'consult-keep-lines "consult" "Filter a subset of the lines in the current buffer with live preview.
+
+The filtered lines are kept and the other lines are deleted.  When
+called interactively, the lines selected are those that match the
+minibuffer input.  In order to match the inverse of the input, prefix
+the input with `! '.  When called from Elisp, the filtering is performed
+by a FILTER function.  If the buffer is narrowed to a region, the
+command only acts on this region.  See also `consult-focus-lines' which
+uses overlays to display only matching lines, but does not modify the
+buffer.
+
+FILTER is the filter function, called for each line.
+INITIAL is the initial input.
+
+(fn FILTER &optional INITIAL)" t) (autoload 'consult-focus-lines "consult" "Show only matching lines using overlays.
+
+In contrast to `consult-keep-lines' the buffer is not modified.  The
+FILTER selects the lines which are shown.  When called interactively,
+the lines selected are those that match the minibuffer input.  In order
+to match the inverse of the input, prefix the input with `! '.  With
+optional prefix argument SHOW reveal the hidden lines.  Alternatively
+rerun the command and exit the minibuffer directly without input to
+reveal the lines.  When called from Elisp, the filtering is performed by
+a FILTER function.  If the buffer is narrowed to a region, the command
+only acts on this region.
+
+FILTER is the filter function, called for each line.
+SHOW is the prefix argument, if non-nil reveal all hidden lines.
+INITIAL is the initial input.
+
+(fn FILTER &optional SHOW INITIAL)" t) (autoload 'consult-goto-line "consult" "Read line number and jump to the line with preview.
+
+Enter either a line number to jump to the first column of the
+given line or line:column in order to jump to a specific column.
+Jump directly if a line number is given as prefix ARG.  The
+command respects narrowing and the settings
+`consult-goto-line-numbers' and `consult-line-numbers-widen'.
+
+(fn &optional ARG)" t) (autoload 'consult-recent-file "consult" "Find recent file using `completing-read'." t) (autoload 'consult-mode-command "consult" "Run a command from any of the given MODES.
+
+If no MODES are specified, use currently active major and minor modes.
+
+(fn &rest MODES)" t) (autoload 'consult-yank-from-kill-ring "consult" "Select STRING from the kill ring and insert it.
+With prefix ARG, put point at beginning, and mark at end, like `yank' does.
+
+This command behaves like `yank-from-kill-ring', which also offers a
+`completing-read' interface to the `kill-ring'.  Additionally the
+Consult version supports preview of the selected string.
+
+(fn STRING &optional ARG)" t) (autoload 'consult-yank-pop "consult" "If there is a recent yank act like `yank-pop'.
+
+Otherwise select string from the kill ring and insert it.
+See `yank-pop' for the meaning of ARG.
+
+This command behaves like `yank-pop', which also offers a
+`completing-read' interface to the `kill-ring'.  Additionally the
+Consult version supports preview of the selected string.
+
+(fn &optional ARG)" t) (autoload 'consult-yank-replace "consult" "Select STRING from the kill ring.
+
+If there was no recent yank, insert the string.
+Otherwise replace the just-yanked string with the selected string.
+
+(fn STRING)" t) (autoload 'consult-bookmark "consult" "If bookmark NAME exists, open it, otherwise create a new bookmark with NAME.
+
+The command supports preview of file bookmarks and narrowing.  See the
+variable `consult-bookmark-narrow' for the narrowing configuration.
+
+(fn NAME)" t) (autoload 'consult-complex-command "consult" "Select and evaluate command from the command history.
+
+This command can act as a drop-in replacement for `repeat-complex-command'." t) (autoload 'consult-history "consult" "Insert string from HISTORY of current buffer.
+In order to select from a specific HISTORY, pass the history
+variable as argument.  INDEX is the name of the index variable to
+update, if any.  BOL is the function which jumps to the beginning
+of the prompt.  See also `cape-history' from the Cape package.
+
+(fn &optional HISTORY INDEX BOL)" t) (autoload 'consult-isearch-history "consult" "Read a search string with completion from the Isearch history.
+
+This replaces the current search string if Isearch is active, and
+starts a new Isearch session otherwise." t) (autoload 'consult-minor-mode-menu "consult" "Enable or disable minor mode.
+
+This is an alternative to `minor-mode-menu-from-indicator'." t) (autoload 'consult-theme "consult" "Disable current themes and enable THEME from `consult-themes'.
+
+The command supports previewing the currently selected theme.
+
+(fn THEME)" t) (autoload 'consult-buffer "consult" "Enhanced `switch-to-buffer' command with support for virtual buffers.
+
+The command supports recent files, bookmarks, views and project files as
+virtual buffers.  Buffers are previewed.  Narrowing to buffers (b), files (f),
+bookmarks (m) and project files (p) is supported via the corresponding
+keys.  In order to determine the project-specific files and buffers, the
+`consult-project-function' is used.  The virtual buffer SOURCES
+default to `consult-buffer-sources'.  See `consult--multi' for the
+configuration of the virtual buffer sources.
+
+(fn &optional SOURCES)" t) (autoload 'consult-project-buffer "consult" "Enhanced `project-switch-to-buffer' command with support for virtual buffers.
+The command may prompt you for a project directory if it is invoked from
+outside a project.  See `consult-buffer' for more details." t) (autoload 'consult-buffer-other-window "consult" "Variant of `consult-buffer', switching to a buffer in another window." t) (autoload 'consult-buffer-other-frame "consult" "Variant of `consult-buffer', switching to a buffer in another frame." t) (autoload 'consult-buffer-other-tab "consult" "Variant of `consult-buffer', switching to a buffer in another tab." t) (autoload 'consult-grep-match "consult" "Jump to grep matches related to the current project or file.
+
+This command collects entries from all related Grep buffers.  The
+command supports preview of the currently selected match.  With prefix
+ARG, jump to the match in the Grep buffer, instead of to the actual
+location of the match.  This command is a thin wrapper around
+`consult-compile-error'.
+
+(fn &optional ARG)" t) (autoload 'consult-grep "consult" "Search with `grep' for files in DIR where the content matches a regexp.
+
+The initial input is given by the INITIAL argument.  DIR can be nil, a
+directory string or a list of file/directory paths.  If `consult-grep'
+is called interactively with a prefix argument, the user can specify the
+directories or files to search in.  Multiple directories or files must
+be separated by comma in the minibuffer, since they are read via
+`completing-read-multiple'.  By default the project directory is used if
+`consult-project-function' is defined and returns non-nil.  Otherwise
+the `default-directory' is searched.  If the command is invoked with a
+double prefix argument (twice `C-u') the user is asked for a project, if
+not yet inside a project, or the current project is searched.
+
+The input string is split, the first part of the string (grep input) is
+passed to the asynchronous grep process and the second part of the
+string is passed to the completion-style filtering.
+
+The input string is split at a punctuation character, which is given as
+the first character of the input string.  The format is similar to
+Perl-style regular expressions, e.g., /regexp/.  Furthermore command
+line options can be passed to grep, specified behind --.  The overall
+prompt input has the form `#async-input -- grep-opts#filter-string'.
+
+Note that the grep input string is transformed from Emacs regular
+expressions to Posix regular expressions.  Always enter Emacs regular
+expressions at the prompt.  `consult-grep' behaves like builtin Emacs
+search commands, e.g., Isearch, which take Emacs regular expressions.
+Furthermore the asynchronous input split into words, each word must
+match separately and in any order.  See `consult--regexp-compiler' for
+the inner workings.  In order to disable transformations of the grep
+input, adjust `consult--regexp-compiler' accordingly.
+
+Here we give a few example inputs:
+
+#alpha beta         : Search for alpha and beta in any order.
+#alpha.*beta        : Search for alpha before beta.
+#\\(alpha\\|beta\\) : Search for alpha or beta (Note Emacs syntax!)
+#word -- -C3        : Search for word, include 3 lines as context
+#first#second       : Search for first, quick filter for second.
+
+The symbol at point is added to the future history.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-git-grep "consult" "Search with `git grep' for files in DIR with INITIAL input.
+See `consult-grep' for details.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-ripgrep "consult" "Search with `rg' for files in DIR with INITIAL input.
+See `consult-grep' for details.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-find "consult" "Search for files with `find' in DIR.
+The file names must match the input regexp.  INITIAL is the
+initial minibuffer input.  See `consult-grep' for details
+regarding the asynchronous search and the arguments.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-fd "consult" "Search for files with `fd' in DIR.
+The file names must match the input regexp.  INITIAL is the
+initial minibuffer input.  See `consult-grep' for details
+regarding the asynchronous search and the arguments.
+
+(fn &optional DIR INITIAL)" t) (autoload 'consult-locate "consult" "Search with `locate' for files which match input given INITIAL input.
+
+The input is treated literally such that locate can take advantage of
+the locate database index.  Regular expressions would often force a slow
+linear search through the entire database.  The locate process is started
+asynchronously, similar to `consult-grep'.  See `consult-grep' for more
+details regarding the asynchronous search.
+
+(fn &optional INITIAL)" t) (autoload 'consult-man "consult" "Search for man page given INITIAL input.
+
+The input string is not preprocessed and passed literally to the
+underlying man commands.  The man process is started asynchronously,
+similar to `consult-grep'.  See `consult-grep' for more details regarding
+the asynchronous search.
+
+(fn &optional INITIAL)" t) (register-definition-prefixes "consult" '("consult-")) (autoload 'consult-compile-error "consult-compile" "Jump to a compilation error related to the current project or file.
+
+This command collects entries from all related compilation buffers.  The
+command supports preview of the currently selected error.  With prefix
+ARG, jump to the error message in the compilation buffer, instead of to
+the actual location of the error.  If GREP is non-nil, Grep buffers are
+searched.  See also `consult-grep-match'.
+
+(fn &optional ARG GREP)" t) (register-definition-prefixes "consult-compile" '("consult-compile--")) (autoload 'consult-flymake "consult-flymake" "Jump to Flymake diagnostic.
+When PROJECT is non-nil then prompt with diagnostics from all
+buffers in the current project instead of just the current buffer.
+
+(fn &optional PROJECT)" t) (register-definition-prefixes "consult-flymake" '("consult-flymake--")) (autoload 'consult-imenu "consult-imenu" "Select item from flattened `imenu' using `completing-read' with preview.
+
+The command supports preview and narrowing.  See the variable
+`consult-imenu-config', which configures the narrowing.
+The symbol at point is added to the future history.
+
+See also `consult-imenu-multi'." t) (autoload 'consult-imenu-multi "consult-imenu" "Select item from the imenus of all buffers from the same project.
+
+In order to determine the buffers belonging to the same project, the
+`consult-project-function' is used.  Only the buffers with the
+same major mode as the current buffer are used.  See also
+`consult-imenu' for more details.  In order to search a subset of buffers,
+QUERY can be set to a plist according to `consult--buffer-query'.
+
+(fn &optional QUERY)" t) (register-definition-prefixes "consult-imenu" '("consult-imenu-")) (autoload 'consult-info "consult-info" "Full text search through info MANUALS.
+
+(fn &rest MANUALS)" t) (defun consult-info-define (name &rest manuals) "Define `consult-info-NAME' command to search through MANUALS.
+MANUALS is a list of a strings. NAME can be a symbol or a string. If
+NAME is a string, it is added to the MANUALS list. Return name of
+defined command as symbol." (let ((cmd (intern (format "consult-info-%s" name)))) (when (stringp name) (push name manuals)) (defalias cmd (lambda nil (interactive) (apply #'consult-info manuals)) (format "Search via `consult-info' through the manual%s %s:
+
+%s" (if (cdr manuals) "s" "") (mapconcat (lambda (m) (format "\"%s\"" m)) manuals ", ") (mapconcat (lambda (m) (format "  * Info node `(%s)'" m)) manuals "
+"))) cmd)) (register-definition-prefixes "consult-info" '("consult-info--")) (autoload 'consult-kmacro "consult-kmacro" "Run a chosen keyboard macro.
+
+With prefix ARG, run the macro that many times.
+Macros containing mouse clicks are omitted.
+
+(fn ARG)" t) (register-definition-prefixes "consult-kmacro" '("consult-kmacro--")) (autoload 'consult-org-heading "consult-org" "Jump to an Org heading.
+
+MATCH and SCOPE are as in `org-map-entries' and determine which
+entries are offered.  By default, all entries of the current
+buffer are offered.
+
+(fn &optional MATCH SCOPE)" t) (autoload 'consult-org-agenda "consult-org" "Jump to an Org agenda heading.
+
+By default, all agenda entries are offered.  MATCH is as in
+`org-map-entries' and can used to refine this.
+
+(fn &optional MATCH)" t) (register-definition-prefixes "consult-org" '("consult-org--")) (autoload 'consult-register-window "consult-register" "Enhanced drop-in replacement for `register-preview'.
+
+BUFFER is the window buffer.
+SHOW-EMPTY must be t if the window should be shown for an empty register list.
+Optional argument PRED specifies the types of register to show.
+
+(fn BUFFER &optional SHOW-EMPTY PRED)") (autoload 'consult-register-format "consult-register" "Enhanced preview of register REG.
+This function can be used as `register-preview-function'.
+If COMPLETION is non-nil format the register for completion.
+
+(fn REG &optional COMPLETION)") (autoload 'consult-register "consult-register" "Load register and either jump to location or insert the stored text.
+
+This command is useful to search the register contents.  For quick access
+to registers it is still recommended to use the register functions
+`consult-register-load' and `consult-register-store' or the built-in
+built-in register access functions.  The command supports narrowing, see
+`consult-register--narrow'.  Marker positions are previewed.  See
+`jump-to-register' and `insert-register' for the meaning of prefix ARG.
+
+(fn &optional ARG)" t) (autoload 'consult-register-load "consult-register" "Do what I mean with a REG.
+
+For a window configuration, restore it.  For a number or text, insert it.
+For a location, jump to it.  See `jump-to-register' and `insert-register'
+for the meaning of prefix ARG.
+
+(fn REG &optional ARG)" t) (autoload 'consult-register-store "consult-register" "Store register dependent on current context, showing an action menu.
+
+With an active region, store/append/prepend the contents, optionally
+deleting the region when a prefix ARG is given.  With a numeric prefix
+ARG, store or add the number.  Otherwise store point, frameset, window or
+kmacro.
+
+(fn ARG)" t) (register-definition-prefixes "consult-register" '("consult-register-")) (autoload 'consult-xref "consult-xref" "Show xrefs with preview in the minibuffer.
+
+This function can be used for `xref-show-xrefs-function'.
+See `xref-show-xrefs-function' for the description of the
+FETCHER and ALIST arguments.
+
+(fn FETCHER &optional ALIST)") (register-definition-prefixes "consult-xref" '("consult-xref--")) (provide 'consult-autoloads)) "consult-denote" ((consult-denote consult-denote-autoloads) (autoload 'consult-denote-grep "consult-denote" "Call `consult-denote-grep-command' in the variable `denote-directory'." t) (function-put 'consult-denote-grep 'interactive-only 't) (autoload 'consult-denote-find "consult-denote" "Call `consult-denote-find-command' in the variable `denote-directory'." t) (function-put 'consult-denote-find 'interactive-only 't) (defvar consult-denote-mode nil "Non-nil if Consult-Denote mode is enabled.
+See the `consult-denote-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `consult-denote-mode'.") (custom-autoload 'consult-denote-mode "consult-denote" nil) (autoload 'consult-denote-mode "consult-denote" "Use Consult in tandem with Denote.
+
+This is a global minor mode.  If called interactively, toggle the
+`Consult-Denote mode' mode.  If the prefix argument is positive, enable
+the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='consult-denote-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "consult-denote" '("consult-denote-")) (provide 'consult-denote-autoloads)) "cdlatex" ((cdlatex-autoloads cdlatex) (autoload 'turn-on-cdlatex "cdlatex" "Turn on CDLaTeX minor mode.") (autoload 'cdlatex-mode "cdlatex" "Minor mode for editing scientific LaTeX documents.
+
+Here is a list of features: \\<cdlatex-mode-map>
+
+                           KEYWORD COMMANDS
+                           ----------------
+
+Many CDLaTeX commands are activated with an abbrev-like
+mechanism.  When a keyword is typed followed \\[cdlatex-tab], the
+keyword is deleted from the buffer and a command is executed.
+You can get a full list of these commands with
+\\[cdlatex-command-help].  For example, when you type `fr<TAB>',
+CDLaTeX will insert \\frac{}{}.
+
+When inserting templates like \\='\\frac{}{}\\=', the cursor is
+positioned properly.  Use \\[cdlatex-tab] to move through
+templates.  \\[cdlatex-tab] also kills unnecessary braces around
+subscripts and superscripts at point.
+
+                     MATH CHARACTERS AND ACCENTS
+                     ---------------------------
+
+\\[cdlatex-math-symbol] followed by any character inserts a LaTeX
+math character
+      e.g. \\[cdlatex-math-symbol]e
+        => \\epsilon
+
+\\[cdlatex-math-symbol]\\[cdlatex-math-symbol] followed by any
+character inserts other LaTeX math character
+      e.g. \\[cdlatex-math-symbol]\\[cdlatex-math-symbol]e
+        => \\varepsilon
+\\[cdlatex-math-modify]  followed by character puts a math
+accent on a letter or symbol
+      e.g. \\[cdlatex-math-symbol]a\\[cdlatex-math-modify]~
+        => \\tilde{\\alpha}
+
+CDLaTeX is aware of the math environments in LaTeX and modifies
+the workings of some functions according to the current status.
+
+                             ONLINE HELP
+                             -----------
+
+After pressing \\[cdlatex-math-symbol] or
+\\[cdlatex-math-modify], CDLaTeX waits for a short time for the
+second character.  If that does not come, it will pop up a window
+displaying the available characters and their meanings.
+
+                             KEY BINDINGS
+                             ------------
+\\{cdlatex-mode-map}
+
+Under X, many functions will be available also in a menu on the menu bar.
+
+Entering `cdlatex-mode' calls the hook cdlatex-mode-hook.
+
+This is a minor mode.  If called interactively, toggle the `CDLatex
+mode' mode.  If the prefix argument is positive, enable the mode, and if
+it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `cdlatex-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'turn-on-cdlatex-electricindex "cdlatex" "Turn on cdlatex-electricindex minor mode.") (autoload 'cdlatex-electricindex-mode "cdlatex" "Minor mode for electric insertion of numbered indixes.
+
+cdlatex-electricindex is a minor mode supporting fast digit index
+insertation in LaTeX math. For example typing x 1 2 will insert
+x_{12}.
+
+To turn cdlatex-electricindex Minor Mode on and off in a
+particular buffer, use `M-x cdlatex-electricindex-mode'.
+
+To turn on cdlatex-electricindex Minor Mode for all LaTeX files,
+add one of the following lines to your .emacs file:
+
+    (add-hook 'latex-mode-hook #'turn-on-cdlatex-electricindex)
+
+This index insertion will only work when the cursor is in a LaTeX
+math environment, based on (texmathp). If texmathp is not
+available, math math-mode will be assumed.
+
+Entering `cdlatex-electricindex-mode' calls the hook
+`cdlatex-electricindex-mode-hook'.
+
+This is a minor mode.  If called interactively, toggle the
+`Cdlatex-Electricindex mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `cdlatex-electricindex-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "cdlatex" '("cdlatex-")) (provide 'cdlatex-autoloads)) "org-fragtog" ((org-fragtog-autoloads org-fragtog) (autoload 'org-fragtog-mode "org-fragtog" "A minor mode that automatically toggles Org mode LaTeX fragment previews.
+
+Fragment previews are disabled for editing when your cursor steps onto them,
+and re-enabled when the cursor leaves.
+
+This is a minor mode.  If called interactively, toggle the `Org-Fragtog
+mode' mode.  If the prefix argument is positive, enable the mode, and if
+it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `org-fragtog-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "org-fragtog" '("org-fragtog-")) (provide 'org-fragtog-autoloads)) "auctex" ((auctex-autoloads latex-flymake auctex-pkg auctex texmathp tex-site toolbar-x context-en bib-cite font-latex tex-fold latex context tex-wizard plain-tex tex tex-font tex-style context-nl tex-jp tex-ispell multi-prompt tex-info preview tex-bar tex-mik) (register-definition-prefixes "auctex" '("AUCTeX-version")) (autoload 'bib-cite-minor-mode "bib-cite" "Toggle bib-cite mode.
+When bib-cite mode is enabled, citations, labels and refs are highlighted
+when the mouse is over them.  Clicking on these highlights with [mouse-2]
+runs `bib-find', and [mouse-3] runs `bib-display'.
+
+(fn ARG)" t) (autoload 'turn-on-bib-cite "bib-cite" "Unconditionally turn on Bib Cite mode.") (register-definition-prefixes "bib-cite" '("LaTeX-find-label-hist-alist" "bib-" "create-alist-from-list" "member-cis" "psg-" "search-directory-tree")) (defalias 'context-mode #'ConTeXt-mode) (autoload 'ConTeXt-mode "context" "Major mode in AUCTeX for editing ConTeXt files.
+
+Entering `ConTeXt-mode' calls the value of `text-mode-hook',
+then the value of `TeX-mode-hook', and then the value
+of `ConTeXt-mode-hook'.
+
+(fn)" t) (register-definition-prefixes "context" '("ConTeXt-" "TeX-ConTeXt-sentinel" "context-guess-current-interface")) (register-definition-prefixes "context-en" '("ConTeXt-")) (register-definition-prefixes "context-nl" '("ConTeXt-")) (autoload 'font-latex-setup "font-latex" "Setup this buffer for LaTeX font-lock.  Usually called from a hook.") (register-definition-prefixes "font-latex" '("font-latex-")) (autoload 'BibTeX-auto-store "latex" "This function should be called from `bibtex-mode-hook'.
+It will setup BibTeX to store keys in an auto file.") (add-to-list 'auto-mode-alist '("\\.drv\\'" . LaTeX-mode) t) (add-to-list 'auto-mode-alist '("\\.hva\\'" . LaTeX-mode)) (if (eq (symbol-function 'LaTeX-mode) 'latex-mode) (defalias 'LaTeX-mode nil)) (autoload 'LaTeX-mode "latex" "Major mode in AUCTeX for editing LaTeX files.
+See info under AUCTeX for full documentation.
+
+Entering LaTeX mode calls the value of `text-mode-hook',
+then the value of `TeX-mode-hook', and then the value
+of `LaTeX-mode-hook'.
+
+(fn)" t) (put 'LaTeX-mode 'auctex-function-definition (symbol-function 'LaTeX-mode)) (autoload 'docTeX-mode "latex" "Major mode in AUCTeX for editing .dtx files derived from `LaTeX-mode'.
+Runs `LaTeX-mode', sets a few variables and
+runs the hooks in `docTeX-mode-hook'.
+
+(fn)" t) (register-definition-prefixes "latex" '("Bib" "LaTeX-" "TeX-" "docTeX-" "latex-math-mode")) (register-definition-prefixes "latex-flymake" '("LaTeX-")) (autoload 'multi-prompt "multi-prompt" "Completing prompt for a list of strings.
+The first argument SEPARATOR should be the string (of length 1) to
+separate the elements in the list.  The second argument UNIQUE should
+be non-nil, if each element must be unique.  The remaining elements
+are the arguments to `completing-read'.  See that.
+
+(fn SEPARATOR UNIQUE PROMPT TABLE &optional MP-PREDICATE REQUIRE-MATCH INITIAL HISTORY)") (autoload 'multi-prompt-key-value "multi-prompt" "Read multiple strings, with completion and key=value support.
+PROMPT is a string to prompt with, usually ending with a colon
+and a space.
+
+TABLE is an alist where each entry is a list.  The first element
+of each list is a string representing a key and the optional
+second element is a list with strings to be used as values for
+the key.  The second element can also be a variable returning a
+list of strings.
+
+See the documentation for `completing-read' for details on the
+other arguments: PREDICATE, REQUIRE-MATCH, INITIAL-INPUT, HIST,
+DEF, and INHERIT-INPUT-METHOD.
+
+The return value is the string as entered in the minibuffer.
+
+(fn PROMPT TABLE &optional PREDICATE REQUIRE-MATCH INITIAL-INPUT HIST DEF INHERIT-INPUT-METHOD)") (register-definition-prefixes "multi-prompt" '("multi-prompt-")) (if (eq (symbol-function 'plain-TeX-mode) 'plain-tex-mode) (defalias 'plain-TeX-mode nil)) (autoload 'plain-TeX-mode "plain-tex" "Major mode in AUCTeX for editing plain TeX files.
+See info under AUCTeX for documentation.
+
+Entering `plain-TeX-mode' calls the value of `text-mode-hook',
+then the value of `TeX-mode-hook', and then the value
+of `plain-TeX-mode-hook'.
+
+(fn)" t) (put 'plain-TeX-mode 'auctex-function-definition (symbol-function 'plain-TeX-mode)) (autoload 'AmSTeX-mode "plain-tex" "Major mode in AUCTeX for editing AmSTeX files.
+See info under AUCTeX for documentation.
+
+Entering `AmSTeX-mode' calls the value of `text-mode-hook', then
+the value of `TeX-mode-hook', `plain-TeX-mode-hook' and then the
+value of `AmSTeX-mode-hook'.
+
+(fn)" t) (defalias 'ams-tex-mode #'AmSTeX-mode) (register-definition-prefixes "plain-tex" '("AmSTeX-" "plain-TeX-")) (put 'preview-scale-function 'safe-local-variable (lambda (x) (and (numberp x) (<= 0.1 x 10)))) (autoload 'desktop-buffer-preview "preview" "Hook function for restoring persistent previews into a buffer.
+
+(fn FILE-NAME BUFFER-NAME MISC)") (add-to-list 'desktop-buffer-mode-handlers '(LaTeX-mode . desktop-buffer-preview)) (autoload 'preview-install-styles "preview" "Install the TeX style files into a permanent location DIR.
+This must be in the TeX search path.  If FORCE-OVERWRITE is greater
+than 1, files will get overwritten without query, if it is less
+than 1 or nil, the operation will fail.  The default of 1 for interactive
+use will query.
+
+Similarly FORCE-SAVE can be used for saving
+`preview-TeX-style-dir' to record the fact that the uninstalled
+files are no longer needed in the search path.
+
+(fn DIR &optional FORCE-OVERWRITE FORCE-SAVE)" t) (autoload 'LaTeX-preview-setup "preview" "Hook function for embedding the preview package into AUCTeX.
+This is called by `LaTeX-mode-hook' and changes AUCTeX variables
+to add the preview functionality.") (autoload 'preview-report-bug "preview" "Report a bug in the preview-latex package." t) (register-definition-prefixes "preview" '("TeX-" "desktop-buffer-preview-misc-data" "preview-")) (autoload 'TeX-tex-mode "tex" "Call suitable AUCTeX major mode for editing TeX or LaTeX files.
+Tries to guess whether this file is for plain TeX or LaTeX.
+
+The algorithm is as follows:
+
+   1) If the file is empty or `TeX-force-default-mode' is not set to nil,
+      `TeX-default-mode' is chosen.
+   2) If non-commented out content matches with regular expression in
+      `TeX-format-list', use the associated major mode.  For example,
+      if \\documentclass or \\begin{, \\section{, \\part{ or \\chapter{ is
+      found, `LaTeX-mode' is selected.
+   3) Otherwise, use `TeX-default-mode'.
+
+By default, `TeX-format-list' has a fallback entry for
+`plain-TeX-mode', thus non-empty file which didn't match any
+other entries will enter `plain-TeX-mode'." t) (if (eq (symbol-function 'TeX-mode) 'tex-mode) (defalias 'TeX-mode nil)) (put 'TeX-mode 'auctex-function-definition (symbol-function 'TeX-mode)) (autoload 'TeX-auto-generate "tex" "Generate style file for TEX and store it in AUTO.
+If TEX is a directory, generate style files for all files in the directory.
+
+(fn TEX AUTO)" t) (autoload 'TeX-auto-generate-global "tex" "Create global auto directory for global TeX macro definitions." t) (autoload 'TeX-submit-bug-report "tex" "Submit a bug report on AUCTeX via mail.
+
+Don't hesitate to report any problems or inaccurate documentation.
+
+If you don't have setup sending mail from Emacs, please copy the
+output buffer into your mail program, as it gives us important
+information about your AUCTeX version and AUCTeX configuration." t) (register-definition-prefixes "tex" '("Bib" "ConTeXt-" "LaTeX-" "TeX-" "docTeX-default-extension" "plain-TeX-auto-regexp-list" "tex-")) (autoload 'TeX-install-toolbar "tex-bar" "Install toolbar buttons for TeX mode." t) (autoload 'LaTeX-install-toolbar "tex-bar" "Install toolbar buttons for LaTeX mode." t) (register-definition-prefixes "tex-bar" '("TeX-bar-")) (autoload 'TeX-fold-mode "tex-fold" "Minor mode for hiding and revealing macros and environments.
+
+Called interactively, with no prefix argument, toggle the mode.
+With universal prefix ARG (or if ARG is nil) turn mode on.
+With zero or negative ARG turn mode off.
+
+(fn &optional ARG)" t) (defalias 'tex-fold-mode #'TeX-fold-mode) (register-definition-prefixes "tex-fold" '("TeX-fold-")) (autoload 'tex-font-setup "tex-font" "Setup font lock support for TeX.") (register-definition-prefixes "tex-font" '("tex-font-lock-")) (autoload 'Texinfo-mode "tex-info" "Major mode in AUCTeX for editing Texinfo files.
+
+Entering Texinfo mode calls the value of `text-mode-hook' and then the
+value of `Texinfo-mode-hook'.
+
+(fn)" t) (register-definition-prefixes "tex-info" '("Texinfo-" "texinfo-environment-regexp")) (register-definition-prefixes "tex-ispell" '("TeX-ispell-")) (autoload 'japanese-plain-TeX-mode "tex-jp" "Major mode in AUCTeX for editing Japanese plain TeX files.
+
+(fn)" t) (defalias 'japanese-plain-tex-mode #'japanese-plain-TeX-mode) (autoload 'japanese-LaTeX-mode "tex-jp" "Major mode in AUCTeX for editing Japanese LaTeX files.
+
+(fn)" t) (defalias 'japanese-latex-mode #'japanese-LaTeX-mode) (register-definition-prefixes "tex-jp" '("TeX-japanese-process-" "japanese-")) (require 'tex-site) (register-definition-prefixes "tex-site" '("TeX-" "preview-TeX-style-dir" "tex-site-unload-function")) (register-definition-prefixes "tex-style" '("LaTeX-" "TeX-TikZ-point-name-regexp")) (register-definition-prefixes "tex-wizard" '("TeX-wizard")) (autoload 'texmathp "texmathp" "Determine if point is inside (La)TeX math mode.
+Returns t or nil.  Additional info is placed into `texmathp-why'.
+The functions assumes that you have (almost) syntactically correct (La)TeX in
+the buffer.
+See the variable `texmathp-tex-commands' about which commands are checked." t) (autoload 'texmathp-match-switch "texmathp" "Search backward for any of the math switches.
+Limit searched to BOUND.
+
+(fn BOUND)") (register-definition-prefixes "texmathp" '("texmathp-")) (autoload 'toolbarx-install-toolbar "toolbar-x") (register-definition-prefixes "toolbar-x" '("toolbarx-")) (provide 'auctex-autoloads)) "tablist" ((tablist-filter tablist tablist-autoloads) (autoload 'tablist-minor-mode "tablist" "Toggle tablist minor mode.
+
+This is a minor mode.  If called interactively, toggle the `Tablist
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `tablist-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'tablist-mode "tablist" "
+
+(fn)" t) (register-definition-prefixes "tablist" '("tablist-")) (register-definition-prefixes "tablist-filter" '("tablist-filter-")) (provide 'tablist-autoloads)) "let-alist" ((let-alist-pkg let-alist-autoloads let-alist) (autoload 'let-alist "let-alist" "Let-bind dotted symbols to their cdrs in ALIST and execute BODY.
+Dotted symbol is any symbol starting with a `.'.  Only those present
+in BODY are let-bound and this search is done at compile time.
+A number will result in a list index.
+
+For instance, the following code
+
+  (let-alist alist
+    (if (and .title.0 .body)
+        .body
+      .site
+      .site.contents))
+
+essentially expands to
+
+  (let ((.title (nth 0 (cdr (assq \\='title alist))))
+        (.body  (cdr (assq \\='body alist)))
+        (.site  (cdr (assq \\='site alist)))
+        (.site.contents (cdr (assq \\='contents (cdr (assq \\='site alist))))))
+    (if (and .title.0 .body)
+        .body
+      .site
+      .site.contents))
+
+If you nest `let-alist' invocations, the inner one can't access
+the variables of the outer one.  You can, however, access alists
+inside the original alist by using dots inside the symbol, as
+displayed in the example above.
+
+To refer to a non-`let-alist' variable starting with a dot in BODY, use
+two dots instead of one.  For example, in the following form `..foo'
+refers to the variable `.foo' bound outside of the `let-alist':
+
+    (let ((.foo 42)) (let-alist \\='((foo . nil)) ..foo))
+
+Note that there is no way to differentiate the case where a key
+is missing from when it is present, but its value is nil.  Thus,
+the following form evaluates to nil:
+
+    (let-alist \\='((some-key . nil))
+      .some-key)
+
+(fn ALIST &rest BODY)" nil t) (function-put 'let-alist 'lisp-indent-function 1) (register-definition-prefixes "let-alist" '("let-alist--")) (provide 'let-alist-autoloads)) "pdf-tools" ((pdf-isearch pdf-history pdf-misc pdf-sync pdf-util pdf-cache pdf-occur pdf-annot pdf-virtual pdf-outline pdf-loader pdf-view pdf-info pdf-dev pdf-tools-autoloads pdf-macs pdf-tools pdf-links) (autoload 'pdf-annot-minor-mode "pdf-annot" "Support for PDF Annotations.
+
+\\{pdf-annot-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Annot
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-annot-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-annot" '("pdf-annot-")) (register-definition-prefixes "pdf-cache" '("boundingbox" "define-pdf-cache-function" "page" "pdf-cache-" "textregions")) (register-definition-prefixes "pdf-dev" '("pdf-dev-")) (autoload 'pdf-history-minor-mode "pdf-history" "Keep a history of previously visited pages.
+
+This is a simple stack-based history.  Turning the page or
+following a link pushes the left-behind page on the stack, which
+may be navigated with the following keys.
+
+\\{pdf-history-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the `Pdf-History
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-history-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-history" '("pdf-history-")) (register-definition-prefixes "pdf-info" '("pdf-info-")) (autoload 'pdf-isearch-minor-mode "pdf-isearch" "Isearch mode for PDF buffer.
+
+When this mode is enabled \\[isearch-forward], among other keys,
+starts an incremental search in this PDF document.  Since this mode
+uses external programs to highlight found matches via
+image-processing, proceeding to the next match may be slow.
+
+Therefore two isearch behaviours have been defined: Normal isearch and
+batch mode.  The later one is a minor mode
+(`pdf-isearch-batch-mode'), which when activated inhibits isearch
+from stopping at and highlighting every single match, but rather
+display them batch-wise.  Here a batch means a number of matches
+currently visible in the selected window.
+
+The kind of highlighting is determined by three faces
+`pdf-isearch-match' (for the current match), `pdf-isearch-lazy'
+(for all other matches) and `pdf-isearch-batch' (when in batch
+mode), which see.
+
+Colors may also be influenced by the minor-mode
+`pdf-view-dark-minor-mode'.  If this is minor mode enabled, each face's
+dark colors, are used (see e.g. `frame-background-mode'), instead
+of the light ones.
+
+\\{pdf-isearch-minor-mode-map}
+While in `isearch-mode' the following keys are available. Note
+that not every isearch command work as expected.
+
+\\{pdf-isearch-active-mode-map}
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Isearch
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-isearch-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-isearch" '("pdf-isearch-")) (autoload 'pdf-links-minor-mode "pdf-links" "Handle links in PDF documents.\\<pdf-links-minor-mode-map>
+
+If this mode is enabled, most links in the document may be
+activated by clicking on them or by pressing \\[pdf-links-action-perform] and selecting
+one of the displayed keys, or by using isearch limited to
+links via \\[pdf-links-isearch-link].
+
+\\{pdf-links-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Links
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-links-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-links-action-perform "pdf-links" "Follow LINK, depending on its type.
+
+This may turn to another page, switch to another PDF buffer or
+invoke `pdf-links-browse-uri-function'.
+
+Interactively, link is read via `pdf-links-read-link-action'.
+This function displays characters around the links in the current
+page and starts reading characters (ignoring case).  After a
+sufficient number of characters have been read, the corresponding
+link's link is invoked.  Additionally, SPC may be used to
+scroll the current page.
+
+(fn LINK)" t) (register-definition-prefixes "pdf-links" '("pdf-links-")) (autoload 'pdf-loader-install "pdf-loader" "Prepare Emacs for using PDF Tools.
+
+This function acts as a replacement for `pdf-tools-install' and
+makes Emacs load and use PDF Tools as soon as a PDF file is
+opened, but not sooner.
+
+The arguments are passed verbatim to `pdf-tools-install', which
+see.
+
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)") (register-definition-prefixes "pdf-loader" '("pdf-loader--")) (register-definition-prefixes "pdf-macs" '("pdf-view-")) (autoload 'pdf-misc-minor-mode "pdf-misc" "FIXME:  Not documented.
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Misc
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-misc-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-size-indication-minor-mode "pdf-misc" "Provide a working size indication in the mode-line.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Size-Indication minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-misc-size-indication-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-menu-bar-minor-mode "pdf-misc" "Display a PDF Tools menu in the menu-bar.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Menu-Bar minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-misc-menu-bar-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-misc-context-menu-minor-mode "pdf-misc" "Provide a right-click context menu in PDF buffers.
+
+\\{pdf-misc-context-menu-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Misc-Context-Menu minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-misc-context-menu-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-misc" '("pdf-misc-")) (autoload 'pdf-occur "pdf-occur" "List lines matching STRING or PCRE.
+
+Interactively search for a regexp. Unless a prefix arg was given,
+in which case this functions performs a string search.
+
+If `pdf-occur-prefer-string-search' is non-nil, the meaning of
+the prefix-arg is inverted.
+
+(fn STRING &optional REGEXP-P)" t) (autoload 'pdf-occur-multi-command "pdf-occur" "Perform `pdf-occur' on multiple buffer.
+
+For a programmatic search of multiple documents see
+`pdf-occur-search'." t) (defvar pdf-occur-global-minor-mode nil "Non-nil if Pdf-Occur-Global minor mode is enabled.
+See the `pdf-occur-global-minor-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `pdf-occur-global-minor-mode'.") (custom-autoload 'pdf-occur-global-minor-mode "pdf-occur" nil) (autoload 'pdf-occur-global-minor-mode "pdf-occur" "Enable integration of Pdf Occur with other modes.
+
+This global minor mode enables (or disables)
+`pdf-occur-ibuffer-minor-mode' and `pdf-occur-dired-minor-mode'
+in all current and future ibuffer/dired buffer.
+
+This is a global minor mode.  If called interactively, toggle the
+`Pdf-Occur-Global minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='pdf-occur-global-minor-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-occur-ibuffer-minor-mode "pdf-occur" "Hack into ibuffer's do-occur binding.
+
+This mode remaps `ibuffer-do-occur' to
+`pdf-occur-ibuffer-do-occur', which will start the PDF Tools
+version of `occur', if all marked buffer's are in `pdf-view-mode'
+and otherwise fallback to `ibuffer-do-occur'.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Occur-Ibuffer minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-occur-ibuffer-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-occur-dired-minor-mode "pdf-occur" "Hack into dired's `dired-do-search' binding.
+
+This mode remaps `dired-do-search' to
+`pdf-occur-dired-do-search', which will start the PDF Tools
+version of `occur', if all marked buffer's are in `pdf-view-mode'
+and otherwise fallback to `dired-do-search'.
+
+This is a minor mode.  If called interactively, toggle the
+`Pdf-Occur-Dired minor mode' mode.  If the prefix argument is positive,
+enable the mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-occur-dired-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-occur" '("pdf-occur-")) (autoload 'pdf-outline-minor-mode "pdf-outline" "Display an outline of a PDF document.
+
+This provides a PDF's outline on the menu bar via imenu.
+Additionally the same outline may be viewed in a designated
+buffer.
+
+\\{pdf-outline-minor-mode-map}
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Outline
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-outline-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-outline "pdf-outline" "Display an PDF outline of BUFFER.
+
+BUFFER defaults to the current buffer.  Select the outline
+buffer, unless NO-SELECT-WINDOW-P is non-nil.
+
+(fn &optional BUFFER NO-SELECT-WINDOW-P)" t) (autoload 'pdf-outline-imenu-enable "pdf-outline" "Enable imenu in the current PDF buffer." t) (register-definition-prefixes "pdf-outline" '("pdf-outline")) (autoload 'pdf-sync-minor-mode "pdf-sync" "Correlate a PDF position with the TeX file.
+
+\\<pdf-sync-minor-mode-map>
+This works via SyncTeX, which means the TeX sources need to have
+been compiled with `--synctex=1'.  In AUCTeX this can be done by
+setting `TeX-source-correlate-method' to `synctex' (before AUCTeX
+is loaded) and enabling `TeX-source-correlate-mode'.
+
+Then \\[pdf-sync-backward-search-mouse] in the PDF buffer will
+open the corresponding TeX location.
+
+If AUCTeX is your preferred tex-mode, this library arranges to
+bind `pdf-sync-forward-display-pdf-key' (the default is `C-c C-g')
+to `pdf-sync-forward-search' in `TeX-source-correlate-map'.  This
+function displays the PDF page corresponding to the current
+position in the TeX buffer.  This function only works together
+with AUCTeX.
+
+This is a minor mode.  If called interactively, toggle the `Pdf-Sync
+minor mode' mode.  If the prefix argument is positive, enable the mode,
+and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `pdf-sync-minor-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (register-definition-prefixes "pdf-sync" '("pdf-sync-")) (defvar pdf-tools-handle-upgrades t "Whether PDF Tools should handle upgrading itself.") (custom-autoload 'pdf-tools-handle-upgrades "pdf-tools" t) (autoload 'pdf-tools-install "pdf-tools" "Install PDF-Tools in all current and future PDF buffers.
+
+If the `pdf-info-epdfinfo-program' is not running or does not
+appear to be working, attempt to rebuild it.  If this build
+succeeded, continue with the activation of the package.
+Otherwise fail silently, i.e. no error is signaled.
+
+Build the program (if necessary) without asking first, if
+NO-QUERY-P is non-nil.
+
+Don't attempt to install system packages, if SKIP-DEPENDENCIES-P
+is non-nil.
+
+Do not signal an error in case the build failed, if NO-ERROR-P is
+non-nil.
+
+Attempt to install system packages (even if it is deemed
+unnecessary), if FORCE-DEPENDENCIES-P is non-nil.
+
+Note that SKIP-DEPENDENCIES-P and FORCE-DEPENDENCIES-P are
+mutually exclusive.
+
+Note further, that you can influence the installation directory
+by setting `pdf-info-epdfinfo-program' to an appropriate
+value (e.g. ~/bin/epdfinfo) before calling this function.
+
+See `pdf-view-mode' and `pdf-tools-enabled-modes'.
+
+(fn &optional NO-QUERY-P SKIP-DEPENDENCIES-P NO-ERROR-P FORCE-DEPENDENCIES-P)" t) (autoload 'pdf-tools-enable-minor-modes "pdf-tools" "Enable MODES in the current buffer.
+
+MODES defaults to `pdf-tools-enabled-modes'.
+
+(fn &optional MODES)" t) (autoload 'pdf-tools-help "pdf-tools" "Show a Help buffer for `pdf-tools'." t) (register-definition-prefixes "pdf-tools" '("pdf-tools-")) (register-definition-prefixes "pdf-util" '("display-buffer-split-below-and-attach" "pdf-util-")) (autoload 'pdf-view-bookmark-jump-handler "pdf-view" "The bookmark handler-function interface for bookmark BMK.
+
+See also `pdf-view-bookmark-make-record'.
+
+(fn BMK)") (register-definition-prefixes "pdf-view" '("cua-copy-region--pdf-view-advice" "pdf-view-")) (autoload 'pdf-virtual-edit-mode "pdf-virtual" "Major mode when editing a virtual PDF buffer.
+
+(fn)" t) (autoload 'pdf-virtual-view-mode "pdf-virtual" "Major mode in virtual PDF buffers.
+
+(fn)" t) (defvar pdf-virtual-global-minor-mode nil "Non-nil if Pdf-Virtual-Global minor mode is enabled.
+See the `pdf-virtual-global-minor-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `pdf-virtual-global-minor-mode'.") (custom-autoload 'pdf-virtual-global-minor-mode "pdf-virtual" nil) (autoload 'pdf-virtual-global-minor-mode "pdf-virtual" "Enable recognition and handling of VPDF files.
+
+This is a global minor mode.  If called interactively, toggle the
+`Pdf-Virtual-Global minor mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='pdf-virtual-global-minor-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t) (autoload 'pdf-virtual-buffer-create "pdf-virtual" "
+
+(fn &optional FILENAMES BUFFER-NAME DISPLAY-P)" t) (register-definition-prefixes "pdf-virtual" '("pdf-virtual-")) (provide 'pdf-tools-autoloads))))
+
+#s(hash-table test eq data (org-elpa #s(hash-table test equal data (version (16 "https://github.com/emacs-straight/org-mode.git") "org" (org :type git :host github :protocol https :repo "emacs-straight/org-mode" :local-repo "org" :depth full :pre-build (straight-recipes-org-elpa--build) :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*"))) "leaf" nil "leaf-keywords" nil "org-superstar" nil "evil" nil "cl-lib" nil "goto-chg" nil "annalist" nil "evil-collection" nil "evil-surround" nil "pulsar" nil "switch-window" nil "avy" nil "multiple-cursors" nil "move-text" nil "yasnippet" nil "auto-yasnippet" nil "evil-nerd-commenter" nil "dap-mode" nil "dash" nil "lsp-mode" nil "f" nil "s" nil "ht" nil "spinner" nil "markdown-mode" nil "lv" nil "eldoc" nil "bui" nil "lsp-treemacs" nil "treemacs" nil "ace-window" nil "pfuture" nil "hydra" nil "cfrs" nil "posframe" nil "lsp-docker" nil "yaml" nil "which-key" nil "flycheck" nil "seq" nil "projectile" nil "compat" nil "org-timeblock" nil "svg" nil "magit-todos" nil "async" nil "hl-todo" nil "magit" nil "cond-let" nil "llama" nil "magit-section" nil "transient" nil "with-editor" nil "pcre2el" nil "modus-themes" nil "visual-fill-column" nil "writeroom-mode" nil "org-transclusion" nil "org-roam" nil "emacsql" nil "denote-explore" nil "denote" nil "denote-regexp" nil "consult-denote" nil "consult" nil "cdlatex" nil "org-fragtog" nil "auctex" nil "pdf-tools" nil "tablist" nil "let-alist" nil)) melpa #s(hash-table test equal data (version 3 "leaf" (leaf :type git :host github :repo "conao3/leaf.el") "leaf-keywords" (leaf-keywords :type git :host github :repo "conao3/leaf-keywords.el") "org-superstar" (org-superstar :type git :host github :repo "integral-dw/org-superstar-mode") "evil" (evil :type git :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil") "cl-lib" nil "goto-chg" (goto-chg :type git :host github :repo "emacs-evil/goto-chg") "annalist" (annalist :type git :host github :repo "noctuid/annalist.el") "evil-collection" (evil-collection :type git :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection") "evil-surround" (evil-surround :type git :host github :repo "emacs-evil/evil-surround") "pulsar" nil "switch-window" (switch-window :type git :host github :repo "dimitri/switch-window") "avy" (avy :type git :host github :repo "abo-abo/avy") "multiple-cursors" (multiple-cursors :type git :host github :repo "magnars/multiple-cursors.el") "move-text" (move-text :type git :host github :repo "emacsfodder/move-text") "yasnippet" (yasnippet :type git :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet") "auto-yasnippet" (auto-yasnippet :type git :host github :repo "abo-abo/auto-yasnippet") "evil-nerd-commenter" (evil-nerd-commenter :type git :host github :repo "redguardtoo/evil-nerd-commenter") "dap-mode" (dap-mode :type git :files (:defaults "icons" "dap-mode-pkg.el") :host github :repo "emacs-lsp/dap-mode") "dash" (dash :type git :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el") "lsp-mode" (lsp-mode :type git :files (:defaults "clients/*.*" "lsp-mode-pkg.el") :host github :repo "emacs-lsp/lsp-mode") "f" (f :type git :host github :repo "rejeep/f.el") "s" (s :type git :host github :repo "magnars/s.el") "ht" (ht :type git :host github :repo "Wilfred/ht.el") "spinner" nil "markdown-mode" (markdown-mode :type git :host github :repo "jrblevin/markdown-mode") "lv" (lv :type git :files ("lv.el" "lv-pkg.el") :host github :repo "abo-abo/hydra") "eldoc" nil "bui" (bui :type git :host github :repo "alezost/bui.el") "lsp-treemacs" (lsp-treemacs :type git :files (:defaults "icons" "lsp-treemacs-pkg.el") :host github :repo "emacs-lsp/lsp-treemacs") "treemacs" (treemacs :type git :files (:defaults "Changelog.org" "icons" "src/elisp/treemacs*.el" "src/scripts/treemacs*.py" (:exclude "src/extra/*") "treemacs-pkg.el") :host github :repo "Alexander-Miller/treemacs") "ace-window" (ace-window :type git :host github :repo "abo-abo/ace-window") "pfuture" (pfuture :type git :host github :repo "Alexander-Miller/pfuture") "hydra" (hydra :type git :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra") "cfrs" (cfrs :type git :host github :repo "Alexander-Miller/cfrs") "posframe" (posframe :type git :host github :repo "tumashu/posframe") "lsp-docker" (lsp-docker :type git :host github :repo "emacs-lsp/lsp-docker") "yaml" (yaml :type git :host github :repo "zkry/yaml.el") "which-key" (which-key :type git :host github :repo "justbur/emacs-which-key") "flycheck" (flycheck :type git :host github :repo "flycheck/flycheck") "seq" nil "projectile" (projectile :type git :host github :repo "bbatsov/projectile") "compat" nil "org-timeblock" (org-timeblock :type git :host github :repo "ichernyshovvv/org-timeblock") "svg" nil "magit-todos" (magit-todos :type git :host github :repo "alphapapa/magit-todos") "async" (async :type git :host github :repo "jwiegley/emacs-async") "hl-todo" (hl-todo :type git :host github :repo "tarsius/hl-todo") "magit" (magit :type git :files ("lisp/magit*.el" "lisp/git-*.el" "docs/magit.texi" "docs/AUTHORS.md" "LICENSE" ".dir-locals.el" (:exclude "lisp/magit-section.el") "magit-pkg.el") :host github :repo "magit/magit") "cond-let" (cond-let :type git :host github :repo "tarsius/cond-let") "llama" (llama :type git :files ("llama.el" ".dir-locals.el" "llama-pkg.el") :host github :repo "tarsius/llama") "magit-section" (magit-section :type git :files ("lisp/magit-section.el" "docs/magit-section.texi" "magit-section-pkg.el" "magit-section-pkg.el") :host github :repo "magit/magit") "transient" (transient :type git :host github :repo "magit/transient") "with-editor" (with-editor :type git :host github :repo "magit/with-editor") "pcre2el" (pcre2el :type git :host github :repo "joddie/pcre2el") "modus-themes" (modus-themes :type git :host github :repo "protesilaos/modus-themes") "visual-fill-column" (visual-fill-column :type git :host codeberg :repo "joostkremers/visual-fill-column") "writeroom-mode" (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode") "org-transclusion" nil "org-roam" (org-roam :type git :files (:defaults "extensions/*" "org-roam-pkg.el") :host github :repo "org-roam/org-roam") "emacsql" (emacsql :type git :files (:defaults "README.md" "sqlite" "emacsql-pkg.el") :host github :repo "magit/emacsql") "denote-explore" (denote-explore :type git :files (:defaults "*.html" "denote-explore-pkg.el") :host github :repo "pprevos/denote-explore") "denote" nil "denote-regexp" (denote-regexp :type git :host sourcehut :repo "swflint/denote-regexp") "consult-denote" nil "consult" (consult :type git :host github :repo "minad/consult") "cdlatex" (cdlatex :type git :host github :repo "cdominik/cdlatex") "org-fragtog" (org-fragtog :type git :host github :repo "io12/org-fragtog") "auctex" nil "pdf-tools" (pdf-tools :type git :files (:defaults "README" ("build" "Makefile") ("build" "server") "pdf-tools-pkg.el") :host github :repo "vedang/pdf-tools") "tablist" (tablist :type git :host github :repo "emacsorphanage/tablist") "let-alist" nil)) gnu-elpa-mirror #s(hash-table test equal data (version 3 "cl-lib" nil "pulsar" (pulsar :type git :host github :repo "emacs-straight/pulsar" :files ("*" (:exclude ".git"))) "spinner" (spinner :type git :host github :repo "emacs-straight/spinner" :files ("*" (:exclude ".git"))) "eldoc" (eldoc :type git :host github :repo "emacs-straight/eldoc" :files ("*" (:exclude ".git"))) "seq" (seq :type git :host github :repo "emacs-straight/seq" :files ("*" (:exclude ".git"))) "compat" (compat :type git :host github :repo "emacs-straight/compat" :files ("*" (:exclude ".git"))) "svg" (svg :type git :host github :repo "emacs-straight/svg" :files ("*" (:exclude ".git"))) "org-transclusion" (org-transclusion :type git :host github :repo "emacs-straight/org-transclusion" :files ("*" (:exclude ".git"))) "denote" (denote :type git :host github :repo "emacs-straight/denote" :files ("*" (:exclude ".git"))) "consult-denote" (consult-denote :type git :host github :repo "emacs-straight/consult-denote" :files ("*" (:exclude ".git"))) "auctex" (auctex :type git :host github :repo "emacs-straight/auctex" :files ("*" (:exclude ".git"))) "let-alist" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git"))))) nongnu-elpa #s(hash-table test equal data (version (5 "https://github.com/emacsmirror/nongnu_elpa.git") "cl-lib" nil)) el-get #s(hash-table test equal data (version 2 "cl-lib" nil)) emacsmirror-mirror #s(hash-table test equal data (version 2 "cl-lib" nil))))
+
+("let-alist" "tablist" "pdf-tools" "auctex" "org-fragtog" "cdlatex" "emacsql" "org-roam" "consult" "consult-denote" "denote-regexp" "denote-explore" "denote" "org-transclusion" "writeroom-mode" "visual-fill-column" "modus-themes" "pcre2el" "with-editor" "transient" "magit-section" "llama" "cond-let" "magit" "hl-todo" "async" "magit-todos" "svg" "org-timeblock" "compat" "projectile" "seq" "flycheck" "which-key" "yaml" "lsp-docker" "posframe" "cfrs" "hydra" "pfuture" "ace-window" "treemacs" "lsp-treemacs" "bui" "eldoc" "lv" "markdown-mode" "spinner" "ht" "s" "f" "lsp-mode" "dash" "dap-mode" "evil-nerd-commenter" "auto-yasnippet" "yasnippet" "move-text" "multiple-cursors" "avy" "switch-window" "pulsar" "evil-surround" "evil-collection" "annalist" "nadvice" "goto-chg" "cl-lib" "evil" "org-superstar" "leaf-keywords" "leaf" "org" "emacsmirror-mirror" "el-get" "nongnu-elpa" "gnu-elpa-mirror" "melpa" "org-elpa" "emacs" "straight")
 
 t
