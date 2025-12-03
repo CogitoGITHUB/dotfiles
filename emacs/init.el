@@ -731,18 +731,21 @@
   (setq pdf-view-display-size 'fit-page))
 
 (defun shapeshifter-magit-commit-with-message ()
-  "Prompt for a commit message on save and commit without opening the commit buffer."
+  "Commit on save using Magit, only once, only if real changes exist."
   (when (and (buffer-file-name)
-             (vc-root-dir)
-             (y-or-n-p "Commit this change with Magit? "))
-    (let* ((default-directory (vc-root-dir))
-           (msg (read-string "Commit message: ")))
-      ;; stage modified files
-      (magit-stage-modified)
-      ;; perform commit non-interactively with message
-      (magit-run-git "commit" "-m" msg)
-      (message "Committed: %s" msg))))
-      
+             (vc-root-dir))
+    ;; Refresh Magit so its modified-state is accurate.
+    (magit-refresh-all)
+    ;; Now check if there is anything to commit.
+    (when (magit-anything-modified-p)
+      (when (y-or-n-p "Commit this change with Magit? ")
+        (let* ((default-directory (vc-root-dir))
+               (msg (read-string "Commit message: ")))
+          (magit-stage-modified)
+          (magit-run-git "commit" "-m" msg)
+          (magit-refresh)
+          (message "Committed: %s" msg))))))
+
 (add-hook 'after-save-hook #'shapeshifter-magit-commit-with-message)
 
 ;; (define-minor-mode shapeshifter-commit-on-save-mode
