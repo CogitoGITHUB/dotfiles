@@ -50,6 +50,26 @@
 (setq-default mode-line-format nil)
 (setq mode-line-format nil)
 
+(leaf writeroom-mode
+  :straight (writeroom-mode
+             :type git
+             :host github
+             :repo "joostkremers/writeroom-mode")
+  :global-minor-mode global-writeroom-mode
+  :after visual-fill-column
+  :config
+  ;; No fullscreen or rewriting windows
+  (setq writeroom-global-effects nil
+        writeroom-maximize-window nil
+        writeroom-mode-line nil
+        writeroom-bottom-divider-width 0)
+
+  ;; Evil-width precision bindings
+  (with-eval-after-load 'writeroom-mode
+    (define-key writeroom-mode-map (kbd "C-<") #'writeroom-decrease-width)
+    (define-key writeroom-mode-map (kbd "C->") #'writeroom-increase-width)
+    (define-key writeroom-mode-map (kbd "C-=") #'writeroom-adjust-width)))
+
 (leaf org-superstar
   :straight (org-superstar
              :type git
@@ -92,33 +112,47 @@
   :config
   (defun shapeshift/apply-fonts ()
     (when (display-graphic-p)
-
       ;; ---------------------------------
       ;; PURE CALLIGRAPHY – THE ONE FONT
       ;; ---------------------------------
-      (when (find-font (font-spec :name "Tangerine"))
-        (set-face-attribute 'default nil
-                            :family "Tangerine"
-                            :height 110)
-        (set-face-attribute 'variable-pitch nil
-                            :family "Tangerine"
-                            :height 110)
-        (set-face-attribute 'fixed-pitch nil
-                            :family "Tangerine"
-                            :height 110)))
-
+      (condition-case nil
+          (progn
+            ;; Set default font
+            (set-face-attribute 'default nil
+                                :family "Tangerine"
+                                :height 110)
+            (set-face-attribute 'variable-pitch nil
+                                :family "Tangerine"
+                                :height 110)
+            (set-face-attribute 'fixed-pitch nil
+                                :family "Tangerine"
+                                :height 110)
+            (message "Tangerine font applied successfully"))
+        (error (message "Failed to apply Tangerine font - is it installed?")))
+      
       ;; ---------------------------------
       ;; LIVING UNICODE FALLBACKS
       ;; ---------------------------------
-      (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend)
-      (set-fontset-font t 'unicode "Noto Sans" nil 'append)
-      (set-fontset-font t 'unicode "Noto Sans Mono" nil 'append)
-      (set-fontset-font t 'unicode "Noto Color Emoji" nil 'append)))
-
+      (condition-case nil
+          (progn
+            (set-fontset-font t 'unicode "Noto Sans Symbols" nil 'prepend)
+            (set-fontset-font t 'unicode "Noto Sans" nil 'append)
+            (set-fontset-font t 'unicode "Noto Sans Mono" nil 'append)
+            (set-fontset-font t 'unicode "Noto Color Emoji" nil 'append))
+        (error (message "Some Noto fonts may not be available")))))
+  
+  ;; Apply on startup
+  (add-hook 'after-init-hook #'shapeshift/apply-fonts)
+  
+  ;; Apply when new frames are created
   (add-hook 'after-make-frame-functions
-            (lambda (_frame) (shapeshift/apply-fonts)))
-
-  (shapeshift/apply-fonts)
+            (lambda (_frame) 
+              (with-selected-frame _frame
+                (shapeshift/apply-fonts))))
+  
+  ;; Apply immediately if already in graphical mode
+  (when (display-graphic-p)
+    (shapeshift/apply-fonts)))
 
 (leaf evil
   :straight (evil :type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t)
@@ -447,6 +481,22 @@
                               "~/Projects/"))
   (setq org-timeblock-span 3))
 
+(leaf orgit-file
+  :straight (orgit-file
+             :type git
+             :host github
+             :repo "gggion/orgit-file")
+  :after (orgit magit org)
+
+  :config
+  ;; Now variables exist — safe to set
+  (setq orgit-file-link-to-file-use-orgit 'blob-buffers-only)
+  (setq orgit-file-abbreviate-revisions t)
+  (setq orgit-file-export-text-fragments t)
+
+  ;; Keybinding
+  (define-key global-map (kbd "C-c g l") #'orgit-file-store))
+
 (leaf magit-todos
   :straight (magit-todos
              :type git
@@ -482,31 +532,67 @@
   (load-theme 'modus-operandi :no-confirm)
 
   (defun shapeshift/monochrome-world ()
-    ;; canvas
+    "Pure black-on-white monochrome for everything."
+    
+    ;; Canvas
     (set-face-attribute 'default nil
                         :foreground "#000000"
                         :background "#ffffff")
+    (set-face-attribute 'fringe nil :background "#ffffff" :foreground "#000000")
+    (set-face-attribute 'mode-line nil :background "#ffffff" :foreground "#000000" :box nil)
+    (set-face-attribute 'mode-line-inactive nil :background "#ffffff" :foreground "#000000" :box nil)
 
-    ;; org hierarchy — titanic black mono
+    ;; Org hierarchy
     (set-face-attribute 'org-document-title nil :foreground "#000000" :weight 'bold :height 2.0 :inherit nil)
     (set-face-attribute 'org-level-1 nil :foreground "#000000" :weight 'bold :height 1.80 :inherit nil)
     (set-face-attribute 'org-level-2 nil :foreground "#000000" :weight 'bold :height 1.60 :inherit nil)
     (set-face-attribute 'org-level-3 nil :foreground "#000000" :weight 'bold :height 1.40 :inherit nil)
+    (set-face-attribute 'org-level-4 nil :foreground "#000000" :weight 'bold :height 1.20 :inherit nil)
+    (set-face-attribute 'org-level-5 nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'org-level-6 nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'org-level-7 nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'org-level-8 nil :foreground "#000000" :weight 'bold :inherit nil)
 
-    ;; links stripped
+    ;; Org elements
     (set-face-attribute 'org-link nil :underline nil :inherit nil :foreground "#000000")
+    (set-face-attribute 'org-block nil :background "#f5f5f5" :foreground "#000000")
+    (set-face-attribute 'org-block-begin-line nil :foreground "#000000" :background "#f5f5f5")
+    (set-face-attribute 'org-block-end-line nil :foreground "#000000" :background "#f5f5f5")
+    (set-face-attribute 'org-code nil :foreground "#000000" :background "#f5f5f5")
+    (set-face-attribute 'org-verbatim nil :foreground "#000000" :background "#f5f5f5")
+    (set-face-attribute 'org-meta-line nil :foreground "#000000")
+    (set-face-attribute 'org-todo nil :foreground "#000000" :weight 'bold)
+    (set-face-attribute 'org-done nil :foreground "#000000" :weight 'bold)
 
-    ;; syntax, pure black
+    ;; Code syntax highlighting
     (dolist (face '(font-lock-comment-face
                     font-lock-string-face
                     font-lock-keyword-face
                     font-lock-function-name-face
                     font-lock-variable-name-face
                     font-lock-type-face
-                    font-lock-constant-face))
-      (set-face-attribute face nil :foreground "#000000"))
+                    font-lock-constant-face
+                    font-lock-builtin-face
+                    font-lock-warning-face
+                    font-lock-doc-face))
+      (set-face-attribute face nil :foreground "#000000" :inherit nil))
 
-    ;; Dired faces — only apply after Dired loads
+    ;; LaTeX faces
+    (with-eval-after-load 'tex-mode
+      (dolist (face '(font-latex-math-face
+                      font-latex-script-char-face
+                      font-latex-string-face
+                      font-latex-warning-face
+                      font-latex-sedate-face
+                      font-latex-sectioning-0-face
+                      font-latex-sectioning-1-face
+                      font-latex-sectioning-2-face
+                      font-latex-sectioning-3-face
+                      font-latex-sectioning-4-face
+                      font-latex-sectioning-5-face))
+        (set-face-attribute face nil :foreground "#000000" :inherit nil)))
+
+    ;; Dired
     (with-eval-after-load 'dired
       (dolist (face '(dired-directory
                       dired-symlink
@@ -515,42 +601,145 @@
                       dired-flagged
                       dired-warning
                       dired-perm-write
-                      dired-special))
-        (set-face-attribute face nil :foreground "#000000" :weight 'bold :inherit nil))))
+                      dired-special
+                      dired-header
+                      dired-ignored))
+        (set-face-attribute face nil :foreground "#000000" :weight 'bold :inherit nil)))
+
+    ;; Magit
+    (with-eval-after-load 'magit
+      (dolist (face '(magit-section-heading
+                      magit-section-highlight
+                      magit-branch-local
+                      magit-branch-remote
+                      magit-branch-current
+                      magit-hash
+                      magit-tag
+                      magit-diff-added
+                      magit-diff-removed
+                      magit-diff-added-highlight
+                      magit-diff-removed-highlight
+                      magit-diff-context
+                      magit-diff-context-highlight
+                      magit-diff-hunk-heading
+                      magit-diff-hunk-heading-highlight
+                      magit-diff-file-heading
+                      magit-diff-file-heading-highlight
+                      magit-log-author
+                      magit-log-date
+                      magit-log-graph
+                      magit-process-ok
+                      magit-process-ng
+                      magit-signature-good
+                      magit-signature-bad
+                      magit-signature-untrusted
+                      magit-cherry-equivalent
+                      magit-cherry-unmatched))
+        (when (facep face)
+          (set-face-attribute face nil :foreground "#000000" :background "#ffffff" :inherit nil))))
+
+    ;; PDF-tools
+    (with-eval-after-load 'pdf-view
+      (setq pdf-view-midnight-colors '("#000000" . "#ffffff")))
+
+    ;; Line numbers
+    (when (facep 'line-number)
+      (set-face-attribute 'line-number nil :foreground "#000000" :background "#ffffff")
+      (set-face-attribute 'line-number-current-line nil :foreground "#000000" :background "#f5f5f5" :weight 'bold))
+
+    ;; Highlighting
+    (with-eval-after-load 'hl-line
+      (set-face-attribute 'hl-line nil :background "#f5f5f5" :inherit nil))
+    (set-face-attribute 'region nil :background "#e0e0e0" :foreground "#000000")
+    (set-face-attribute 'highlight nil :background "#e0e0e0" :foreground "#000000")
+
+    ;; Minibuffer
+    (set-face-attribute 'minibuffer-prompt nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'completions-annotations nil :foreground "#000000" :inherit nil)
+    (set-face-attribute 'completions-common-part nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'completions-first-difference nil :foreground "#000000" :weight 'bold :inherit nil)
+    (set-face-attribute 'shadow nil :foreground "#000000" :inherit nil)
+    (set-face-attribute 'help-key-binding nil :foreground "#000000" :weight 'bold :inherit nil)
+    (when (facep 'completions-highlight)
+      (set-face-attribute 'completions-highlight nil :foreground "#000000" :background "#f5f5f5" :inherit nil))
+    (with-eval-after-load 'vertico
+      (dolist (face '(vertico-current
+                      vertico-group-title
+                      vertico-group-separator
+                      vertico-multiline))
+        (when (facep face)
+          (set-face-attribute face nil :foreground "#000000" :background "#f5f5f5" :inherit nil))))
+    (with-eval-after-load 'orderless
+      (set-face-attribute 'orderless-match-face-0 nil :foreground "#000000" :weight 'bold :inherit nil)
+      (set-face-attribute 'orderless-match-face-1 nil :foreground "#000000" :weight 'bold :inherit nil)
+      (set-face-attribute 'orderless-match-face-2 nil :foreground "#000000" :weight 'bold :inherit nil)
+      (set-face-attribute 'orderless-match-face-3 nil :foreground "#000000" :weight 'bold :inherit nil))
+    (with-eval-after-load 'ivy
+      (dolist (face '(ivy-current-match
+                      ivy-minibuffer-match-face-1
+                      ivy-minibuffer-match-face-2
+                      ivy-minibuffer-match-face-3
+                      ivy-minibuffer-match-face-4
+                      ivy-action
+                      ivy-highlight-face
+                      ivy-remote
+                      ivy-subdir
+                      ivy-virtual
+                      ivy-confirm-face
+                      ivy-match-required-face))
+        (when (facep face)
+          (set-face-attribute face nil :foreground "#000000" :weight 'bold :inherit nil))))
+    (with-eval-after-load 'helm
+      (dolist (face '(helm-selection
+                      helm-match
+                      helm-source-header
+                      helm-visible-mark
+                      helm-candidate-number
+                      helm-separator
+                      helm-M-x-key
+                      helm-buffer-directory
+                      helm-buffer-file
+                      helm-buffer-process
+                      helm-ff-directory
+                      helm-ff-file
+                      helm-grep-match))
+        (when (facep face)
+          (set-face-attribute face nil :foreground "#000000" :background "#ffffff" :weight 'bold :inherit nil))))
+
+    ;; Org-roam-ui sync
+    (when (and (featurep 'org-roam-ui) org-roam-ui-mode)
+      (org-roam-ui--update-theme)))
 
   ;; Apply immediately
   (shapeshift/monochrome-world)
 
-  ;; persist after theme reload
+  ;; Persist after theme reload
   (advice-add 'load-theme :after
               (lambda (&rest _) (shapeshift/monochrome-world))))
 
-(leaf visual-fill-column
-  :straight (visual-fill-column
+;; Ensure org-roam-ui picks up the monochrome theme
+(leaf org-roam-ui
+  :straight (org-roam-ui
              :type git
              :host github
-             :repo "joostkremers/visual-fill-column")
-  :require visual-fill-column)
-
-(leaf writeroom-mode
-  :straight (writeroom-mode
-             :type git
-             :host github
-             :repo "joostkremers/writeroom-mode")
-  :global-minor-mode global-writeroom-mode
-  :after visual-fill-column
+             :repo "org-roam/org-roam-ui"
+             :files ("*.el" "out"))
+  :after org-roam
   :config
-  ;; No fullscreen or rewriting windows
-  (setq writeroom-global-effects nil
-        writeroom-maximize-window nil
-        writeroom-mode-line nil
-        writeroom-bottom-divider-width 0)
-
-  ;; Evil-width precision bindings
-  (with-eval-after-load 'writeroom-mode
-    (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
-    (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
-    (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width)))
+  (require 'hl-line)
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t)
+  
+  (add-hook 'after-init-hook #'org-roam-ui-mode)
+  
+  (defun my/org-roam-ui-sync-theme (&rest _)
+    (when (and (featurep 'org-roam-ui) org-roam-ui-mode)
+      (org-roam-ui--update-theme)))
+  
+  (advice-add 'load-theme :after #'my/org-roam-ui-sync-theme)
+  (advice-add 'shapeshift/monochrome-world :after #'my/org-roam-ui-sync-theme))
 
 (leaf org-transclusion
   :straight (org-transclusion
@@ -761,21 +950,29 @@
   ;; Optional: narrow by keyword/tag quickly
   (global-set-key (kbd "C-c d F") #'consult-denote-file))
 
+;; Ensure org-roam-ui picks up the monochrome theme
 (leaf org-roam-ui
   :straight (org-roam-ui
              :type git
              :host github
              :repo "org-roam/org-roam-ui"
              :files ("*.el" "out"))
-  :after org-roam  ;; ensure Roam loads first
+  :after org-roam
   :config
+  (require 'hl-line)
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t)
-
-  ;; open UI immediately when Emacs finishes startup
-  (add-hook 'emacs-startup-hook #'org-roam-ui-mode))
+  
+  (add-hook 'after-init-hook #'org-roam-ui-mode)
+  
+  (defun my/org-roam-ui-sync-theme (&rest _)
+    (when (and (featurep 'org-roam-ui) org-roam-ui-mode)
+      (org-roam-ui--update-theme)))
+  
+  (advice-add 'load-theme :after #'my/org-roam-ui-sync-theme)
+  (advice-add 'shapeshift/monochrome-world :after #'my/org-roam-ui-sync-theme))
 
 ;;──────────────────────────────────────────────────────────
 ;; LaTeX Manuscript Mode (Safe, Non-recursive, Precise)
@@ -912,37 +1109,56 @@
   (define-key shapeshifter-leader-map (kbd "s") #'consult-ripgrep)
   (define-key shapeshifter-leader-map (kbd "l") #'consult-line))
 
-;; ───────────────────────────────────────────────────────────────
-;; ALL THE ICONS — full Git install, no MELPA, no missing files
-;; ───────────────────────────────────────────────────────────────
-
-(leaf all-the-icons
-  :straight (all-the-icons
-             :type git
-             :host github
-             :repo "domtronn/all-the-icons.el")
+(leaf shapeback
   :config
-  ;; Install the fonts automatically if missing
-  (unless (file-exists-p (expand-file-name "all-the-icons.ttf"
-                                           (concat user-emacs-directory "fonts/")))
-    (all-the-icons-install-fonts t)))
+  ;; Base directory for all ephemeral Emacs files
+  (let* ((base "~/.config/emacs/")
+         (backup-dir   (expand-file-name "backups/" base))
+         (autosave-dir (expand-file-name "auto-saves/" base))
+         (tramp-dir    (expand-file-name "tramp-saves/" base))
+         (dirs (list backup-dir autosave-dir tramp-dir)))
 
-(leaf all-the-icons-dired
-  :straight (all-the-icons-dired
+    ;; Ensure directories exist
+    (dolist (dir dirs)
+      (unless (file-directory-p dir)
+        (make-directory dir t)))
+
+    ;; Backup system
+    (setq backup-directory-alist `((".*" . ,backup-dir))
+          make-backup-files t
+          version-control t
+          kept-new-versions 6
+          kept-old-versions 2
+          delete-old-versions t)
+
+    ;; Auto-save system
+    (setq auto-save-file-name-transforms `((".*" ,autosave-dir t))
+          auto-save-list-file-prefix (concat autosave-dir ".saves-"))
+
+    ;; TRAMP safety
+    (setq tramp-backup-directory-alist `((".*" . ,backup-dir))
+          tramp-auto-save-directory tramp-dir)))
+
+(leaf speed-type
+  :straight (speed-type
              :type git
              :host github
-             :repo "wyuenho/all-the-icons-dired")
-  :hook (dired-mode . all-the-icons-dired-mode))
+             :repo "dakra/speed-type")
+  :after evil
 
-(leaf all-the-icons-completion
-  :straight (all-the-icons-completion
-             :type git
-             :host github
-             :repo "iyefrat/all-the-icons-completion")
-  :after (all-the-icons marginalia)
-  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
   :config
-  (all-the-icons-completion-mode 1))
+  ;; Directory for speed-type corpuses.
+  (let ((speed-dir "~/.config/emacs/lib/speed-type"))
+    (unless (file-directory-p speed-dir)
+      (make-directory speed-dir t))
+    ;; Default corpus file; you can replace or add more later.
+    (setq speed-type-gb-file (expand-file-name "gb.txt" speed-dir)))
+
+  ;; Evil leader bindings — "T" for typing drills
+  (define-key evil-normal-state-map (kbd "SPC T t") #'speed-type-text)
+  (define-key evil-normal-state-map (kbd "SPC T b") #'speed-type-buffer)
+  (define-key evil-normal-state-map (kbd "SPC T r") #'speed-type-region)
+  (define-key evil-normal-state-map (kbd "SPC T d") #'speed-type-debug))
 
 (defun live-shaping/auto-tangle-and-reload ()
   "Auto-tangle and reload when this Org file tangles to init.el."

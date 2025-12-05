@@ -8,9 +8,9 @@
 #+LATEX_HEADER: \usepackage{listings}
 #+OPTIONS: toc:nil num:nil
 
-*  Qustios
+*  Questions
 for the next chapter
-- What is the shape of time?
+  What is the shape of time?
 - Can a mind become a manifold?
 - What structure survives collapse?
 * Code as incantation — Emacs Lisp

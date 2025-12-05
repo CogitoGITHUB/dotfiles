@@ -1,0 +1,43 @@
+* {
+  all: unset;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+}
+
+.bar {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0px 20px;
+}
+
+.workspaces {
+  padding: 5px 10px;
+}
+
+.workspace-button {
+  color: #000000;
+  background-color: transparent;
+  padding: 5px 15px;
+  border-radius: 4px;
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.workspace-button-focused {
+  color: #000000;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 5px 15px;
+  border-radius: 4px;
+  opacity: 1;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+
+.workspace-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.spacer {
+  min-width: 10px;
+}

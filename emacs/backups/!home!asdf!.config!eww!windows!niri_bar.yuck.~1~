@@ -1,0 +1,9 @@
+(defwindow niri-bar
+  :monitor 0
+  :stacking "fg"
+  :geometry "0x0"
+  :exclusive true
+  (centerbox :class "bar"
+    (niri-workspaces)
+    ))
+

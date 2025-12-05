@@ -1,0 +1,41 @@
+;; Variables
+(defvar workspaces "[\"I\", \"II\", \"III\", \"IV\", \"V\"]")
+
+;; Workspace widget
+(defwidget workspaces []
+  (box :class "workspaces"
+       :orientation "h"
+       :space-evenly false
+       :halign "center"
+       :spacing 20
+    (for ws in workspaces
+      (button :class "workspace-button"
+              :onclick "echo ${ws}"
+        ws))))
+
+;; Main bar
+(defwidget bar []
+  (centerbox :class "bar"
+             :orientation "h"
+    (box :halign "start" :spacing 10
+      (label :text "" :class "spacer"))
+    
+    (box :halign "center"
+      (workspaces))
+    
+    (box :halign "end" :spacing 10
+      (label :text "" :class "spacer"))))
+
+;; Window definition
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "30px"
+                      :anchor "top center")
+  :stacking "fg"
+  :exclusive true
+  :focusable false
+  (bar))

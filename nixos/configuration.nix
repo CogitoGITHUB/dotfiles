@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, noctalia, ... }:
 
 {
   imports = [
@@ -6,13 +6,12 @@
   ];
 
   # --- FLAKE ENABLEMENT ------------------------------------------------------
-  nix = {
-    package = pkgs.nixFlakes;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
 
+nix = {
+  extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+};
   # --- HOST ------------------------------------------------------------------
   networking.hostName = "shapeless";  # rename from "nixos"
   networking.networkmanager.enable = true;
@@ -100,8 +99,22 @@
   # --- OPTIONAL PROGRAMS -----------------------------------------------------
   programs.steam.enable = true;
 
+
+
+  # Required services for Noctalia features
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
+
+
+
+
+
   # --- PACKAGES --------------------------------------------------------------
   environment.systemPackages = with pkgs; [
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+
+
     qemu
 
     waydroid-nftables
@@ -111,8 +124,6 @@
     krita
 
     xwayland-satellite
-    eww
-
     tmux
     qutebrowser
     xdg-desktop-portal
@@ -162,7 +173,7 @@
     mpv
     mpvpaper
     yt-dlp
-
+    wget
     texlive.combined.scheme-full
     texlivePackages.latexmk
     ghostscript

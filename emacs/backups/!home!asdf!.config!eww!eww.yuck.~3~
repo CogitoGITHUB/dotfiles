@@ -1,0 +1,49 @@
+;; Provide wslist to the widget using `with`
+(defwidget workspaces-wrapper []
+  (with
+    (wslist (poll :interval "300ms"
+                  :command "~/.config/eww/scripts/niri_workspaces.nu"))
+    (workspaces wslist)))
+
+
+;; Dynamic Niri workspaces
+(defwidget workspaces [wslist]
+  (box :class "workspaces"
+       :orientation "h"
+       :spacing 20
+    (for w in wslist
+      (button
+        :class (if w.focused "workspace-button-focused" "workspace-button")
+        :onclick "niri msg focus-workspace ${w.name}"
+        w.name))))
+
+
+;; Main bar
+(defwidget bar []
+  (centerbox :class "bar"
+             :orientation "h"
+    ;; left side (empty for now)
+    (box :halign "start" :spacing 10
+      (label :text "" :class "spacer"))
+    
+    ;; center → dynamic workspaces
+    (box :halign "center"
+      (workspaces))
+    
+    ;; right side (empty for now)
+    (box :halign "end" :spacing 10
+      (label :text "" :class "spacer"))))
+
+;; Window definition
+(defwindow bar
+  :monitor 0
+  :windowtype "dock"
+  :geometry (geometry :x "0%"
+                      :y "0%"
+                      :width "100%"
+                      :height "30px"
+                      :anchor "top center")
+  :stacking "fg"
+  :exclusive true
+  :focusable false
+  (bar))

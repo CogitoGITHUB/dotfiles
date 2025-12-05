@@ -2,42 +2,30 @@
 ;; --------------------------------------------------------------------------
 ;; Desktop File for Emacs
 ;; --------------------------------------------------------------------------
-;; Created Wed Dec  3 21:41:01 2025
+;; Created Fri Dec  5 22:09:09 2025
 ;; Desktop file format version 208
 ;; Emacs version 30.2
 
 ;; Global section:
-(setq desktop-saved-frameset [frameset 1 (26928 37453 608231 585000) (desktop . "208") "asdf@nixos" nil nil ((((minibuffer . t) (tty-type . "xterm-256color") (tty . "/dev/tty") (display-type . color) (background-mode . light) (scroll-bar-foreground . "#9f9f9f") (scroll-bar-background . "#f2f2f2") (cursor-color . "#000000") (menu-bar-lines . 0) (tool-bar-lines . 0) (vertical-scroll-bars) (right-fringe . 0) (left-fringe . 0) (background-color . "#ffffff") (foreground-color . "#000000") (frameset--id . "4140-036D-5896-ACAC") (frameset--mini t) (font . "tty") (height . 51) (width . 164) (modeline . t) (unsplittable) (tab-bar-lines . 0)) ((min-height . 4) (min-width . 10) (min-height-ignore . 1) (min-width-ignore . 2) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 4) (min-pixel-width . 10) (min-pixel-height-ignore . 1) (min-pixel-width-ignore . 2) (min-pixel-height-safe . 1) (min-pixel-width-safe . 2)) leaf (pixel-width . 164) (pixel-height . 50) (total-width . 164) (total-height . 50) (normal-height . 1.0) (normal-width . 1.0) (buffer "[D] Emacs manual" (selected . t) (hscroll . 0) (fringes 0 0 nil nil) (margins 42 . 42) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 1) (start . 1)) (prev-buffers ("denote" 1 117) ("*scratch*" 1 1))))])
+(setq desktop-saved-frameset [frameset 1 (26931 15333 61445 202000) (desktop . "208") "asdf@shapeless" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font . "-PfEd-DejaVu Sans-regular-normal-normal-*-15-*-*-*-*-0-iso10646-1") (border-width . 0) (internal-border-width . 0) (child-frame-border-width) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#000000") (background-color . "#ffffff") (mouse-color . "black") (border-color . "black") (screen-gamma) (line-spacing) (left-fringe . 0) (right-fringe . 0) (no-special-glyphs) (scroll-bar-foreground . "#9f9f9f") (scroll-bar-background . "#f2f2f2") (menu-bar-lines . 0) (tab-bar-lines . 0) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 16) (scroll-bar-height . 16) (alpha) (alpha-background) (no-focus-on-map) (no-accept-focus) (fullscreen . fullheight) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . light) (cursor-color . "#000000") (font-parameter) (sticky) (environment) (last-focus-update . t) (frameset--id . "54D1-4B7C-40A0-E0B7") (frameset--mini t . t) (height . 54) (width . 185) (modeline . t) (unsplittable) (left . 0) (top . 0) (icon-name) (display . "wayland-1") (explicit-name)) ((min-height . 4) (min-width . 10) (min-height-ignore . 1) (min-width-ignore . 2) (min-height-safe . 1) (min-width-safe . 2) (min-pixel-height . 72) (min-pixel-width . 90) (min-pixel-height-ignore . 18) (min-pixel-width-ignore . 18) (min-pixel-height-safe . 18) (min-pixel-width-safe . 18)) leaf (pixel-width . 1672) (pixel-height . 971) (total-width . 186) (total-height . 53) (normal-height . 1.0) (normal-width . 1.0) (buffer "[D] Emacs manual" (selected . t) (hscroll . 0) (fringes 0 0 nil nil) (margins nil) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 1) (start . 1)) (prev-buffers ("*scratch*" 1 1))))])
 (setq desktop-missing-file-warning nil)
 (setq tags-file-name nil)
 (setq tags-table-list nil)
 (setq search-ring nil)
 (setq regexp-search-ring nil)
-(setq register-alist '((48 . "") (106)))
-(setq file-name-history '("~/.config/emacs/" "~/denote/" "~/.config/emacs/" "~/.config/emacs/templates/journal.org" "~/.config/emacs/templates/todo.org" "~/.config/emacs/templates/meeting.org" "~/.config/emacs/templates/note.org" "~/.config/emacs/" "~/denote/aoe/" "~/.config/emacs/" "~/denote/aoe/" "~/.config/emacs/" "~/.config/.git/COMMIT_EDITMSG" "~/.config/emacs/" "~/"))
+(setq register-alist nil)
+(setq file-name-history '("~/.config/emacs/" "~/"))
 
 ;; Buffer section -- buffers listed in same order as in buffer list:
-(desktop-create-buffer 208
-  nil
-  "denote"
-  'dired-mode
-  '(evil-local-mode font-lock-mode pulsar-mode evil-collection-unimpaired-mode evil-surround-mode)
-  117
-  '(117 nil)
-  t
-  '("/home/asdf/denote/")
-  '((buffer-display-time 26928 37442 597629 237000) (overwrite-mode))
-  '((mark-ring (332 332 1 1 1 1 1 1 1 1 1 1 1 1 1))))
-
 (desktop-create-buffer 208
   "/home/asdf/.config/emacs/20251203T160728==emacs--emacs-manual__emacs.org"
   "[D] Emacs manual"
   'org-mode
-  '(org-superstar-mode font-lock-mode evil-local-mode evil-collection-unimpaired-mode evil-surround-mode visual-fill-column-mode writeroom-mode pulsar-mode org-transclusion-mode org-beamer-mode)
+  '(org-superstar-mode pulsar-mode font-lock-mode evil-local-mode evil-collection-unimpaired-mode evil-surround-mode org-transclusion-mode org-beamer-mode)
   1
   '(nil nil)
   nil
   nil
-  '((tab-width . 8) (buffer-display-time 26928 37448 99076 90000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
+  '((tab-width . 8) (buffer-display-time 26931 15264 526569 520000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (truncate-lines . t))
   '((mark-ring nil)))
 

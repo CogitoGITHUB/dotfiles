@@ -28,3 +28,7 @@ source ~/.zoxide.nu
 # }
 
 # start_zellij
+
+
+
+# maybe : https://github.com/lasantosr/intelli-shell

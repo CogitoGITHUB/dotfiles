@@ -2632,3 +2632,5 @@ curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
 source ~/.local/share/atuin/init.nu
 cdd
+mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
+source ~/.local/share/atuin/init.nu<\n>
