@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/evil-collection/modes/hideshow/evil-collection-hideshow.el

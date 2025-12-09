@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/speed-type/test-speed-type.el

@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/all-the-icons-completion/all-the-icons-completion.el

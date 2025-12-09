@@ -1,0 +1,1 @@
+/home/asdf/.config/emacs/straight/repos/treemacs/src/scripts/treemacs-find-ignored-files.py
