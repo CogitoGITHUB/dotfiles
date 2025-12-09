@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/lsp-mode/clients/lsp-qml.el

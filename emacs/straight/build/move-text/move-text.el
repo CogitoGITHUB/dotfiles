@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/move-text/move-text.el

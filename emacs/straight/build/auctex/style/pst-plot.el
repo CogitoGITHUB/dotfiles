@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/auctex/style/pst-plot.el

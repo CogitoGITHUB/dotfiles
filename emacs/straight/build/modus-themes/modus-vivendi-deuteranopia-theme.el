@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/modus-themes/modus-vivendi-deuteranopia-theme.el

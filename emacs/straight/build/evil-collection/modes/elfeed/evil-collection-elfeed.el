@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/evil-collection/modes/elfeed/evil-collection-elfeed.el

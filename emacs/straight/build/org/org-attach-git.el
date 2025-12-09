@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/org/lisp/org-attach-git.el

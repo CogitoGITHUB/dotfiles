@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/svg/.github/PULL_REQUEST_TEMPLATE.md
