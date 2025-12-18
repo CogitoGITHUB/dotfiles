@@ -1,0 +1,29 @@
+* Writeroom Mode
+:PROPERTIES:
+:PACKAGE:  writeroom-mode
+:STRAIGHT: (writeroom-mode :type git :host github :repo "joostkremers/writeroom-mode")
+:AFTER:    visual-fill-column
+:END:
+
+** Global Minor Mode :config:
+#+begin_src emacs-lisp
+(global-writeroom-mode 1)
+#+end_src
+
+** Settings :config:
+#+begin_src emacs-lisp
+;; No fullscreen or rewriting windows
+(setq writeroom-global-effects nil
+      writeroom-maximize-window nil
+      writeroom-mode-line nil
+      writeroom-bottom-divider-width 0)
+#+end_src
+
+** Keybindings :config:
+#+begin_src emacs-lisp
+;; Evil-width precision bindings
+(with-eval-after-load 'writeroom-mode
+  (define-key writeroom-mode-map (kbd "C-<") #'writeroom-decrease-width)
+  (define-key writeroom-mode-map (kbd "C->") #'writeroom-increase-width)
+  (define-key writeroom-mode-map (kbd "C-=") #'writeroom-adjust-width))
+#+end_src

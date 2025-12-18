@@ -1,0 +1,8 @@
+{
+	"airGapped": false,
+	"__internal__": {
+		"migrations": {
+			"version": "0.43.6"
+		}
+	}
+}

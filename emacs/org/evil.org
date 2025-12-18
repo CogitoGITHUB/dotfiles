@@ -1,0 +1,120 @@
+* Evil — the Dvorak HTNS blade
+:PROPERTIES:
+:PACKAGE:  evil
+:STRAIGHT: (evil :type git :host github :repo "emacs-evil/evil")
+:END:
+
+** Evil Base Configuration :init:
+#+begin_src emacs-lisp
+(setq evil-want-keybinding nil
+      evil-want-C-u-scroll t)
+#+end_src
+
+** Enable Evil Mode :config:
+#+begin_src emacs-lisp
+(evil-mode 1)
+#+end_src
+
+** Dvorak HTNS Movement :config:
+#+begin_src emacs-lisp
+;; directional h t n s
+(define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
+(define-key evil-normal-state-map (kbd "t") 'evil-next-line)
+(define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
+(define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
+(define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
+(define-key evil-motion-state-map (kbd "t") 'evil-next-line)
+(define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
+(define-key evil-motion-state-map (kbd "s") 'evil-forward-char)
+#+end_src
+
+** Leader Key Setup :config:
+#+begin_src emacs-lisp
+;; leader
+(defvar shapeshifter-leader-map (make-sparse-keymap))
+(define-key evil-normal-state-map (kbd "SPC") shapeshifter-leader-map)
+(define-key evil-motion-state-map (kbd "SPC") shapeshifter-leader-map)
+#+end_src
+
+** Leader Bindings :config:
+#+begin_src emacs-lisp
+;; leader bindings
+(define-key shapeshifter-leader-map (kbd "f") #'find-file)
+(define-key shapeshifter-leader-map (kbd "s") #'save-buffer)
+(define-key shapeshifter-leader-map (kbd "g") #'magit-status)
+(define-key shapeshifter-leader-map (kbd "b") #'switch-to-buffer)
+(define-key shapeshifter-leader-map (kbd "k") #'kill-buffer)
+(define-key shapeshifter-leader-map (kbd "j") #'avy-goto-char-timer)
+#+end_src
+
+** Dired Keybindings :config:
+#+begin_src emacs-lisp
+;; Dired: RET opens, TAB refresh
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map
+    (kbd "RET") #'dired-find-file
+    (kbd "TAB") #'revert-buffer))
+#+end_src
+
+** Org Mode Keybindings :config:
+#+begin_src emacs-lisp
+;; Org: TAB + C-TAB
+(with-eval-after-load 'org
+  (evil-define-key 'normal org-mode-map
+    (kbd "TAB")       #'org-cycle
+    (kbd "<C-tab>")   #'org-shifttab))
+#+end_src
+
+* Annalist
+:PROPERTIES:
+:PACKAGE:  annalist
+:STRAIGHT: (annalist :type git :host github :repo "noctuid/annalist.el")
+:END:
+
+* Evil Collection
+:PROPERTIES:
+:PACKAGE:  evil-collection
+:STRAIGHT: (evil-collection :type git :host github :repo "emacs-evil/evil-collection")
+:AFTER:    (evil annalist)
+:END:
+
+** Initialize :config:
+#+begin_src emacs-lisp
+(evil-collection-init)
+#+end_src
+
+* Evil Surround
+:PROPERTIES:
+:PACKAGE:  evil-surround
+:STRAIGHT: (evil-surround :type git :host github :repo "timcharper/evil-surround")
+:AFTER:    evil
+:END:
+
+** Enable Globally :config:
+#+begin_src emacs-lisp
+(global-evil-surround-mode 1)
+#+end_src
+
+* Multiple Cursors
+:PROPERTIES:
+:PACKAGE:  multiple-cursors
+:STRAIGHT: t
+:AFTER:    evil
+:END:
+
+* Evil Nerd Commenter
+:PROPERTIES:
+:PACKAGE:  evil-nerd-commenter
+:STRAIGHT: (evil-nerd-commenter :type git :host github :repo "redguardtoo/evil-nerd-commenter")
+:AFTER:    evil
+:END:
+
+** Configuration :config:
+#+begin_src emacs-lisp
+(declare-function web-mode-comment-or-uncomment-region "web-mode")
+(setq evilnc-comment-text-object "c")
+(evilnc-default-hotkeys)
+(define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
+(define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
+(define-key evil-normal-state-map (kbd "gC") #'evilnc-copy-and-comment-lines)
+#+end_src

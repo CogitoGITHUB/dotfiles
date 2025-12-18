@@ -48,16 +48,40 @@ nix = {
     jack.enable = true;
   };
 
-  # --- USER ------------------------------------------------------------------
-  users.users.asdf = {
-    isNormalUser = true;
-    description = "asdf";
-    extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.nushell;
-    packages = with pkgs; [ ];
-  };
+# --- USER ------------------------------------------------------------------
+users.users.asdf = {
+  isNormalUser = true;
+  description = "asdf";
+  extraGroups = [ "networkmanager" "wheel" "docker" ];
+  shell = pkgs.nushell;
 
-  # --- BLUETOOTH -------------------------------------------------------------
+  packages = with pkgs; [
+    docker-compose
+
+    # Kubernetes swordset
+    kubectl
+    k9s
+    helm
+
+    # Observability
+    prometheus
+    grafana
+
+    # Mesh sorcery (choose one)
+    istioctl
+    linkerd
+
+    # Ingress gatekeepers
+    traefik
+    nginx
+
+    # Lens (warning: heavy GUI, remove if you want CLI-only purity)
+    lens
+  ];
+};
+
+
+# --- BLUETOOTH -------------------------------------------------------------
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -106,12 +130,42 @@ nix = {
   services.upower.enable = true;
 
 
+services.tailscale.enable = true;
+services.tailscale.extraSetFlags = ["--netfilter-mode=nodivert"];
+services.logind.lidSwitch = "ignore";
+services.logind.lidSwitchDocked = "ignore";
 
 
 
-  # --- PACKAGES --------------------------------------------------------------
+
+
+  # --- DOCKER ---------------------------------------------------------------
+  virtualisation.docker.enable = true;
+
+# --- KUBERNETES (K3S) ------------------------------------------------------
+services.k3s = {
+  enable = true;
+  role = "server";
+  clusterInit = true;
+  extraFlags = [ "--docker" ];
+};
+
+
+
+
   environment.systemPackages = with pkgs; [
-    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+docker
+lazydocker
+  docker-compose
+    k3s
+  kubectl
+  helm
+  k9s
+n8n
+gemini-cli
+
+
+inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
 
 
 
@@ -152,18 +206,16 @@ nix = {
     mpdcron
     cava
     rmpc
-    spotify
-    spotify-cli-linux
     fastfetch
     evtest
     git
+    lazygit
     gh
-    jujutsu
-    lazyjj
-    jj-fzf
-    starship
+ jujutsu
+jj-fzf
+lazyjj
+starship
     wl-clipboard
-    swww
     atuin
     fzf
     zoxide
@@ -177,7 +229,9 @@ nix = {
     texlive.combined.scheme-full
     texlivePackages.latexmk
     ghostscript
-  ];
+zip
+texinfo
+];
 
   # --- SSH -------------------------------------------------------------------
   services.openssh.enable = true;

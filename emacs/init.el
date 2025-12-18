@@ -1,91 +1,697 @@
 ;;──────────────────────────────────────────────────────────
-  ;; Straight bootstrap (must be first)
-  ;;──────────────────────────────────────────────────────────
-
-  (defvar bootstrap-version)
+;; Straight bootstrap (must be first)
+;;──────────────────────────────────────────────────────────
+(defvar bootstrap-version)
 (let ((bootstrap-file
-         (expand-file-name
-          "straight/repos/straight.el/bootstrap.el"
-          user-emacs-directory))
-        (bootstrap-version 7))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-	(goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-
-  (setq straight-use-package-by-default t)
-  (straight-use-package 'org)
-  (require 'org)
-  ;;──────────────────────────────────────────────────────────
-  ;; Install leaf *before* leaf-keywords is used
-  ;;──────────────────────────────────────────────────────────
-  (straight-use-package 'leaf)
-  (straight-use-package 'leaf-keywords)
-
-  (require 'leaf)
-  (require 'leaf-keywords)
-  (leaf-keywords-init)
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        user-emacs-directory))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(setq straight-use-package-by-default t)
+;;──────────────────────────────────────────────────────────
+;; Org (required, explicit, upstream)
+;;──────────────────────────────────────────────────────────
+(straight-use-package
+ '(org :type git
+       :host git
+       :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"))
+(require 'org)
+;;──────────────────────────────────────────────────────────
+;; Leaf system
+;;──────────────────────────────────────────────────────────
+(straight-use-package 'leaf)
+(straight-use-package 'leaf-keywords)
+(require 'leaf)
+(require 'leaf-keywords)
+(leaf-keywords-init)
 
 ;;──────────────────────────────────────────────────────────
-  ;; Primitive built-in configuration with leaf
-  ;;──────────────────────────────────────────────────────────
-  (leaf cus-start
-    :doc "builtin core configuration"
-    :tag "builtin"
-    :custom ((truncate-lines . t)
-             (menu-bar-mode . nil)
-             (tool-bar-mode . nil)
-             (scroll-bar-mode . nil)
-             (inhibit-startup-screen . t)
-             (initial-scratch-message . nil)
-             (ring-bell-function . 'ignore)
-             (use-dialog-box . nil)
-             (cursor-in-non-selected-windows . nil)
-             (frame-title-format . "%b")
-             (fringe-mode . 0)))
+;; Primitive built-in configuration with leaf
+;;──────────────────────────────────────────────────────────
+(leaf cus-start
+  :doc "builtin core configuration"
+  :tag "builtin"
+  :custom ((truncate-lines . t)
+           (menu-bar-mode . nil)
+           (tool-bar-mode . nil)
+           (scroll-bar-mode . nil)
+           (inhibit-startup-screen . t)
+           (initial-scratch-message . nil)
+           (ring-bell-function . 'ignore)
+           (use-dialog-box . nil)
+           (cursor-in-non-selected-windows . nil)
+           (frame-title-format . "%b")
+           (fringe-mode . 0)))
 (setq-default mode-line-format nil)
 (setq mode-line-format nil)
 
-(leaf writeroom-mode
-  :straight (writeroom-mode
-             :type git
-             :host github
-             :repo "joostkremers/writeroom-mode")
-  :global-minor-mode global-writeroom-mode
-  :after visual-fill-column
-  :config
-  ;; No fullscreen or rewriting windows
-  (setq writeroom-global-effects nil
-        writeroom-maximize-window nil
-        writeroom-mode-line nil
-        writeroom-bottom-divider-width 0)
+;;; tree.el --- Managed Emacs configuration through org files
+;; Copyright (C) 2025
+;; Author: Internal implementation
+;;; Commentary:
+;; This version works exclusively with leaf package declarations.
+;; Remote functionality has been removed.
+(require 'cl-lib)
+(require 'ob-core)
+;;; Code:
 
-  ;; Evil-width precision bindings
-  (with-eval-after-load 'writeroom-mode
-    (define-key writeroom-mode-map (kbd "C-<") #'writeroom-decrease-width)
-    (define-key writeroom-mode-map (kbd "C->") #'writeroom-increase-width)
-    (define-key writeroom-mode-map (kbd "C-=") #'writeroom-adjust-width)))
+(defvar tree-packages '()
+    "List of packages that should be installed.")
 
-(leaf org-superstar
-  :straight (org-superstar
-             :type git
-             :host github
-             :repo "integral-dw/org-superstar-mode")
-  :after org
-  :hook (org-mode-hook . org-superstar-mode)
-  :custom
-  ((org-superstar-headline-bullets-list . '(?Ⅰ ?Ⅱ ?Ⅲ ?Ⅳ ?Ⅴ ?Ⅵ ?Ⅶ ?Ⅷ))
-   (org-superstar-remove-leading-stars . t)
-   (org-superstar-leading-fallback . ?\s))
-  :config
-  (custom-set-faces
-   '(org-superstar-header-bullet ((t (:foreground "#000000" :weight bold :height 1.3))))
-   '(org-superstar-item ((t (:foreground "#000000"))))
-   '(org-superstar-leading ((t (:foreground "#000000"))))))
+  (defvar tree--booting nil
+    "Non-nil when running inside `tree-boot'.")
+
+  (defvar tree--boot-phase :loading
+    "Internal boot phase for the splash screen.
+  Possible values: :compiling or :loading.")
+
+  (defvar tree--boot-errors '()
+    "List of compile / loading errors encountered during tree boot.")
+
+  (defcustom tree-wrap-statements-in-condition t
+    "Wrap code in condition statements."
+    :type 'boolean
+    :group 'tree)
+
+(defcustom tree-leaf-keywords
+  '("after" "demand" "ensure" "config" "init" "bind" "bind*" "hook" "general" "custom" "defer" "requires" "straight")
+  "List of `leaf' keywords that can be used.
+The keywords are case sensitive. If the tag ends with an
+underscore, it will be replaced with a asterisk."
+  :type 'list
+  :group 'tree)
+  
+  (defcustom tree-output-directory (expand-file-name "tree" user-emacs-directory)
+    "Directory where the tangled Elisp files are stored."
+    :type 'string
+    :group 'tree)
+
+  (defcustom tree-org-directory (expand-file-name "org" user-emacs-directory)
+    "Directory where the Org files are stored."
+    :type 'string
+    :group 'tree)
+
+  (defcustom tree-force-compile nil
+    "Force compilation of Org files, even if the Elisp file is newer
+  than the Org file."
+    :type 'boolean
+    :group 'tree)
+
+(defun tree-indent (string n)
+  "Indent STRING by N spaces."
+  (let ((indentation (make-string n ?\s)))
+    (replace-regexp-in-string "^" indentation string)))
+
+(defun tree-plist-keys (plist)
+  "Return the keys of PLIST as a list."
+  (let ((keys '()))
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    (nreverse keys)))
+
+(defun tree-find-property (property)
+  "Find PROPERTY in the current Org element or any ancestor element."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property property (org-element-context)))
+            (org-up-element))
+          (intern (org-element-property property (org-element-context))))
+      (error nil))))
+
+(defun tree-find-tags ()
+  "Find tags in the current Org element or any ancestor element."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property :tags (org-element-lineage (org-element-context) '(headline) t)))
+            (org-up-element))
+          (org-element-property :tags (org-element-lineage (org-element-context) '(headline) t)))
+      (error nil))))
+
+(defun tree-find-tag ()
+  "Find a `leaf' tag in the current Org element or any ancestor element."
+  (let* ((keywords tree-leaf-keywords)
+         (tag (car (seq-filter (lambda (tag) (member tag keywords)) (tree-find-tags)))))
+    (when tag
+      (replace-regexp-in-string "_" "-"
+                                (replace-regexp-in-string "_$" "*" tag)))))
+
+(defun tree-find-package ()
+  "Find a `leaf' package in the current Org element or any ancestor element."
+  (or (tree-find-property :PACKAGE)
+      (tree-find-property :LEAF_PACKAGE)
+      (tree-find-property :LEAF-PACKAGE)))
+
+(defun tree-find-after ()
+  "Find a `leaf' :after property in the current Org element or any ancestor element."
+  (when-let* ((after (tree-find-property :AFTER)))
+    (prin1-to-string (read (symbol-name after)))))
+
+(defun tree-find-demand ()
+  "Find a `leaf' :demand property in the current Org element or any ancestor element."
+  (when-let* ((demand (tree-find-property :DEMAND)))
+    (prin1-to-string (read (symbol-name demand)))))
+
+(defun tree-find-ensure ()
+  "Find a `leaf' :ensure property in the current Org element or any ancestor element."
+  (when-let* ((ensure (tree-find-property :ENSURE)))
+    (prin1-to-string (read (symbol-name ensure)))))
+
+(defun tree-find-defer ()
+  "Find a `leaf' :defer property in the current Org element or any ancestor element."
+  (when-let* ((defer (tree-find-property :DEFER)))
+    (prin1-to-string (read (symbol-name defer)))))
+
+(defun tree-find-requires ()
+  "Find a `leaf' :requires property in the current Org element or any ancestor element."
+  (when-let* ((requires (tree-find-property :REQUIRES)))
+    (prin1-to-string (read (symbol-name requires)))))
+
+(defun tree-find-keyword ()
+  "Find a `leaf' keyword in the current Org element or any ancestor element."
+  (when-let* ((keyword (tree-find-property :KEYWORD)))
+    (replace-regexp-in-string "^:" "" (symbol-name keyword))))
+
+(defun tree-get-leaf-package ()
+  "Return the package name and Leaf keyword for a package."
+  (when-let* ((package (tree-find-package))
+              (keyword (or (tree-find-keyword)
+                          (tree-find-tag))))
+    (list package keyword)))
+
+(defun tree-find-straight ()
+"Find a `leaf' :straight property in the current Org element or any ancestor element."
+(when-let* ((straight (tree-find-property :STRAIGHT)))
+  (prin1-to-string (read (symbol-name straight)))))
+
+(defun tree-file-properties (file)
+  "Return all properties from an org FILE."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let (properties)
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$" nil t)
+        (let ((key (intern (downcase (match-string 1))))
+              (value (match-string 2)))
+          (push (cons key value) properties)))
+      properties)))
+
+(defun tree-file-priority (file)
+  "Return the priority of an org FILE.
+If no priority is set, return 10."
+  (let ((priority (alist-get 'priority (tree-file-properties file) "10")))
+    (if (string-match-p "^[0-9]+$" priority)
+        (string-to-number priority)
+      10)))
+
+(defun tree-file-lexical-binding (file)
+  "Return the lexical-binding of an org FILE.
+If no lexical-binding is set, return t."
+  (let ((lexical-binding (alist-get 'lexical_binding (tree-file-properties file) "t")))
+    (if (string= lexical-binding "nil")
+        nil
+      t)))
+
+(defun tree-get-files (extension directory)
+  "Return all files with EXTENSION in DIRECTORY.
+The files are sorted by priority."
+  (when (file-exists-p directory)
+    (let* ((files (directory-files-recursively directory extension)))
+      (sort files (lambda (a b) (< (tree-file-priority a)
+                                   (tree-file-priority b)))))))
+
+(defun tree-safe-read (string file &optional line)
+  "Read STRING and return the result.
+If STRING is not a valid Elisp form, return nil.
+FILE is the file name of the Org file.
+LINE is the line number of the Org file.
+If read fails, display a warning."
+  (condition-case err
+      (read string)
+    (error
+     (display-warning
+      'tree
+      (if line
+          (format "failed to read body of %s:%s" file line)
+        (format "failed to read body of %s" file))
+      :error)
+     nil)))
+
+(defun tree-wrap-in-condition (file part)
+  "Wrap PART in a `condition-case' form.
+FILE is the file name of the Org file."
+  (let* ((body (plist-get part :body))
+         (line (plist-get part :line))
+         (expression-string (string-trim-right body))
+         (expression (tree-safe-read (format "(progn\n%s)" expression-string) file line)))
+    (if tree-wrap-statements-in-condition
+        (pp-to-string
+         `(condition-case err
+              ,expression
+            (error
+             (add-to-list 'tree--boot-errors
+                          (list :file ,(format "%s" file)
+                                :line ,line
+                                :message (error-message-string err)))
+             (unless tree--booting
+               (display-warning
+                'tree
+                (format "Error loading %s:%s - %s"
+                        ,(format "%s" file)
+                        ,line
+                        (error-message-string err))
+                :error)))))
+      expression-string)))
+
+(defun tree-merge-bodies (file xs)
+  "Merge the bodies of a list of `leaf' statements.
+FILE is the file name of the Org file.
+XS is a list of `leaf' statements."
+  (let ((result '()))
+    (dolist (x xs)
+      (let* ((body (plist-get x :body))
+             (line (plist-get x :line))
+             (result-body (tree-safe-read body file line)))
+        (when result-body
+          (setq result (append result result-body)))))
+    (when result
+      (prin1-to-string result))))
+
+(defun tree-build-leaf-string (package-name package file)
+    "Build a `leaf' block for PACKAGE-NAME in string format.
+  PACKAGE is the package plist.
+  FILE is the Org file name."
+    (concat
+     (string-trim-right
+      (concat (format "(leaf %s" package-name)
+              ;; Leaf uses :ensure
+;; Leaf supports :straight
+(when-let* ((straight (plist-get (car (plist-get package :straight)) :body)))
+  (format "\n  :straight %s" straight))
+              (when-let* ((ensure (plist-get (car (plist-get package :ensure)) :body)))
+                (format "\n  :ensure %s" ensure))
+              ;; Leaf supports :require (not :requires)
+              (when-let* ((requires (plist-get (car (plist-get package :requires)) :body)))
+                (format "\n  :require %s" requires))
+              ;; Leaf supports :after
+              (when-let* ((after (plist-get (car (plist-get package :after)) :body)))
+                (format "\n  :after %s" after))
+              ;; Leaf supports :defer
+              (when-let* ((defer (plist-get (car (plist-get package :defer)) :body)))
+                (format "\n  :defer %s" defer))
+              ;; Leaf supports :demand
+              (when-let* ((demand (plist-get (car (plist-get package :demand)) :body)))
+                (format "\n  :demand %s" demand))
+              ;; Leaf supports :bind*
+              (when-let* ((bind* (tree-merge-bodies file (plist-get package :bind*))))
+                (format "\n  :bind*\n%s" (tree-indent bind* 2)))
+              ;; Leaf supports :bind
+              (when-let* ((bind (tree-merge-bodies file (plist-get package :bind))))
+                (format "\n  :bind\n%s" (tree-indent bind 2)))
+              ;; Leaf supports :hook
+              (when-let* ((hook (tree-merge-bodies file (plist-get package :hook))))
+                (format "\n  :hook\n%s" (tree-indent hook 2)))
+              ;; Leaf supports :init
+              (when-let* ((init (plist-get package :init)))
+                (format "\n  :init\n%s" (tree-indent (string-join (mapcar (lambda (x) (tree-wrap-in-condition file x)) init) "\n") 2)))
+              ;; Leaf supports :custom
+              (when-let* ((custom (plist-get package :custom)))
+                (let ((custom-forms (mapcar (lambda (part) 
+                                             (string-trim (plist-get part :body)))
+                                           custom)))
+                  (format "\n  :custom\n  %s" (string-join custom-forms "\n  "))))
+              ;; Leaf supports :config
+              (when-let* ((config (plist-get package :config)))
+                (format "\n  :config\n%s" (tree-indent (string-join (mapcar (lambda (x) (tree-wrap-in-condition file x)) config) "\n") 2)))))
+     ")\n\n"))
+  (defun tree-build-leaf (file package-name)
+    "Build a `leaf' block for PACKAGE-NAME in string format.
+  FILE is the Org file name.
+  PACKAGE-NAME is the name of the package."
+    (when-let* ((package (plist-get tree-packages package-name)))
+      (when (not (equal package-name (intern "nil")))
+        (let ((package-string (tree-build-leaf-string package-name package file)))
+          (when (tree-safe-read package-string file)
+            package-string)))))
+
+  (defun tree-build-leafs (file)
+    "Build a string of `leaf' blocks.
+  The resulting string contains all packages in `tree-packages'.
+  FILE is the file name of the Org file."
+    (let ((package-names (tree-plist-keys tree-packages))
+          (result ""))
+      (dolist (package-name package-names)
+        (setq result (concat result (tree-build-leaf file package-name))))
+      result))
+
+(defun tree-put-package-parameter (package-name parameter value)
+  "Put a parameter in the `tree-packages' plist.
+PACKAGE-NAME is the name of the package.
+PARAMETER is the parameter to set.
+VALUE is the value to set."
+  (setq tree-packages
+        (plist-put
+         tree-packages
+         package-name
+         (plist-put (plist-get tree-packages package-name)
+                    parameter
+                    value))))
+
+(defun tree-add-package (package body element)
+  "Execute a block of Leaf code with org-babel.
+PACKAGE is a list of the package name and parameter.
+BODY is the body of the source block.
+ELEMENT is the org element of the source block."
+  (let* ((begin (org-element-property :begin element))
+         (line (line-number-at-pos begin))
+         (package-name (car package))
+         (package-parameter (intern (concat ":" (car (cdr package)))))
+         (previous-body (plist-get (plist-get tree-packages package-name) package-parameter))
+         (value (append previous-body `((:body ,body :line ,line)))))
+    (tree-put-package-parameter package-name package-parameter value)
+    nil))
+
+(defun tree-concatenate-source-blocks (file)
+  "Concatenate all source blocks in FILE and return the results as a string."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let ((results '()))
+      (org-map-entries
+       (lambda ()
+         (let ((line (line-number-at-pos (org-element-property :begin (org-element-context)))))
+           (when-let* ((package-name (tree-find-package))
+                       (package (org-element-property :PACKAGE (org-element-context))))
+             (tree-put-package-parameter package-name :package line))
+           (when-let* ((package-name (tree-find-package))
+                       (after (tree-find-after)))
+             (tree-put-package-parameter package-name :after `((:body ,after :line ,line))))
+           (when-let* ((package-name (tree-find-package))
+                       (demand (tree-find-demand)))
+             (tree-put-package-parameter package-name :demand `((:body ,demand :line ,line))))
+           (when-let* ((package-name (tree-find-package))
+                       (ensure (tree-find-ensure)))
+             (tree-put-package-parameter package-name :ensure `((:body ,ensure :line ,line))))
+           (when-let* ((package-name (tree-find-package))
+                       (defer (tree-find-defer)))
+             (tree-put-package-parameter package-name :defer `((:body ,defer :line ,line))))
+           (when-let* ((package-name (tree-find-package))
+                       (requires (tree-find-requires)))
+             (tree-put-package-parameter package-name :requires `((:body ,requires :line ,line))))
+           (when-let* ((package-name (tree-find-package))
+                       (straight (tree-find-straight)))
+             (tree-put-package-parameter package-name :straight `((:body ,straight :line ,line)))))))
+      (org-babel-map-src-blocks nil
+        (let ((body (org-element-property :value (org-element-context)))
+              (line (line-number-at-pos (org-element-property :begin (org-element-context))))
+              (language (org-element-property :language (org-element-context))))
+          (when (string= language "emacs-lisp")
+            (if-let* ((package (tree-get-leaf-package)))
+                (tree-add-package package body (org-element-context))
+              (when (stringp body)
+                (push (tree-wrap-in-condition file `(:body ,body :line ,line))
+                      results))))))
+      (mapconcat 'identity (reverse results) "\n"))))
+
+(defun tree-output-file-name (file)
+  "Return the name of the output Elisp file for FILE."
+  (if (string-prefix-p
+       (expand-file-name tree-org-directory)
+       (expand-file-name file))
+      (expand-file-name
+       (concat (file-name-as-directory tree-output-directory)
+               (file-name-sans-extension (substring file (length (expand-file-name tree-org-directory))))
+               ".el"))
+    (error "File is not in tree-org-directory")))
+
+(defun tree-compile-file (file)
+  "Compile FILE to Elisp.
+FILE is an Org file.
+The output Elisp file is stored in `tree-output-directory'."
+  (unless (file-exists-p file)
+    (error "File to tangle does not exist: %s" file))
+  (unless (file-exists-p tree-output-directory)
+    (make-directory tree-output-directory t))
+  (let ((output-file (tree-output-file-name file)))
+    (make-directory (file-name-directory output-file) t)
+    (when (or tree-force-compile
+              (file-newer-than-file-p file output-file))
+      (message "Tree: Compiling %s" file)
+      (let* ((tree-packages nil)
+             (source (tree-concatenate-source-blocks file))
+             (output (concat source "\n" (tree-build-leafs file))))
+        (with-temp-file output-file
+          (when (tree-file-lexical-binding file)
+            (insert ";;; -*- lexical-binding: t -*-\n"))
+          (dolist (property (tree-file-properties file))
+            (insert (format ";; #+%s: %s\n\n"
+                            (upcase (symbol-name (car property)))
+                            (cdr property))))
+          (insert output)))
+      (when (file-exists-p output-file)
+        (set-file-times output-file))
+      output-file)))
+
+(defun tree-compile-directory ()
+  "Compile all Org files in `tree-org-directory' to Elisp.
+All files will be outputted to `tree-output-directory'."
+  (let* ((splash (when tree--booting (tree-show-splash)))
+         (files (tree-get-files "^[^#]*\\.org$" tree-org-directory))
+         (compiled '())
+         (current 0)
+         (total (length files)))
+    (dolist (file files)
+      (setq current (1+ current))
+      (when splash
+        (tree-splash-update-progress splash current total file))
+      (when-let* ((output (tree-compile-file file)))
+        (push output compiled)))
+    compiled))
+
+(defun tree-load-file (file)
+  "Load FILE."
+  (let ((inhibit-message t))
+    (if (load (expand-file-name file) nil t)
+        (message "Tree: Loaded %s" file)
+      (message "Tree: Failed to load %s" file))))
+
+(defun tree-load-directory ()
+  "Load all compiled Elisp files from `tree-output-directory'."
+  (let* ((splash (when tree--booting (tree-show-splash)))
+         (initial-gc-cons-threshold gc-cons-threshold)
+         (files (tree-get-files "^[^#]*\\.el$" tree-output-directory))
+         (total (length files))
+         (current 0))
+    (setq gc-cons-threshold (* 1024 1024 100))
+    (dolist (file files)
+      (condition-case err
+          (progn
+            (setq current (1+ current))
+            (when splash
+              (tree-splash-update-progress splash current total file))
+            (tree-load-file file))
+        (error
+         (add-to-list 'tree--boot-errors
+                      (list :file (format "%s" file)
+                            :line 1
+                            :message (error-message-string err)))
+         (unless tree--booting
+           (display-warning
+            'tree
+            (format "Error loading %s:%s - %s"
+                    (format "%s" file)
+                    1
+                    (error-message-string err))
+            :error)))))
+    (tree-splash-update-progress splash total total nil)
+    (setq gc-cons-threshold initial-gc-cons-threshold)
+    nil))
+
+(defun tree-reload ()
+  "Compile and load all Org files."
+  (interactive)
+  (dolist (compiled-file (tree-compile-directory))
+    (tree-load-file compiled-file)))
+
+(defun tree-reload-current-buffer ()
+  "Compile and load current Org file."
+  (interactive)
+  (let ((tree-force-compile t))
+    (when-let* ((compiled-file (tree-compile-file (buffer-file-name (current-buffer)))))
+      (tree-load-file compiled-file))))
+
+(defun tree-preview ()
+  "Compile the current buffer and display the result in *tree preview*."
+  (interactive)
+  (let* ((buffer (get-buffer-create "*tree preview*"))
+         (_ (display-buffer buffer))
+         (tree-wrap-statements-in-condition nil)
+         (file (buffer-file-name (current-buffer)))
+         (tree-packages nil)
+         (source (tree-concatenate-source-blocks file))
+         (output (concat source "\n" (tree-build-leafs file))))
+    (with-current-buffer buffer
+      (emacs-lisp-mode)
+      (read-only-mode 1)
+      (save-excursion
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert output)
+          (goto-char (point-min)))))))
+
+(define-minor-mode tree-preview-mode
+  "Preview the current buffer as elisp."
+  :lighter " tree-preview"
+  (if tree-preview-mode
+      (add-hook 'after-save-hook 'tree-preview nil t)
+    (remove-hook 'after-save-hook 'tree-preview t)))
+
+(defun tree-show-splash ()
+  "Show the tree loading splash screen."
+  (let ((buf (get-buffer-create "*Tree Loading*")))
+    (with-current-buffer buf
+      (erase-buffer)
+      (org-mode)
+      ;; Add keybinding to kill buffer with Enter
+      (local-set-key (kbd "RET") 'tree-kill-splash)
+      (local-set-key (kbd "<return>") 'tree-kill-splash))
+    (switch-to-buffer buf)
+    buf))
+
+(defun tree-kill-splash ()
+  "Kill the Tree splash screen buffer."
+  (interactive)
+  (when (string= (buffer-name) "*Tree Loading*")
+    (kill-buffer (current-buffer))))
+
+(defun tree-splash-update-progress (buf current total file)
+  "Update the splash screen progress.
+BUF is the splash buffer.
+CURRENT is the current file number.
+TOTAL is the total number of files.
+FILE is the current file being processed."
+  (when (buffer-live-p buf)
+    (with-current-buffer buf
+      (let ((inhibit-read-only t)
+            (label (pcase tree--boot-phase
+                     (:compiling "Compiling")
+                     (:loading   "Loading")
+                     (_          "Processing"))))
+        (erase-buffer)
+        (insert "TREE")
+        (insert (make-string 10 ?\n))
+        (insert (format "[ %d / %d ]\n\n"
+                        current total))
+        (insert (tree-progress-bar-fancy current total 54))
+        (insert "\n\n")
+        (if file
+            (insert (format "%s: %s\n" label file))
+          (insert "\n"))
+        (center-region (point-min) (point-max))
+        (when tree--boot-errors
+          (insert "\nErrors encountered:\n\n"))
+        (dolist (e tree--boot-errors)
+          (insert (format "[[%s::%s][%s:%s]]\n"
+                          (plist-get e :file)
+                          (plist-get e :line)
+                          (plist-get e :file)
+                          (plist-get e :line)))
+          (insert (propertize (format " ⌞ %s\n" (plist-get e :message))
+                              'face 'error)))
+        (insert "\n\n")
+        (insert (propertize "Press ENTER to dismiss" 'face 'shadow))
+        (center-line)
+        (redisplay)
+        (unless file
+          (org-mode)
+          ;; Re-bind keys after org-mode resets them
+          (local-set-key (kbd "RET") 'tree-kill-splash)
+          (local-set-key (kbd "<return>") 'tree-kill-splash))))))
+
+(defun tree-progress-bar-fancy (current total width)
+  "Create a fancy progress bar.
+CURRENT is the current progress.
+TOTAL is the total amount.
+WIDTH is the width of the progress bar."
+  (let* ((ratio (/ (float current) total))
+         (done (floor (* ratio width)))
+         (todo (- width done)))
+    (format "┌%s┐\n│%s%s│\n└%s┘"
+            (make-string width ?─)
+            (make-string done ?█)
+            (make-string todo ?·)
+            (make-string width ?─))))
+
+(defun tree-boot ()
+  "Compile and then load all Org files, showing a splash screen."
+  (interactive)
+  (let ((tree--booting t))
+    (setq tree--boot-errors '())
+    (let ((tree--boot-phase :compiling))
+      (tree-compile-directory))
+    (let ((tree--boot-phase :loading))
+      (tree-load-directory))))
+
+;; Initialize tree
+(setq tree-org-directory           (expand-file-name "org" user-emacs-directory)
+      tree-output-directory        (expand-file-name "tree" user-emacs-directory))
+(tree-boot)
+(add-hook 'org-mode-hook #'tree-preview-mode)
+
+(provide 'tree)
+;;; tree.el ends here
+
+(defun tree/auto-compile-and-reload ()
+  "Auto-compile and reload when an Org file in tree-org-directory is saved."
+  (when (and buffer-file-name
+             (file-in-directory-p buffer-file-name tree-org-directory)
+             (string-suffix-p ".org" buffer-file-name))
+    (message "Tree: Compiling and reloading %s…" (file-name-nondirectory buffer-file-name))
+    (condition-case err
+        (let ((tree-force-compile t))
+          (when-let ((compiled-file (tree-compile-file buffer-file-name)))
+            (tree-load-file compiled-file)
+            (message "Tree: Reload complete ✓")))
+      (error
+       (display-warning
+        'tree 
+        (format "Failed to compile/reload: %s" (error-message-string err)) 
+        :error)))))
+
+(add-hook 'after-save-hook #'tree/auto-compile-and-reload)
+
+(defun live-shaping/auto-tangle-and-reload ()
+  "Auto-tangle and reload when this Org file tangles to init.el."
+  (when (and buffer-file-name
+             (save-excursion
+               (goto-char (point-min))
+               (re-search-forward ":tangle[ \t]+~/.config/emacs/init.el" nil t)))
+    (message "Live-Shaping: Tangling…")
+    (condition-case err
+        (let ((target "~/.config/emacs/init.el")
+              (temp   "~/.config/emacs/init.el.tmp"))
+          (when (org-babel-tangle)
+            (when (file-exists-p temp) (delete-file temp))
+            (rename-file target temp t)
+            (rename-file temp target t)
+            (load-file target)
+            (message "Live-Shaping: Reload complete ✓")))
+      (error
+       (display-warning
+        'live-shaping (format "%s" (error-message-string err)) :error)))))
+
+(add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
 
 (leaf center-lock
   :config
@@ -153,82 +759,6 @@
   ;; Apply immediately if already in graphical mode
   (when (display-graphic-p)
     (shapeshift/apply-fonts)))
-
-(leaf evil
-  :straight (evil :type git :host github :repo "emacs-evil/evil" :branch "master" :fetch t)
-  :init
-  (setq evil-want-keybinding nil
-        evil-want-C-u-scroll t)
-  :config
-  (evil-mode 1)
-
-  ;; h t n s directional compass
-  (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
-  (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
-  (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
-  (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
-
-  (define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
-  (define-key evil-motion-state-map (kbd "t") 'evil-next-line)
-  (define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
-  (define-key evil-motion-state-map (kbd "s") 'evil-forward-char)
-
-  ;; SPACE as leader
-  (define-key evil-normal-state-map (kbd "SPC") nil)
-  (define-key evil-motion-state-map (kbd "SPC") nil)
-
-  (defvar shapeshifter-leader-map (make-sparse-keymap)
-    "Shapeshifter Leader keymap.")
-
-  (define-key evil-normal-state-map (kbd "SPC") shapeshifter-leader-map)
-  (define-key evil-motion-state-map (kbd "SPC") shapeshifter-leader-map)
-
-  ;; Core leader bindings
-  (define-key shapeshifter-leader-map (kbd "f") #'find-file)
-  (define-key shapeshifter-leader-map (kbd "s") #'save-buffer)
-  (define-key shapeshifter-leader-map (kbd "g") #'magit-status)
-  (define-key shapeshifter-leader-map (kbd "b") #'switch-to-buffer)
-  (define-key shapeshifter-leader-map (kbd "k") #'kill-buffer)
-  (define-key shapeshifter-leader-map (kbd "j") #'avy-goto-char-timer))
-(leaf annalist
-  :straight (annalist :type git :host github :repo "noctuid/annalist.el" :fetch t))
-
-(leaf evil-collection
-  :straight (evil-collection :type git :host github :repo "emacs-evil/evil-collection" :fetch t)
-  :after evil
-  :config
-  (evil-collection-init))
-
-(leaf evil-surround
-  :straight (evil-surround :type git :host github :repo "timcharper/evil-surround" :fetch t)
-  :config
-  (global-evil-surround-mode 1))
-
-;;──────────────────────────────────────────────────────────
-;; Desktop save location setup
-;;──────────────────────────────────────────────────────────
-(setq desktop-dirname "~/.config/emacs/desktop/"
-      desktop-path   '("~/.config/emacs/desktop/")
-      desktop-base-file-name "emacs-desktop")
-
-(make-directory desktop-dirname t) ;; ensure directory exists
-
-
-;;──────────────────────────────────────────────────────────
-;; Desktop Mode
-;;──────────────────────────────────────────────────────────
-(leaf desktop
-  :require t
-  :config
-  ;; auto-save session when closing Emacs
-  (add-hook 'kill-emacs-hook #'desktop-save-in-desktop-dir)
-
-  ;; restore behavior tuning
-  (setq desktop-restore-eager 8
-        desktop-lazy-idle-delay 0.5
-        desktop-load-locked-desktop t)
-
-  (desktop-save-mode 1))
 
 (leaf pulsar
   :straight (pulsar
@@ -302,28 +832,6 @@
           (?c . avy-kill-ring-save)))
 )
 
-(leaf multiple-cursors
-  :straight (multiple-cursors
-             :type git
-             :host github
-             :repo "magnars/multiple-cursors.el"
-             :fetch t)
-  :config
-  ;; evil + mc movement bindings
-  (define-key evil-normal-state-map (kbd "g m n") #'mc/mark-next-like-this)
-  (define-key evil-normal-state-map (kbd "g m p") #'mc/mark-previous-like-this)
-  (define-key evil-normal-state-map (kbd "g m a") #'mc/mark-all-like-this)
-
-  (define-key evil-visual-state-map (kbd "g m n") #'mc/mark-next-like-this)
-  (define-key evil-visual-state-map (kbd "g m p") #'mc/mark-previous-like-this)
-
-  ;; edit multiple lines
-  (define-key evil-normal-state-map (kbd "g m l") #'mc/edit-lines)
-
-  ;; escape mode
-  (define-key evil-normal-state-map (kbd "<escape>") #'mc/keyboard-quit)
-  (define-key evil-visual-state-map (kbd "<escape>") #'mc/keyboard-quit))
-
 (leaf move-text
   :straight (move-text
              :type git
@@ -368,20 +876,6 @@
   :config
   (setq aya-persist-snippets t
         aya-persist-directory (expand-file-name "auto-snippets" "~/.config/emacs/")))
-
-(leaf evil-nerd-commenter
-  :straight (evil-nerd-commenter
-             :type git
-             :host github
-             :repo "redguardtoo/evil-nerd-commenter")
-  :after evil
-  :config
-  (declare-function web-mode-comment-or-uncomment-region "web-mode")
-  (setq evilnc-comment-text-object "c")
-  (evilnc-default-hotkeys)
-  (define-key evil-normal-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
-  (define-key evil-visual-state-map (kbd "gc") #'evilnc-comment-or-uncomment-lines)
-  (define-key evil-normal-state-map (kbd "gC") #'evilnc-copy-and-comment-lines))
 
 (leaf dap-mode
   :straight (dap-mode
@@ -719,8 +1213,8 @@
 
 ;; Ensure org-roam-ui picks up the monochrome theme
 (leaf org-roam-ui
-  :straight (org-roam-ui
-             :type git
+ :straight (org-roam-ui
+           :type git
              :host github
              :repo "org-roam/org-roam-ui"
              :files ("*.el" "out"))
@@ -739,7 +1233,7 @@
       (org-roam-ui--update-theme)))
   
   (advice-add 'load-theme :after #'my/org-roam-ui-sync-theme)
-  (advice-add 'shapeshift/monochrome-world :after #'my/org-roam-ui-sync-theme))
+ (advice-add 'shapeshift/monochrome-world :after #'my/org-roam-ui-sync-theme))
 
 (leaf org-transclusion
   :straight (org-transclusion
@@ -755,177 +1249,6 @@
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "C-c t a") #'org-transclusion-add)
     (define-key org-mode-map (kbd "C-c t u") #'org-transclusion-refresh)))
-
-;;────────────────────────────────────────────────────────────
-;; Denote — Clean configuration, no inline templates
-;;────────────────────────────────────────────────────────────
-;;────────────────────────────────────────────────────────────
-;; Org-ID — persistent identity
-;;────────────────────────────────────────────────────────────
-(leaf org-id
-  :after org
-  :config
-  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
-
-;;────────────────────────────────────────────────────────────
-;; Org-Roam — neural map engine
-;;────────────────────────────────────────────────────────────
-(leaf org-roam
-  :straight (org-roam
-             :type git
-             :host github
-             :repo "org-roam/org-roam")
-  :after org
-  :init
-  ;; CRITICAL: Point Org-Roam to your Denote directory
-  (setq org-roam-directory (file-truename "~/denote"))
-  (setq find-file-visit-truename t)
-  (setq org-roam-v2-ack t)
-  :config
-  ;; Awaken the database watcher
-  (org-roam-db-autosync-mode))
-
-;;────────────────────────────────────────────────────────────
-;; Denote Configuration (updated)
-;;────────────────────────────────────────────────────────────
- (leaf denote
-  :straight (denote :type git :host github :repo "protesilaos/denote")
-  :after org
-  :init
-  ;; Base directory for all notes (shared with Org-Roam)
-  (setq denote-directory (expand-file-name "~/denote"))
-  ;; File format + naming
-  (setq denote-file-type 'org)
-  (setq denote-date-format "%Y-%m-%d--%H-%M")
-  ;; Prompts: title, keywords, subdirectory, signature
-  (setq denote-prompts '(title keywords subdirectory signature))
-  ;; Org appearance
-  (setq org-startup-with-inline-images nil)
-  (setq org-startup-folded 'showall)
-  :config
-  ;; Ensure directory exists
-  (unless (file-directory-p denote-directory)
-    (make-directory denote-directory t))
-
-  ;; Auto rename buffers to meaningful Denote names
-  (denote-rename-buffer-mode 1)
-
-  ;; Backlinks rendering behavior
-  (setq denote-link-backlinks-display-buffer-action
-        '((display-buffer-reuse-window display-buffer-below-selected)
-          (window-height . fit-window-to-buffer)))
-
-  ;;────────── Subdirectory creation logic ──────────
-  (defun my/denote-subdirectory-prompt ()
-    "Prompt for a Denote subdirectory, creating it if needed."
-    (let* ((subdirs (mapcar (lambda (dir)
-                              (file-relative-name dir denote-directory))
-                            (seq-filter #'file-directory-p
-                                        (directory-files denote-directory t "^[^.]"))))
-           (subdir (completing-read "Subdirectory (new or existing): "
-                                    subdirs nil nil)))
-      (let ((full-path (expand-file-name subdir denote-directory)))
-        (unless (file-directory-p full-path)
-          (when (yes-or-no-p (format "Create directory %s? " full-path))
-            (make-directory full-path t)))
-        full-path)))
-
-  (advice-add 'denote-subdirectory-prompt :override #'my/denote-subdirectory-prompt)
-
-  ;;────────── Helper function for capture (Org-roam compatible) ──────────
-  (defun my/denote-capture-create-file ()
-    "Create a Denote file as a valid Org-roam node and return its path for org-capture."
-    (let* ((title (read-string "Title: "))
-           (keywords (denote-keywords-prompt))
-           (subdir (my/denote-subdirectory-prompt))
-           (signature (read-string "Signature (optional): " nil nil ""))
-           (date (current-time))
-           ;; Denote ID (timestamp-style)
-           (id (format-time-string denote-date-format date))
-           (date-formatted (format-time-string denote-date-format date))
-           (ext ".org")
-           (kws (if keywords (concat "_" (mapconcat #'downcase keywords "_")) ""))
-           (sig (if (string-empty-p signature) "" (concat "==" signature)))
-           (slug (replace-regexp-in-string "[^[:alnum:][:digit:]]" "-" (downcase title)))
-           (filename (concat id "--" slug kws sig ext))
-           (path (expand-file-name filename subdir))
-           ;; Org-roam UUID for the node
-           (org-id (org-id-new))
-           (frontmatter
-            (concat
-             "#+title:      " title "\n"
-             "#+date:       " date-formatted "\n"
-             "#+AUTHOR:     Shapeshifter\n"
-             "#+identifier: " id "\n"
-             "#+filetags:   "
-             (if keywords (mapconcat #'identity keywords " ") "")
-             "\n"
-             (unless (string-empty-p signature)
-               (concat "#+signature:  " signature "\n"))
-             "\n"
-             "* " title "\n"
-             ":PROPERTIES:\n"
-             ":ID:       " org-id "\n"
-             ":END:\n\n")))
-      ;; write file
-      (write-region frontmatter nil path)
-      path)))
-
-;;────────────────────────────────────────────────────────────
-;; Org-Capture Templates
-;;────────────────────────────────────────────────────────────
-(with-eval-after-load 'denote
-  (with-eval-after-load 'org-capture
-    (setq org-capture-templates
-          '(("n" "New Denote Note" plain
-             (file my/denote-capture-create-file)
-             ""
-             :empty-lines 1
-             :jump-to-captured t)))))
-
-;;────────────────────────────────────────────────────────────
-;; Leader Keybindings (Denote + Org-Roam)
-;;────────────────────────────────────────────────────────────
-(with-eval-after-load 'denote
-  (with-eval-after-load 'evil
-    ;; DENOTE keybindings
-    (define-key evil-normal-state-map (kbd "SPC n n")
-      (lambda () (interactive) (org-capture nil "n")))
-    (define-key evil-normal-state-map (kbd "SPC n c") #'denote)
-    (define-key evil-visual-state-map (kbd "SPC n R") #'denote-region)
-    (define-key evil-normal-state-map (kbd "SPC n r") #'denote-rename-file)
-    (define-key evil-normal-state-map (kbd "SPC n S")
-      #'denote-rename-file-using-front-matter)
-    (define-key evil-normal-state-map (kbd "SPC n d")
-      (lambda () (interactive) (dired denote-directory)))
-    (define-key evil-normal-state-map (kbd "SPC n s") #'denote-subdirectory)
-    
-    ;; LINKING: Use both Denote and Org-Roam
-    (define-key evil-normal-state-map (kbd "SPC n l") #'denote-link)
-    (define-key evil-normal-state-map (kbd "SPC n L") #'denote-link-add-links)
-    
-    ;; BACKLINKS: Denote backlinks
-    (define-key evil-normal-state-map (kbd "SPC n b") #'denote-backlinks)
-    
-    (define-key evil-normal-state-map (kbd "SPC n e")
-      (lambda () (interactive) (dired denote-directory)))
-    (define-key evil-normal-state-map (kbd "SPC n k") #'kill-current-buffer)))
-
-;; ORG-ROAM keybindings (separate prefix)
-(with-eval-after-load 'org-roam
-  (with-eval-after-load 'evil
-    ;; Find/insert Org-Roam node
-    (define-key evil-normal-state-map (kbd "SPC r f") #'org-roam-node-find)
-    (define-key evil-normal-state-map (kbd "SPC r i") #'org-roam-node-insert)
-    
-    ;; Org-Roam backlinks buffer (graph view)
-    (define-key evil-normal-state-map (kbd "SPC r b") #'org-roam-buffer-toggle)
-    
-    ;; Show graph UI
-    (define-key evil-normal-state-map (kbd "SPC r g") #'org-roam-ui-mode)
-    
-    ;; Sync database
-    (define-key evil-normal-state-map (kbd "SPC r s") #'org-roam-db-sync)))
 
 (leaf denote-explore
   :straight (denote-explore
@@ -949,116 +1272,6 @@
 
   ;; Optional: narrow by keyword/tag quickly
   (global-set-key (kbd "C-c d F") #'consult-denote-file))
-
-;; Ensure org-roam-ui picks up the monochrome theme
-(leaf org-roam-ui
-  :straight (org-roam-ui
-             :type git
-             :host github
-             :repo "org-roam/org-roam-ui"
-             :files ("*.el" "out"))
-  :after org-roam
-  :config
-  (require 'hl-line)
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t)
-  
-  (add-hook 'after-init-hook #'org-roam-ui-mode)
-  
-  (defun my/org-roam-ui-sync-theme (&rest _)
-    (when (and (featurep 'org-roam-ui) org-roam-ui-mode)
-      (org-roam-ui--update-theme)))
-  
-  (advice-add 'load-theme :after #'my/org-roam-ui-sync-theme)
-  (advice-add 'shapeshift/monochrome-world :after #'my/org-roam-ui-sync-theme))
-
-;;──────────────────────────────────────────────────────────
-;; LaTeX Manuscript Mode (Safe, Non-recursive, Precise)
-;;──────────────────────────────────────────────────────────
-
-(leaf cdlatex
-  :straight (cdlatex :type git :host github :repo "cdominik/cdlatex"))
-
-(leaf org-fragtog
-  :straight (org-fragtog :type git :host github :repo "io12/org-fragtog"))
-
-(leaf auctex
-  :straight (auctex :type git :host github :repo "emacs-straight/auctex"))
-
-(leaf pdf-tools
-  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools")
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook (pdf-view-mode . pdf-tools-install)
-  :config
-  (setq pdf-view-display-size 'fit-page))
-
-;; Global protection against TeX trying to use ~/.emacs as master
-(setq-default TeX-master nil)
-
-(defvar shapeshift/org-latex-export-timer nil)
-
-(defun shapeshift/show-pdf-in-split (pdf)
-  "Open PDF preview buffer in a split window without marking it visited."
-  (delete-other-windows)
-  (split-window-right)
-  (other-window 1)
-  (let* ((buffer (find-file-noselect pdf)))
-    (with-current-buffer buffer
-      (pdf-view-mode)
-      (auto-revert-mode 1)
-      (setq buffer-read-only t)
-      (setq revert-without-query '(".*\\.pdf")))
-    (switch-to-buffer buffer))
-  (other-window -1))
-
-(defun shapeshift/org-export-and-preview-split ()
-  "Export Org to PDF and preview in split window with idle delay."
-  (interactive)
-  (when shapeshift/org-latex-export-timer
-    (cancel-timer shapeshift/org-latex-export-timer))
-  (setq shapeshift/org-latex-export-timer
-        (run-with-idle-timer
-         0.4 nil
-         (lambda ()
-           (let* ((org-file (buffer-file-name))
-                  (pdf (concat (file-name-sans-extension org-file) ".pdf")))
-             (org-latex-export-to-pdf)
-             (when (file-exists-p pdf)
-               (shapeshift/show-pdf-in-split pdf)
-               (message "PDF updated ✓")))))))
-
-(defun shapeshift/org-latex-manuscript-mode ()
-  "Enable Live-Shaping manuscript preview workflow."
-  (interactive)
-  (visual-line-mode 1)
-  (org-cdlatex-mode 1)
-  (org-fragtog-mode 1)
-  (setq-local TeX-command-extra-options "-shell-escape")
-  (shapeshift/org-export-and-preview-split)
-  (add-hook 'after-save-hook #'shapeshift/org-export-and-preview-split nil t)
-  (message "Manuscript mode enabled: Split live preview"))
-
-(defun shapeshift/maybe-enable-manuscript-mode ()
-  "Enable manuscript mode only for real LaTeX-bearing files, never Emacs.org."
-  (when (and (eq major-mode 'org-mode)
-             (buffer-file-name)
-             (not (string-match-p "Emacs.org" (buffer-file-name)))
-             (save-excursion
-               (goto-char (point-min))
-               (re-search-forward "^#\\+LATEX_CLASS:" nil t)))
-    (shapeshift/org-latex-manuscript-mode)))
-
-(add-hook 'org-mode-hook #'shapeshift/maybe-enable-manuscript-mode)
-(leaf pdf-tools
-  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools")
-  :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook ((pdf-view-mode . pdf-tools-install))
-  :config
-  (unless (file-exists-p pdf-info-epdfinfo-program)
-    (pdf-tools-install))
-  (setq pdf-view-display-size 'fit-page))
 
 ;; ───────────────────────────────────────────────────────────────
 ;; CONSULT — the high-precision jump engine
@@ -1109,36 +1322,6 @@
   (define-key shapeshifter-leader-map (kbd "s") #'consult-ripgrep)
   (define-key shapeshifter-leader-map (kbd "l") #'consult-line))
 
-(leaf shapeback
-  :config
-  ;; Base directory for all ephemeral Emacs files
-  (let* ((base "~/.config/emacs/")
-         (backup-dir   (expand-file-name "backups/" base))
-         (autosave-dir (expand-file-name "auto-saves/" base))
-         (tramp-dir    (expand-file-name "tramp-saves/" base))
-         (dirs (list backup-dir autosave-dir tramp-dir)))
-
-    ;; Ensure directories exist
-    (dolist (dir dirs)
-      (unless (file-directory-p dir)
-        (make-directory dir t)))
-
-    ;; Backup system
-    (setq backup-directory-alist `((".*" . ,backup-dir))
-          make-backup-files t
-          version-control t
-          kept-new-versions 6
-          kept-old-versions 2
-          delete-old-versions t)
-
-    ;; Auto-save system
-    (setq auto-save-file-name-transforms `((".*" ,autosave-dir t))
-          auto-save-list-file-prefix (concat autosave-dir ".saves-"))
-
-    ;; TRAMP safety
-    (setq tramp-backup-directory-alist `((".*" . ,backup-dir))
-          tramp-auto-save-directory tramp-dir)))
-
 (leaf speed-type
   :straight (speed-type
              :type git
@@ -1160,24 +1343,438 @@
   (define-key evil-normal-state-map (kbd "SPC T r") #'speed-type-region)
   (define-key evil-normal-state-map (kbd "SPC T d") #'speed-type-debug))
 
-(defun live-shaping/auto-tangle-and-reload ()
-  "Auto-tangle and reload when this Org file tangles to init.el."
-  (when (and buffer-file-name
+;;────────────────────────────────────────────────────────────
+;; Denote — .live System with Silos & Formats Separation (ENHANCED)
+;;────────────────────────────────────────────────────────────
+
+;;────────────────────────────────────────────────────────────
+;; Org-ID — persistent identity
+;;────────────────────────────────────────────────────────────
+(leaf org-id
+  :after org
+  :config
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+
+;;────────────────────────────────────────────────────────────
+;; Master Directory Configuration
+;;────────────────────────────────────────────────────────────
+(defvar shapeshift/denote-master-dir "~/testing-manuscripts"
+  "Master directory containing silos/ and formats/ subdirectories.")
+
+(defvar shapeshift/denote-silos-dir nil
+  "Silos directory where .live files are created.")
+
+(defvar shapeshift/denote-formats-dir nil
+  "Formats directory for exported files.")
+
+;; Initialize directory structure
+(setq shapeshift/denote-silos-dir 
+      (expand-file-name "silos" shapeshift/denote-master-dir))
+(setq shapeshift/denote-formats-dir 
+      (expand-file-name "formats" shapeshift/denote-master-dir))
+
+;; Ensure directory structure exists
+(unless (file-directory-p shapeshift/denote-master-dir)
+  (make-directory shapeshift/denote-master-dir t))
+(unless (file-directory-p shapeshift/denote-silos-dir)
+  (make-directory shapeshift/denote-silos-dir t))
+(unless (file-directory-p shapeshift/denote-formats-dir)
+  (make-directory shapeshift/denote-formats-dir t))
+
+;;────────────────────────────────────────────────────────────
+;; Org-Roam — neural map engine
+;;────────────────────────────────────────────────────────────
+(leaf org-roam
+  :straight (org-roam
+             :type git
+             :host github
+             :repo "org-roam/org-roam")
+  :after org
+  :init
+  ;; Point to silos directory
+  (setq org-roam-directory (file-truename shapeshift/denote-silos-dir))
+  (setq find-file-visit-truename t)
+  (setq org-roam-v2-ack t)
+  :config
+  (org-roam-db-autosync-mode))
+
+;;────────────────────────────────────────────────────────────
+;; Denote Configuration with .live Extension
+;;────────────────────────────────────────────────────────────
+(leaf denote
+  :straight t
+  :after org
+  :init
+  ;; Use silos directory
+  (setq denote-directory (expand-file-name shapeshift/denote-silos-dir))
+  (setq denote-file-type 'org)
+  (setq denote-date-format "%Y-%m-%d--%H-%M")
+  ;; Always prompt for: title, keywords, silo (subdirectory), signature
+  (setq denote-prompts '(title keywords subdirectory signature))
+  (setq org-startup-with-inline-images nil)
+  (setq org-startup-folded 'showall)
+  
+  :config
+  (denote-rename-buffer-mode 1)
+  
+  (setq denote-link-backlinks-display-buffer-action
+        '((display-buffer-reuse-window display-buffer-below-selected)
+          (window-height . fit-window-to-buffer)))
+
+  ;;────────── Auto-Silo Creation Logic (No Confirmation) ──────────
+  (defun shapeshift/denote-auto-silo-prompt ()
+    "Prompt for silo (1st level) and sub-silo (2nd level), creating automatically."
+    (let* ((existing-silos 
+            (seq-filter #'file-directory-p
+                        (directory-files denote-directory t "^[^.]")))
+           (silo-names (mapcar (lambda (dir) 
+                                 (file-name-nondirectory dir))
+                               existing-silos))
+           (silo (completing-read "Silo (1st level): " silo-names nil nil))
+           (silo-path (expand-file-name silo denote-directory)))
+      
+      ;; Create silo automatically if needed
+      (unless (file-directory-p silo-path)
+        (make-directory silo-path t)
+        (message "Created silo: %s" silo))
+      
+      ;; Now prompt for sub-silo (2nd level subdirectory)
+      (let* ((existing-subsilo 
+              (seq-filter #'file-directory-p
+                          (directory-files silo-path t "^[^.]")))
+             (subsilo-names (mapcar (lambda (dir)
+                                      (file-name-nondirectory dir))
+                                    existing-subsilo))
+             (subsilo (completing-read "Sub-silo (2nd level, optional): " 
+                                       subsilo-names nil nil)))
+        
+        (if (string-empty-p subsilo)
+            silo-path
+          (let ((subsilo-path (expand-file-name subsilo silo-path)))
+            ;; Create sub-silo automatically
+            (unless (file-directory-p subsilo-path)
+              (make-directory subsilo-path t)
+              (message "Created sub-silo: %s/%s" silo subsilo))
+            subsilo-path)))))
+  
+  (advice-add 'denote-subdirectory-prompt 
+              :override #'shapeshift/denote-auto-silo-prompt)
+
+  ;;────────── Two-Way Linking System ──────────
+  (defvar shapeshift/source-buffer-for-linking nil
+    "Buffer from which new note was created, for bidirectional linking.")
+  
+  (defun shapeshift/insert-bidirectional-link (source-file new-file)
+    "Insert link to NEW-FILE in SOURCE-FILE and vice versa."
+    (when (and source-file (file-exists-p source-file))
+      ;; Insert link in source file pointing to new file
+      (with-current-buffer (find-file-noselect source-file)
+        (save-excursion
+          (goto-char (point-max))
+          (unless (bolp) (insert "\n"))
+          (insert "\n** Related Notes\n")
+          (org-insert-link nil (concat "id:" (org-id-get-create)) 
+                           (format "Link to new note: %s" 
+                                   (file-name-base new-file)))
+          (insert "\n"))
+        (save-buffer))
+      
+      ;; Insert link in new file pointing back to source
+      (with-current-buffer (find-file-noselect new-file)
+        (save-excursion
+          (goto-char (point-max))
+          (unless (bolp) (insert "\n"))
+          (insert "\n** Related Notes\n")
+          (org-insert-link nil (concat "id:" (org-id-get-create)) 
+                           (format "Link from: %s" 
+                                   (file-name-base source-file)))
+          (insert "\n"))
+        (save-buffer))))
+
+  ;;────────── Enhanced File Creation with .live Extension ──────────
+  (defun shapeshift/denote-capture-create-file ()
+    "Create Denote file with .live extension, org-id, and bidirectional linking."
+    (let* ((title (read-string "Title: "))
+           (keywords (denote-keywords-prompt))
+           (subdir (shapeshift/denote-auto-silo-prompt))
+           (signature (read-string "Signature (optional): " nil nil ""))
+           (date (current-time))
+           (id (format-time-string denote-date-format date))
+           (date-formatted (format-time-string denote-date-format date))
+           (ext ".live")
+           (kws (if keywords (concat "_" (mapconcat #'downcase keywords "_")) ""))
+           (sig (if (string-empty-p signature) "" (concat "==" signature)))
+           (slug (replace-regexp-in-string "[^[:alnum:][:digit:]]" "-" 
+                                           (downcase title)))
+           (filename (concat id "--" slug kws sig ext))
+           (path (expand-file-name filename subdir))
+           (org-id (org-id-new))
+           
+           ;; Basic LaTeX frontmatter with ORG-ID
+           (frontmatter
+            (concat
+             "#+TITLE:      " title "\n"
+             "#+AUTHOR:     Shapeshifter\n"
+             "#+DATE:       " date-formatted "\n"
+             "#+IDENTIFIER: " id "\n"
+             "#+FILETAGS:   " (if keywords (mapconcat #'identity keywords " ") "") "\n"
+             (unless (string-empty-p signature)
+               (concat "#+SIGNATURE:  " signature "\n"))
+             "\n"
+             "#+LATEX_CLASS: article\n"
+             "#+LATEX_CLASS_OPTIONS: [11pt,a4paper]\n"
+             "#+LATEX_COMPILER: lualatex\n"
+             "#+LATEX_HEADER: \\usepackage{amsmath}\n"
+             "#+LATEX_HEADER: \\usepackage{graphicx}\n"
+             "#+LATEX_HEADER: \\usepackage{hyperref}\n"
+             "#+LATEX_HEADER: \\usepackage{fontspec}\n"
+             "#+OPTIONS: toc:nil num:t\n"
+             "\n"
+             "* " title "\n"
+             ":PROPERTIES:\n"
+             ":ID:       " org-id "\n"
+             ":END:\n\n"
+             "Write your manuscript here.\n\n"
+             "** Section Example\n\n"
+             "Use LaTeX inline: $E = mc^2$\n\n"
+             "Display equations:\n"
+             "\\begin{equation}\n"
+             "\\int_{a}^{b} f(x) dx\n"
+             "\\end{equation}\n")))
+      
+      ;; Write the file
+      (write-region frontmatter nil path)
+      
+      ;; Ask about bidirectional linking
+      (when (and shapeshift/source-buffer-for-linking
+                 (y-or-n-p "Create bidirectional link with source note? "))
+        (shapeshift/insert-bidirectional-link 
+         (buffer-file-name shapeshift/source-buffer-for-linking)
+         path))
+      
+      ;; Export to all formats immediately
+      (shapeshift/export-to-all-formats path subdir)
+      
+      path)))
+
+  ;;────────── Multi-Format Export System (EXPANDED) ──────────
+  (defun shapeshift/get-relative-silo-path (file-path)
+    "Get relative silo path from silos directory."
+    (file-relative-name 
+     (file-name-directory file-path) 
+     shapeshift/denote-silos-dir))
+
+  (defun shapeshift/ensure-formats-mirror-dir (relative-silo format-ext)
+    "Create mirror directory structure in formats/FORMAT_EXT/silo/subsilo."
+    (let* ((format-base (expand-file-name format-ext shapeshift/denote-formats-dir))
+           (mirror-dir (expand-file-name relative-silo format-base)))
+      (unless (file-directory-p mirror-dir)
+        (make-directory mirror-dir t))
+      mirror-dir))
+
+  (defun shapeshift/export-to-all-formats (live-file original-subdir)
+    "Export .live file to all formats with mirrored directory structure."
+    (let* ((relative-silo (shapeshift/get-relative-silo-path live-file))
+           (base-name (file-name-sans-extension (file-name-nondirectory live-file)))
+           (formats '(("txt" . org-ascii-export-to-ascii)
+                      ("tex" . org-latex-export-to-latex)
+                      ("html" . org-html-export-to-html)
+                      ("md" . org-md-export-to-markdown)
+                      ("pdf" . org-latex-export-to-pdf)
+                      ("docx" . org-odt-export-to-odt)
+                      ("beamer" . org-beamer-export-to-pdf))))
+      
+      (with-current-buffer (find-file-noselect live-file)
+        (dolist (format-pair formats)
+          (let* ((ext (car format-pair))
+                 (export-fn (cdr format-pair))
+                 (mirror-dir (shapeshift/ensure-formats-mirror-dir relative-silo ext))
+                 (output-file (expand-file-name 
+                               (concat base-name "." ext) 
+                               mirror-dir)))
+            (condition-case err
+                (progn
+                  (funcall export-fn)
+                  ;; Move exported file to formats directory
+                  (let ((temp-export (concat (file-name-sans-extension live-file) "." ext)))
+                    (when (file-exists-p temp-export)
+                      (rename-file temp-export output-file t)
+                      (message "Exported: %s → formats/%s/" base-name ext))))
+              (error 
+               (message "Export to %s failed: %s" ext (error-message-string err))))))
+        
+        ;; Keep .org copy in formats/org as well
+        (let* ((org-mirror-dir (shapeshift/ensure-formats-mirror-dir relative-silo "org"))
+               (org-copy (expand-file-name (concat base-name ".org") org-mirror-dir)))
+          (copy-file live-file org-copy t))
+        
+        (message "✓ Exported to all formats in: formats/"))))
+
+  ;;────────── Cleanup Function: Remove Non-.live Files from Silos ──────────
+  (defun shapeshift/cleanup-silos ()
+    "Remove all non-.live files from silos directory (exports, temps, etc)."
+    (interactive)
+    (let ((files-to-clean 
+           (directory-files-recursively 
+            shapeshift/denote-silos-dir
+            "\\(\\.org\\|\\.tex\\|\\.pdf\\|\\.html\\|\\.txt\\|\\.md\\|\\.odt\\)$")))
+      (dolist (file files-to-clean)
+        (when (file-exists-p file)
+          (delete-file file)
+          (message "Cleaned: %s" file)))
+      (message "✓ Silos cleaned: only .live files remain")))
+
+;;────────────────────────────────────────────────────────────
+;; Auto-Export on Save Hook + Cleanup
+;;────────────────────────────────────────────────────────────
+(defun shapeshift/auto-export-on-save ()
+  "Auto-export current .live file and clean up silos directory."
+  (when (and (buffer-file-name)
+             (string-suffix-p ".live" (buffer-file-name))
+             (string-prefix-p (expand-file-name shapeshift/denote-silos-dir) 
+                              (expand-file-name (buffer-file-name))))
+    (let ((live-file (buffer-file-name))
+          (subdir (file-name-directory (buffer-file-name))))
+      (shapeshift/export-to-all-formats live-file subdir)
+      ;; Clean up any leftover exports in silos
+      (shapeshift/cleanup-silos))))
+
+(add-hook 'after-save-hook #'shapeshift/auto-export-on-save)
+
+;;────────────────────────────────────────────────────────────
+;; .live File Mode Detection
+;;────────────────────────────────────────────────────────────
+(add-to-list 'auto-mode-alist '("\\.live\\'" . org-mode))
+
+;;────────────────────────────────────────────────────────────
+;; Org-Capture Templates with Source Tracking
+;;────────────────────────────────────────────────────────────
+(with-eval-after-load 'denote
+  (with-eval-after-load 'org-capture
+    (setq org-capture-templates
+          '(("n" "New Denote Note (.live format)" plain
+             (file shapeshift/denote-capture-create-file)
+             ""
+             :empty-lines 1
+             :jump-to-captured t
+             :prepare-finalize (setq shapeshift/source-buffer-for-linking 
+                                     (current-buffer)))))))
+
+;;────────────────────────────────────────────────────────────
+;; Essential Keybindings (Minimal, Most Automatic)
+;;────────────────────────────────────────────────────────────
+(with-eval-after-load 'denote
+  (with-eval-after-load 'evil
+    ;; Core creation
+    (define-key evil-normal-state-map (kbd "SPC n n")
+      (lambda () (interactive) (org-capture nil "n")))
+    
+    ;; Navigation
+    (define-key evil-normal-state-map (kbd "SPC n d")
+      (lambda () (interactive) (dired shapeshift/denote-silos-dir)))
+    (define-key evil-normal-state-map (kbd "SPC n e")
+      (lambda () (interactive) (dired shapeshift/denote-formats-dir)))
+    
+    ;; Linking
+    (define-key evil-normal-state-map (kbd "SPC n l") #'denote-link)
+    (define-key evil-normal-state-map (kbd "SPC n b") #'denote-backlinks)))
+
+;; ORG-ROAM keybindings (Minimal)
+(with-eval-after-load 'org-roam
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "SPC r f") #'org-roam-node-find)
+    (define-key evil-normal-state-map (kbd "SPC r i") #'org-roam-node-insert)
+    (define-key evil-normal-state-map (kbd "SPC r b") #'org-roam-buffer-toggle)))
+
+;;────────────────────────────────────────────────────────────
+;; LaTeX Manuscript Mode (FIXED)
+;;────────────────────────────────────────────────────────────
+(leaf cdlatex
+  :straight (cdlatex :type git :host github :repo "cdominik/cdlatex"))
+
+(leaf org-fragtog
+  :straight (org-fragtog :type git :host github :repo "io12/org-fragtog"))
+
+(leaf auctex
+  :straight (auctex :type git :host github :repo "emacs-straight/auctex"))
+
+(leaf pdf-tools
+  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools")
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :hook (pdf-view-mode . pdf-tools-install)
+  :config
+  (setq pdf-view-display-size 'fit-page))
+
+(setq-default TeX-master nil)
+
+(defvar shapeshift/org-latex-export-timer nil)
+
+(defun shapeshift/show-pdf-in-split (pdf)
+  "Open PDF preview buffer in a split window without marking it visited."
+  (when (and pdf (file-exists-p pdf))
+    (delete-other-windows)
+    (split-window-right)
+    (other-window 1)
+    (let* ((buffer (find-file-noselect pdf)))
+      (with-current-buffer buffer
+        (pdf-view-mode)
+        (auto-revert-mode 1)
+        (setq buffer-read-only t)
+        (setq revert-without-query '(".*\\.pdf")))
+      (switch-to-buffer buffer))
+    (other-window -1)))
+
+(defun shapeshift/get-pdf-path-in-formats (org-file)
+  "Get the PDF path in formats/pdf/ directory for ORG-FILE."
+  (when org-file
+    (let* ((relative-path (shapeshift/get-relative-silo-path org-file))
+           (base-name (file-name-sans-extension 
+                       (file-name-nondirectory org-file)))
+           (pdf-dir (expand-file-name 
+                     relative-path
+                     (expand-file-name "pdf" shapeshift/denote-formats-dir))))
+      (expand-file-name (concat base-name ".pdf") pdf-dir))))
+
+(defun shapeshift/org-export-and-preview-split ()
+  "Export Org to PDF and preview in split window with idle delay."
+  (interactive)
+  (when shapeshift/org-latex-export-timer
+    (cancel-timer shapeshift/org-latex-export-timer))
+  (setq shapeshift/org-latex-export-timer
+        (run-with-idle-timer
+         0.4 nil
+         (lambda ()
+           (when (buffer-file-name)
+             (let* ((org-file (buffer-file-name))
+                    (pdf-in-silos (concat (file-name-sans-extension org-file) ".pdf"))
+                    (pdf-in-formats (shapeshift/get-pdf-path-in-formats org-file)))
+               (org-latex-export-to-pdf)
+               ;; Use PDF from formats directory for preview
+               (when (file-exists-p pdf-in-formats)
+                 (shapeshift/show-pdf-in-split pdf-in-formats)
+                 (message "PDF updated ✓"))
+               ;; Clean up silos
+               (when (file-exists-p pdf-in-silos)
+                 (delete-file pdf-in-silos))))))))
+
+(defun shapeshift/org-latex-manuscript-mode ()
+  "Enable Live-Shaping manuscript preview workflow."
+  (interactive)
+  (visual-line-mode 1)
+  (org-cdlatex-mode 1)
+  (org-fragtog-mode 1)
+  (setq-local TeX-command-extra-options "-shell-escape")
+  (shapeshift/org-export-and-preview-split)
+  (add-hook 'after-save-hook #'shapeshift/org-export-and-preview-split nil t)
+  (message "Manuscript mode enabled: Split live preview"))
+
+(defun shapeshift/maybe-enable-manuscript-mode ()
+  "Enable manuscript mode only for .live files with LaTeX."
+  (when (and (buffer-file-name)
+             (string-suffix-p ".live" (buffer-file-name))
              (save-excursion
                (goto-char (point-min))
-               (re-search-forward ":tangle[ \t]+~/.config/emacs/init.el" nil t)))
-    (message "Live-Shaping: Tangling…")
-    (condition-case err
-        (let ((target "~/.config/emacs/init.el")
-              (temp   "~/.config/emacs/init.el.tmp"))
-          (when (org-babel-tangle)
-            (when (file-exists-p temp) (delete-file temp))
-            (rename-file target temp t)
-            (rename-file temp target t)
-            (load-file target)
-            (message "Live-Shaping: Reload complete ✓")))
-      (error
-       (display-warning
-        'live-shaping (format "%s" (error-message-string err)) :error)))))
+               (re-search-forward "^#\\+LATEX_CLASS:" nil t)))
+    (shapeshift/org-latex-manuscript-mode)))
 
-(add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
+(add-hook 'org-mode-hook #'shapeshift/maybe-enable-manuscript-mode)

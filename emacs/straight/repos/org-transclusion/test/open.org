@@ -1,7 +1,0 @@
-* Headline
-
-#+begin_comment
-This is a comment
-#+end_comment
-
-Hello.

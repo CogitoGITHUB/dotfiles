@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/evil-collection/modes/geiser/evil-collection-geiser.el

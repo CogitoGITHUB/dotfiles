@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/evil-collection/modes/magit-section/evil-collection-magit-section.el

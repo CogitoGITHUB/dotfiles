@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/denote/tests/denote-test.el

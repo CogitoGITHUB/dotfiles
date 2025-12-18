@@ -1,0 +1,9 @@
+{
+	"skipAll": false,
+	"activeSteps": {},
+	"__internal__": {
+		"migrations": {
+			"version": "2.0.0"
+		}
+	}
+}

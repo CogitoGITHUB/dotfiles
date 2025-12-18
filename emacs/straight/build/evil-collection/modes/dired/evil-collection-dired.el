@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/evil-collection/modes/dired/evil-collection-dired.el

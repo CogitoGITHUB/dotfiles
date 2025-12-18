@@ -1,0 +1,104 @@
+2025-12-16T17:03:10.203Z info: 	[LENS-CORE-RENDERER]: loading finished for /home/asdf/.config/Lens/lens-local-storage/app.json
+2025-12-16T17:03:10.208Z info: 	[LOCAL-STORAGE]: initialized
+2025-12-16T17:03:10.214Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "before-application-is-loading-injection-token" took 64.2 ms.
+
+Individual runnables took:
+- cluster-common:storage-initialization                    	50.3 ms
+- local-storage-feature:run-initialization-of-local-storage	49.2 ms
+- lens-core-renderer:initialize-lens-local-storage-state   	21.4 ms
+- user-preferences:storage-initialization                  	18.8 ms
+- messaging:start-listening-of-channels                    	5.5 ms 
+- app-paths-setup-renderer:setup-app-paths                 	4.4 ms 
+- chart-feature:register-chart-injectable                  	0.5 ms 
+- chart-plugins:register-annotation-injectable             	0.3 ms 
+- chart-plugins:register-zoom-plugin-injectable            	0.1 ms 
+- chart-plugins:register-highest-max-injectable            	0 ms   
+2025-12-16T17:03:10.289Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "before-frame-starts-first" took 50.2 ms.
+
+Individual runnables took:
+- internal-proxy-renderer:setup-lens-proxy-certificate	46.5 ms
+- lens-core-renderer:preload-terminal-fonts           	39.7 ms
+- lens-core-renderer:configure-immer                  	0.3 ms 
+- lens-core-renderer:configure-mobx                   	0.1 ms 
+2025-12-16T17:03:10.291Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "before-main-frame-starts-first" took 1.2 ms.
+
+Individual runnables took:
+- lens-core-renderer:setup-sentry      	0.1 ms
+- network-renderer:setup-window-online 	0.1 ms
+- network-renderer:setup-window-offline	0 ms  
+2025-12-16T17:03:10.335Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "before-frame-starts-second" took 42.6 ms.
+
+Individual runnables took:
+- theme-renderer-feature:initialize-system-theme-type                            	40.4 ms
+- lens-core-renderer:setup-cluster-state-sync                                    	33.7 ms
+- lens-core-renderer:enabled-extensions-persistent-storage-version-initialization	32 ms  
+- lens-core-renderer:setup-system-ca                                             	25.2 ms
+- lens-core-renderer:provide-initial-values-for-sync-boxes                       	24.9 ms
+- lens-core-renderer:load-monaco-themes                                          	6 ms   
+- lens-core-renderer:load-weblink-storage                                        	5 ms   
+- lens-core-renderer:init-file-system-provisioner-store                          	1.5 ms 
+- lens-core-renderer:setup-root-mac-classname                                    	0.3 ms 
+- lens-core-renderer:listen-unload                                               	0.2 ms 
+- lens-core-renderer:setup-logging-for-navigation                                	0 ms   
+2025-12-16T17:03:10.336Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "before-main-frame-starts-second" took 0.1 ms.
+
+Individual runnables took:
+
+2025-12-16T17:03:10.348Z info: 	[EXTENSIONS-LOADER]: auto initializing extensions
+2025-12-16T17:03:12.419Z info: 	[CLI] activated
+2025-12-16T17:03:12.440Z info: 	[LENS-APPS] [SHIPA-EXTENSION]: activated
+2025-12-16T17:03:12.468Z info: 	[SUPPORT-EXTENSION] activated
+2025-12-16T17:03:12.980Z info: 	[LENS-SPACES-EXTENSION]: 12/16/2025, 7:03:12 PM Lens Spaces Extension activated
+2025-12-16T17:03:12.993Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "on-load-of-application" took 2779.6 ms.
+
+Individual runnables took:
+- lens-core-renderer:bootstrap                                                 	2657 ms
+- lens-core-renderer:start-frame                                               	96.3 ms
+- lens-id:initialize-auth-token-store-runnable                                 	96 ms  
+- lens-id:initialize-lens-cloud-status-store-runnable                          	94.2 ms
+- lens-id:initialize-local-metadata-store-runnable                             	93.9 ms
+- lens-id:initialize-space-settings-store-runnable                             	93.5 ms
+- main-view-feature:initialize-running-on-selected-tab-change                  	66.9 ms
+- main-view-feature:start-updating-on-selected-tab-change-handlers             	64.7 ms
+- local-storage-feature:write-changed-local-storage                            	61 ms  
+- cluster-manager-renderer:start-emitting-telemetry-on-load                    	59.7 ms
+- main-view-feature:remove-corrupted-tabs-on-startup                           	57.2 ms
+- kubernetes-resources:start-cleaning-up-tabs-on-cluster-removal               	56.8 ms
+- kubernetes-resources:migrate-legacy-local-storage-data-to-persisted-state    	50 ms  
+- lens-core-renderer:updating-is-enabled-initialization                        	49.3 ms
+- dynamic-features:register-already-installed-extensions-on-load-of-application	43.1 ms
+- terminal-dock-tab:create-initial-terminal-tab                                	3.7 ms 
+2025-12-16T17:03:13.394Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "after-application-is-loaded-injection-token" took 401.2 ms.
+
+Individual runnables took:
+- release-notes-renderer:show-release-notes-on-startup                        	223 ms  
+- react-application:render-application-when-application-is-ready              	178.7 ms
+- lens-id-auth:start-for-close-tabs-on-unregister                             	71.2 ms 
+- welcome-for-renderer:show-welcome-page-on-startup                           	71 ms   
+- context-menu:start-for-automatically-close-context-menu-when-no-items       	8.7 ms  
+- demo-cluster-feature:start-for-ensure-demo-cluster-kube-config-after-startup	7.3 ms  
+- chart-plugins:register-moment-adapter-injectable                            	0.2 ms  
+- lens-spaces-renderer:check-refresh-token-validity                           	0.1 ms  
+- application-electron-renderer-feature:closing-of-application                	0 ms    
+2025-12-16T17:03:35.958Z info: 	[LENS-SPACES-EXTENSION]: (from:AuthCallbackServer) 12/16/2025, 7:03:35 PM Running AuthCallbackServer on http://localhost:45619
+2025-12-16T17:03:35.961Z info: 	[LENS-SPACES-EXTENSION]: (from:AuthHandler) 12/16/2025, 7:03:35 PM Opening authorizationRequestUrl: https://app.k8slens.dev/signup/realms/lensCloud/protocol/openid-connect/auth?client_id=lens-extension&scope=openid%20offline_access&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A45619%2Flogin&state=PGW6zC8o0kgjdWC43h0Pvs3Mje5BLZLMED7OvyrMx2Q&response_mode=query&machine_id=fa02119c6466829f5cd81cff66fdcd502ba25c5a9d053af121d9cd647c8800c6
+2025-12-16T17:04:24.230Z info: 	[ROOT-FRAME]: Unload app
+2025-12-16T17:04:24.245Z info: 	[LENS-SPACES-EXTENSION]: (from:AuthCallbackServer) 12/16/2025, 7:04:24 PM Stopping AuthCallbackServer on http://localhost:45619
+2025-12-16T17:04:24.257Z info: 	[LENS-SECURITY] deactivated
+2025-12-16T17:04:24.258Z info: 	[LENS-APPS] [SHIPA-EXTENSION]: deactivated
+2025-12-16T17:04:24.258Z info: 	[SUPPORT-EXTENSION] deactivated
+2025-12-16T17:04:24.259Z info: 	[TOUR-EXTENSION] deactivated
+2025-12-16T17:04:24.259Z info: 	[LENS-SPACES-EXTENSION]: 12/16/2025, 7:04:24 PM Lens Spaces Extension deactivated.
+2025-12-16T17:04:24.260Z info: 	[RUN-MANY-PERFORMANCE-LOGGING]: Running runnables for "on-closing-of-application-injection-token" took 7.4 ms.
+
+Individual runnables took:
+- fs-feature:automatic-dispose-of-watchers-on-closing-of-application         	4.9 ms
+- local-storage-feature:stop-writing-changed-local-storage                   	4.5 ms
+- context-menu:stop-for-automatically-close-context-menu-when-no-items       	3.9 ms
+- main-view-feature:stop-updating-on-selected-tab-change-handlers            	3.8 ms
+- kubernetes-resources:stop-cleaning-up-tabs-on-cluster-removal              	3.8 ms
+- lens-core-renderer:deactivate-extensions-on-close                          	3.7 ms
+- lens-id-auth:stop-for-close-tabs-on-unregister                             	0.6 ms
+- demo-cluster-feature:stop-for-ensure-demo-cluster-kube-config-after-startup	0.6 ms
+- messaging:stop-listening-of-channels                                       	0.2 ms
+- with-auto-dispose:dispose-on-close-of-application                          	0.1 ms

@@ -1,0 +1,10 @@
+{
+	"__internal__": {
+		"migrations": {
+			"version": "6.5.1"
+		}
+	},
+	"preferences": {
+		"updateChannel": "latest"
+	}
+}

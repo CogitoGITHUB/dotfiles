@@ -1,0 +1,8 @@
+{
+	"enabled": true,
+	"__internal__": {
+		"migrations": {
+			"version": "1.0.6"
+		}
+	}
+}

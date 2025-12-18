@@ -1,0 +1,14 @@
+#+title:      Theme Configuration
+#+PRIORITY:   1
+
+* Doom Themes
+:PROPERTIES:
+:PACKAGE: doom-themes
+:STRAIGHT: doomemacs/themes
+:END:
+
+
+** Config :config:
+#+begin_src emacs-lisp
+(load-theme 'doom-one t)
+#+end_src

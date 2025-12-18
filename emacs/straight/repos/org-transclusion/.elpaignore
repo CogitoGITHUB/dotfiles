@@ -1,9 +1,0 @@
-test
-docs
-resources
-Makefile
-.gitignore
-.elpaignore
-.github
-text-clone-docs
-.dir-locals.el

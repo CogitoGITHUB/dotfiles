@@ -1,5 +1,0 @@
-<<aaa>>=
-def test_aaa ():
-    print('aaa')
-
-# Newline missing at the end of this file.

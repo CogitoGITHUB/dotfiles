@@ -1,1 +1,0 @@
-/home/asdf/.config/emacs/straight/repos/all-the-icons.el/data/data-alltheicons.el

@@ -254,9 +254,9 @@ hotkey-overlay {
 binds {
 
  // Core Noctalia binds
-    Mod+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+A { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-    Mod+Z { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+ //   Mod+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+ //   Mod+A { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+ //   Mod+Z { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "settings" "toggle"; }
  //   Mod+V { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
  //   Mod+C { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "calculator"; }
  //   Mod+P { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
@@ -268,11 +268,11 @@ binds {
 
     Mod+B hotkey-overlay-title="Open qutebrowser" { spawn "qutebrowser"; }
     Mod+E hotkey-overlay-title="Open Emacs: Emacs" { spawn "emacs"; }
-    Mod+U hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm"; }
-    Mod+RETURN hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: wezterm" { spawn "wezterm"; }
+    Mod+U hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
 
     Mod+Ctrl+RETURN { quit; }
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+ //   Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     Mod+V       { toggle-window-floating; }
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
@@ -280,7 +280,7 @@ binds {
     Mod+W { toggle-column-tabbed-display; }
     Mod+I { set-column-width "-10%"; }
     Mod+D { set-column-width "+10%"; }
-    Mod+F { fullscreen-window; }
+    Mod+Space { fullscreen-window; }
     Mod+Ctrl+F { expand-column-to-available-width; }
     Mod+Shift+Minus { set-window-height "-10%"; }
     Mod+Shift+Equal { set-window-height "+10%"; }

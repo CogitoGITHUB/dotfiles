@@ -1,0 +1,92 @@
+#+title:      Emacs Configuration
+#+date:       2025-12-16
+#+AUTHOR:     Shapeshifter
+#+PROPERTY:   header-args:emacs-lisp :tangle ~/.config/emacs/init.el
+
+* straight.el
+#+begin_src emacs-lisp
+;;──────────────────────────────────────────────────────────
+;; Straight bootstrap (must be first)
+;;──────────────────────────────────────────────────────────
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        user-emacs-directory))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(setq straight-use-package-by-default t)
+(straight-use-package 'org)
+(require 'org)
+
+;;──────────────────────────────────────────────────────────
+;; Install leaf *before* leaf-keywords is used
+;;──────────────────────────────────────────────────────────
+(straight-use-package 'leaf)
+(straight-use-package 'leaf-keywords)
+(require 'leaf)
+(require 'leaf-keywords)
+(leaf-keywords-init)
+#+end_src
+
+* Tree Full of Leafs
+#+begin_src emacs-lisp
+;;──────────────────────────────────────────────────────────
+;; Install and configure Tree Full of Leafs
+;;──────────────────────────────────────────────────────────
+(straight-use-package
+ '(tree-full-of-leafs :type git
+                      :host github
+                      :repo "CogitoGITHUB/Tree-full-of-leafs"))
+
+(require 'tree-full-of-leafs)
+
+;; Directories are now in ~/.config/emacs/shapes/
+;; The defaults are:
+;; - tfol-org-directory: ~/.config/emacs/shapes/
+;; - tfol-output-directory: ~/.config/emacs/shapes/.compiled/
+;; - tfol-remote-org-directory: ~/.config/emacs/shapes/.remote/
+;; - tfol-remote-output-directory: ~/.config/emacs/shapes/.remote-compiled/
+
+;; Boot Tree Full of Leafs (compile and load all org files from shapes/)
+(tfol-boot)
+
+;; Optional: Add keybindings for quick access
+(global-set-key (kbd "C-c t r") 'tfol-recompile)      ; Recompile all org files
+(global-set-key (kbd "C-c t l") 'tfol-reload)         ; Reload compiled files
+(global-set-key (kbd "C-c t p") 'tfol-preview)        ; Preview current org file
+(global-set-key (kbd "C-c t e") 'tfol-report-errors)  ; Show boot errors
+(global-set-key (kbd "C-c t c") 'tfol-clean)          ; Clean compiled files
+#+end_src
+
+* Leaf Core
+#+begin_src emacs-lisp
+;;──────────────────────────────────────────────────────────
+;; Primitive built-in configuration with leaf
+;;──────────────────────────────────────────────────────────
+(leaf cus-start
+  :doc "builtin core configuration"
+  :tag "builtin"
+  :custom ((truncate-lines . t)
+           (menu-bar-mode . nil)
+           (tool-bar-mode . nil)
+           (scroll-bar-mode . nil)
+           (inhibit-startup-screen . t)
+           (initial-scratch-message . nil)
+           (ring-bell-function . 'ignore)
+           (use-dialog-box . nil)
+           (cursor-in-non-selected-windows . nil)
+           (frame-title-format . "%b")
+           (fringe-mode . 0)))
+
+(setq-default mode-line-format nil)
+(setq mode-line-format nil)
+#+end_src
