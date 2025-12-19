@@ -53,73 +53,105 @@
 (setq-default mode-line-format nil)
 (setq mode-line-format nil)
 
-;;; tree.el --- Managed Emacs configuration through org files
+;;; shaping.el --- Managed Emacs configuration through org files
 ;; Copyright (C) 2025
 ;; Author: Internal implementation
+
 ;;; Commentary:
 ;; This version works exclusively with leaf package declarations.
 ;; Remote functionality has been removed.
+
 (require 'cl-lib)
 (require 'ob-core)
+
 ;;; Code:
 
-(defvar tree-packages '()
-    "List of packages that should be installed.")
+(defvar shaping-packages '()
+  "List of packages that should be installed.
+This is a plist where keys are package symbols and values are
+plists containing package configuration like :init, :config, :bind, etc.")
 
-  (defvar tree--booting nil
-    "Non-nil when running inside `tree-boot'.")
+(defvar shaping--booting nil
+  "Non-nil when running inside `shaping-boot'.
+Used internally to control behavior during the boot process.")
 
-  (defvar tree--boot-phase :loading
-    "Internal boot phase for the splash screen.
-  Possible values: :compiling or :loading.")
+(defvar shaping--boot-errors '()
+  "List of compile/loading errors encountered during shaping boot.
+Each error is a plist with :file, :line, and :message keys.")
 
-  (defvar tree--boot-errors '()
-    "List of compile / loading errors encountered during tree boot.")
+(defcustom shaping-wrap-statements-in-condition t
+  "Wrap code in condition-case statements.
+When non-nil, all code blocks are wrapped in condition-case forms
+to catch and report errors without stopping the entire boot process.
+Set to nil for debugging to see raw errors."
+  :type 'boolean
+  :group 'shaping)
 
-  (defcustom tree-wrap-statements-in-condition t
-    "Wrap code in condition statements."
-    :type 'boolean
-    :group 'tree)
+(defcustom shaping-leaf-keywords
+  '("after" "demand" "ensure" "config" "init" "bind" "bind*" 
+    "hook" "general" "custom" "defer" "requires" "straight")
+  "List of `leaf' keywords that can be used as org tags.
+The keywords are case sensitive. If a tag ends with an underscore,
+it will be replaced with an asterisk in the generated code.
 
-(defcustom tree-leaf-keywords
-  '("after" "demand" "ensure" "config" "init" "bind" "bind*" "hook" "general" "custom" "defer" "requires" "straight")
-  "List of `leaf' keywords that can be used.
-The keywords are case sensitive. If the tag ends with an
-underscore, it will be replaced with a asterisk."
+Example: A tag 'bind_' becomes ':bind*' in the leaf declaration."
   :type 'list
-  :group 'tree)
-  
-  (defcustom tree-output-directory (expand-file-name "tree" user-emacs-directory)
-    "Directory where the tangled Elisp files are stored."
-    :type 'string
-    :group 'tree)
+  :group 'shaping)
 
-  (defcustom tree-org-directory (expand-file-name "org" user-emacs-directory)
-    "Directory where the Org files are stored."
-    :type 'string
-    :group 'tree)
+(defcustom shaping-output-directory 
+  (expand-file-name "shaped-packages" user-emacs-directory)
+  "Directory where the compiled Elisp files are stored.
+This directory is automatically created if it doesn't exist.
+Files in this directory are auto-generated and should not be edited manually."
+  :type 'string
+  :group 'shaping)
 
-  (defcustom tree-force-compile nil
-    "Force compilation of Org files, even if the Elisp file is newer
-  than the Org file."
-    :type 'boolean
-    :group 'tree)
+(defcustom shaping-org-directory 
+  (expand-file-name "shaping-packages" user-emacs-directory)
+  "Directory where the source Org files are stored.
+This is where you should place your configuration org files.
+Subdirectories are supported and will maintain their structure
+in the output directory."
+  :type 'string
+  :group 'shaping)
 
-(defun tree-indent (string n)
-  "Indent STRING by N spaces."
+(defcustom shaping-force-compile nil
+  "Force compilation of Org files even if elisp file is newer.
+When non-nil, always recompile org files regardless of timestamps.
+Useful for debugging or when you've modified shaping.el itself."
+  :type 'boolean
+  :group 'shaping)
+
+(defun shaping-indent (string n)
+  "Indent STRING by N spaces.
+Adds N spaces to the beginning of each line in STRING.
+
+Example:
+  (shaping-indent \"hello\\nworld\" 2)
+  => \"  hello\\n  world\""
   (let ((indentation (make-string n ?\s)))
     (replace-regexp-in-string "^" indentation string)))
 
-(defun tree-plist-keys (plist)
-  "Return the keys of PLIST as a list."
+(defun shaping-plist-keys (plist)
+  "Return the keys of PLIST as a list.
+Extracts all keys (every other element starting from position 0)
+from a property list.
+
+Example:
+  (shaping-plist-keys '(:a 1 :b 2 :c 3))
+  => (:a :b :c)"
   (let ((keys '()))
     (while plist
       (push (car plist) keys)
       (setq plist (cddr plist)))
     (nreverse keys)))
 
-(defun tree-find-property (property)
-  "Find PROPERTY in the current Org element or any ancestor element."
+(defun shaping-find-property (property)
+  "Find PROPERTY in the current Org element or any ancestor element.
+Walks up the org tree from the current position until it finds
+an element with the specified PROPERTY, or returns nil if not found.
+
+Used to inherit properties from parent headlines."
   (save-excursion
     (condition-case nil
         (progn
@@ -128,145 +160,191 @@ underscore, it will be replaced with a asterisk."
           (intern (org-element-property property (org-element-context))))
       (error nil))))
 
-(defun tree-find-tags ()
-  "Find tags in the current Org element or any ancestor element."
+(defun shaping-find-tags ()
+  "Find tags in the current Org element or any ancestor element.
+Returns a list of tags from the nearest headline with tags,
+searching upward from the current position."
   (save-excursion
     (condition-case nil
         (progn
-          (while (not (org-element-property :tags (org-element-lineage (org-element-context) '(headline) t)))
+          (while (not (org-element-property :tags 
+                        (org-element-lineage (org-element-context) '(headline) t)))
             (org-up-element))
-          (org-element-property :tags (org-element-lineage (org-element-context) '(headline) t)))
+          (org-element-property :tags 
+            (org-element-lineage (org-element-context) '(headline) t)))
       (error nil))))
 
-(defun tree-find-tag ()
-  "Find a `leaf' tag in the current Org element or any ancestor element."
-  (let* ((keywords tree-leaf-keywords)
-         (tag (car (seq-filter (lambda (tag) (member tag keywords)) (tree-find-tags)))))
+(defun shaping-find-tag ()
+  "Find a `leaf' tag in the current Org element or any ancestor element.
+Looks for tags that match keywords in `shaping-leaf-keywords'.
+Converts underscores to hyphens and trailing underscores to asterisks.
+
+Example: 'bind_' tag becomes 'bind*'"
+  (let* ((keywords shaping-leaf-keywords)
+         (tag (car (seq-filter (lambda (tag) (member tag keywords)) 
+                               (shaping-find-tags)))))
     (when tag
       (replace-regexp-in-string "_" "-"
                                 (replace-regexp-in-string "_$" "*" tag)))))
 
-(defun tree-find-package ()
-  "Find a `leaf' package in the current Org element or any ancestor element."
-  (or (tree-find-property :PACKAGE)
-      (tree-find-property :LEAF_PACKAGE)
-      (tree-find-property :LEAF-PACKAGE)))
+(defun shaping-find-package ()
+  "Find a `leaf' package name in the current Org element or ancestor.
+Searches for :PACKAGE:, :LEAF_PACKAGE:, or :LEAF-PACKAGE: properties.
+Returns the package name as a symbol."
+  (or (shaping-find-property :PACKAGE)
+      (shaping-find-property :LEAF_PACKAGE)
+      (shaping-find-property :LEAF-PACKAGE)))
 
-(defun tree-find-after ()
-  "Find a `leaf' :after property in the current Org element or any ancestor element."
-  (when-let* ((after (tree-find-property :AFTER)))
+(defun shaping-find-after ()
+  "Find a `leaf' :after property in current or ancestor element.
+The :AFTER: property specifies which packages must be loaded first.
+Returns a string representation suitable for leaf's :after keyword."
+  (when-let* ((after (shaping-find-property :AFTER)))
     (prin1-to-string (read (symbol-name after)))))
 
-(defun tree-find-demand ()
-  "Find a `leaf' :demand property in the current Org element or any ancestor element."
-  (when-let* ((demand (tree-find-property :DEMAND)))
+(defun shaping-find-demand ()
+  "Find a `leaf' :demand property in current or ancestor element.
+The :DEMAND: property forces immediate loading of a package.
+Returns a string representation (typically 't' or 'nil')."
+  (when-let* ((demand (shaping-find-property :DEMAND)))
     (prin1-to-string (read (symbol-name demand)))))
 
-(defun tree-find-ensure ()
-  "Find a `leaf' :ensure property in the current Org element or any ancestor element."
-  (when-let* ((ensure (tree-find-property :ENSURE)))
+(defun shaping-find-ensure ()
+  "Find a `leaf' :ensure property in current or ancestor element.
+The :ENSURE: property controls whether the package should be installed.
+Returns a string representation (typically 't' or 'nil')."
+  (when-let* ((ensure (shaping-find-property :ENSURE)))
     (prin1-to-string (read (symbol-name ensure)))))
 
-(defun tree-find-defer ()
-  "Find a `leaf' :defer property in the current Org element or any ancestor element."
-  (when-let* ((defer (tree-find-property :DEFER)))
+(defun shaping-find-defer ()
+  "Find a `leaf' :defer property in current or ancestor element.
+The :DEFER: property delays package loading.
+Returns a string representation (number of seconds or 't')."
+  (when-let* ((defer (shaping-find-property :DEFER)))
     (prin1-to-string (read (symbol-name defer)))))
 
-(defun tree-find-requires ()
-  "Find a `leaf' :requires property in the current Org element or any ancestor element."
-  (when-let* ((requires (tree-find-property :REQUIRES)))
+(defun shaping-find-requires ()
+  "Find a `leaf' :requires property in current or ancestor element.
+The :REQUIRES: property specifies features that must be present.
+Returns a string representation."
+  (when-let* ((requires (shaping-find-property :REQUIRES)))
     (prin1-to-string (read (symbol-name requires)))))
 
-(defun tree-find-keyword ()
-  "Find a `leaf' keyword in the current Org element or any ancestor element."
-  (when-let* ((keyword (tree-find-property :KEYWORD)))
+(defun shaping-find-straight ()
+  "Find a `leaf' :straight property in current or ancestor element.
+The :STRAIGHT: property provides straight.el specific configuration.
+Returns a string representation."
+  (when-let* ((straight (shaping-find-property :STRAIGHT)))
+    (prin1-to-string (read (symbol-name straight)))))
+
+(defun shaping-find-keyword ()
+  "Find a `leaf' keyword property in current or ancestor element.
+Looks for a :KEYWORD: property which explicitly specifies the leaf
+keyword to use (e.g., ':init', ':config'). Strips the leading colon."
+  (when-let* ((keyword (shaping-find-property :KEYWORD)))
     (replace-regexp-in-string "^:" "" (symbol-name keyword))))
 
-(defun tree-get-leaf-package ()
-  "Return the package name and Leaf keyword for a package."
-  (when-let* ((package (tree-find-package))
-              (keyword (or (tree-find-keyword)
-                          (tree-find-tag))))
+(defun shaping-get-leaf-package ()
+  "Return the package name and Leaf keyword for current context.
+Returns a list of (PACKAGE-SYMBOL KEYWORD-STRING) or nil.
+The keyword comes from either a :KEYWORD: property or a matching tag."
+  (when-let* ((package (shaping-find-package))
+              (keyword (or (shaping-find-keyword)
+                          (shaping-find-tag))))
     (list package keyword)))
 
-(defun tree-find-straight ()
-"Find a `leaf' :straight property in the current Org element or any ancestor element."
-(when-let* ((straight (tree-find-property :STRAIGHT)))
-  (prin1-to-string (read (symbol-name straight)))))
-
-(defun tree-file-properties (file)
-  "Return all properties from an org FILE."
+(defun shaping-file-properties (file)
+  "Return all #+PROPERTY directives from an org FILE as an alist.
+Parses lines like '#+PRIORITY: 5' or '#+LEXICAL_BINDING: t'
+and returns them as ((priority . \"5\") (lexical_binding . \"t\"))."
   (with-temp-buffer
     (insert-file-contents file)
     (org-mode)
     (let (properties)
       (goto-char (point-min))
-      (while (re-search-forward "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$" nil t)
+      (while (re-search-forward 
+              "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$" 
+              nil t)
         (let ((key (intern (downcase (match-string 1))))
               (value (match-string 2)))
           (push (cons key value) properties)))
       properties)))
 
-(defun tree-file-priority (file)
+(defun shaping-file-priority (file)
   "Return the priority of an org FILE.
-If no priority is set, return 10."
-  (let ((priority (alist-get 'priority (tree-file-properties file) "10")))
+Looks for #+PRIORITY: directive. If not found or invalid, returns 10.
+Lower numbers load first, higher numbers load last.
+
+Example:
+  #+PRIORITY: 1  ; Loads early
+  #+PRIORITY: 99 ; Loads late"
+  (let ((priority (alist-get 'priority (shaping-file-properties file) "10")))
     (if (string-match-p "^[0-9]+$" priority)
         (string-to-number priority)
       10)))
 
-(defun tree-file-lexical-binding (file)
-  "Return the lexical-binding of an org FILE.
-If no lexical-binding is set, return t."
-  (let ((lexical-binding (alist-get 'lexical_binding (tree-file-properties file) "t")))
+(defun shaping-file-lexical-binding (file)
+  "Return the lexical-binding setting of an org FILE.
+Looks for #+LEXICAL_BINDING: directive. Returns t unless explicitly
+set to 'nil'. This controls whether the compiled elisp uses lexical
+or dynamic binding."
+  (let ((lexical-binding 
+         (alist-get 'lexical_binding (shaping-file-properties file) "t")))
     (if (string= lexical-binding "nil")
         nil
       t)))
 
-(defun tree-get-files (extension directory)
-  "Return all files with EXTENSION in DIRECTORY.
-The files are sorted by priority."
+(defun shaping-get-files (extension directory)
+  "Return all files matching EXTENSION in DIRECTORY, sorted by priority.
+EXTENSION should be a regex pattern (e.g., \"^[^#]*\\\\.org$\").
+Files are sorted using `shaping-file-priority' so lower priorities load first."
   (when (file-exists-p directory)
     (let* ((files (directory-files-recursively directory extension)))
-      (sort files (lambda (a b) (< (tree-file-priority a)
-                                   (tree-file-priority b)))))))
+      (sort files (lambda (a b) 
+                    (< (shaping-file-priority a)
+                       (shaping-file-priority b)))))))
 
-(defun tree-safe-read (string file &optional line)
-  "Read STRING and return the result.
-If STRING is not a valid Elisp form, return nil.
-FILE is the file name of the Org file.
-LINE is the line number of the Org file.
-If read fails, display a warning."
+(defun shaping-safe-read (string file &optional line)
+  "Read STRING as elisp and return the result.
+If STRING is not a valid Elisp form, displays a warning and returns nil.
+FILE is the file name for error reporting.
+LINE is the optional line number for error reporting."
   (condition-case err
       (read string)
     (error
      (display-warning
-      'tree
+      'shaping
       (if line
           (format "failed to read body of %s:%s" file line)
         (format "failed to read body of %s" file))
       :error)
      nil)))
 
-(defun tree-wrap-in-condition (file part)
-  "Wrap PART in a `condition-case' form.
-FILE is the file name of the Org file."
+(defun shaping-wrap-in-condition (file part)
+  "Wrap PART in a `condition-case' form for safe evaluation.
+FILE is the file name for error reporting.
+PART is a plist with :body (the code) and :line (line number).
+
+When `shaping-wrap-statements-in-condition' is t, wraps the code
+in error handling that collects errors without stopping execution.
+Otherwise returns the code as-is for easier debugging."
   (let* ((body (plist-get part :body))
          (line (plist-get part :line))
          (expression-string (string-trim-right body))
-         (expression (tree-safe-read (format "(progn\n%s)" expression-string) file line)))
-    (if tree-wrap-statements-in-condition
+         (expression (shaping-safe-read (format "(progn\n%s)" expression-string) 
+                                        file line)))
+    (if shaping-wrap-statements-in-condition
         (pp-to-string
          `(condition-case err
               ,expression
             (error
-             (add-to-list 'tree--boot-errors
+             (add-to-list 'shaping--boot-errors
                           (list :file ,(format "%s" file)
                                 :line ,line
                                 :message (error-message-string err)))
-             (unless tree--booting
+             (unless shaping--booting
                (display-warning
-                'tree
+                'shaping
                 (format "Error loading %s:%s - %s"
                         ,(format "%s" file)
                         ,line
@@ -274,273 +352,356 @@ FILE is the file name of the Org file."
                 :error)))))
       expression-string)))
 
-(defun tree-merge-bodies (file xs)
-  "Merge the bodies of a list of `leaf' statements.
-FILE is the file name of the Org file.
-XS is a list of `leaf' statements."
+(defun shaping-merge-bodies (file xs)
+  "Merge the bodies of a list of leaf statements into a single list.
+FILE is the file name for error reporting.
+XS is a list of plists, each containing :body and :line.
+
+Used to combine multiple :bind, :hook, etc. declarations into
+a single list for the leaf form."
   (let ((result '()))
     (dolist (x xs)
       (let* ((body (plist-get x :body))
              (line (plist-get x :line))
-             (result-body (tree-safe-read body file line)))
+             (result-body (shaping-safe-read body file line)))
         (when result-body
           (setq result (append result result-body)))))
     (when result
       (prin1-to-string result))))
 
-(defun tree-build-leaf-string (package-name package file)
-    "Build a `leaf' block for PACKAGE-NAME in string format.
-  PACKAGE is the package plist.
-  FILE is the Org file name."
-    (concat
-     (string-trim-right
-      (concat (format "(leaf %s" package-name)
-              ;; Leaf uses :ensure
-;; Leaf supports :straight
-(when-let* ((straight (plist-get (car (plist-get package :straight)) :body)))
-  (format "\n  :straight %s" straight))
-              (when-let* ((ensure (plist-get (car (plist-get package :ensure)) :body)))
-                (format "\n  :ensure %s" ensure))
-              ;; Leaf supports :require (not :requires)
-              (when-let* ((requires (plist-get (car (plist-get package :requires)) :body)))
-                (format "\n  :require %s" requires))
-              ;; Leaf supports :after
-              (when-let* ((after (plist-get (car (plist-get package :after)) :body)))
-                (format "\n  :after %s" after))
-              ;; Leaf supports :defer
-              (when-let* ((defer (plist-get (car (plist-get package :defer)) :body)))
-                (format "\n  :defer %s" defer))
-              ;; Leaf supports :demand
-              (when-let* ((demand (plist-get (car (plist-get package :demand)) :body)))
-                (format "\n  :demand %s" demand))
-              ;; Leaf supports :bind*
-              (when-let* ((bind* (tree-merge-bodies file (plist-get package :bind*))))
-                (format "\n  :bind*\n%s" (tree-indent bind* 2)))
-              ;; Leaf supports :bind
-              (when-let* ((bind (tree-merge-bodies file (plist-get package :bind))))
-                (format "\n  :bind\n%s" (tree-indent bind 2)))
-              ;; Leaf supports :hook
-              (when-let* ((hook (tree-merge-bodies file (plist-get package :hook))))
-                (format "\n  :hook\n%s" (tree-indent hook 2)))
-              ;; Leaf supports :init
-              (when-let* ((init (plist-get package :init)))
-                (format "\n  :init\n%s" (tree-indent (string-join (mapcar (lambda (x) (tree-wrap-in-condition file x)) init) "\n") 2)))
-              ;; Leaf supports :custom
-              (when-let* ((custom (plist-get package :custom)))
-                (let ((custom-forms (mapcar (lambda (part) 
-                                             (string-trim (plist-get part :body)))
-                                           custom)))
-                  (format "\n  :custom\n  %s" (string-join custom-forms "\n  "))))
-              ;; Leaf supports :config
-              (when-let* ((config (plist-get package :config)))
-                (format "\n  :config\n%s" (tree-indent (string-join (mapcar (lambda (x) (tree-wrap-in-condition file x)) config) "\n") 2)))))
-     ")\n\n"))
-  (defun tree-build-leaf (file package-name)
-    "Build a `leaf' block for PACKAGE-NAME in string format.
-  FILE is the Org file name.
-  PACKAGE-NAME is the name of the package."
-    (when-let* ((package (plist-get tree-packages package-name)))
-      (when (not (equal package-name (intern "nil")))
-        (let ((package-string (tree-build-leaf-string package-name package file)))
-          (when (tree-safe-read package-string file)
-            package-string)))))
+(defun shaping-build-leaf-string (package-name package file)
+  "Build a complete `leaf' declaration for PACKAGE-NAME as a string.
+PACKAGE is a plist containing all configuration for the package.
+FILE is the org file name for error reporting.
 
-  (defun tree-build-leafs (file)
-    "Build a string of `leaf' blocks.
-  The resulting string contains all packages in `tree-packages'.
-  FILE is the file name of the Org file."
-    (let ((package-names (tree-plist-keys tree-packages))
-          (result ""))
-      (dolist (package-name package-names)
-        (setq result (concat result (tree-build-leaf file package-name))))
-      result))
+Constructs a leaf form with all applicable keywords:
+  :straight, :ensure, :require, :after, :defer, :demand,
+  :bind*, :bind, :hook, :init, :custom, :config
 
-(defun tree-put-package-parameter (package-name parameter value)
-  "Put a parameter in the `tree-packages' plist.
-PACKAGE-NAME is the name of the package.
-PARAMETER is the parameter to set.
-VALUE is the value to set."
-  (setq tree-packages
+Each section is only included if configuration exists for it."
+  (concat
+   (string-trim-right
+    (concat (format "(leaf %s" package-name)
+            ;; Leaf supports :straight
+            (when-let* ((straight (plist-get (car (plist-get package :straight)) 
+                                             :body)))
+              (format "\n  :straight %s" straight))
+            ;; Leaf uses :ensure
+            (when-let* ((ensure (plist-get (car (plist-get package :ensure)) 
+                                           :body)))
+              (format "\n  :ensure %s" ensure))
+            ;; Leaf supports :require (not :requires)
+            (when-let* ((requires (plist-get (car (plist-get package :requires)) 
+                                             :body)))
+              (format "\n  :require %s" requires))
+            ;; Leaf supports :after
+            (when-let* ((after (plist-get (car (plist-get package :after)) 
+                                          :body)))
+              (format "\n  :after %s" after))
+            ;; Leaf supports :defer
+            (when-let* ((defer (plist-get (car (plist-get package :defer)) 
+                                          :body)))
+              (format "\n  :defer %s" defer))
+            ;; Leaf supports :demand
+            (when-let* ((demand (plist-get (car (plist-get package :demand)) 
+                                           :body)))
+              (format "\n  :demand %s" demand))
+            ;; Leaf supports :bind*
+            (when-let* ((bind* (shaping-merge-bodies file 
+                                                     (plist-get package :bind*))))
+              (format "\n  :bind*\n%s" (shaping-indent bind* 2)))
+            ;; Leaf supports :bind
+            (when-let* ((bind (shaping-merge-bodies file 
+                                                    (plist-get package :bind))))
+              (format "\n  :bind\n%s" (shaping-indent bind 2)))
+            ;; Leaf supports :hook
+            (when-let* ((hook (shaping-merge-bodies file 
+                                                    (plist-get package :hook))))
+              (format "\n  :hook\n%s" (shaping-indent hook 2)))
+            ;; Leaf supports :init
+            (when-let* ((init (plist-get package :init)))
+              (format "\n  :init\n%s" 
+                      (shaping-indent 
+                       (string-join 
+                        (mapcar (lambda (x) (shaping-wrap-in-condition file x)) 
+                                init) 
+                        "\n") 
+                       2)))
+            ;; Leaf supports :custom
+            (when-let* ((custom (plist-get package :custom)))
+              (let ((custom-forms (mapcar (lambda (part) 
+                                           (string-trim (plist-get part :body)))
+                                         custom)))
+                (format "\n  :custom\n  %s" (string-join custom-forms "\n  "))))
+            ;; Leaf supports :config
+            (when-let* ((config (plist-get package :config)))
+              (format "\n  :config\n%s" 
+                      (shaping-indent 
+                       (string-join 
+                        (mapcar (lambda (x) (shaping-wrap-in-condition file x)) 
+                                config) 
+                        "\n") 
+                       2)))))
+   ")\n\n"))
+
+(defun shaping-build-leaf (file package-name)
+  "Build a `leaf' block for PACKAGE-NAME as a string.
+FILE is the org file name for error reporting.
+PACKAGE-NAME is the symbol naming the package.
+
+Returns nil if the package is 'nil or has invalid syntax."
+  (when-let* ((package (plist-get shaping-packages package-name)))
+    (when (not (equal package-name (intern "nil")))
+      (let ((package-string (shaping-build-leaf-string package-name package file)))
+        (when (shaping-safe-read package-string file)
+          package-string)))))
+
+(defun shaping-build-leafs (file)
+  "Build a string containing all `leaf' blocks for FILE.
+Iterates through all packages in `shaping-packages' and generates
+their leaf declarations, concatenating them into a single string."
+  (let ((package-names (shaping-plist-keys shaping-packages))
+        (result ""))
+    (dolist (package-name package-names)
+      (setq result (concat result (shaping-build-leaf file package-name))))
+    result))
+
+(defun shaping-put-package-parameter (package-name parameter value)
+  "Store a PARAMETER with VALUE for PACKAGE-NAME in `shaping-packages'.
+PACKAGE-NAME is a symbol identifying the package.
+PARAMETER is a keyword (e.g., :init, :config).
+VALUE is the value to store (typically a list of plists with :body and :line)."
+  (setq shaping-packages
         (plist-put
-         tree-packages
+         shaping-packages
          package-name
-         (plist-put (plist-get tree-packages package-name)
+         (plist-put (plist-get shaping-packages package-name)
                     parameter
                     value))))
 
-(defun tree-add-package (package body element)
-  "Execute a block of Leaf code with org-babel.
-PACKAGE is a list of the package name and parameter.
-BODY is the body of the source block.
-ELEMENT is the org element of the source block."
+(defun shaping-add-package (package body element)
+  "Add a code block BODY to PACKAGE configuration.
+PACKAGE is a list of (PACKAGE-NAME KEYWORD-STRING).
+BODY is the source code as a string.
+ELEMENT is the org element for extracting metadata.
+
+This function is called for each source block tagged with a package
+name and keyword (like 'init' or 'config'). It accumulates all such
+blocks for later assembly into a leaf declaration."
   (let* ((begin (org-element-property :begin element))
          (line (line-number-at-pos begin))
          (package-name (car package))
          (package-parameter (intern (concat ":" (car (cdr package)))))
-         (previous-body (plist-get (plist-get tree-packages package-name) package-parameter))
+         (previous-body (plist-get (plist-get shaping-packages package-name) 
+                                   package-parameter))
          (value (append previous-body `((:body ,body :line ,line)))))
-    (tree-put-package-parameter package-name package-parameter value)
+    (shaping-put-package-parameter package-name package-parameter value)
     nil))
 
-(defun tree-concatenate-source-blocks (file)
-  "Concatenate all source blocks in FILE and return the results as a string."
+(defun shaping-concatenate-source-blocks (file)
+  "Process FILE and extract all configuration into strings and package data.
+This function:
+  1. Parses org properties from headlines to extract package metadata
+  2. Processes each source block:
+     - If it belongs to a package (has :PACKAGE: and keyword tag),
+       adds it to `shaping-packages'
+     - Otherwise, wraps it in error handling and adds to results
+  3. Returns a string of standalone code (non-package blocks)
+
+The package-specific blocks are not returned - they're accumulated
+in `shaping-packages' for later assembly by `shaping-build-leafs'."
   (with-temp-buffer
     (insert-file-contents file)
     (org-mode)
     (let ((results '()))
+      ;; First pass: extract properties from headlines
       (org-map-entries
        (lambda ()
-         (let ((line (line-number-at-pos (org-element-property :begin (org-element-context)))))
-           (when-let* ((package-name (tree-find-package))
-                       (package (org-element-property :PACKAGE (org-element-context))))
-             (tree-put-package-parameter package-name :package line))
-           (when-let* ((package-name (tree-find-package))
-                       (after (tree-find-after)))
-             (tree-put-package-parameter package-name :after `((:body ,after :line ,line))))
-           (when-let* ((package-name (tree-find-package))
-                       (demand (tree-find-demand)))
-             (tree-put-package-parameter package-name :demand `((:body ,demand :line ,line))))
-           (when-let* ((package-name (tree-find-package))
-                       (ensure (tree-find-ensure)))
-             (tree-put-package-parameter package-name :ensure `((:body ,ensure :line ,line))))
-           (when-let* ((package-name (tree-find-package))
-                       (defer (tree-find-defer)))
-             (tree-put-package-parameter package-name :defer `((:body ,defer :line ,line))))
-           (when-let* ((package-name (tree-find-package))
-                       (requires (tree-find-requires)))
-             (tree-put-package-parameter package-name :requires `((:body ,requires :line ,line))))
-           (when-let* ((package-name (tree-find-package))
-                       (straight (tree-find-straight)))
-             (tree-put-package-parameter package-name :straight `((:body ,straight :line ,line)))))))
+         (let ((line (line-number-at-pos 
+                     (org-element-property :begin (org-element-context)))))
+           ;; Store package name line number
+           (when-let* ((package-name (shaping-find-package))
+                       (package (org-element-property :PACKAGE 
+                                                      (org-element-context))))
+             (shaping-put-package-parameter package-name :package line))
+           ;; Extract all leaf properties
+           (when-let* ((package-name (shaping-find-package))
+                       (after (shaping-find-after)))
+             (shaping-put-package-parameter package-name :after 
+                                           `((:body ,after :line ,line))))
+           (when-let* ((package-name (shaping-find-package))
+                       (demand (shaping-find-demand)))
+             (shaping-put-package-parameter package-name :demand 
+                                           `((:body ,demand :line ,line))))
+           (when-let* ((package-name (shaping-find-package))
+                       (ensure (shaping-find-ensure)))
+             (shaping-put-package-parameter package-name :ensure 
+                                           `((:body ,ensure :line ,line))))
+           (when-let* ((package-name (shaping-find-package))
+                       (defer (shaping-find-defer)))
+             (shaping-put-package-parameter package-name :defer 
+                                           `((:body ,defer :line ,line))))
+           (when-let* ((package-name (shaping-find-package))
+                       (requires (shaping-find-requires)))
+             (shaping-put-package-parameter package-name :requires 
+                                           `((:body ,requires :line ,line))))
+           (when-let* ((package-name (shaping-find-package))
+                       (straight (shaping-find-straight)))
+             (shaping-put-package-parameter package-name :straight 
+                                           `((:body ,straight :line ,line)))))))
+      ;; Second pass: process source blocks
       (org-babel-map-src-blocks nil
         (let ((body (org-element-property :value (org-element-context)))
-              (line (line-number-at-pos (org-element-property :begin (org-element-context))))
+              (line (line-number-at-pos 
+                    (org-element-property :begin (org-element-context))))
               (language (org-element-property :language (org-element-context))))
           (when (string= language "emacs-lisp")
-            (if-let* ((package (tree-get-leaf-package)))
-                (tree-add-package package body (org-element-context))
+            (if-let* ((package (shaping-get-leaf-package)))
+                ;; This block belongs to a package - add to shaping-packages
+                (shaping-add-package package body (org-element-context))
+              ;; Standalone block - add to results
               (when (stringp body)
-                (push (tree-wrap-in-condition file `(:body ,body :line ,line))
+                (push (shaping-wrap-in-condition file `(:body ,body :line ,line))
                       results))))))
+      ;; Return concatenated standalone blocks
       (mapconcat 'identity (reverse results) "\n"))))
 
-(defun tree-output-file-name (file)
-  "Return the name of the output Elisp file for FILE."
+(defun shaping-output-file-name (file)
+  "Return the output elisp file path for org FILE.
+Maintains directory structure relative to `shaping-org-directory'.
+Output goes to `shaping-output-directory' with .el extension.
+
+Example:
+  Input:  ~/.emacs.d/shaping-packages/ui/theme.org
+  Output: ~/.emacs.d/shaped-packages/ui/theme.el"
   (if (string-prefix-p
-       (expand-file-name tree-org-directory)
+       (expand-file-name shaping-org-directory)
        (expand-file-name file))
       (expand-file-name
-       (concat (file-name-as-directory tree-output-directory)
-               (file-name-sans-extension (substring file (length (expand-file-name tree-org-directory))))
+       (concat (file-name-as-directory shaping-output-directory)
+               (file-name-sans-extension 
+                (substring file (length (expand-file-name shaping-org-directory))))
                ".el"))
-    (error "File is not in tree-org-directory")))
+    (error "File is not in shaping-org-directory")))
 
-(defun tree-compile-file (file)
-  "Compile FILE to Elisp.
-FILE is an Org file.
-The output Elisp file is stored in `tree-output-directory'."
+(defun shaping-compile-file (file)
+  "Compile org FILE to elisp.
+FILE is an org file path.
+Output is stored in `shaping-output-directory'.
+
+Process:
+  1. Check if compilation is needed (file newer or force compile)
+  2. Extract standalone code and package configurations
+  3. Generate leaf declarations for all packages
+  4. Write combined output with file properties as comments
+  5. Set file timestamp to current time
+
+Returns the output file path or nil if no compilation occurred."
   (unless (file-exists-p file)
     (error "File to tangle does not exist: %s" file))
-  (unless (file-exists-p tree-output-directory)
-    (make-directory tree-output-directory t))
-  (let ((output-file (tree-output-file-name file)))
+  (unless (file-exists-p shaping-output-directory)
+    (make-directory shaping-output-directory t))
+  (let ((output-file (shaping-output-file-name file)))
     (make-directory (file-name-directory output-file) t)
-    (when (or tree-force-compile
+    (when (or shaping-force-compile
               (file-newer-than-file-p file output-file))
-      (message "Tree: Compiling %s" file)
-      (let* ((tree-packages nil)
-             (source (tree-concatenate-source-blocks file))
-             (output (concat source "\n" (tree-build-leafs file))))
+      (message "Shaping: Compiling %s" file)
+      (let* ((shaping-packages nil)  ; Reset for this file
+             (source (shaping-concatenate-source-blocks file))
+             (output (concat source "\n" (shaping-build-leafs file))))
         (with-temp-file output-file
-          (when (tree-file-lexical-binding file)
+          ;; Add lexical binding marker if needed
+          (when (shaping-file-lexical-binding file)
             (insert ";;; -*- lexical-binding: t -*-\n"))
-          (dolist (property (tree-file-properties file))
+          ;; Add file properties as comments
+          (dolist (property (shaping-file-properties file))
             (insert (format ";; #+%s: %s\n\n"
                             (upcase (symbol-name (car property)))
                             (cdr property))))
           (insert output)))
+      ;; Touch file to update timestamp
       (when (file-exists-p output-file)
         (set-file-times output-file))
       output-file)))
 
-(defun tree-compile-directory ()
-  "Compile all Org files in `tree-org-directory' to Elisp.
-All files will be outputted to `tree-output-directory'."
-  (let* ((splash (when tree--booting (tree-show-splash)))
-         (files (tree-get-files "^[^#]*\\.org$" tree-org-directory))
-         (compiled '())
-         (current 0)
-         (total (length files)))
+(defun shaping-compile-directory ()
+  "Compile all org files in `shaping-org-directory' to elisp.
+Processes files in priority order (lowest priority numbers first).
+Returns a list of compiled output file paths."
+  (let* ((files (shaping-get-files "^[^#]*\\.org$" shaping-org-directory))
+         (compiled '()))
     (dolist (file files)
-      (setq current (1+ current))
-      (when splash
-        (tree-splash-update-progress splash current total file))
-      (when-let* ((output (tree-compile-file file)))
+      (when-let* ((output (shaping-compile-file file)))
         (push output compiled)))
     compiled))
 
-(defun tree-load-file (file)
-  "Load FILE."
+(defun shaping-load-file (file)
+  "Load elisp FILE with quiet messages.
+Reports success or failure via messages."
   (let ((inhibit-message t))
     (if (load (expand-file-name file) nil t)
-        (message "Tree: Loaded %s" file)
-      (message "Tree: Failed to load %s" file))))
+        (message "Shaping: Loaded %s" file)
+      (message "Shaping: Failed to load %s" file))))
 
-(defun tree-load-directory ()
-  "Load all compiled Elisp files from `tree-output-directory'."
-  (let* ((splash (when tree--booting (tree-show-splash)))
-         (initial-gc-cons-threshold gc-cons-threshold)
-         (files (tree-get-files "^[^#]*\\.el$" tree-output-directory))
-         (total (length files))
-         (current 0))
+(defun shaping-load-directory ()
+  "Load all compiled elisp files from `shaping-output-directory'.
+Loads files in priority order with error handling.
+Temporarily increases garbage collection threshold for performance.
+Errors are collected in `shaping--boot-errors' and displayed."
+  (let* ((initial-gc-cons-threshold gc-cons-threshold)
+         (files (shaping-get-files "^[^#]*\\.el$" shaping-output-directory)))
+    ;; Increase GC threshold during loading for performance
     (setq gc-cons-threshold (* 1024 1024 100))
     (dolist (file files)
       (condition-case err
-          (progn
-            (setq current (1+ current))
-            (when splash
-              (tree-splash-update-progress splash current total file))
-            (tree-load-file file))
+          (shaping-load-file file)
         (error
-         (add-to-list 'tree--boot-errors
+         (add-to-list 'shaping--boot-errors
                       (list :file (format "%s" file)
                             :line 1
                             :message (error-message-string err)))
-         (unless tree--booting
+         (unless shaping--booting
            (display-warning
-            'tree
+            'shaping
             (format "Error loading %s:%s - %s"
                     (format "%s" file)
                     1
                     (error-message-string err))
             :error)))))
-    (tree-splash-update-progress splash total total nil)
+    ;; Restore GC threshold
     (setq gc-cons-threshold initial-gc-cons-threshold)
     nil))
 
-(defun tree-reload ()
-  "Compile and load all Org files."
+(defun shaping-reload ()
+  "Compile and load all org files.
+Use this after making changes to multiple files or when you want
+to ensure everything is up to date."
   (interactive)
-  (dolist (compiled-file (tree-compile-directory))
-    (tree-load-file compiled-file)))
+  (dolist (compiled-file (shaping-compile-directory))
+    (shaping-load-file compiled-file)))
 
-(defun tree-reload-current-buffer ()
-  "Compile and load current Org file."
+(defun shaping-reload-current-buffer ()
+  "Compile and load the current org file.
+Quick way to test changes to a single configuration file.
+Forces compilation even if the file hasn't changed."
   (interactive)
-  (let ((tree-force-compile t))
-    (when-let* ((compiled-file (tree-compile-file (buffer-file-name (current-buffer)))))
-      (tree-load-file compiled-file))))
+  (let ((shaping-force-compile t))
+    (when-let* ((compiled-file (shaping-compile-file 
+                                (buffer-file-name (current-buffer)))))
+      (shaping-load-file compiled-file))))
 
-(defun tree-preview ()
-  "Compile the current buffer and display the result in *tree preview*."
+(defun shaping-preview ()
+  "Display the compiled elisp for the current buffer in a preview window.
+Shows what will be generated without actually loading it.
+Useful for debugging and understanding how your org file translates to elisp."
   (interactive)
-  (let* ((buffer (get-buffer-create "*tree preview*"))
+  (let* ((buffer (get-buffer-create "*shaping preview*"))
          (_ (display-buffer buffer))
-         (tree-wrap-statements-in-condition nil)
+         (shaping-wrap-statements-in-condition nil)
          (file (buffer-file-name (current-buffer)))
-         (tree-packages nil)
-         (source (tree-concatenate-source-blocks file))
-         (output (concat source "\n" (tree-build-leafs file))))
+         (shaping-packages nil)
+         (source (shaping-concatenate-source-blocks file))
+         (output (concat source "\n" (shaping-build-leafs file))))
     (with-current-buffer buffer
       (emacs-lisp-mode)
       (read-only-mode 1)
@@ -550,126 +711,610 @@ All files will be outputted to `tree-output-directory'."
           (insert output)
           (goto-char (point-min)))))))
 
-(define-minor-mode tree-preview-mode
-  "Preview the current buffer as elisp."
-  :lighter " tree-preview"
-  (if tree-preview-mode
-      (add-hook 'after-save-hook 'tree-preview nil t)
-    (remove-hook 'after-save-hook 'tree-preview t)))
+(define-minor-mode shaping-preview-mode
+  "Minor mode to auto-preview compiled elisp on save.
+When enabled, the preview buffer updates automatically whenever
+you save the org file."
+  :lighter " shaping-preview"
+  (if shaping-preview-mode
+      (add-hook 'after-save-hook 'shaping-preview nil t)
+    (remove-hook 'after-save-hook 'shaping-preview t)))
 
-(defun tree-show-splash ()
-  "Show the tree loading splash screen."
-  (let ((buf (get-buffer-create "*Tree Loading*")))
-    (with-current-buffer buf
-      (erase-buffer)
-      (org-mode)
-      ;; Add keybinding to kill buffer with Enter
-      (local-set-key (kbd "RET") 'tree-kill-splash)
-      (local-set-key (kbd "<return>") 'tree-kill-splash))
-    (switch-to-buffer buf)
-    buf))
+(defun shaping-boot ()
+  "Compile and load all org files - the main entry point.
+This is called automatically when shaping.el loads, and can be
+called manually to reload everything.
 
-(defun tree-kill-splash ()
-  "Kill the Tree splash screen buffer."
+Process:
+  1. Set `shaping--booting' flag
+  2. Clear previous boot errors
+  3. Compile all org files in priority order
+  4. Load all compiled elisp files in priority order"
   (interactive)
-  (when (string= (buffer-name) "*Tree Loading*")
-    (kill-buffer (current-buffer))))
+  (let ((shaping--booting t))
+    (setq shaping--boot-errors '())
+    (shaping-compile-directory)
+    (shaping-load-directory)))
 
-(defun tree-splash-update-progress (buf current total file)
-  "Update the splash screen progress.
-BUF is the splash buffer.
-CURRENT is the current file number.
-TOTAL is the total number of files.
-FILE is the current file being processed."
-  (when (buffer-live-p buf)
-    (with-current-buffer buf
-      (let ((inhibit-read-only t)
-            (label (pcase tree--boot-phase
-                     (:compiling "Compiling")
-                     (:loading   "Loading")
-                     (_          "Processing"))))
-        (erase-buffer)
-        (insert "TREE")
-        (insert (make-string 10 ?\n))
-        (insert (format "[ %d / %d ]\n\n"
-                        current total))
-        (insert (tree-progress-bar-fancy current total 54))
-        (insert "\n\n")
-        (if file
-            (insert (format "%s: %s\n" label file))
-          (insert "\n"))
-        (center-region (point-min) (point-max))
-        (when tree--boot-errors
-          (insert "\nErrors encountered:\n\n"))
-        (dolist (e tree--boot-errors)
-          (insert (format "[[%s::%s][%s:%s]]\n"
-                          (plist-get e :file)
-                          (plist-get e :line)
-                          (plist-get e :file)
-                          (plist-get e :line)))
-          (insert (propertize (format " ⌞ %s\n" (plist-get e :message))
-                              'face 'error)))
-        (insert "\n\n")
-        (insert (propertize "Press ENTER to dismiss" 'face 'shadow))
-        (center-line)
-        (redisplay)
-        (unless file
-          (org-mode)
-          ;; Re-bind keys after org-mode resets them
-          (local-set-key (kbd "RET") 'tree-kill-splash)
-          (local-set-key (kbd "<return>") 'tree-kill-splash))))))
+;; Initialize shaping directories and perform initial boot
+(setq shaping-org-directory    (expand-file-name "shaping-packages" 
+                                                 user-emacs-directory)
+      shaping-output-directory (expand-file-name "shaped-packages" 
+                                                 user-emacs-directory))
 
-(defun tree-progress-bar-fancy (current total width)
-  "Create a fancy progress bar.
-CURRENT is the current progress.
-TOTAL is the total amount.
-WIDTH is the width of the progress bar."
-  (let* ((ratio (/ (float current) total))
-         (done (floor (* ratio width)))
-         (todo (- width done)))
-    (format "┌%s┐\n│%s%s│\n└%s┘"
-            (make-string width ?─)
-            (make-string done ?█)
-            (make-string todo ?·)
-            (make-string width ?─))))
+;; Boot the system on load
+(shaping-boot)
 
-(defun tree-boot ()
-  "Compile and then load all Org files, showing a splash screen."
-  (interactive)
-  (let ((tree--booting t))
-    (setq tree--boot-errors '())
-    (let ((tree--boot-phase :compiling))
-      (tree-compile-directory))
-    (let ((tree--boot-phase :loading))
-      (tree-load-directory))))
+;; Enable preview mode for all org files
+(add-hook 'org-mode-hook #'shaping-preview-mode)
 
-;; Initialize tree
-(setq tree-org-directory           (expand-file-name "org" user-emacs-directory)
-      tree-output-directory        (expand-file-name "tree" user-emacs-directory))
-(tree-boot)
-(add-hook 'org-mode-hook #'tree-preview-mode)
-
-(provide 'tree)
-;;; tree.el ends here
-
-(defun tree/auto-compile-and-reload ()
-  "Auto-compile and reload when an Org file in tree-org-directory is saved."
+(defun shaping/auto-compile-and-reload ()
+  "Auto-compile and reload when an org file in shaping-org-directory is saved.
+This provides immediate feedback when editing configuration files."
   (when (and buffer-file-name
-             (file-in-directory-p buffer-file-name tree-org-directory)
+             (file-in-directory-p buffer-file-name shaping-org-directory)
              (string-suffix-p ".org" buffer-file-name))
-    (message "Tree: Compiling and reloading %s…" (file-name-nondirectory buffer-file-name))
+    (message "Shaping: Compiling and reloading %s…" 
+             (file-name-nondirectory buffer-file-name))
     (condition-case err
-        (let ((tree-force-compile t))
-          (when-let ((compiled-file (tree-compile-file buffer-file-name)))
-            (tree-load-file compiled-file)
-            (message "Tree: Reload complete ✓")))
+        (let ((shaping-force-compile t))
+          (when-let ((compiled-file (shaping-compile-file buffer-file-name)))
+            (shaping-load-file compiled-file)
+            (message "Shaping: Reload complete ✓")))
       (error
        (display-warning
-        'tree 
+        'shaping 
         (format "Failed to compile/reload: %s" (error-message-string err)) 
         :error)))))
 
-(add-hook 'after-save-hook #'tree/auto-compile-and-reload)
+;; Enable auto-reload
+(add-hook 'after-save-hook #'shaping/auto-compile-and-reload)
+
+(provide 'shaping)
+;;; shaping.el ends here
+
+;;; guix-shaping.el --- Managed Guix package definitions through org files
+;; Copyright (C) 2025
+;; Author: Internal implementation
+
+;;; Commentary:
+;; This system generates Guix package definitions from org-mode files.
+;; Each package is defined using org properties and source blocks.
+
+(require 'cl-lib)
+(require 'ob-core)
+
+;;; Code:
+
+(defvar guix-shaping-packages '()
+  "List of Guix packages being defined.
+This is a plist where keys are package symbols and values are
+plists containing package metadata like :version, :source, :synopsis, etc.")
+
+(defvar guix-shaping--booting nil
+  "Non-nil when running inside `guix-shaping-boot'.
+Used internally to control behavior during the boot process.")
+
+(defvar guix-shaping--boot-errors '()
+  "List of compile/loading errors encountered during guix-shaping boot.
+Each error is a plist with :file, :line, and :message keys.")
+
+(defcustom guix-shaping-wrap-statements-in-condition t
+  "Wrap code in condition-case statements.
+When non-nil, code is wrapped to catch and report errors.
+Set to nil for debugging to see raw errors."
+  :type 'boolean
+  :group 'guix-shaping)
+
+(defcustom guix-shaping-package-fields
+  '("name" "version" "source" "build-system" "arguments" "inputs" 
+    "native-inputs" "propagated-inputs" "outputs" "home-page" 
+    "synopsis" "description" "license" "properties" "supported-systems")
+  "List of Guix package fields that can be used as org tags.
+These correspond to standard Guix package definition fields."
+  :type 'list
+  :group 'guix-shaping)
+
+(defcustom guix-shaping-output-directory 
+  (expand-file-name "guix-shaped" user-emacs-directory)
+  "Directory where the compiled Guix Scheme files are stored.
+This directory is automatically created if it doesn't exist.
+Files in this directory are auto-generated and should not be edited manually."
+  :type 'string
+  :group 'guix-shaping)
+
+(defcustom guix-shaping-org-directory 
+  (expand-file-name "guix-packages" user-emacs-directory)
+  "Directory where the source Org files are stored.
+This is where you should place your package definition org files."
+  :type 'string
+  :group 'guix-shaping)
+
+(defcustom guix-shaping-force-compile nil
+  "Force compilation of Org files even if Scheme file is newer.
+When non-nil, always recompile org files regardless of timestamps."
+  :type 'boolean
+  :group 'guix-shaping)
+
+(defun guix-shaping-indent (string n)
+  "Indent STRING by N spaces.
+Adds N spaces to the beginning of each line in STRING."
+  (let ((indentation (make-string n ?\s)))
+    (replace-regexp-in-string "^" indentation string)))
+
+(defun guix-shaping-plist-keys (plist)
+  "Return the keys of PLIST as a list.
+Extracts all keys from a property list."
+  (let ((keys '()))
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    (nreverse keys)))
+
+(defun guix-shaping-symbol-to-scheme (symbol)
+  "Convert elisp SYMBOL to Guix-style naming.
+Example: 'emacs-my-package becomes 'emacs-my-package"
+  (replace-regexp-in-string "_" "-" (symbol-name symbol)))
+
+(defun guix-shaping-find-property (property)
+  "Find PROPERTY in the current Org element or any ancestor element.
+Walks up the org tree from the current position until it finds
+an element with the specified PROPERTY, or returns nil if not found."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property property (org-element-context)))
+            (org-up-element))
+          (org-element-property property (org-element-context)))
+      (error nil))))
+
+(defun guix-shaping-find-tags ()
+  "Find tags in the current Org element or any ancestor element.
+Returns a list of tags from the nearest headline with tags."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property :tags 
+                        (org-element-lineage (org-element-context) '(headline) t)))
+            (org-up-element))
+          (org-element-property :tags 
+            (org-element-lineage (org-element-context) '(headline) t)))
+      (error nil))))
+
+(defun guix-shaping-find-tag ()
+  "Find a Guix package field tag in current or ancestor element.
+Looks for tags that match fields in `guix-shaping-package-fields'."
+  (let* ((fields guix-shaping-package-fields)
+         (tag (car (seq-filter (lambda (tag) (member tag fields)) 
+                               (guix-shaping-find-tags)))))
+    (when tag
+      (replace-regexp-in-string "_" "-" tag))))
+
+(defun guix-shaping-find-package ()
+  "Find a Guix package name in current or ancestor element.
+Searches for :PACKAGE: or :NAME: properties.
+Returns the package name as a string."
+  (or (guix-shaping-find-property :PACKAGE)
+      (guix-shaping-find-property :NAME)))
+
+(defun guix-shaping-find-version ()
+  "Find package :VERSION: property."
+  (guix-shaping-find-property :VERSION))
+
+(defun guix-shaping-find-module ()
+  "Find module definition :MODULE: property.
+Example: '(my-packages emacs)'"
+  (guix-shaping-find-property :MODULE))
+
+(defun guix-shaping-find-use-modules ()
+  "Find :USE_MODULES: property for module imports."
+  (guix-shaping-find-property :USE_MODULES))
+
+(defun guix-shaping-find-license ()
+  "Find :LICENSE: property."
+  (guix-shaping-find-property :LICENSE))
+
+(defun guix-shaping-find-home-page ()
+  "Find :HOME_PAGE: property."
+  (guix-shaping-find-property :HOME_PAGE))
+
+(defun guix-shaping-find-synopsis ()
+  "Find :SYNOPSIS: property."
+  (guix-shaping-find-property :SYNOPSIS))
+
+(defun guix-shaping-find-build-system ()
+  "Find :BUILD_SYSTEM: property."
+  (guix-shaping-find-property :BUILD_SYSTEM))
+
+(defun guix-shaping-find-field ()
+  "Find a Guix package field property.
+Looks for a :FIELD: property which explicitly specifies the field."
+  (guix-shaping-find-property :FIELD))
+
+(defun guix-shaping-get-package-field ()
+  "Return the package name and field for current context.
+Returns a list of (PACKAGE-NAME FIELD-STRING) or nil."
+  (when-let* ((package (guix-shaping-find-package))
+              (field (or (guix-shaping-find-field)
+                        (guix-shaping-find-tag))))
+    (list package field)))
+
+(defun guix-shaping-file-properties (file)
+  "Return all #+PROPERTY directives from an org FILE as an alist."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let (properties)
+      (goto-char (point-min))
+      (while (re-search-forward 
+              "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$" 
+              nil t)
+        (let ((key (intern (downcase (match-string 1))))
+              (value (match-string 2)))
+          (push (cons key value) properties)))
+      properties)))
+
+(defun guix-shaping-file-priority (file)
+  "Return the priority of an org FILE.
+Lower numbers compile first. Default is 10."
+  (let ((priority (alist-get 'priority (guix-shaping-file-properties file) "10")))
+    (if (string-match-p "^[0-9]+$" priority)
+        (string-to-number priority)
+      10)))
+
+(defun guix-shaping-file-module (file)
+  "Return the module name for FILE.
+Looks for #+MODULE: directive, e.g., '(my-packages emacs)'."
+  (alist-get 'module (guix-shaping-file-properties file)))
+
+(defun guix-shaping-file-use-modules (file)
+  "Return the use-modules list for FILE.
+Looks for #+USE_MODULES: directive."
+  (alist-get 'use_modules (guix-shaping-file-properties file)))
+
+(defun guix-shaping-get-files (extension directory)
+  "Return all files matching EXTENSION in DIRECTORY, sorted by priority."
+  (when (file-exists-p directory)
+    (let* ((files (directory-files-recursively directory extension)))
+      (sort files (lambda (a b) 
+                    (< (guix-shaping-file-priority a)
+                       (guix-shaping-file-priority b)))))))
+
+(defun guix-shaping-safe-read (string file &optional line)
+  "Read STRING as elisp/scheme and return the result.
+If STRING is not valid, displays a warning and returns nil."
+  (condition-case err
+      (read string)
+    (error
+     (display-warning
+      'guix-shaping
+      (if line
+          (format "failed to read body of %s:%s" file line)
+        (format "failed to read body of %s" file))
+      :error)
+     nil)))
+
+(defun guix-shaping-wrap-field (file part)
+  "Wrap PART for safe inclusion in package definition.
+FILE is the file name for error reporting.
+PART is a plist with :body and :line."
+  (let* ((body (plist-get part :body))
+         (line (plist-get part :line)))
+    (string-trim-right body)))
+
+(defun guix-shaping-put-package-parameter (package-name parameter value)
+  "Store a PARAMETER with VALUE for PACKAGE-NAME.
+PACKAGE-NAME is a string identifying the package.
+PARAMETER is a keyword (e.g., :source, :description).
+VALUE is the value to store."
+  (setq guix-shaping-packages
+        (plist-put
+         guix-shaping-packages
+         (intern package-name)
+         (plist-put (plist-get guix-shaping-packages (intern package-name))
+                    parameter
+                    value))))
+
+(defun guix-shaping-add-package-field (package body element)
+  "Add a field BODY to PACKAGE configuration.
+PACKAGE is a list of (PACKAGE-NAME FIELD-STRING).
+BODY is the source code as a string.
+ELEMENT is the org element for extracting metadata."
+  (let* ((begin (org-element-property :begin element))
+         (line (line-number-at-pos begin))
+         (package-name (car package))
+         (package-field (intern (concat ":" (car (cdr package)))))
+         (previous-body (plist-get (plist-get guix-shaping-packages 
+                                              (intern package-name)) 
+                                   package-field))
+         (value (append previous-body `((:body ,body :line ,line)))))
+    (guix-shaping-put-package-parameter package-name package-field value)
+    nil))
+
+(defun guix-shaping-build-package-string (package-name package file)
+  "Build a complete Guix package definition for PACKAGE-NAME.
+PACKAGE is a plist containing all fields for the package.
+FILE is the org file name for error reporting."
+  (let* ((name (or (plist-get (car (plist-get package :name)) :body)
+                  package-name))
+         (version (plist-get (car (plist-get package :version)) :body))
+         (source (plist-get (car (plist-get package :source)) :body))
+         (build-system (plist-get (car (plist-get package :build-system)) :body))
+         (arguments (plist-get (car (plist-get package :arguments)) :body))
+         (inputs (plist-get (car (plist-get package :inputs)) :body))
+         (native-inputs (plist-get (car (plist-get package :native-inputs)) :body))
+         (propagated-inputs (plist-get (car (plist-get package :propagated-inputs)) :body))
+         (home-page (plist-get (car (plist-get package :home-page)) :body))
+         (synopsis (plist-get (car (plist-get package :synopsis)) :body))
+         (description (plist-get (car (plist-get package :description)) :body))
+         (license (plist-get (car (plist-get package :license)) :body))
+         (properties (plist-get (car (plist-get package :properties)) :body))
+         (supported-systems (plist-get (car (plist-get package :supported-systems)) :body)))
+    (concat
+     (format "(define-public %s\n" package-name)
+     "  (package\n"
+     (when name
+       (format "    (name %s)\n" name))
+     (when version
+       (format "    (version %s)\n" version))
+     (when source
+       (format "    (source\n%s)\n" (guix-shaping-indent source 5)))
+     (when build-system
+       (format "    (build-system %s)\n" build-system))
+     (when arguments
+       (format "    (arguments\n%s)\n" (guix-shaping-indent arguments 5)))
+     (when inputs
+       (format "    (inputs\n%s)\n" (guix-shaping-indent inputs 5)))
+     (when native-inputs
+       (format "    (native-inputs\n%s)\n" (guix-shaping-indent native-inputs 5)))
+     (when propagated-inputs
+       (format "    (propagated-inputs\n%s)\n" (guix-shaping-indent propagated-inputs 5)))
+     (when home-page
+       (format "    (home-page %s)\n" home-page))
+     (when synopsis
+       (format "    (synopsis %s)\n" synopsis))
+     (when description
+       (format "    (description\n%s)\n" (guix-shaping-indent description 5)))
+     (when license
+       (format "    (license %s)\n" license))
+     (when properties
+       (format "    (properties\n%s)\n" (guix-shaping-indent properties 5)))
+     (when supported-systems
+       (format "    (supported-systems %s)\n" supported-systems))
+     "  ))\n\n")))
+
+(defun guix-shaping-build-package (file package-name)
+  "Build a Guix package definition for PACKAGE-NAME.
+FILE is the org file name.
+PACKAGE-NAME is the symbol naming the package."
+  (when-let* ((package (plist-get guix-shaping-packages package-name)))
+    (guix-shaping-build-package-string (symbol-name package-name) package file)))
+
+(defun guix-shaping-build-packages (file)
+  "Build all package definitions from FILE.
+Returns a string containing all package definitions."
+  (let ((package-names (guix-shaping-plist-keys guix-shaping-packages))
+        (result ""))
+    (dolist (package-name package-names)
+      (setq result (concat result (guix-shaping-build-package file package-name))))
+    result))
+
+(defun guix-shaping-concatenate-source-blocks (file)
+  "Process FILE and extract all package definitions.
+Parses org properties and source blocks to build package definitions.
+Returns a string of standalone code (non-package blocks)."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let ((results '()))
+      ;; First pass: extract properties from headlines
+      (org-map-entries
+       (lambda ()
+         (let ((line (line-number-at-pos 
+                     (org-element-property :begin (org-element-context)))))
+           ;; Store package metadata from properties
+           (when-let* ((package-name (guix-shaping-find-package)))
+             (guix-shaping-put-package-parameter package-name :package line)
+             
+             (when-let* ((version (guix-shaping-find-version)))
+               (guix-shaping-put-package-parameter 
+                package-name :version `((:body ,version :line ,line))))
+             
+             (when-let* ((license (guix-shaping-find-license)))
+               (guix-shaping-put-package-parameter 
+                package-name :license `((:body ,license :line ,line))))
+             
+             (when-let* ((home-page (guix-shaping-find-home-page)))
+               (guix-shaping-put-package-parameter 
+                package-name :home-page `((:body ,home-page :line ,line))))
+             
+             (when-let* ((synopsis (guix-shaping-find-synopsis)))
+               (guix-shaping-put-package-parameter 
+                package-name :synopsis `((:body ,synopsis :line ,line))))
+             
+             (when-let* ((build-system (guix-shaping-find-build-system)))
+               (guix-shaping-put-package-parameter 
+                package-name :build-system `((:body ,build-system :line ,line))))))))
+      
+      ;; Second pass: process source blocks
+      (org-babel-map-src-blocks nil
+        (let ((body (org-element-property :value (org-element-context)))
+              (line (line-number-at-pos 
+                    (org-element-property :begin (org-element-context))))
+              (language (org-element-property :language (org-element-context))))
+          (when (or (string= language "scheme") (string= language "guile"))
+            (if-let* ((package (guix-shaping-get-package-field)))
+                ;; This block belongs to a package
+                (guix-shaping-add-package-field package body (org-element-context))
+              ;; Standalone block
+              (when (stringp body)
+                (push body results))))))
+      ;; Return concatenated standalone blocks
+      (mapconcat 'identity (reverse results) "\n"))))
+
+(defun guix-shaping-output-file-name (file)
+  "Return the output Scheme file path for org FILE.
+Maintains directory structure and uses .scm extension."
+  (if (string-prefix-p
+       (expand-file-name guix-shaping-org-directory)
+       (expand-file-name file))
+      (expand-file-name
+       (concat (file-name-as-directory guix-shaping-output-directory)
+               (file-name-sans-extension 
+                (substring file (length (expand-file-name guix-shaping-org-directory))))
+               ".scm"))
+    (error "File is not in guix-shaping-org-directory")))
+
+(defun guix-shaping-build-module-header (file)
+  "Build the module header for FILE.
+Includes define-module and use-module declarations."
+  (let* ((module (guix-shaping-file-module file))
+         (use-modules (guix-shaping-file-use-modules file)))
+    (concat
+     (when module
+       (format "(define-module %s\n" module))
+     (when use-modules
+       (concat "  " use-modules "\n"))
+     (when module
+       ")\n\n"))))
+
+(defun guix-shaping-compile-file (file)
+  "Compile org FILE to Guix Scheme.
+FILE is an org file path.
+Output is stored in `guix-shaping-output-directory'.
+Returns the output file path or nil if no compilation occurred."
+  (unless (file-exists-p file)
+    (error "File to compile does not exist: %s" file))
+  (unless (file-exists-p guix-shaping-output-directory)
+    (make-directory guix-shaping-output-directory t))
+  (let ((output-file (guix-shaping-output-file-name file)))
+    (make-directory (file-name-directory output-file) t)
+    (when (or guix-shaping-force-compile
+              (file-newer-than-file-p file output-file))
+      (message "Guix-Shaping: Compiling %s" file)
+      (let* ((guix-shaping-packages nil)  ; Reset for this file
+             (source (guix-shaping-concatenate-source-blocks file))
+             (module-header (guix-shaping-build-module-header file))
+             (packages (guix-shaping-build-packages file))
+             (output (concat module-header source "\n" packages)))
+        (with-temp-file output-file
+          ;; Add file header comments
+          (insert ";;; Generated by guix-shaping from " 
+                  (file-name-nondirectory file) "\n")
+          (insert ";;; Do not edit manually\n\n")
+          (dolist (property (guix-shaping-file-properties file))
+            (insert (format ";;; #+%s: %s\n"
+                            (upcase (symbol-name (car property)))
+                            (cdr property))))
+          (insert "\n" output)))
+      ;; Touch file to update timestamp
+      (when (file-exists-p output-file)
+        (set-file-times output-file))
+      output-file)))
+
+(defun guix-shaping-compile-directory ()
+  "Compile all org files in `guix-shaping-org-directory' to Scheme.
+Processes files in priority order.
+Returns a list of compiled output file paths."
+  (let* ((files (guix-shaping-get-files "^[^#]*\\.org$" 
+                                        guix-shaping-org-directory))
+         (compiled '()))
+    (dolist (file files)
+      (when-let* ((output (guix-shaping-compile-file file)))
+        (push output compiled)))
+    compiled))
+
+(defun guix-shaping-compile ()
+  "Compile all org files to Guix Scheme.
+Use this after making changes to package definitions."
+  (interactive)
+  (let ((compiled (guix-shaping-compile-directory)))
+    (message "Guix-Shaping: Compiled %d file(s)" (length compiled))))
+
+(defun guix-shaping-compile-current-buffer ()
+  "Compile the current org file.
+Quick way to test changes to a single package definition file.
+Forces compilation even if the file hasn't changed."
+  (interactive)
+  (let ((guix-shaping-force-compile t))
+    (when-let* ((compiled-file (guix-shaping-compile-file 
+                                (buffer-file-name (current-buffer)))))
+      (message "Guix-Shaping: Compiled to %s" compiled-file))))
+
+(defun guix-shaping-preview ()
+  "Display the compiled Scheme for the current buffer.
+Shows what will be generated without actually writing to file.
+Useful for debugging package definitions."
+  (interactive)
+  (let* ((buffer (get-buffer-create "*guix-shaping preview*"))
+         (_ (display-buffer buffer))
+         (file (buffer-file-name (current-buffer)))
+         (guix-shaping-packages nil)
+         (source (guix-shaping-concatenate-source-blocks file))
+         (module-header (guix-shaping-build-module-header file))
+         (packages (guix-shaping-build-packages file))
+         (output (concat module-header source "\n" packages)))
+    (with-current-buffer buffer
+      (scheme-mode)
+      (read-only-mode 1)
+      (save-excursion
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert output)
+          (goto-char (point-min)))))))
+
+(define-minor-mode guix-shaping-preview-mode
+  "Minor mode to auto-preview compiled Scheme on save.
+When enabled, the preview buffer updates automatically."
+  :lighter " guix-preview"
+  (if guix-shaping-preview-mode
+      (add-hook 'after-save-hook 'guix-shaping-preview nil t)
+    (remove-hook 'after-save-hook 'guix-shaping-preview t)))
+
+(defun guix-shaping-boot ()
+  "Compile all org files - the main entry point.
+This can be called manually to recompile everything."
+  (interactive)
+  (let ((guix-shaping--booting t))
+    (setq guix-shaping--boot-errors '())
+    (guix-shaping-compile-directory)))
+
+;; Initialize guix-shaping directories
+(setq guix-shaping-org-directory    
+      (expand-file-name "guix-packages" user-emacs-directory)
+      guix-shaping-output-directory 
+      (expand-file-name "guix-shaped" user-emacs-directory))
+
+;; Enable preview mode for scheme/guile org blocks
+(add-hook 'org-mode-hook 
+          (lambda ()
+            (when (and buffer-file-name
+                       (file-in-directory-p buffer-file-name 
+                                           guix-shaping-org-directory))
+              (guix-shaping-preview-mode 1))))
+
+(defun guix-shaping/auto-compile ()
+  "Auto-compile when an org file in guix-shaping-org-directory is saved."
+  (when (and buffer-file-name
+             (file-in-directory-p buffer-file-name guix-shaping-org-directory)
+             (string-suffix-p ".org" buffer-file-name))
+    (message "Guix-Shaping: Compiling %s…" 
+             (file-name-nondirectory buffer-file-name))
+    (condition-case err
+        (let ((guix-shaping-force-compile t))
+          (when-let ((compiled-file (guix-shaping-compile-file buffer-file-name)))
+            (message "Guix-Shaping: Compilation complete ✓")))
+      (error
+       (display-warning
+        'guix-shaping 
+        (format "Failed to compile: %s" (error-message-string err)) 
+        :error)))))
+
+;; Enable auto-compile
+(add-hook 'after-save-hook #'guix-shaping/auto-compile)
+
+(provide 'guix-shaping)
+;;; guix-shaping.el ends here
 
 (defun live-shaping/auto-tangle-and-reload ()
   "Auto-tangle and reload when this Org file tangles to init.el."
@@ -1342,6 +1987,27 @@ WIDTH is the width of the progress bar."
   (define-key evil-normal-state-map (kbd "SPC T b") #'speed-type-buffer)
   (define-key evil-normal-state-map (kbd "SPC T r") #'speed-type-region)
   (define-key evil-normal-state-map (kbd "SPC T d") #'speed-type-debug))
+
+(leaf vterm
+  :straight (vterm
+             :type git
+             :host github
+             :repo "akermu/emacs-libvterm")
+  :after evil
+  :config
+  ;; Optional: vterm buffer directory
+  (setq vterm-buffer-name "vterm")  ;; default name for new terminals
+
+  ;; Ensure executable exists
+  (unless (executable-find "vterm")
+    (message "⚠️ vterm executable not found. Make sure libvterm is compiled."))
+
+  ;; Evil leader bindings — "V" for terminal
+  (define-key evil-normal-state-map (kbd "SPC V v") #'vterm)
+  (define-key evil-normal-state-map (kbd "SPC V s") 
+    (lambda () (interactive)
+      (vterm (generate-new-buffer-name "vterm"))))
+  (define-key evil-normal-state-map (kbd "SPC V r") #'vterm-send-receive))
 
 ;;────────────────────────────────────────────────────────────
 ;; Denote — .live System with Silos & Formats Separation (ENHANCED)

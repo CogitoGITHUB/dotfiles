@@ -6,6 +6,8 @@ emacs/history
 emacs/eln-cache/
 emacs/var/
 emacs/auto-save-list/
+# Emacs straight.el build and repos (derivable state)
+emacs/straight/
 
 # Straight.el (correct spelling)
 emacs/lib/

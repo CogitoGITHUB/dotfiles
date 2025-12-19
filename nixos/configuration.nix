@@ -231,6 +231,14 @@ starship
     ghostscript
 zip
 texinfo
+ cmake          # required for vterm-module compilation
+    gcc            # build tools
+    libtool
+    autoconf
+    automake
+    pkg-config
+
+
 ];
 
   # --- SSH -------------------------------------------------------------------

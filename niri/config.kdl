@@ -17,38 +17,35 @@ output "eDP-1" {
 layout {
     empty-workspace-above-first
     background-color "white"
-    gaps 15
+    gaps 5
     center-focused-column "always"
     default-column-width { proportion 0.9; }
 
     focus-ring {
-        width 0
+        width 2
         active-color "black"
         inactive-color "grey"
    }
     border {
-        width 0
+        width 1
         active-color "black"
         inactive-color "grey"
         urgent-color "red"
     }
     shadow {
-          on
+          off	
     }
     struts {
-       left 15
-       right 15
-       top 15
-       bottom 15
+       left 0
+       right 0
+       top 10
+       bottom 10
      }
 
 }
 
 
 spawn-at-startup "noctalia-shell"
-
-//spawn-at-startup "wezterm"
-spawn-at-startup "qutebrowser"
 spawn-at-startup "emacs"
 //spawn-at-startup ""
 
@@ -177,7 +174,7 @@ cursor {
     hide-when-typing
     hide-after-inactive-ms 1000
     xcursor-theme "breeze_cursors"
-    xcursor-size 30
+    xcursor-size 10
 }
 
 environment {
@@ -239,7 +236,7 @@ animations {
 }
 
 overview {
-    zoom 0.50
+    zoom 0.70
     backdrop-color "white"
     workspace-shadow {
           off
