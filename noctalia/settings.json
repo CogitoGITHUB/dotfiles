@@ -99,7 +99,7 @@
                     "id": "ActiveWindow",
                     "maxWidth": 145,
                     "scrollingMode": "hover",
-                    "showIcon": true,
+                    "showIcon": false,
                     "useFixedWidth": false
                 },
                 {

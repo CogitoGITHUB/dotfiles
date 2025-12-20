@@ -6,48 +6,42 @@
   (condition-case err
       (progn (setq evil-want-keybinding nil evil-want-C-u-scroll t))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 8 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 7 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      8 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      7 (error-message-string err))
   		      :error))))
   
   :config
   (condition-case err (progn (evil-mode 1))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 14 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 12 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      14 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      12 (error-message-string err))
   		      :error))))
   
-  (condition-case err
-      (progn
-        (define-key evil-normal-state-map (kbd "h") 'evil-backward-char)
-        (define-key evil-normal-state-map (kbd "t") 'evil-next-line)
-        (define-key evil-normal-state-map (kbd "n") 'evil-previous-line)
-        (define-key evil-normal-state-map (kbd "s") 'evil-forward-char)
-        (define-key evil-motion-state-map (kbd "h") 'evil-backward-char)
-        (define-key evil-motion-state-map (kbd "t") 'evil-next-line)
-        (define-key evil-motion-state-map (kbd "n") 'evil-previous-line)
-        (define-key evil-motion-state-map (kbd "s") 'evil-forward-char))
+  (condition-case err nil
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 19 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 16 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      19 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      16 (error-message-string err))
   		      :error))))
   
   (condition-case err
@@ -58,14 +52,15 @@
         (define-key evil-motion-state-map (kbd "SPC")
   		  shapeshifter-leader-map))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 32 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 40 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      32 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      40 (error-message-string err))
   		      :error))))
   
   (condition-case err
@@ -76,48 +71,194 @@
         (define-key shapeshifter-leader-map (kbd "b") #'switch-to-buffer)
         (define-key shapeshifter-leader-map (kbd "k") #'kill-buffer)
         (define-key shapeshifter-leader-map (kbd "j")
-  		  #'avy-goto-char-timer))
+  		  #'avy-goto-char-timer)
+        (define-key shapeshifter-leader-map (kbd "d") #'dired)
+        (define-key shapeshifter-leader-map (kbd "D") #'dired-jump)
+        (define-key shapeshifter-leader-map (kbd "w")
+  		  (make-sparse-keymap))
+        (define-key shapeshifter-leader-map (kbd "wh")
+  		  #'evil-window-left)
+        (define-key shapeshifter-leader-map (kbd "ws")
+  		  #'evil-window-right)
+        (define-key shapeshifter-leader-map (kbd "wt")
+  		  #'evil-window-down)
+        (define-key shapeshifter-leader-map (kbd "wn") #'evil-window-up)
+        (define-key shapeshifter-leader-map (kbd "ww")
+  		  #'evil-window-next)
+        (define-key shapeshifter-leader-map (kbd "wv")
+  		  #'evil-window-vsplit)
+        (define-key shapeshifter-leader-map (kbd "wx")
+  		  #'evil-window-split)
+        (define-key shapeshifter-leader-map (kbd "wq")
+  		  #'evil-window-delete))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 40 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 49 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      40 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      49 (error-message-string err))
   		      :error))))
   
   (condition-case err
       (progn
         (with-eval-after-load 'dired
   	(evil-define-key 'normal dired-mode-map
-  	  (kbd "RET") #'dired-find-file (kbd "TAB") #'revert-buffer)))
+  	  (kbd "h") #'dired-up-directory (kbd "s") #'dired-find-file
+  	  (kbd "t")
+  	  (lambda nil (interactive)
+  	    (dired-next-line 1)
+  	    (when (bound-and-true-p shapeshifter/dired-preview-window)
+  	      (shapeshifter/dired-preview-file)))
+  	  (kbd "n")
+  	  (lambda nil (interactive)
+  	    (dired-previous-line 1)
+  	    (when (bound-and-true-p shapeshifter/dired-preview-window)
+  	      (shapeshifter/dired-preview-file)))
+  	  (kbd "SPC") #'dired-find-file (kbd "RET") #'dired-find-file
+  	  (kbd "TAB")
+  	  (lambda nil (interactive)
+  	    (if (file-directory-p (dired-get-filename nil t))
+  		(dired-find-file)
+  	      (message "Use 'p' for preview if available")))
+  	  (kbd "<tab>")
+  	  (lambda nil (interactive)
+  	    (if (file-directory-p (dired-get-filename nil t))
+  		(dired-find-file)
+  	      (message "Use 'p' for preview if available")))
+  	  (kbd "p") #'ignore (kbd "q") #'quit-window (kbd "Q")
+  	  #'quit-window (kbd "<left>") #'dired-up-directory
+  	  (kbd "<right>") #'dired-find-file (kbd "<up>")
+  	  (lambda nil (interactive)
+  	    (dired-previous-line 1)
+  	    (when (bound-and-true-p shapeshifter/dired-preview-window)
+  	      (shapeshifter/dired-preview-file)))
+  	  (kbd "<down>")
+  	  (lambda nil (interactive)
+  	    (dired-next-line 1)
+  	    (when (bound-and-true-p shapeshifter/dired-preview-window)
+  	      (shapeshifter/dired-preview-file)))
+  	  (kbd "zn")
+  	  (lambda nil (interactive) (dired-sort-toggle-or-edit))
+  	  (kbd "zt")
+  	  (lambda nil (interactive) (dired-sort-toggle-or-edit))
+  	  (kbd "gi") #'dired-show-file-type (kbd "yy")
+  	  #'dired-copy-filename-as-kill (kbd "Y")
+  	  (lambda nil (interactive) (kill-new (dired-get-filename)))
+  	  (kbd "d") #'dired-do-delete (kbd "x")
+  	  #'dired-do-flagged-delete (kbd "r") #'dired-do-rename
+  	  (kbd "c") #'dired-do-copy (kbd "C") #'dired-do-compress-to
+  	  (kbd "R") #'dired-do-rename (kbd "m") #'dired-mark (kbd "u")
+  	  #'dired-unmark (kbd "U") #'dired-unmark-all-marks (kbd "*")
+  	  #'dired-mark-executables (kbd "v") #'dired-mark (kbd "K")
+  	  #'kill-buffer (kbd "gr") #'revert-buffer (kbd "C-r")
+  	  #'revert-buffer (kbd "X") #'dired-do-flagged-delete
+  	  (kbd "!") #'dired-do-shell-command (kbd "&")
+  	  #'dired-do-async-shell-command (kbd "+")
+  	  #'dired-create-directory (kbd "=") #'dired-diff (kbd ".")
+  	  (lambda nil (interactive) (dired-hide-details-mode 'toggle))
+  	  (kbd "i") #'dired-toggle-read-only (kbd "/")
+  	  #'evil-search-forward (kbd "?") #'evil-search-backward
+  	  (kbd "gg") #'evil-goto-first-line (kbd "G") #'evil-goto-line)
+  	(evil-define-key 'visual dired-mode-map
+  	  (kbd "d") #'dired-do-delete (kbd "c") #'dired-do-copy
+  	  (kbd "r") #'dired-do-rename (kbd "!")
+  	  #'dired-do-shell-command (kbd "C") #'dired-do-compress-to)))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 51 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 75 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      51 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      75 (error-message-string err))
+  		      :error))))
+  
+  (condition-case err
+      (progn
+        (with-eval-after-load 'dired
+  	(evil-define-key 'normal dired-mode-map
+  	  (kbd "h") 'dired-up-directory (kbd "s")
+  	  'shapeshifter/dired-enhanced-open (kbd "t") 'dired-next-line
+  	  (kbd "n") 'dired-previous-line (kbd "RET")
+  	  'shapeshifter/dired-enhanced-open (kbd "SPC")
+  	  'shapeshifter/dired-enhanced-open (kbd "TAB")
+  	  'dired-find-file (kbd "<tab>") 'dired-find-file (kbd "o")
+  	  'shapeshifter/dired-open-in-external-app (kbd "p")
+  	  'shapeshifter/dired-preview-file (kbd "P")
+  	  'shapeshifter/dired-toggle-preview-mode (kbd "q")
+  	  'shapeshifter/dired-preview-close (kbd "Q") 'quit-window
+  	  (kbd "d") 'dired-do-delete (kbd "x")
+  	  'dired-do-flagged-delete (kbd "D") 'dired-flag-file-deletion
+  	  (kbd "r") 'dired-do-rename (kbd "c") 'dired-do-copy
+  	  (kbd "C") 'dired-do-compress-to (kbd "R") 'dired-do-rename
+  	  (kbd "+") 'dired-create-directory (kbd "N")
+  	  'shapeshifter/dired-create-file (kbd "m") 'dired-mark
+  	  (kbd "u") 'dired-unmark (kbd "U") 'dired-unmark-all-marks
+  	  (kbd "v") 'dired-mark (kbd "*") 'dired-mark-executables
+  	  (kbd "t*") 'dired-toggle-marks (kbd "mc")
+  	  'shapeshifter/dired-count-marked (kbd "yy")
+  	  'dired-copy-filename-as-kill (kbd "yp")
+  	  'shapeshifter/dired-copy-path (kbd "yf")
+  	  'shapeshifter/dired-copy-filename-only (kbd "zn")
+  	  'shapeshifter/dired-sort-by-name (kbd "zs")
+  	  'shapeshifter/dired-sort-by-size (kbd "zt")
+  	  'shapeshifter/dired-sort-by-time (kbd "zx")
+  	  'shapeshifter/dired-sort-by-extension (kbd "gi")
+  	  'shapeshifter/dired-file-info (kbd "gd")
+  	  'shapeshifter/dired-directory-summary (kbd "gf")
+  	  'dired-show-file-type (kbd "K")
+  	  'shapeshifter/dired-kill-other-dired-buffers (kbd "gr")
+  	  'revert-buffer (kbd "C-r") 'revert-buffer (kbd "!")
+  	  'dired-do-shell-command (kbd "&")
+  	  'dired-do-async-shell-command (kbd "=") 'dired-diff
+  	  (kbd "X") 'dired-do-flagged-delete (kbd ".")
+  	  'dired-hide-details-mode (kbd "i") 'dired-toggle-read-only
+  	  (kbd "(") 'dired-omit-mode (kbd "C-c r")
+  	  'shapeshifter/dired-open-as-root (kbd "<left>")
+  	  'dired-up-directory (kbd "<right>") 'dired-find-file
+  	  (kbd "<up>") 'dired-previous-line (kbd "<down>")
+  	  'dired-next-line (kbd "/") 'evil-search-forward (kbd "?")
+  	  'evil-search-backward (kbd "gg") 'evil-goto-first-line
+  	  (kbd "G") 'evil-goto-line)
+  	(evil-define-key 'visual dired-mode-map
+  	  (kbd "d") 'dired-do-delete (kbd "c") 'dired-do-copy
+  	  (kbd "r") 'dired-do-rename (kbd "!") 'dired-do-shell-command
+  	  (kbd "C") 'dired-do-compress-to)))
+    (error
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 205 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
+  		      (format "Error loading %s:%s - %s"
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      205 (error-message-string err))
   		      :error))))
   
   (condition-case err
       (progn
         (with-eval-after-load 'org
   	(evil-define-key 'normal org-mode-map
-  	  (kbd "TAB") #'org-cycle (kbd "<C-tab>") #'org-shifttab)))
+  	  (kbd "TAB") #'org-cycle (kbd "<tab>") #'org-cycle
+  	  (kbd "<C-tab>") #'org-shifttab (kbd "C-<tab>")
+  	  #'org-shifttab)))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 60 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 337 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      60 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      337 (error-message-string err))
   		      :error)))))
 
 (leaf annalist
@@ -129,14 +270,15 @@
   :config
   (condition-case err (progn (evil-collection-init))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 82 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 360 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      82 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      360 (error-message-string err))
   		      :error)))))
 
 (leaf evil-surround
@@ -145,14 +287,15 @@
   :config
   (condition-case err (progn (global-evil-surround-mode 1))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 94 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 370 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      94 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      370 (error-message-string err))
   		      :error)))))
 
 (leaf multiple-cursors
@@ -175,13 +318,14 @@
         (define-key evil-normal-state-map (kbd "gC")
   		  #'evilnc-copy-and-comment-lines))
     (error
-     (add-to-list 'tree--boot-errors
-  		(list :file "/home/asdf/.config/emacs/org/evil.org"
-  		      :line 113 :message (error-message-string err)))
-     (unless tree--booting
-       (display-warning 'tree
+     (add-to-list 'shaping--boot-errors
+  		(list :file
+  		      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  		      :line 386 :message (error-message-string err)))
+     (unless shaping--booting
+       (display-warning 'shaping
   		      (format "Error loading %s:%s - %s"
-  			      "/home/asdf/.config/emacs/org/evil.org"
-  			      113 (error-message-string err))
+  			      "/home/asdf/.config/emacs/shaping-packages/evil.org"
+  			      386 (error-message-string err))
   		      :error)))))
 

@@ -132,10 +132,10 @@ users.users.asdf = {
 
 services.tailscale.enable = true;
 services.tailscale.extraSetFlags = ["--netfilter-mode=nodivert"];
-services.logind.lidSwitch = "ignore";
-services.logind.lidSwitchDocked = "ignore";
 
 
+services.logind.settings.Login.HandleLidSwitch = "ignore";
+services.logind.settings.Login.HandleLidSwitchDocked = "ignore";
 
 
 
@@ -151,6 +151,8 @@ services.k3s = {
 };
 
 
+systemd.services.k3s.enable = false;
+systemd.services."tailscaled-set".enable = false;
 
 
   environment.systemPackages = with pkgs; [
@@ -202,6 +204,7 @@ inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
     ffmpeg
     python3
     python3Packages.mutagen
+    neovim
     mpd
     mpdcron
     cava
@@ -233,11 +236,6 @@ zip
 texinfo
  cmake          # required for vterm-module compilation
     gcc            # build tools
-    libtool
-    autoconf
-    automake
-    pkg-config
-
 
 ];
 

@@ -1,5 +1,0 @@
-#!/usr/bin/env nu
-
-# Pull workspace state from the installed binary
-let ws = (eww-niri-workspaces --json | from json)
-$ws

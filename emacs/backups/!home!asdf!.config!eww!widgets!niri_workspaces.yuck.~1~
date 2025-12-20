@@ -1,8 +1,0 @@
-(defwidget niri-workspaces []
-  (poll :interval "150ms"
-        :command "~/.config/eww/scripts/niri_workspaces.nu"
-        (box :class "niri-workspace-box"
-             (for ws workspaces
-               (label
-                 :class (if ws.focused "niri-ws-focused" "niri-ws")
-                 :text ws.name)))))
