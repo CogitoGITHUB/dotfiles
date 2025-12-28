@@ -1,0 +1,181 @@
+* Dashboard — The Command Center
+:PROPERTIES:
+:PACKAGE:  dashboard
+:STRAIGHT: t
+:END:
+
+** Core Setup :init:
+#+begin_src emacs-lisp
+(setq dashboard-startup-banner 'official
+      dashboard-center-content t
+      dashboard-show-shortcuts t
+      dashboard-set-navigator t
+      dashboard-set-init-info t
+      dashboard-items '((recents  . 5)
+                        (bookmarks . 5)
+                        (projects . 5)
+                        (agenda . 5))
+      dashboard-week-agenda t
+      dashboard-display-agenda-at-startup t
+      dashboard-filter-agenda-entry 'dashboard-no-filter-agenda
+      dashboard-banner-logo-title
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SHAPESHIFTER — THE DVORAK BLADE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+      dashboard-footer-messages
+      '("The blade that adapts, survives."
+        "Every keystroke is a choice."
+        "HTNS — The path of efficiency."
+        "Shape your tools, shape your mind."
+        "In simplicity, power emerges."
+        "The editor is a canvas of thought."
+        "Precision over speed, always."
+        "Master the fundamentals, transcend the rest."))
+#+end_src
+
+** Navigator Buttons :init:
+#+begin_src emacs-lisp
+(setq dashboard-navigator-buttons
+      `(;; Line 1
+        (("g" "GitHub" "Open GitHub [g]" 
+          (lambda (&rest _) (browse-url "https://github.com")))
+         ("i" "Config" "Open init file [i]" 
+          (lambda (&rest _) (find-file user-init-file)))
+         ("d" "Docs" "Open documentation [d]" 
+          (lambda (&rest _) (browse-url "https://www.gnu.org/software/emacs/manual/")))
+         ("u" "Update" "Update packages [u]" 
+          (lambda (&rest _) (straight-pull-all)))
+         ("f" "Dired" "Open file manager [f]"
+          (lambda (&rest _) (dired "~")))
+         ("c" "Calendar" "Open calendar [c]"
+          (lambda (&rest _) (calendar))))))
+#+end_src
+
+** Initialize Dashboard :config:
+#+begin_src emacs-lisp
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+
+;; Hide cursor in dashboard
+(add-hook 'dashboard-mode-hook
+          (lambda ()
+            (setq-local cursor-type nil)
+            (hl-line-mode 1)))
+
+;; Show dashboard on empty frames
+(setq initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name)))
+#+end_src
+
+** Custom Functions :config:
+#+begin_src emacs-lisp
+(defun shapeshifter/dashboard-refresh ()
+  "Refresh the dashboard buffer."
+  (interactive)
+  (when (get-buffer dashboard-buffer-name)
+    (kill-buffer dashboard-buffer-name))
+  (dashboard-insert-startupify-lists)
+  (switch-to-buffer dashboard-buffer-name)
+  (dashboard-mode))
+
+(defun shapeshifter/dashboard-goto-section (section)
+  "Jump to a SECTION in dashboard."
+  (interactive "sSection: ")
+  (with-current-buffer dashboard-buffer-name
+    (goto-char (point-min))
+    (search-forward section nil t)
+    (forward-line 1)))
+
+(defun shapeshifter/dashboard-goto-recent-files ()
+  "Jump to recent files section."
+  (interactive) 
+  (shapeshifter/dashboard-goto-section "Recent Files:"))
+
+(defun shapeshifter/dashboard-goto-projects ()
+  "Jump to projects section."
+  (interactive) 
+  (shapeshifter/dashboard-goto-section "Projects:"))
+
+(defun shapeshifter/dashboard-goto-bookmarks ()
+  "Jump to bookmarks section."
+  (interactive) 
+  (shapeshifter/dashboard-goto-section "Bookmarks:"))
+#+end_src
+
+** Keybindings :config:
+#+begin_src emacs-lisp
+;; Simple approach: bind keys directly to dashboard-mode-map
+(with-eval-after-load 'dashboard
+  ;; Basic navigation
+  (define-key dashboard-mode-map "h" 'widget-backward)
+  (define-key dashboard-mode-map "t" 'next-line)
+  (define-key dashboard-mode-map "n" 'previous-line)
+  (define-key dashboard-mode-map "s" 'widget-forward)
+  
+  ;; Section navigation  
+  (define-key dashboard-mode-map "H" 'dashboard-previous-section)
+  (define-key dashboard-mode-map "S" 'dashboard-next-section)
+  
+  ;; Activation
+  (define-key dashboard-mode-map (kbd "RET") 'widget-button-press)
+  (define-key dashboard-mode-map (kbd "SPC") 'widget-button-press)
+  (define-key dashboard-mode-map (kbd "TAB") 'widget-forward)
+  (define-key dashboard-mode-map (kbd "S-TAB") 'widget-backward)
+  
+  ;; Quick access keys (matching navigator buttons)
+  (define-key dashboard-mode-map "g" (lambda () (interactive) (browse-url "https://github.com")))
+  (define-key dashboard-mode-map "i" (lambda () (interactive) (find-file user-init-file)))
+  (define-key dashboard-mode-map "d" (lambda () (interactive) (browse-url "https://www.gnu.org/software/emacs/manual/")))
+  (define-key dashboard-mode-map "u" (lambda () (interactive) (straight-pull-all)))
+  (define-key dashboard-mode-map "f" (lambda () (interactive) (dired "~")))
+  (define-key dashboard-mode-map "c" 'calendar)
+  
+  ;; Utilities
+  (define-key dashboard-mode-map "r" 'shapeshifter/dashboard-refresh)
+  (define-key dashboard-mode-map "q" 'quit-window)
+  (define-key dashboard-mode-map "Q" 'kill-buffer-and-window))
+
+;; Evil integration
+(with-eval-after-load 'evil
+  (evil-set-initial-state 'dashboard-mode 'emacs))
+#+end_src
+
+** Monochrome Faces :config:
+#+begin_src emacs-lisp
+(defface shapeshifter-dashboard-banner-face
+  '((t :foreground "white" :weight bold))
+  "Face for dashboard banner."
+  :group 'dashboard)
+
+;; Monochrome color scheme
+(with-eval-after-load 'dashboard
+  (set-face-attribute 'dashboard-heading nil 
+                      :foreground "white" 
+                      :weight 'bold)
+  (set-face-attribute 'dashboard-items-face nil 
+                      :foreground "gray70")
+  (set-face-attribute 'dashboard-no-items-face nil 
+                      :foreground "gray50")
+  (set-face-attribute 'dashboard-text-banner nil 
+                      :foreground "white" 
+                      :weight 'bold)
+  (set-face-attribute 'dashboard-banner-logo-title nil 
+                      :foreground "white" 
+                      :weight 'bold))
+#+end_src
+
+** Recent Files & Bookmarks :config:
+#+begin_src emacs-lisp
+(setq recentf-max-saved-items 50
+      recentf-max-menu-items 15
+      recentf-exclude '("/tmp/" "/ssh:" "/sudo:" "\\.git/" "COMMIT_EDITMSG" ".*\\.elc$"))
+(run-at-time nil (* 5 60) 'recentf-save-list)
+
+(setq bookmark-default-file (expand-file-name "bookmarks" user-emacs-directory)
+      bookmark-save-flag 1)
+#+end_src
+
+** Projects Integration :config:
+#+begin_src emacs-lisp
+(with-eval-after-load 'projectile
+  (setq dashboard-projects-backend 'projectile))
+#+end_src

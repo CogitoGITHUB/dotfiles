@@ -1,0 +1,10 @@
+* Grease — The Filesystem Blade
+:PROPERTIES:
+:PACKAGE:  grease
+:STRAIGHT: (grease :type git :host github :repo "mwac-dev/grease.el")
+:END:
+
+** Commands :config:
+#+begin_src emacs-lisp
+(setq grease-sort-directories-first t) ; Always show dirs first (for non-type sorts)
+#+end_src

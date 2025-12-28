@@ -1,0 +1,17 @@
+{
+  "dankActions": {
+    "enabled": true
+  },
+  "dankBatteryAlerts": {
+    "enabled": true
+  },
+  "dankDesktopWeather": {
+    "enabled": true
+  },
+  "dankHooks": {
+    "enabled": true
+  },
+  "dankPomodoroTimer": {
+    "enabled": true
+  }
+}

@@ -12,22 +12,22 @@ output "eDP-1" {
 //    transform "90" rotate screen !!!
     position x=1280 y=0
     focus-at-startup
-    backdrop-color "white"
+    backdrop-color "grey"
 }
 layout {
     empty-workspace-above-first
-    background-color "white"
-    gaps 5
+    background-color "grey"
+    gaps 0
     center-focused-column "always"
-    default-column-width { proportion 0.9; }
+    default-column-width { proportion 1.0; }
 
     focus-ring {
-        width 2
+        width 0
         active-color "black"
         inactive-color "grey"
    }
     border {
-        width 1
+        width 0
         active-color "black"
         inactive-color "grey"
         urgent-color "red"
@@ -38,8 +38,8 @@ layout {
     struts {
        left 0
        right 0
-       top 10
-       bottom 10
+       top 0
+       bottom 0
      }
 
 }

@@ -1,0 +1,713 @@
+#+title:      init.org
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.config/emacs/init.el
+
+
+* Bootstrap and Core Setup
+#+begin_src emacs-lisp
+;;──────────────────────────────────────────────────────────
+;; Straight bootstrap (must be first)
+;;──────────────────────────────────────────────────────────
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        user-emacs-directory))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(setq straight-use-package-by-default t)
+
+;;──────────────────────────────────────────────────────────
+;; Org (required, explicit, upstream)
+;;──────────────────────────────────────────────────────────
+(straight-use-package
+ '(org :type git
+       :host git
+       :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"))
+(require 'org)
+
+;;──────────────────────────────────────────────────────────
+;; Leaf system
+;;──────────────────────────────────────────────────────────
+(straight-use-package 'leaf)
+(straight-use-package 'leaf-keywords)
+(require 'leaf)
+(require 'leaf-keywords)
+(leaf-keywords-init)
+#+end_src
+
+* Core Settings with Leaf
+#+begin_src emacs-lisp
+(leaf cus-start
+  :doc "builtin core configuration"
+  :tag "builtin"
+  :custom ((truncate-lines . t)
+           (menu-bar-mode . nil)
+           (tool-bar-mode . nil)
+           (scroll-bar-mode . nil)
+           (inhibit-startup-screen . t)
+           (initial-scratch-message . nil)
+           (ring-bell-function . 'ignore)
+           (use-dialog-box . nil)
+           (cursor-in-non-selected-windows . nil)
+           (frame-title-format . "%b")
+           (fringe-mode . 0)
+           (mode-line-format . nil)))  ;; hide mode line
+#+end_src
+
+
+* live-shaping-emacs
+
+#+begin_src emacs-lisp
+;;──────────────────────────────────────────────────────────
+;; live-shaping-emacs.el --- Live configuration management
+;;──────────────────────────────────────────────────────────
+;; 
+;; Live Shaping Emacs - A system for managing any kind of
+;; configuration through org files, not just packages.
+;;
+;; Changes in 2.0.1:
+;; - Preview is now manual via C-c C-v (not automatic on save)
+;; - Always loads ALL files on save, not just changed ones
+;; - Ensures complete configuration is always applied
+
+(require 'cl-lib)
+(require 'ob-core)
+
+;; Configuration Variables
+(defvar live-shaping-emacs-packages '()
+  "List of packages that should be installed.
+This is a plist where keys are package symbols and values are
+plists containing package configuration like :init, :config, :bind, etc.")
+
+(defvar live-shaping-emacs--booting nil
+  "Non-nil when running inside `live-shaping-emacs-boot'.
+Used internally to control behavior during the boot process.")
+
+(defvar live-shaping-emacs--boot-errors '()
+  "List of compile/loading errors encountered during boot.
+Each error is a plist with :file, :line, and :message keys.")
+
+(defcustom live-shaping-emacs-wrap-statements-in-condition t
+  "Wrap code in condition-case statements.
+When non-nil, all code blocks are wrapped in condition-case forms
+to catch and report errors without stopping the entire boot process.
+Set to nil for debugging to see raw errors."
+  :type 'boolean
+  :group 'live-shaping-emacs)
+
+(defcustom live-shaping-emacs-leaf-keywords
+  '("after" "demand" "ensure" "config" "init" "bind" "bind*" 
+    "hook" "general" "custom" "defer" "requires" "straight")
+  "List of `leaf' keywords that can be used as org tags.
+The keywords are case sensitive. If a tag ends with an underscore,
+it will be replaced with an asterisk in the generated code.
+Example: A tag 'bind_' becomes ':bind*' in the leaf declaration."
+  :type 'list
+  :group 'live-shaping-emacs)
+
+(defcustom live-shaping-emacs-output-directory 
+  (expand-file-name "shaped-outputs" user-emacs-directory)
+  "Directory where the compiled Elisp files are stored.
+This directory is automatically created if it doesn't exist.
+Files in this directory are auto-generated and should not be edited manually."
+  :type 'string
+  :group 'live-shaping-emacs)
+
+(defcustom live-shaping-emacs-org-directory 
+  (expand-file-name "shaping-sources" user-emacs-directory)
+  "Directory where the source Org files are stored.
+This is where you should place your configuration org files.
+Subdirectories are supported and will maintain their structure
+in the output directory."
+  :type 'string
+  :group 'live-shaping-emacs)
+
+(defcustom live-shaping-emacs-force-compile nil
+  "Force compilation of Org files even if elisp file is newer.
+When non-nil, always recompile org files regardless of timestamps.
+Useful for debugging or when you've modified live-shaping-emacs.el itself."
+  :type 'boolean
+  :group 'live-shaping-emacs)
+
+;; Utility Functions
+(defun live-shaping-emacs-indent (string n)
+  "Indent STRING by N spaces."
+  (let ((indentation (make-string n ?\s)))
+    (replace-regexp-in-string "^" indentation string)))
+
+(defun live-shaping-emacs-plist-keys (plist)
+  "Return the keys of PLIST as a list."
+  (let ((keys '()))
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    (nreverse keys)))
+
+;; Org Element Property Finders
+(defun live-shaping-emacs-find-property (property)
+  "Find PROPERTY in the current Org element or any ancestor element."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property property (org-element-context)))
+            (org-up-element))
+          (intern (org-element-property property (org-element-context))))
+      (error nil))))
+
+(defun live-shaping-emacs-find-tags ()
+  "Find tags in the current Org element or any ancestor element."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property :tags 
+                        (org-element-lineage (org-element-context) '(headline) t)))
+            (org-up-element))
+          (org-element-property :tags 
+            (org-element-lineage (org-element-context) '(headline) t)))
+      (error nil))))
+
+(defun live-shaping-emacs-find-tag ()
+  "Find a `leaf' tag in the current Org element or any ancestor element."
+  (let* ((keywords live-shaping-emacs-leaf-keywords)
+         (tag (car (seq-filter (lambda (tag) (member tag keywords)) 
+                               (live-shaping-emacs-find-tags)))))
+    (when tag
+      (replace-regexp-in-string "_" "-"
+                                (replace-regexp-in-string "_$" "*" tag)))))
+
+(defun live-shaping-emacs-find-package ()
+  "Find a `leaf' package name in the current Org element or ancestor."
+  (or (live-shaping-emacs-find-property :PACKAGE)
+      (live-shaping-emacs-find-property :LEAF_PACKAGE)
+      (live-shaping-emacs-find-property :LEAF-PACKAGE)))
+
+(defun live-shaping-emacs-find-after ()
+  "Find a `leaf' :after property in current or ancestor element."
+  (when-let* ((after (live-shaping-emacs-find-property :AFTER)))
+    (prin1-to-string (read (symbol-name after)))))
+
+(defun live-shaping-emacs-find-demand ()
+  "Find a `leaf' :demand property in current or ancestor element."
+  (when-let* ((demand (live-shaping-emacs-find-property :DEMAND)))
+    (prin1-to-string (read (symbol-name demand)))))
+
+(defun live-shaping-emacs-find-ensure ()
+  "Find a `leaf' :ensure property in current or ancestor element."
+  (when-let* ((ensure (live-shaping-emacs-find-property :ENSURE)))
+    (prin1-to-string (read (symbol-name ensure)))))
+
+(defun live-shaping-emacs-find-defer ()
+  "Find a `leaf' :defer property in current or ancestor element."
+  (when-let* ((defer (live-shaping-emacs-find-property :DEFER)))
+    (prin1-to-string (read (symbol-name defer)))))
+
+(defun live-shaping-emacs-find-requires ()
+  "Find a `leaf' :requires property in current or ancestor element."
+  (when-let* ((requires (live-shaping-emacs-find-property :REQUIRES)))
+    (prin1-to-string (read (symbol-name requires)))))
+
+(defun live-shaping-emacs-find-straight ()
+  "Find a `leaf' :straight property in current or ancestor element."
+  (when-let* ((straight (live-shaping-emacs-find-property :STRAIGHT)))
+    (prin1-to-string (read (symbol-name straight)))))
+
+(defun live-shaping-emacs-find-keyword ()
+  "Find a `leaf' keyword property in current or ancestor element."
+  (when-let* ((keyword (live-shaping-emacs-find-property :KEYWORD)))
+    (replace-regexp-in-string "^:" "" (symbol-name keyword))))
+
+(defun live-shaping-emacs-get-leaf-package ()
+  "Return the package name and Leaf keyword for current context."
+  (when-let* ((package (live-shaping-emacs-find-package))
+              (keyword (or (live-shaping-emacs-find-keyword)
+                          (live-shaping-emacs-find-tag))))
+    (list package keyword)))
+
+;; File Property Functions
+(defun live-shaping-emacs-file-properties (file)
+  "Return all #+PROPERTY directives from an org FILE as an alist."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let (properties)
+      (goto-char (point-min))
+      (while (re-search-forward 
+              "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$" 
+              nil t)
+        (let ((key (intern (downcase (match-string 1))))
+              (value (match-string 2)))
+          (push (cons key value) properties)))
+      properties)))
+
+(defun live-shaping-emacs-file-priority (file)
+  "Return the priority of an org FILE (lower numbers load first)."
+  (let ((priority (alist-get 'priority (live-shaping-emacs-file-properties file) "10")))
+    (if (string-match-p "^[0-9]+$" priority)
+        (string-to-number priority)
+      10)))
+
+(defun live-shaping-emacs-file-lexical-binding (file)
+  "Return the lexical-binding setting of an org FILE."
+  (let ((lexical-binding 
+         (alist-get 'lexical_binding (live-shaping-emacs-file-properties file) "t")))
+    (if (string= lexical-binding "nil")
+        nil
+      t)))
+
+(defun live-shaping-emacs-get-files (extension directory)
+  "Return all files matching EXTENSION in DIRECTORY, sorted by priority."
+  (when (file-exists-p directory)
+    (let* ((files (directory-files-recursively directory extension)))
+      (sort files (lambda (a b) 
+                    (< (live-shaping-emacs-file-priority a)
+                       (live-shaping-emacs-file-priority b)))))))
+
+;; Safe Reading and Wrapping Functions
+(defun live-shaping-emacs-safe-read (string file &optional line)
+  "Read STRING as elisp and return the result."
+  (condition-case err
+      (read string)
+    (error
+     (display-warning
+      'live-shaping-emacs
+      (if line
+          (format "failed to read body of %s:%s" file line)
+        (format "failed to read body of %s" file))
+      :error)
+     nil)))
+
+(defun live-shaping-emacs-wrap-in-condition (file part)
+  "Wrap PART in a `condition-case' form for safe evaluation."
+  (let* ((body (plist-get part :body))
+         (line (plist-get part :line))
+         (expression-string (string-trim-right body))
+         (expression (live-shaping-emacs-safe-read (format "(progn\n%s)" expression-string) 
+                                                    file line)))
+    (if live-shaping-emacs-wrap-statements-in-condition
+        (pp-to-string
+         `(condition-case err
+              ,expression
+            (error
+             (add-to-list 'live-shaping-emacs--boot-errors
+                          (list :file ,(format "%s" file)
+                                :line ,line
+                                :message (error-message-string err)))
+             (unless live-shaping-emacs--booting
+               (display-warning
+                'live-shaping-emacs
+                (format "Error loading %s:%s - %s"
+                        ,(format "%s" file)
+                        ,line
+                        (error-message-string err))
+                :error)))))
+      expression-string)))
+
+(defun live-shaping-emacs-merge-bodies (file xs)
+  "Merge the bodies of a list of leaf statements into a single list."
+  (let ((result '()))
+    (dolist (x xs)
+      (let* ((body (plist-get x :body))
+             (line (plist-get x :line))
+             (result-body (live-shaping-emacs-safe-read body file line)))
+        (when result-body
+          (setq result (append result result-body)))))
+    (when result
+      (prin1-to-string result))))
+
+;; Leaf Block Building Functions
+(defun live-shaping-emacs-build-leaf-string (package-name package file)
+  "Build a complete `leaf' declaration for PACKAGE-NAME as a string."
+  (concat
+   (string-trim-right
+    (concat (format "(leaf %s" package-name)
+            (when-let* ((straight (plist-get (car (plist-get package :straight)) :body)))
+              (format "\n  :straight %s" straight))
+            (when-let* ((ensure (plist-get (car (plist-get package :ensure)) :body)))
+              (format "\n  :ensure %s" ensure))
+            (when-let* ((requires (plist-get (car (plist-get package :requires)) :body)))
+              (format "\n  :require %s" requires))
+            (when-let* ((after (plist-get (car (plist-get package :after)) :body)))
+              (format "\n  :after %s" after))
+            (when-let* ((defer (plist-get (car (plist-get package :defer)) :body)))
+              (format "\n  :defer %s" defer))
+            (when-let* ((demand (plist-get (car (plist-get package :demand)) :body)))
+              (format "\n  :demand %s" demand))
+            (when-let* ((bind* (live-shaping-emacs-merge-bodies file (plist-get package :bind*))))
+              (format "\n  :bind*\n%s" (live-shaping-emacs-indent bind* 2)))
+            (when-let* ((bind (live-shaping-emacs-merge-bodies file (plist-get package :bind))))
+              (format "\n  :bind\n%s" (live-shaping-emacs-indent bind 2)))
+            (when-let* ((hook (live-shaping-emacs-merge-bodies file (plist-get package :hook))))
+              (format "\n  :hook\n%s" (live-shaping-emacs-indent hook 2)))
+            (when-let* ((init (plist-get package :init)))
+              (format "\n  :init\n%s" 
+                      (live-shaping-emacs-indent 
+                       (string-join 
+                        (mapcar (lambda (x) (live-shaping-emacs-wrap-in-condition file x)) init) 
+                        "\n") 
+                       2)))
+            (when-let* ((custom (plist-get package :custom)))
+              (let ((custom-forms (mapcar (lambda (part) (string-trim (plist-get part :body)))
+                                         custom)))
+                (format "\n  :custom\n  %s" (string-join custom-forms "\n  "))))
+            (when-let* ((config (plist-get package :config)))
+              (format "\n  :config\n%s" 
+                      (live-shaping-emacs-indent 
+                       (string-join 
+                        (mapcar (lambda (x) (live-shaping-emacs-wrap-in-condition file x)) config) 
+                        "\n") 
+                       2)))))
+   ")\n\n"))
+
+(defun live-shaping-emacs-build-leaf (file package-name)
+  "Build a `leaf' block for PACKAGE-NAME as a string."
+  (when-let* ((package (plist-get live-shaping-emacs-packages package-name)))
+    (when (not (equal package-name (intern "nil")))
+      (let ((package-string (live-shaping-emacs-build-leaf-string package-name package file)))
+        (when (live-shaping-emacs-safe-read package-string file)
+          package-string)))))
+
+(defun live-shaping-emacs-build-leafs (file)
+  "Build a string containing all `leaf' blocks for FILE."
+  (let ((package-names (live-shaping-emacs-plist-keys live-shaping-emacs-packages))
+        (result ""))
+    (dolist (package-name package-names)
+      (setq result (concat result (live-shaping-emacs-build-leaf file package-name))))
+    result))
+
+;; Package Parameter Management
+(defun live-shaping-emacs-put-package-parameter (package-name parameter value)
+  "Store a PARAMETER with VALUE for PACKAGE-NAME."
+  (setq live-shaping-emacs-packages
+        (plist-put
+         live-shaping-emacs-packages
+         package-name
+         (plist-put (plist-get live-shaping-emacs-packages package-name)
+                    parameter
+                    value))))
+
+(defun live-shaping-emacs-add-package (package body element)
+  "Add a code block BODY to PACKAGE configuration."
+  (let* ((begin (org-element-property :begin element))
+         (line (line-number-at-pos begin))
+         (package-name (car package))
+         (package-parameter (intern (concat ":" (car (cdr package)))))
+         (previous-body (plist-get (plist-get live-shaping-emacs-packages package-name) 
+                                   package-parameter))
+         (value (append previous-body `((:body ,body :line ,line)))))
+    (live-shaping-emacs-put-package-parameter package-name package-parameter value)
+    nil))
+
+;; Source Block Processing
+(defun live-shaping-emacs-concatenate-source-blocks (file)
+  "Process FILE and extract all configuration into strings and package data."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let ((results '()))
+      ;; First pass: extract properties from headlines
+      (org-map-entries
+       (lambda ()
+         (let ((line (line-number-at-pos 
+                     (org-element-property :begin (org-element-context)))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (package (org-element-property :PACKAGE (org-element-context))))
+             (live-shaping-emacs-put-package-parameter package-name :package line))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (after (live-shaping-emacs-find-after)))
+             (live-shaping-emacs-put-package-parameter package-name :after 
+                                                       `((:body ,after :line ,line))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (demand (live-shaping-emacs-find-demand)))
+             (live-shaping-emacs-put-package-parameter package-name :demand 
+                                                       `((:body ,demand :line ,line))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (ensure (live-shaping-emacs-find-ensure)))
+             (live-shaping-emacs-put-package-parameter package-name :ensure 
+                                                       `((:body ,ensure :line ,line))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (defer (live-shaping-emacs-find-defer)))
+             (live-shaping-emacs-put-package-parameter package-name :defer 
+                                                       `((:body ,defer :line ,line))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (requires (live-shaping-emacs-find-requires)))
+             (live-shaping-emacs-put-package-parameter package-name :requires 
+                                                       `((:body ,requires :line ,line))))
+           (when-let* ((package-name (live-shaping-emacs-find-package))
+                       (straight (live-shaping-emacs-find-straight)))
+             (live-shaping-emacs-put-package-parameter package-name :straight 
+                                                       `((:body ,straight :line ,line)))))))
+      ;; Second pass: process source blocks
+      (org-babel-map-src-blocks nil
+        (let ((body (org-element-property :value (org-element-context)))
+              (line (line-number-at-pos (org-element-property :begin (org-element-context))))
+              (language (org-element-property :language (org-element-context))))
+          (when (string= language "emacs-lisp")
+            (if-let* ((package (live-shaping-emacs-get-leaf-package)))
+                (live-shaping-emacs-add-package package body (org-element-context))
+              (when (stringp body)
+                (push (live-shaping-emacs-wrap-in-condition file `(:body ,body :line ,line))
+                      results))))))
+      (mapconcat 'identity (reverse results) "\n"))))
+
+;; File Compilation Functions
+(defun live-shaping-emacs-output-file-name (file)
+  "Return the output elisp file path for org FILE."
+  (if (string-prefix-p
+       (expand-file-name live-shaping-emacs-org-directory)
+       (expand-file-name file))
+      (expand-file-name
+       (concat (file-name-as-directory live-shaping-emacs-output-directory)
+               (file-name-sans-extension 
+                (substring file (length (expand-file-name live-shaping-emacs-org-directory))))
+               ".el"))
+    (error "File is not in live-shaping-emacs-org-directory")))
+
+(defun live-shaping-emacs-compile-file (file)
+  "Compile org FILE to elisp."
+  (unless (file-exists-p file)
+    (error "File to tangle does not exist: %s" file))
+  (unless (file-exists-p live-shaping-emacs-output-directory)
+    (make-directory live-shaping-emacs-output-directory t))
+  (let ((output-file (live-shaping-emacs-output-file-name file)))
+    (make-directory (file-name-directory output-file) t)
+    (when (or live-shaping-emacs-force-compile
+              (file-newer-than-file-p file output-file))
+      (message "Live-Shaping-Emacs: Compiling %s" file)
+      (let* ((live-shaping-emacs-packages nil)
+             (source (live-shaping-emacs-concatenate-source-blocks file))
+             (output (concat source "\n" (live-shaping-emacs-build-leafs file))))
+        (with-temp-file output-file
+          (when (live-shaping-emacs-file-lexical-binding file)
+            (insert ";;; -*- lexical-binding: t -*-\n"))
+          (dolist (property (live-shaping-emacs-file-properties file))
+            (insert (format ";; #+%s: %s\n\n"
+                            (upcase (symbol-name (car property)))
+                            (cdr property))))
+          (insert output)))
+      (when (file-exists-p output-file)
+        (set-file-times output-file))
+      output-file)))
+
+(defun live-shaping-emacs-compile-directory ()
+  "Compile all org files in `live-shaping-emacs-org-directory' to elisp."
+  (let* ((files (live-shaping-emacs-get-files "^[^#]*\\.org$" 
+                                              live-shaping-emacs-org-directory))
+         (compiled '()))
+    (dolist (file files)
+      (when-let* ((output (live-shaping-emacs-compile-file file)))
+        (push output compiled)))
+    compiled))
+
+;; Orphaned File Cleanup
+(defun live-shaping-emacs-cleanup-orphaned-el-files ()
+  "Delete .el files in output directory that don't have corresponding .org files."
+  (when (file-exists-p live-shaping-emacs-output-directory)
+    (let* ((el-files (live-shaping-emacs-get-files "^[^#]*\\.el$" 
+                                                    live-shaping-emacs-output-directory))
+           (deleted-count 0))
+      (dolist (el-file el-files)
+        (let* ((relative-path (substring el-file 
+                                        (length (expand-file-name 
+                                                live-shaping-emacs-output-directory))))
+               (org-file (expand-file-name
+                         (concat (file-name-as-directory live-shaping-emacs-org-directory)
+                                (file-name-sans-extension relative-path)
+                                ".org"))))
+          (unless (file-exists-p org-file)
+            (message "Live-Shaping-Emacs: Removing orphaned file %s" el-file)
+            (delete-file el-file)
+            (setq deleted-count (1+ deleted-count))
+            ;; Try to clean up empty parent directories
+            (let ((parent-dir (file-name-directory el-file)))
+              (when (and parent-dir
+                        (not (equal (expand-file-name parent-dir) 
+                                   (expand-file-name live-shaping-emacs-output-directory)))
+                        (null (directory-files parent-dir nil "^[^.]")))
+                (ignore-errors (delete-directory parent-dir)))))))
+      (when (> deleted-count 0)
+        (message "Live-Shaping-Emacs: Cleaned up %d orphaned .el file(s)" deleted-count)))))
+
+;; File Loading Functions
+(defun live-shaping-emacs-load-file (file)
+  "Load elisp FILE with quiet messages."
+  (let ((inhibit-message t))
+    (if (load (expand-file-name file) nil t)
+        (message "Live-Shaping-Emacs: Loaded %s" file)
+      (message "Live-Shaping-Emacs: Failed to load %s" file))))
+
+(defun live-shaping-emacs-load-directory ()
+  "Load all compiled elisp files from `live-shaping-emacs-output-directory'."
+  (let* ((initial-gc-cons-threshold gc-cons-threshold)
+         (files (live-shaping-emacs-get-files "^[^#]*\\.el$" 
+                                              live-shaping-emacs-output-directory)))
+    (setq gc-cons-threshold (* 1024 1024 100))
+    (dolist (file files)
+      (condition-case err
+          (live-shaping-emacs-load-file file)
+        (error
+         (add-to-list 'live-shaping-emacs--boot-errors
+                      (list :file (format "%s" file)
+                            :line 1
+                            :message (error-message-string err)))
+         (unless live-shaping-emacs--booting
+           (display-warning
+            'live-shaping-emacs
+            (format "Error loading %s:%s - %s" (format "%s" file) 1
+                    (error-message-string err))
+            :error)))))
+    (setq gc-cons-threshold initial-gc-cons-threshold)
+    nil))
+
+;; Interactive Commands
+(defun live-shaping-emacs-reload ()
+  "Compile and load all org files."
+  (interactive)
+  (live-shaping-emacs-cleanup-orphaned-el-files)
+  (dolist (compiled-file (live-shaping-emacs-compile-directory))
+    (live-shaping-emacs-load-file compiled-file)))
+
+(defun live-shaping-emacs-reload-current-buffer ()
+  "Compile and load the current org file."
+  (interactive)
+  (let ((live-shaping-emacs-force-compile t))
+    (when-let* ((compiled-file (live-shaping-emacs-compile-file 
+                                (buffer-file-name (current-buffer)))))
+      (live-shaping-emacs-load-file compiled-file))))
+
+(defun live-shaping-emacs-preview ()
+  "Display the compiled elisp for the current buffer in a preview window."
+  (interactive)
+  (let* ((buffer (get-buffer-create "*live-shaping-emacs preview*"))
+         (_ (display-buffer buffer))
+         (live-shaping-emacs-wrap-statements-in-condition nil)
+         (file (buffer-file-name (current-buffer)))
+         (live-shaping-emacs-packages nil)
+         (source (live-shaping-emacs-concatenate-source-blocks file))
+         (output (concat source "\n" (live-shaping-emacs-build-leafs file))))
+    (with-current-buffer buffer
+      (emacs-lisp-mode)
+      (read-only-mode 1)
+      (save-excursion
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert output)
+          (goto-char (point-min)))))))
+
+(define-minor-mode live-shaping-emacs-preview-mode
+  "Minor mode to preview compiled elisp on demand with C-c C-v."
+  :lighter " live-shaping-preview"
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c C-v") 'live-shaping-emacs-preview)
+            map))
+
+;; Boot and Initialization
+(defun live-shaping-emacs-boot ()
+  "Compile and load all org files - the main entry point."
+  (interactive)
+  (let ((live-shaping-emacs--booting t))
+    (setq live-shaping-emacs--boot-errors '())
+    (live-shaping-emacs-cleanup-orphaned-el-files)
+    (live-shaping-emacs-compile-directory)
+    (live-shaping-emacs-load-directory)))
+
+;; Initialize directories
+(setq live-shaping-emacs-org-directory    
+      (expand-file-name "shaping-sources" user-emacs-directory)
+      live-shaping-emacs-output-directory 
+      (expand-file-name "shaped-outputs" user-emacs-directory))
+
+;; Boot the system on load
+(live-shaping-emacs-boot)
+
+;; Enable preview mode for all org files (manual preview with C-c C-v)
+(add-hook 'org-mode-hook #'live-shaping-emacs-preview-mode)
+
+;; Auto-reload on Save - ALWAYS reloads ALL files
+(defun live-shaping-emacs/auto-compile-and-reload ()
+  "Auto-compile and reload ALL org files when any org file is saved.
+This ensures all files are loaded even if you're only working on one."
+  (when (and buffer-file-name
+             (file-in-directory-p buffer-file-name live-shaping-emacs-org-directory)
+             (string-suffix-p ".org" buffer-file-name))
+    (message "Live-Shaping-Emacs: Checking all files for changes…")
+    (condition-case err
+        (progn
+          (live-shaping-emacs-cleanup-orphaned-el-files)
+          ;; Always compile and load all files
+          (let ((all-files (live-shaping-emacs-get-files "^[^#]*\\.org$" 
+                                                         live-shaping-emacs-org-directory)))
+            (dolist (file all-files)
+              (let ((output (live-shaping-emacs-compile-file file)))
+                (when output
+                  (live-shaping-emacs-load-file output))))
+            (message "Live-Shaping-Emacs: Reloaded all files ✓")))
+      (error
+       (display-warning
+        'live-shaping-emacs 
+        (format "Failed to compile/reload: %s" (error-message-string err)) 
+        :error)))))
+
+;; Enable auto-reload
+(add-hook 'after-save-hook #'live-shaping-emacs/auto-compile-and-reload)
+
+(provide 'live-shaping-emacs)
+#+end_src
+
+
+* Page-View ( neds total remake !! and integration )
++begin_src emacs-lisp
+(straight-use-package 'olivetti)
+
+(leaf page-view
+  :load-path "/home/asdf/.config/emacs/working-packages/page-view"
+  :require page-view
+  :init
+  ;; 1. Load local footnotes dependency
+  (let ((fn-path "/home/asdf/.config/emacs/working-packages/page-view/footnotes.el"))
+    (when (file-exists-p fn-path)
+      (load fn-path)
+      (provide 'org-inline-fn)))
+
+  ;; 2. Defaults from the source code
+  (setq page-view-display-mode 'book
+        page-view-center-content t )
+
+  :config
+  ;; 3. Enable the mode
+  (add-hook 'org-mode-hook #'page-view-mode))
++end_src
+
+* Auto Tangle + Auto Reload
+#+begin_src emacs-lisp
+(defun live-shaping/auto-tangle-and-reload ()
+  "Auto-tangle and reload when this Org file tangles to init.el."
+  (when (and buffer-file-name
+             (save-excursion
+               (goto-char (point-min))
+               (re-search-forward ":tangle[ \t]+~/.config/emacs/init.el" nil t)))
+    (message "Live-Shaping: Tangling…")
+    (condition-case err
+        (let ((target "~/.config/emacs/init.el")
+              (temp   "~/.config/emacs/init.el.tmp"))
+          (when (org-babel-tangle)
+            (when (file-exists-p temp) (delete-file temp))
+            (rename-file target temp t)
+            (rename-file temp target t)
+            (load-file target)
+            (message "Live-Shaping: Reload complete ✓")))
+      (error
+       (display-warning
+        'live-shaping (format "%s" (error-message-string err)) :error)))))
+
+(add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
+#+end_src
+
+
+

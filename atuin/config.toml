@@ -233,4 +233,4 @@ records = true
 
 
 [theme]
-name = "all-white" # Tells Atuin to look for all-white.toml
+name = "all-white-red"

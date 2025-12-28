@@ -1,0 +1,512 @@
+* Manuscript — The Knowledge Forge
+:PROPERTIES:
+:PACKAGE:  denote
+:STRAIGHT: t
+:DESCRIPTION: Advanced note-taking system with .live files, silos, and optional multi-format export
+:END:
+
+** Master Directory Structure :init:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § DIRECTORY ARCHITECTURE — THE FOUNDATION
+;; ════════════════════════════════════════════════════════════
+;; This system uses a silo-based approach:
+;; - silos/ : Source .live files (org-mode with custom extension)
+;;
+;; Structure:
+;; ~/testing-manuscripts/
+;;   └── silos/
+;;       ├── project-a/
+;;       │   ├── research/
+;;       │   └── drafts/
+;;       └── project-b/
+
+(defvar shapeshift/denote-master-dir "~/testing-manuscripts"
+  "Root directory for the manuscript system.")
+
+(defvar shapeshift/denote-silos-dir nil
+  "Source directory where .live files are created and edited.")
+
+;; Initialize paths
+(setq shapeshift/denote-silos-dir 
+      (expand-file-name "silos" shapeshift/denote-master-dir))
+
+;; Create directory structure if it doesn't exist
+(unless (file-directory-p shapeshift/denote-master-dir)
+  (make-directory shapeshift/denote-master-dir t))
+
+(unless (file-directory-p shapeshift/denote-silos-dir)
+  (make-directory shapeshift/denote-silos-dir t))
+#+end_src
+
+** Org-ID Configuration :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § ORG-ID — PERSISTENT IDENTITY SYSTEM
+;; ════════════════════════════════════════════════════════════
+;; Org-ID provides stable, unique identifiers for notes that persist
+;; even if files are renamed or moved. This is crucial for reliable
+;; linking in a knowledge management system.
+
+(with-eval-after-load 'org
+  (require 'org-id)
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
+#+end_src
+
+** Org-Roam Integration :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § ORG-ROAM — NEURAL NETWORK FOR NOTES
+;; ════════════════════════════════════════════════════════════
+;; Org-Roam creates a knowledge graph of your notes, enabling
+;; backlinks, graph visualization, and networked thought.
+;; It operates on the silos directory to track all .live files.
+
+(use-package org-roam
+  :straight (org-roam
+             :type git
+             :host github
+             :repo "org-roam/org-roam")
+  :after org
+  :init
+  (setq org-roam-directory (file-truename shapeshift/denote-silos-dir))
+  (setq find-file-visit-truename t)
+  (setq org-roam-v2-ack t)
+  
+  :config
+  (org-roam-db-autosync-mode))
+#+end_src
+
+** Denote Base Configuration :init:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § DENOTE — FILE NAMING & ORGANIZATION
+;; ════════════════════════════════════════════════════════════
+;; Denote provides a structured file-naming scheme:
+;; YYYY-MM-DD--HH-MM--title_keywords--signature.live
+;;
+;; Components:
+;; - Date/time: Unique identifier and chronological ordering
+;; - Title: Human-readable name (slugified)
+;; - Keywords: Tags for categorization (prefixed with _)
+;; - Signature: Optional identifier (prefixed with --)
+;; - Extension: .live (custom extension for source files)
+;; 
+;; Note: Uses -- instead of == for LaTeX filename compatibility
+
+(setq denote-directory (expand-file-name shapeshift/denote-silos-dir))
+(setq denote-file-type 'org)
+(setq denote-date-format "%Y-%m-%d--%H-%M")
+(setq denote-prompts '(title keywords subdirectory signature))
+(setq org-startup-with-inline-images nil)
+(setq org-startup-folded 'showall)
+#+end_src
+
+** Denote Configuration :config:
+#+begin_src emacs-lisp
+(require 'denote)
+
+;; Enable automatic buffer renaming to match note title
+(denote-rename-buffer-mode 1)
+
+;; Configure backlinks display
+(setq denote-link-backlinks-display-buffer-action
+      '((display-buffer-reuse-window display-buffer-below-selected)
+        (window-height . fit-window-to-buffer)))
+#+end_src
+
+** Silo Management System :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § SILO SYSTEM — HIERARCHICAL ORGANIZATION
+;; ════════════════════════════════════════════════════════════
+;; Silos provide two-level hierarchical organization:
+;; Level 1: Main category (e.g., "work", "personal", "research")
+;; Level 2: Subcategory (e.g., "work/projects", "research/papers")
+;;
+;; Silos are created automatically on first use, no confirmation needed.
+
+(defun shapeshift/denote-auto-silo-prompt ()
+  "Prompt for silo and optional sub-silo, creating directories automatically.
+Returns the full path to the selected directory."
+  (let* ((existing-silos 
+          (seq-filter #'file-directory-p
+                      (directory-files denote-directory t "^[^.]")))
+         (silo-names (mapcar (lambda (dir) 
+                               (file-name-nondirectory dir))
+                             existing-silos))
+         (silo (completing-read "Silo (main category): " silo-names nil nil))
+         (silo-path (expand-file-name silo denote-directory)))
+    
+    ;; Create silo directory if it doesn't exist
+    (unless (file-directory-p silo-path)
+      (make-directory silo-path t)
+      (message "Created silo: %s" silo))
+    
+    ;; Prompt for sub-silo (optional)
+    (let* ((existing-subsilo 
+            (seq-filter #'file-directory-p
+                        (directory-files silo-path t "^[^.]")))
+           (subsilo-names (mapcar (lambda (dir)
+                                    (file-name-nondirectory dir))
+                                  existing-subsilo))
+           (subsilo (completing-read "Sub-silo (optional): " 
+                                     subsilo-names nil nil)))
+      
+      (if (string-empty-p subsilo)
+          silo-path
+        (let ((subsilo-path (expand-file-name subsilo silo-path)))
+          ;; Create sub-silo directory automatically
+          (unless (file-directory-p subsilo-path)
+            (make-directory subsilo-path t)
+            (message "Created sub-silo: %s/%s" silo subsilo))
+          subsilo-path)))))
+
+;; Override denote's subdirectory prompt with our auto-creating version
+(advice-add 'denote-subdirectory-prompt 
+            :override #'shapeshift/denote-auto-silo-prompt)
+#+end_src
+
+** Bidirectional Linking System :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § TWO-WAY LINKING — KNOWLEDGE WEB BUILDER
+;; ════════════════════════════════════════════════════════════
+;; When creating a new note from an existing one, automatically
+;; insert links in both directions:
+;; - Source note → New note
+;; - New note → Source note
+;;
+;; This creates a rich web of interconnected knowledge.
+
+(defvar shapeshift/source-buffer-for-linking nil
+  "Stores the buffer from which a new note was created for bidirectional linking.")
+
+(defun shapeshift/insert-bidirectional-link (source-file new-file)
+  "Create mutual links between SOURCE-FILE and NEW-FILE.
+Inserts a link to NEW-FILE in SOURCE-FILE and vice versa."
+  (when (and source-file (file-exists-p source-file))
+    ;; Insert link in source file → new file
+    (with-current-buffer (find-file-noselect source-file)
+      (save-excursion
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert "\n** Related Notes\n")
+        (org-insert-link nil (concat "id:" (org-id-get-create)) 
+                         (format "Link to: %s" 
+                                 (file-name-base new-file)))
+        (insert "\n"))
+      (save-buffer))
+    
+    ;; Insert link in new file → source file
+    (with-current-buffer (find-file-noselect new-file)
+      (save-excursion
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (insert "\n** Related Notes\n")
+        (org-insert-link nil (concat "id:" (org-id-get-create)) 
+                         (format "Created from: %s" 
+                                 (file-name-base source-file)))
+        (insert "\n"))
+      (save-buffer))))
+#+end_src
+
+** File Creation System :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § FILE CREATION — THE NOTE FORGE
+;; ════════════════════════════════════════════════════════════
+;; Creates a new .live file with:
+;; - Structured filename (date, title, keywords, signature)
+;; - LaTeX-ready frontmatter
+;; - Org-ID for persistent identity
+;; - Optional bidirectional linking
+
+(defun shapeshift/denote-capture-create-file ()
+  "Create a new Denote file with .live extension and full frontmatter.
+Returns the path to the created file."
+  (let* ((title (read-string "Title: "))
+         (keywords (denote-keywords-prompt))
+         (subdir (shapeshift/denote-auto-silo-prompt))
+         (signature (read-string "Signature (optional): " nil nil ""))
+         (date (current-time))
+         (id (format-time-string denote-date-format date))
+         (date-formatted (format-time-string denote-date-format date))
+         (ext ".live")
+         (kws (if keywords (concat "_" (mapconcat #'downcase keywords "_")) ""))
+         ;; Use -- instead of == for LaTeX compatibility
+         (sig (if (string-empty-p signature) "" (concat "--" signature)))
+         (slug (replace-regexp-in-string "[^[:alnum:][:digit:]]" "-" 
+                                         (downcase title)))
+         (filename (concat id "--" slug kws sig ext))
+         (path (expand-file-name filename subdir))
+         (org-id (org-id-new))
+         
+         ;; LaTeX-ready frontmatter with metadata
+         (frontmatter
+          (concat
+           "#+TITLE:      " title "\n"
+           "#+AUTHOR:     Shapeshifter\n"
+           "#+DATE:       " date-formatted "\n"
+           "#+IDENTIFIER: " id "\n"
+           "#+FILETAGS:   " (if keywords (mapconcat #'identity keywords " ") "") "\n"
+           (unless (string-empty-p signature)
+             (concat "#+SIGNATURE:  " signature "\n"))
+           "\n"
+           "#+LATEX_CLASS: article\n"
+           "#+LATEX_CLASS_OPTIONS: [11pt,a4paper]\n"
+           "#+LATEX_COMPILER: lualatex\n"
+           "#+LATEX_HEADER: \\usepackage{amsmath}\n"
+           "#+LATEX_HEADER: \\usepackage{graphicx}\n"
+           "#+LATEX_HEADER: \\usepackage{hyperref}\n"
+           "#+LATEX_HEADER: \\usepackage{fontspec}\n"
+           "#+OPTIONS: toc:nil num:t\n"
+           "\n"
+           "* " title "\n"
+           ":PROPERTIES:\n"
+           ":ID:       " org-id "\n"
+           ":END:\n\n"
+           "Write your manuscript here.\n\n"
+           "** Section Example\n\n"
+           "Use LaTeX inline: $E = mc^2$\n\n"
+           "Display equations:\n"
+           "\\begin{equation}\n"
+           "\\int_{a}^{b} f(x) dx\n"
+           "\\end{equation}\n")))
+    
+    ;; Write the file
+    (write-region frontmatter nil path)
+    
+    ;; Offer bidirectional linking if created from another note
+    (when (and shapeshift/source-buffer-for-linking
+               (y-or-n-p "Create bidirectional link with source note? "))
+      (shapeshift/insert-bidirectional-link 
+       (buffer-file-name shapeshift/source-buffer-for-linking)
+       path))
+    
+    path))
+#+end_src
+
+** File Type Association :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § FILE TYPE — .live RECOGNITION
+;; ════════════════════════════════════════════════════════════
+;; Associate .live extension with org-mode
+
+(add-to-list 'auto-mode-alist '("\\.live\\'" . org-mode))
+#+end_src
+
+** Note Creation Command :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § NOTE CREATION — DIRECT COMMAND
+;; ════════════════════════════════════════════════════════════
+;; Direct command to create new .live files without org-capture complexity.
+
+(defun shapeshift/create-new-note ()
+  "Create a new denote note with .live extension."
+  (interactive)
+  ;; Store current buffer for bidirectional linking
+  (setq shapeshift/source-buffer-for-linking (current-buffer))
+  ;; Create the file and open it
+  (let ((new-file (shapeshift/denote-capture-create-file)))
+    (find-file new-file)
+    (goto-char (point-max))))
+#+end_src
+
+** LaTeX Dependencies :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § LATEX TOOLCHAIN — MATHEMATICAL TYPESETTING
+;; ════════════════════════════════════════════════════════════
+;; CDLaTeX: Fast LaTeX input in org-mode
+;; Org-fragtog: Toggle LaTeX fragment previews
+;; AUCTeX: Advanced LaTeX editing
+;; PDF-tools: Superior PDF viewing (NixOS compatible)
+
+(use-package cdlatex
+  :straight (cdlatex :type git :host github :repo "cdominik/cdlatex"))
+
+(use-package org-fragtog
+  :straight (org-fragtog :type git :host github :repo "io12/org-fragtog"))
+
+(use-package auctex
+  :straight (auctex :type git :host github :repo "emacs-straight/auctex"))
+
+;; PDF-tools for viewing PDFs (works great on NixOS)
+(use-package pdf-tools
+  :straight (pdf-tools :type git :host github :repo "vedang/pdf-tools")
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install :no-query)
+  (setq pdf-view-display-size 'fit-page)
+  (setq pdf-view-use-scaling t)
+  (setq pdf-view-use-imagemagick nil))
+
+(setq-default TeX-master nil)
+#+end_src
+
+** Live Preview System :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § LIVE PREVIEW — SPLIT-WINDOW PDF RENDERING
+;; ════════════════════════════════════════════════════════════
+;; Manual PDF preview in split window using pdf-tools (NixOS compatible).
+
+(defvar shapeshift/org-latex-export-timer nil
+  "Timer for delayed LaTeX export to avoid excessive rendering.")
+
+(defun shapeshift/cleanup-latex-aux-files (base-path)
+  "Remove LaTeX auxiliary files AND PDF for BASE-PATH.
+Removes .aux, .log, .out, .toc, .fdb_latexmk, .fls, .tex, .pdf files.
+Keeps only .live files in the silos directory."
+  (let ((aux-extensions '(".aux" ".log" ".out" ".toc" ".fdb_latexmk" ".fls" ".tex" ".pdf")))
+    (dolist (ext aux-extensions)
+      (let ((aux-file (concat base-path ext)))
+        (when (file-exists-p aux-file)
+          (delete-file aux-file))))))
+
+(defun shapeshift/show-pdf-in-split (pdf)
+  "Open PDF in split window using pdf-tools with auto-revert."
+  (when (and pdf (file-exists-p pdf))
+    ;; Save current window configuration
+    (let ((original-window (selected-window)))
+      (delete-other-windows)
+      (split-window-right)
+      (other-window 1)
+      ;; Open PDF with pdf-tools
+      (find-file pdf)
+      (pdf-view-mode)
+      ;; Enable auto-revert for live updates
+      (auto-revert-mode 1)
+      (setq auto-revert-interval 0.5)
+      ;; Return to original window
+      (select-window original-window))))
+
+(defun shapeshift/get-pdf-path (org-file)
+  "Get the corresponding PDF path for ORG-FILE in the same directory."
+  (when org-file
+    (concat (file-name-sans-extension org-file) ".pdf")))
+
+(defun shapeshift/org-export-and-preview-split ()
+  "Export Org to PDF, move to temp location, show preview in split window, then cleanup."
+  (interactive)
+  (when shapeshift/org-latex-export-timer
+    (cancel-timer shapeshift/org-latex-export-timer))
+  (setq shapeshift/org-latex-export-timer
+        (run-with-idle-timer
+         0.4 nil
+         (lambda ()
+           (when (buffer-file-name)
+             (let* ((org-file (buffer-file-name))
+                    (base-path (file-name-sans-extension org-file))
+                    (pdf-path (shapeshift/get-pdf-path org-file))
+                    ;; Create temp location for PDF
+                    (temp-pdf (expand-file-name 
+                               (concat (file-name-nondirectory base-path) ".pdf")
+                               temporary-file-directory)))
+               (condition-case err
+                   (progn
+                     (org-latex-export-to-pdf)
+                     ;; Copy PDF to temp location before cleanup
+                     (when (file-exists-p pdf-path)
+                       (copy-file pdf-path temp-pdf t)
+                       ;; Clean up ALL generated files (including PDF)
+                       (shapeshift/cleanup-latex-aux-files base-path)
+                       ;; Open temp PDF in split window
+                       (shapeshift/show-pdf-in-split temp-pdf)
+                       (message "PDF updated ✓ (silos kept clean)")))
+                 (error 
+                  (message "Error in PDF export/preview: %s" (error-message-string err))))))))))
+#+end_src
+
+** Manuscript Mode :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MANUSCRIPT MODE — ACADEMIC WRITING WORKFLOW
+;; ════════════════════════════════════════════════════════════
+;; Enables a complete LaTeX manuscript workflow with:
+;; - Visual line mode for comfortable editing
+;; - CDLaTeX for fast math input
+;; - Org-fragtog for inline LaTeX preview
+;; - Manual split-window live PDF preview with pdf-tools
+
+(defun shapeshift/org-latex-manuscript-mode ()
+  "Enable manuscript editing workflow with manual preview."
+  (interactive)
+  (visual-line-mode 1)
+  (org-cdlatex-mode 1)
+  (org-fragtog-mode 1)
+  (setq-local TeX-command-extra-options "-shell-escape")
+  (message "Manuscript mode enabled. Use SPC m p to preview PDF"))
+
+(defun shapeshift/maybe-enable-manuscript-mode ()
+  "Auto-enable manuscript mode for .live files with LaTeX content."
+  (when (and (buffer-file-name)
+             (string-suffix-p ".live" (buffer-file-name))
+             (save-excursion
+               (goto-char (point-min))
+               (re-search-forward "^#\\+LATEX_CLASS:" nil t)))
+    (shapeshift/org-latex-manuscript-mode)))
+
+(add-hook 'org-mode-hook #'shapeshift/maybe-enable-manuscript-mode)
+#+end_src
+
+** Evil Keybindings :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MANUSCRIPT KEYBINDINGS — DVORAK HTNS NAVIGATION
+;; ════════════════════════════════════════════════════════════
+
+(with-eval-after-load 'evil
+  (evil-define-key 'normal org-mode-map
+    ;; ──────────────────────────────────────────────────────
+    ;; Note Creation & Navigation (SPC n prefix)
+    ;; ──────────────────────────────────────────────────────
+    (kbd "SPC n n")   'shapeshift/create-new-note
+    (kbd "SPC n d")   (lambda () (interactive) 
+                        (dired shapeshift/denote-silos-dir))
+    
+    ;; ──────────────────────────────────────────────────────
+    ;; Linking (SPC n prefix)
+    ;; ──────────────────────────────────────────────────────
+    (kbd "SPC n l")   'denote-link
+    (kbd "SPC n b")   'denote-backlinks
+    
+    ;; ──────────────────────────────────────────────────────
+    ;; Org-Roam (SPC r prefix)
+    ;; ──────────────────────────────────────────────────────
+    (kbd "SPC r f")   'org-roam-node-find
+    (kbd "SPC r i")   'org-roam-node-insert
+    (kbd "SPC r b")   'org-roam-buffer-toggle
+    
+    ;; ──────────────────────────────────────────────────────
+    ;; Manuscript Commands (SPC m prefix)
+    ;; ──────────────────────────────────────────────────────
+    (kbd "SPC m m")   'shapeshift/org-latex-manuscript-mode
+    (kbd "SPC m p")   'shapeshift/org-export-and-preview-split))
+#+end_src
+
+** Optional: Multi-Format Export System (DISABLED) :noexport:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MULTI-FORMAT EXPORT — FUTURE FEATURE
+;; ════════════════════════════════════════════════════════════
+;; This section is disabled but preserved for future use.
+;; To enable: Remove :noexport: tag from heading above.
+;;
+;; Provides export to multiple formats (HTML, Markdown, DOCX, etc)
+;; with mirrored directory structure in formats/ directory.
+
+;; (defvar shapeshift/denote-formats-dir nil
+;;   "Export directory for all generated formats (PDF, HTML, etc).")
+;; 
+;; (setq shapeshift/denote-formats-dir 
+;;       (expand-file-name "formats" shapeshift/denote-master-dir))
+;; 
+;; (unless (file-directory-p shapeshift/denote-formats-dir)
+;;   (make-directory shapeshift/denote-formats-dir t))
+
+;; Additional export functions would go here...
+#+end_src

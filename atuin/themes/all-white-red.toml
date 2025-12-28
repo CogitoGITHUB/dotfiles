@@ -1,0 +1,14 @@
+[colors]
+AlertInfo  = "red"
+AlertWarn  = "red"
+AlertError = "red"
+
+Guidance   = "red"
+Important  = "red"
+Title      = "red"
+
+Base       = "black"
+Annotation = "black"
+
+Hint  = "#aa0000"
+Muted = "#660000"
