@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, noctalia, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -6,21 +6,20 @@
   ];
 
   # --- FLAKE ENABLEMENT ------------------------------------------------------
+  nix = {
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+  };
 
-nix = {
-  extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
-};
   # --- HOST ------------------------------------------------------------------
-  networking.hostName = "shapeless";  # rename from "nixos"
+  networking.hostName = "shapeless";
   networking.networkmanager.enable = true;
 
   # --- TIME & LOCALE ---------------------------------------------------------
   time.timeZone = "Europe/Bucharest";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "ro_RO.UTF-8";
     LC_IDENTIFICATION = "ro_RO.UTF-8";
@@ -48,40 +47,29 @@ nix = {
     jack.enable = true;
   };
 
-# --- USER ------------------------------------------------------------------
-users.users.asdf = {
-  isNormalUser = true;
-  description = "asdf";
-  extraGroups = [ "networkmanager" "wheel" "docker" ];
-  shell = pkgs.nushell;
+  # --- USER ------------------------------------------------------------------
+  users.users.asdf = {
+    isNormalUser = true;
+    description = "asdf";
+    extraGroups = [ "video" "render" "networkmanager" "wheel" "docker" ];
+    shell = pkgs.nushell;
 
-  packages = with pkgs; [
-    docker-compose
+    packages = with pkgs; [
+      docker-compose
+      kubectl
+      k9s
+      helm
+      prometheus
+      grafana
+      istioctl
+      linkerd
+      traefik
+      nginx
+      lens
+    ];
+  };
 
-    # Kubernetes swordset
-    kubectl
-    k9s
-    helm
-
-    # Observability
-    prometheus
-    grafana
-
-    # Mesh sorcery (choose one)
-    istioctl
-    linkerd
-
-    # Ingress gatekeepers
-    traefik
-    nginx
-
-    # Lens (warning: heavy GUI, remove if you want CLI-only purity)
-    lens
-  ];
-};
-
-
-# --- BLUETOOTH -------------------------------------------------------------
+  # --- BLUETOOTH -------------------------------------------------------------
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -90,9 +78,7 @@ users.users.asdf = {
         Experimental = true;
         FastConnectable = true;
       };
-      Policy = {
-        AutoEnable = true;
-      };
+      Policy.AutoEnable = true;
     };
   };
 
@@ -103,141 +89,186 @@ users.users.asdf = {
 
   # --- PORTALS ---------------------------------------------------------------
   xdg.portal.enable = true;
-
   xdg.portal.extraPortals = [
     pkgs.xdg-desktop-portal-wlr
     pkgs.xdg-desktop-portal-gtk
   ];
 
   environment.variables = {
-    XDG_DESKTOP_PORTAL_DIR = "/run/current-system/sw/share/xdg-desktop-portal/portals";
+    XDG_CURRENT_DESKTOP = "scroll";
+    XDG_SESSION_TYPE = "wayland";
+    XDG_SESSION_DESKTOP = "scroll";
     XDG_DESKTOP_PORTAL_BACKEND = "wlr";
   };
 
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   # --- WAYLAND / COMPOSITOR --------------------------------------------------
-  programs.niri.enable = true;
+  programs.scroll = {
+    enable = true;
+    package =
+      inputs.scroll-flake.packages.${pkgs.stdenv.hostPlatform.system}.scroll-git;
+
+    extraSessionCommands = ''
+      export QT_QPA_PLATFORM="wayland;xcb"
+      export GDK_BACKEND="wayland,x11"
+      export SDL_VIDEODRIVER=wayland
+      export CLUTTER_BACKEND=wayland
+      export ELECTRON_OZONE_PLATFORM_HINT=wayland
+    '';
+  };
 
   # --- UNFREE ---------------------------------------------------------------
   nixpkgs.config.allowUnfree = true;
 
-  # --- OPTIONAL PROGRAMS -----------------------------------------------------
-  programs.steam.enable = true;
+  # --- GRAPHICS --------------------------------------------------------------
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
 
+  # --- STEAM -----------------------------------------------------------------
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+  };
 
-
-  # Required services for Noctalia features
+  # --- POWER / LOGIN ---------------------------------------------------------
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
 
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+  };
 
-services.tailscale.enable = true;
-services.tailscale.extraSetFlags = ["--netfilter-mode=nodivert"];
-
-
-services.logind.settings.Login.HandleLidSwitch = "ignore";
-services.logind.settings.Login.HandleLidSwitchDocked = "ignore";
-
-
+  # --- NETWORKING ------------------------------------------------------------
+  services.tailscale.enable = true;
+  services.tailscale.extraSetFlags = [ "--netfilter-mode=nodivert" ];
 
   # --- DOCKER ---------------------------------------------------------------
   virtualisation.docker.enable = true;
 
-# --- KUBERNETES (K3S) ------------------------------------------------------
-services.k3s = {
+  # --- KUBERNETES (K3S) ------------------------------------------------------
+  services.k3s = {
+    enable = false;
+    role = "server";
+    clusterInit = true;
+    extraFlags = [ "--docker" ];
+  };
+
+
+programs.dankMaterialShell = {
   enable = true;
-  role = "server";
-  clusterInit = true;
-  extraFlags = [ "--docker" ];
+  systemd.enable = true;
+  systemd.restartIfChanged = true;
+  quickshell.package = pkgs.quickshell;
+  enableSystemMonitoring = true;
+  enableClipboard        = true;
+  enableVPN              = true;
+  enableDynamicTheming   = true;
+  enableAudioWavelength  = true;
+  enableCalendarEvents   = true;
+};
+
+# Add these environment variables for the graphical session
+environment.sessionVariables = {
+  QT_QPA_PLATFORM = "wayland";
+  WAYLAND_DISPLAY = "wayland-1";
 };
 
 
-systemd.services.k3s.enable = false;
-systemd.services."tailscaled-set".enable = false;
-
-
+# --- SYSTEM PACKAGES -------------------------------------------------------
   environment.systemPackages = with pkgs; [
-docker
-lazydocker
-  docker-compose
+    docker
+    lazydocker
+    docker-compose
     k3s
-  kubectl
-  helm
-  k9s
-n8n
-gemini-cli
+    kubectl
+    helm
+    k9s
+    n8n
+    gemini-cli
 
-
-inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
-
-
+    ardour
+    lmms
+    hydrogen
+    fluidsynth
+    supercollider
+    sox
+    sonic-pi
 
     qemu
-
-    waydroid-nftables
     waydroid
+    waydroid-nftables
     waydroid-helper
 
     krita
-
-    xwayland-satellite
-    tmux
-    qutebrowser
-    xdg-desktop-portal
-    xdg-desktop-portal-wlr
-    fuzzel
     gimp
     inkscape
+    blender
+
     emacs
-    nodejs
+    neovim
     gcc
+    cmake
+    libtool
     tree-sitter
-    nyxt
-    lsd
-    htop
-    bluetui
-    exiftool
-    bat
-    zathura
-    zellij
-    wezterm
-    nb
-    ffmpeg
+    nodejs
     python3
     python3Packages.mutagen
-    neovim
+
+    tmux
+    zellij
+    wezterm
+    starship
+    nushell
+
+    qutebrowser
+    nyxt
+    fuzzel
+    zathura
+    mpv
+    mpvpaper
+    yt-dlp
+    ffmpeg
+
     mpd
     mpdcron
     cava
     rmpc
-    fastfetch
-    evtest
+
     git
     lazygit
     gh
- jujutsu
-jj-fzf
-lazyjj
-starship
+    jujutsu
+    jj-fzf
+    lazyjj
+
+    bat
+    lsd
+    htop
+    fastfetch
+    bluetui
+    exiftool
+    evtest
     wl-clipboard
     atuin
     fzf
     zoxide
+
     obs-studio
     obs-cli
-    blender
-    mpv
-    mpvpaper
-    yt-dlp
-    wget
+
     texlive.combined.scheme-full
     texlivePackages.latexmk
     ghostscript
-zip
-texinfo
- cmake          # required for vterm-module compilation
-    gcc            # build tools
-
-];
+    texinfo
+    poppler
+    zip
+    wget
+  ];
 
   # --- SSH -------------------------------------------------------------------
   services.openssh.enable = true;
