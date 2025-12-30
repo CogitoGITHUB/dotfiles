@@ -51,7 +51,7 @@
   users.users.asdf = {
     isNormalUser = true;
     description = "asdf";
-    extraGroups = [ "video" "render" "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "uinput" "seat" "video" "render" "networkmanager" "wheel" "docker" ];
     shell = pkgs.nushell;
 
     packages = with pkgs; [
@@ -68,6 +68,9 @@
       lens
     ];
   };
+
+# Make sure uinput group exists ( katana )
+users.groups.uinput = {};
 
   # --- BLUETOOTH -------------------------------------------------------------
   hardware.bluetooth = {
@@ -155,8 +158,8 @@ console.keyMap = "dvorak";  # Use "dvorak" not "us(dvorak)" for console
 
 programs.dankMaterialShell = {
   enable = true;
-  systemd.enable = true;
-  systemd.restartIfChanged = true;
+  systemd.enable = false;
+  systemd.restartIfChanged = false;
   quickshell.package = pkgs.quickshell;
   enableSystemMonitoring = true;
   enableClipboard        = true;
@@ -164,12 +167,6 @@ programs.dankMaterialShell = {
   enableDynamicTheming   = true;
   enableAudioWavelength  = true;
   enableCalendarEvents   = true;
-};
-
-# Add these environment variables for the graphical session
-environment.sessionVariables = {
-  QT_QPA_PLATFORM = "wayland";
-  WAYLAND_DISPLAY = "wayland-1";
 };
 
 services.seatd.enable = true;
@@ -265,6 +262,64 @@ services.seatd.enable = true;
     zip
     wget
   ];
+
+
+
+services.kanata = {
+  enable = true;
+  keyboards = {
+    internalKeyboard = {
+      devices = [
+        "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
+        "/dev/input/by-id/usb-Framework_Laptop_16_Keyboard_Module_-_ANSI_FRAKDKEN0100000000-event-kbd"
+        "/dev/input/by-id/usb-Framework_Laptop_16_Keyboard_Module_-_ANSI_FRAKDKEN0100000000-if02-event-kbd"
+      ];
+      extraDefCfg = "process-unmapped-keys yes";
+      config = ''
+        (defsrc
+         caps a o e u d i h t n s spc
+        )
+        (defvar
+         tap-time 150
+         hold-time 200
+        )
+        (defalias
+         caps (tap-hold 100 100 esc lctl)
+         a (tap-hold $tap-time $hold-time a lmet)
+         o (tap-hold $tap-time $hold-time o lalt)
+         e (tap-hold $tap-time $hold-time e lsft)
+         u (tap-hold $tap-time $hold-time u lctl)
+         h (tap-hold $tap-time $hold-time h rctl)
+         t (tap-hold $tap-time $hold-time t rsft)
+         n (tap-hold $tap-time $hold-time n ralt)
+         s (tap-hold $tap-time $hold-time s rmet)
+         
+         ;; Hold i, press space for Enter
+         i (tap-hold $tap-time $hold-time c (layer-while-held imod))
+         
+         ;; Hold d, press space for Backspace
+         d (tap-hold $tap-time $hold-time d (layer-while-held dmod))
+        )
+        (deflayer base
+         @caps @a @o @e @u @d @i @h @t @n @s spc
+        )
+        
+        ;; Layer when holding i
+        (deflayer imod
+         _ _ _ _ _ _ _ _ _ _ _ ret
+        )
+        
+        ;; Layer when holding d
+        (deflayer dmod
+         _ _ _ _ _ _ _ _ _ _ _ bspc
+        )
+      '';
+    };
+  };
+};
+
+
+
 
   # --- SSH -------------------------------------------------------------------
   services.openssh.enable = true;
