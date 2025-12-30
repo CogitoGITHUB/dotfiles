@@ -87,22 +87,16 @@
     tangerine
   ];
 
+# TTY settings
+console.keyMap = "dvorak";  # Use "dvorak" not "us(dvorak)" for console
+
+
   # --- PORTALS ---------------------------------------------------------------
   xdg.portal.enable = true;
   xdg.portal.extraPortals = [
     pkgs.xdg-desktop-portal-wlr
     pkgs.xdg-desktop-portal-gtk
   ];
-
-  environment.variables = {
-    XDG_CURRENT_DESKTOP = "scroll";
-    XDG_SESSION_TYPE = "wayland";
-    XDG_SESSION_DESKTOP = "scroll";
-    XDG_DESKTOP_PORTAL_BACKEND = "wlr";
-  };
-
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
-
   # --- WAYLAND / COMPOSITOR --------------------------------------------------
   programs.scroll = {
     enable = true;
@@ -177,6 +171,8 @@ environment.sessionVariables = {
   QT_QPA_PLATFORM = "wayland";
   WAYLAND_DISPLAY = "wayland-1";
 };
+
+services.seatd.enable = true;
 
 
 # --- SYSTEM PACKAGES -------------------------------------------------------
