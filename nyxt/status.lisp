@@ -14,12 +14,16 @@
 (define-configuration :cruise-control-mode ((glyph "σ")))
 
 (define-configuration status-buffer
-  "Hide most of the status elements but URL and modes."
-  ((style (str:concat
-           %slot-value%
-           (theme:themed-css (theme *browser*)
-	     `("#controls,#tabs"
-	       :display none !important))))))
+   "Hide most of the status elements but URL and modes."
+   ((style (str:concat
+            %slot-value%
+            (theme:themed-css (theme *browser*)
+ 	     `("#controls,#tabs"
+ 	       :display none !important)
+             `("*"
+               :background-color ,theme:background !important
+               :color ,theme:on-background !important
+               :height "0px" !important))))))
 
 (defmethod format-status-load-status ((status status-buffer))
   "A fancier load status."

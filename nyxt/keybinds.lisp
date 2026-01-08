@@ -9,14 +9,17 @@
      ;; `scheme:vi-normal' or `scheme:vi-insert' instead of
      ;; `scheme:emacs'.
      nyxt/keyscheme:emacs
-     (list "C-c p" 'copy-password
-           "C-c y" 'autofill
-           "C-f" :history-forwards-maybe-query
-           "C-i" :input-edit-mode
-           "M-:" 'eval-expression
-           "C-s" :search-buffer
-           "C-x 3" 'hsplit
-           "C-x 1" 'close-all-panels
+      (list "f" 'follow-hint
+            "y" 'copy
+            "C-c v" 'visual-mode
+            "C-c p" 'copy-password
+            "C-c y" 'autofill
+            "C-f" :history-forwards-maybe-query
+            "C-i" :input-edit-mode
+            "M-:" 'eval-expression
+            "C-s" :search-buffer
+            "C-x 3" 'hsplit
+            "C-x 1" 'close-all-panels
            "C-'"  (lambda-command insert-left-angle-quote ()
                     (ffi-buffer-paste (current-buffer) "«"))
            "C-M-'" (lambda-command insert-left-angle-quote ()

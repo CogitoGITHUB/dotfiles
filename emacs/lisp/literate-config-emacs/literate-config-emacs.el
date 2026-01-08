@@ -18,8 +18,10 @@
   :prefix "literate-config-emacs-")
 
 (defcustom literate-config-emacs-output-directory 
-  (expand-file-name "shaped-outputs" user-emacs-directory)
-  "Directory where compiled Elisp files are stored."
+  (expand-file-name "tangled" 
+                    (expand-file-name "Literative Configurations" user-emacs-directory))
+  "Directory where compiled Elisp files are stored.
+By default, stored inside 'Literative Configurations/tangled'."
   :type 'string
   :group 'literate-config-emacs)
 

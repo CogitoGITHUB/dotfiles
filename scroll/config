@@ -1,7 +1,6 @@
 # Start DankMaterialShell
 exec dms run --session
 
-
 # Execute your favorite apps at launch
 # It is convenient to start the DBUS environment here if you login from a tty
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
@@ -79,28 +78,47 @@ set $mod Mod4
 # You can also configure each device individually.
 # Read `man 5 scroll-input` for more information about this section.
 
+### Window defaults — deeper separation
 
-### Windows defaults
 default_border pixel 1
-gaps inner 1
-gaps outer 1
-client.focused #ffffff #ffffff #000000 #ffffff #ffffff
-client.focused_inactive #808080 #808080 #e0e0e0 #808080 #808080
-client.unfocused #404040 #404040 #e0e0e0 #404040 #404040
-titlebar_border_radius 0
-default_decoration border_radius 0 shadow false shadow_dynamic false shadow_size 40 shadow_blur 30 shadow_offset 40 40 shadow_color #00000070 dim false dim_color #00000040
+
+gaps inner 6
+gaps outer 4
+
+# Focus states
+client.focused            #2e2e2e #2e2e2e #9e9e9e #2e2e2e #2e2e2e
+client.focused_inactive   #666666 #666666 #bdbdbd #666666 #666666
+client.unfocused          #2e2e2e #2e2e2e #9e9e9e #2e2e2e #2e2e2e
+
+# Geometry & shadow
+titlebar_border_radius 6
+default_decoration border_radius 6 \
+  shadow true \
+  shadow_dynamic false \
+  shadow_size 40 \
+  shadow_blur 48 \
+  shadow_offset 18 28 \
+  shadow_color #00000085 \
+  dim true
 
 
 # Idle inhibit for fullscreen windows
 for_window [all] inhibit_idle fullscreen
 
-# Layout settings
-layout_default_width 0.5
-layout_default_height 1.0
-layout_widths [0.33333333 0.5 0.666666667 1.0]
-layout_heights [0.33333333 0.5 0.666666667 1.0]
+# Center every new window automatically
+for_window [all] exec_always scrollmsg align center
 
-# These are the default values for some useful scroll options, consult
+
+# Layout settings — proportional, intentional
+
+layout_default_width 0.6666667
+layout_default_height 0.6666667
+
+layout_widths  [0.3333333 0.5 0.6666667 1.0]
+layout_heights [0.3333333 0.5 0.6666667 1.0]
+
+
+#These are the default values for some useful scroll options, consult
 # `man 5 scroll` and change them to your preference
 
 # align_reset_auto yes
@@ -108,31 +126,51 @@ layout_heights [0.33333333 0.5 0.666666667 1.0]
 # cycle_size_wrap false
  fullscreen_movefocus true nofollow
  fullscreen_on_request default
-# maximize_if_single false
+ maximize_if_single false
  workspace_next_on_output_create_empty true
 # xwayland_output_scale true
  focus_wrapping no
  focus_on_window_activation focus
 # xdg_activation_force false
 
-# Animations
+
+# Animations — weighted, legible, architectural
 animations {
     enabled yes
-    default yes 300 var 3 [ 0.215 0.61 0.355 1 ]
-    window_open yes 300 var 3 [ 0 0 1 1 ]
-    window_move yes 300 var 3 [ 0.215 0.61 0.355 1 ] off 0.05 6 [0 0.6 0.4 0 1 0 0.4 -0.6 1 -0.6]
-    window_size yes 300 var 3 [ -0.35 0 0 0.5 ]
-    # You can also define curves for the following events
-    # window_move_float
-    # workspace_switch
-    # window_fullscreen
-    # overview
-    # jump
+
+    # Baseline motion: calm, dependable
+    default yes 260 var 3 [0.215 0.61 0.355 1]
+
+    # Opening: confident, no hesitation
+    window_open yes 220 var 3 [0.16 1 0.3 1]
+
+    # Movement: mass + directionality
+    window_move yes 280 var 3 [0.215 0.61 0.355 1] \
+        off 0.04 5 [0 0.5 0.4 0 1 0 0.4 -0.5 1 -0.5]
+
+    # Resizing: viscous, deliberate
+    window_size yes 320 var 3 [-0.25 0 0 0.6]
+
+    # Defined but restrained
+    window_move_float yes 260 var 3 [0.22 0.8 0.3 1]
+    workspace_switch yes 240 var 3 [0.2 0.9 0.25 1]
+    window_fullscreen yes 200 var 3 [0.3 1 0.4 1]
+    overview yes 300 var 3 [0.15 0.85 0.2 1]
+    jump yes 180 var 3 [0.4 0 0.6 1]
 }
+
+
+
+
+
 
 ### Key bindings
 #
 # Basics:
+
+    # Exit scroll (logs you out of your Wayland session)
+    bindsym $mod+Shift+x exec scrollnag -t warning -m 'You pressed the exit shortcut. Do you really want to exit scroll? This will end your Wayland session.' -B 'Yes, exit scroll' 'scrollmsg exit' -w 500 -e center -y overlay
+
 
 
     # Reload the configuration file
@@ -161,22 +199,97 @@ bindsym $mod+e exec emacsclient -c -a 'emacs'
     # mouse button for dragging.
     floating_modifier $mod normal
 
-    # Exit scroll (logs you out of your Wayland session)
-    bindsym $mod+Shift+x exec scrollnag -t warning -m 'You pressed the exit shortcut. Do you really want to exit scroll? This will end your Wayland session.' -B 'Yes, exit scroll' 'scrollmsg exit' -w 500 -e center -y overlay
-
+   
     # Layout mode
     bindsym $mod+bracketleft set_mode h
     bindsym $mod+bracketright set_mode v
+
+
+
 #
+# Layout stuff:
+#
+    # Make the current focus fullscreen
+    bindsym $mod+space fullscreen
+    bindsym $mod+Ctrl+space fullscreen layout
+    bindsym $mod+Alt+space fullscreen application
+    bindsym $mod+Ctrl+Alt+space fullscreen global
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym $mod+y focus mode_toggle
+    # Toggle layout type (h<->v)
+    bindsym $mod+Shift+y layout_transpose
+
+    # Float a window
+    bindsym $mod+Shift+f floating toggle
+
+    # Toggle sticky
+    bindsym $mod+Shift+Ctrl+a sticky toggle
+    # Toggle pin
+    bindsym --no-repeat $mod+a pin beginning
+    bindsym --no-repeat $mod+Shift+a pin end
+
+    # Selection
+    bindsym --no-repeat $mod+Insert selection toggle
+    bindsym --no-repeat $mod+Ctrl+Insert selection reset
+    bindsym --no-repeat $mod+Shift+Insert selection move
+    bindsym --no-repeat $mod+Ctrl+Shift+Insert selection workspace
+    bindsym --no-repeat $mod+Alt+Insert selection to_trail
+
+    # Marks
+    # bindsym $mod+m exec scroll-mark-toggle.sh
+    # bindsym $mod+Shift+m exec scroll-mark-remove.sh
+    # bindsym $mod+apostrophe exec scroll-mark-switch.sh
+
+
+mode "layout-control" {
+    bindsym v set_mode center_horiz center_vert; mode "default"
+    bindsym m set_mode nocenter_horiz nocenter_vert; mode "default"
+    bindsym h set_mode center_horiz nocenter_vert; mode "default"
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+}
+bindsym $mod+v mode "layout-control"
+
+#
+# Mode modifiers
+#
+mode "modifiers" {
+    bindsym $right set_mode after; mode default 
+    bindsym $left set_mode before; mode default 
+    bindsym home set_mode beginning; mode default 
+    bindsym end set_mode end; mode default 
+    bindsym $up set_mode focus; mode default 
+    bindsym $down set_mode nofocus; mode default 
+    bindsym h set_mode center_horiz; mode default 
+    bindsym Shift+h set_mode nocenter_horiz; mode default 
+    bindsym v set_mode center_vert; mode default 
+    bindsym Shift+v set_mode nocenter_vert; mode default 
+    bindsym r set_mode reorder_auto; mode default 
+    bindsym Shift+r set_mode noreorder_auto; mode default 
+
+    # Return to default mode
+    bindsym Escape mode "default"
+}
+bindsym $mod+m mode "modifiers"
+
 # Moving around:
 #
-    # Move your focus around
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
-    bindsym $mod+home focus beginning
-    bindsym $mod+end focus end
+
+# Move your focus around and automatically center the window
+bindsym $mod+$left focus left; align center
+bindsym $mod+$down focus down; align center
+bindsym $mod+$up focus up; align center
+bindsym $mod+$right focus right; align center
+
+# Move your focus around and automatically center the window
+bindsym $mod+h focus left; align center
+bindsym $mod+t focus down; align center
+bindsym $mod+n focus up; align center
+bindsym $mod+s focus right; align center
+
+
+
     # Move the focused window with the same, but add Ctrl
     bindsym $mod+Ctrl+$left move left
     bindsym $mod+Ctrl+$down move down
@@ -292,7 +405,7 @@ bindsym $mod+Shift+backslash mode "wssplit"
     # jump_labels_color #9e1530FF
     # jump_labels_background #15309eFF
     # jump_labels_scale 0.9
-    # jump_labels_keys asdf
+    # jump_labels_keys aoeu
     bindsym --no-repeat $mod+j jump
     bindsym --no-repeat $mod+Shift+j jump container
     bindsym --no-repeat $mod+Ctrl+j jump workspaces
@@ -304,41 +417,6 @@ bindsym $mod+Shift+backslash mode "wssplit"
     bindsym $mod+period scale_content incr 0.05
     bindsym --whole-window $mod+button5 scale_content incr 0.05
     bindsym $mod+Ctrl+period scale_content reset
-
-#
-# Layout stuff:
-#
-    # Make the current focus fullscreen
-    bindsym $mod+f fullscreen
-    bindsym $mod+Ctrl+f fullscreen layout
-    bindsym $mod+Alt+f fullscreen application
-    bindsym $mod+Ctrl+Alt+f fullscreen global
-
-    # Toggle the current focus between tiling and floating mode
-    bindsym $mod+y focus mode_toggle
-    # Toggle layout type (h<->v)
-    bindsym $mod+Shift+y layout_transpose
-
-    # Float a window
-    bindsym $mod+Shift+f floating toggle
-
-    # Toggle sticky
-    bindsym $mod+Shift+Ctrl+a sticky toggle
-    # Toggle pin
-    bindsym --no-repeat $mod+a pin beginning
-    bindsym --no-repeat $mod+Shift+a pin end
-
-    # Selection
-    bindsym --no-repeat $mod+Insert selection toggle
-    bindsym --no-repeat $mod+Ctrl+Insert selection reset
-    bindsym --no-repeat $mod+Shift+Insert selection move
-    bindsym --no-repeat $mod+Ctrl+Shift+Insert selection workspace
-    bindsym --no-repeat $mod+Alt+Insert selection to_trail
-
-    # Marks
-    # bindsym $mod+m exec scroll-mark-toggle.sh
-    # bindsym $mod+Shift+m exec scroll-mark-remove.sh
-    # bindsym $mod+apostrophe exec scroll-mark-switch.sh
 
 #
 # Scratchpad:
@@ -355,29 +433,6 @@ bindsym $mod+Shift+backslash mode "wssplit"
     bindsym --no-repeat $mod+Alt+z scratchpad jump
 
     bindsym $mod+Ctrl+z workspace back_and_forth
-
-#
-# Mode modifiers
-#
-mode "modifiers" {
-    bindsym $right set_mode after; mode default 
-    bindsym $left set_mode before; mode default 
-    bindsym home set_mode beginning; mode default 
-    bindsym end set_mode end; mode default 
-    bindsym $up set_mode focus; mode default 
-    bindsym $down set_mode nofocus; mode default 
-    bindsym h set_mode center_horiz; mode default 
-    bindsym Shift+h set_mode nocenter_horiz; mode default 
-    bindsym v set_mode center_vert; mode default 
-    bindsym Shift+v set_mode nocenter_vert; mode default 
-    bindsym r set_mode reorder_auto; mode default 
-    bindsym Shift+r set_mode noreorder_auto; mode default 
-
-    # Return to default mode
-    bindsym Escape mode "default"
-}
-bindsym $mod+backslash mode "modifiers"
-
 #
 # Resizing containers:
 #
@@ -451,7 +506,7 @@ mode "floating" {
     bindsym $left move left 50px
     bindsym $down move down 50px
     bindsym $up move up 50px
-    bindsym $right move right 50px
+    bindsym $right move right 50p
     bindsym Shift+$left resize shrink right 50px
     bindsym Shift+$down resize grow down 50px
     bindsym Shift+$up resize shrink down 50px
@@ -466,9 +521,10 @@ mode "floating" {
 }
 bindsym $mod+Ctrl+r mode "floating"
 
+
 # Toggle Size (and maximize)
-bindsym $mod+t toggle_size this 1.0 1.0
-bindsym $mod+Shift+t toggle_size active 1.0 1.0
+bindsym $mod+i toggle_size this 1.0 1.0
+bindsym $mod+Shift+i toggle_size active 1.0 1.0
 
 mode "togglesizeh" {
     bindsym 1 toggle_size all 0.125 1.0; mode default
@@ -488,7 +544,7 @@ mode "togglesizeh" {
     # Return to default mode
     bindsym Escape mode "default"
 }
-bindsym $mod+Ctrl+t mode "togglesizeh"
+bindsym $mod+Ctrl+i mode "togglesizeh"
 
 mode "togglesizev" {
     bindsym 1 toggle_size all 1.0 0.125; mode default
@@ -508,7 +564,7 @@ mode "togglesizev" {
     # Return to default mode
     bindsym Escape mode "default"
 }
-bindsym $mod+Ctrl+Shift+t mode "togglesizev"
+bindsym $mod+Ctrl+Shift+i mode "togglesizev"
 
 mode "align" {
     bindsym c align center; mode default

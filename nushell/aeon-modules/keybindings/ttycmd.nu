@@ -35,13 +35,13 @@ let keybindings = [
 
     # Launch Niri from TTY
     {
-      name: niri
+      name: scroll
       modifier: control
-      keycode: char_n
+      keycode: char_s
       mode: emacs
       event: {
         send: executehostcommand
-        cmd: "niri"
+        cmd: "scroll"
       }
     },
     # Reboot system

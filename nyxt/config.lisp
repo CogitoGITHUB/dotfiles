@@ -79,7 +79,7 @@ You probably want to stay with CUA in :prompt-buffer, because it's too
 weird using it with VI bindings. But if you're feeling risky, then:
 (define-configuration :prompt-buffer
   ((default-modes (append (list :vi-insert-mode) %slot-value%))))"
-  ((default-modes `(:emacs-mode ,@%slot-value%))))
+   ((default-modes `(:emacs-mode ,@%slot-value%))))
 
 (define-configuration :prompt-buffer
   "Make the attribute widths adjust to the content in them.
@@ -98,11 +98,15 @@ though.")
    (search-always-auto-complete-p
     nil
     :doc "I don't like search completion when I don't need it.")
-   (global-history-p
-    t
-    :doc "It was disabled after 2.2.4, while being a useful feature.
+    (global-history-p
+     t
+     :doc "It was disabled after 2.2.4, while being a useful feature.
 I'm forcing it here, because I'm getting lost in buffer-local
-histories otherwise...")))
+histories otherwise...")
+    (style (theme:themed-css (theme *browser*)
+            `("::selection"
+              :background-color "blue" !important
+              :color "white" !important)))))
 
 (define-configuration :prompt-buffer
   ((hide-single-source-header-p
@@ -124,8 +128,14 @@ more minimalist, but those are internal APIs :(")))
   ((default-modes `(:proxy-mode ,@*web-buffer-modes* ,@%slot-value%))))
 
 (define-configuration :hint-mode
-  "Set up QWERTY home row as the hint keys."
-  ((hints-alphabet "DSJKHLFAGNMXCWEIO")))
+   "Set up QWERTY home row as the hint keys."
+   ((hints-alphabet "asdf")
+    (style (theme:themed-css (theme *browser*)
+            `(".hint"
+              :background-color ,theme:background
+              :color "gray"
+              :border "0px solid" ,theme:background
+              :border-radius "0px")))))
 
 (define-configuration :history-mode
   ((backtrack-to-hubs-p
@@ -168,16 +178,16 @@ for the full list of settings you can tweak this way."
        (webkit:webkit-settings-default-monospace-font-size settings) 17
        ;; Use Unifont for pictograms.
        (webkit:webkit-settings-pictograph-font-family settings) "Material Icons")))
-  ;; Set the view background to black.
-  (cffi:foreign-funcall
-   "webkit_web_view_set_background_color"
-   :pointer (g:pointer (nyxt/renderer/gtk:gtk-object buffer))
-   ;; GdkRgba is simply an array of four doubles.
-   :pointer (cffi:foreign-alloc
-             :double
-             :count 4
-             ;; red green blue alpha
-             :initial-contents '(0d0 0d0 0d0 1d0))))
+   ;; Set the view background to white.
+   (cffi:foreign-funcall
+    "webkit_web_view_set_background_color"
+    :pointer (g:pointer (nyxt/renderer/gtk:gtk-object buffer))
+    ;; GdkRgba is simply an array of four doubles.
+    :pointer (cffi:foreign-alloc
+              :double
+              :count 4
+              ;; red green blue alpha
+              :initial-contents '(1d0 1d0 1d0 1d0))))
 
 (defmethod files:resolve ((profile nyxt:nyxt-profile) (file nyxt/mode/bookmark:bookmarks-file))
   "Reroute the bookmarks to the config directory."

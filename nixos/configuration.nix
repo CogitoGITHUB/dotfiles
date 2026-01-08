@@ -141,8 +141,22 @@ console.keyMap = "dvorak";  # Use "dvorak" not "us(dvorak)" for console
   };
 
   # --- NETWORKING ------------------------------------------------------------
-  services.tailscale.enable = true;
-  services.tailscale.extraSetFlags = [ "--netfilter-mode=nodivert" ];
+services.tailscale.enable = true;
+services.tailscale.extraSetFlags = [
+  "--netfilter-mode=nodivert"
+  "--accept-dns=false"
+];
+
+
+services.guix = {
+    enable = true;
+    package = pkgs.guix;
+    gc = {
+      enable = true;
+      dates = "03:15";
+    };
+  };
+
 
   # --- DOCKER ---------------------------------------------------------------
   virtualisation.docker.enable = true;
@@ -183,7 +197,7 @@ services.seatd.enable = true;
     k9s
     n8n
     gemini-cli
-
+    opencode
     ardour
     lmms
     hydrogen
@@ -269,15 +283,10 @@ services.kanata = {
   enable = true;
   keyboards = {
     internalKeyboard = {
-      devices = [
-        "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
-        "/dev/input/by-id/usb-Framework_Laptop_16_Keyboard_Module_-_ANSI_FRAKDKEN0100000000-event-kbd"
-        "/dev/input/by-id/usb-Framework_Laptop_16_Keyboard_Module_-_ANSI_FRAKDKEN0100000000-if02-event-kbd"
-      ];
       extraDefCfg = "process-unmapped-keys yes";
       config = ''
         (defsrc
-         caps a o e u d i h t n s spc
+         caps a o e u h t n s
         )
         (defvar
          tap-time 150
@@ -293,25 +302,9 @@ services.kanata = {
          t (tap-hold $tap-time $hold-time t rsft)
          n (tap-hold $tap-time $hold-time n ralt)
          s (tap-hold $tap-time $hold-time s rmet)
-         
-         ;; Hold i, press space for Enter
-         i (tap-hold $tap-time $hold-time c (layer-while-held imod))
-         
-         ;; Hold d, press space for Backspace
-         d (tap-hold $tap-time $hold-time d (layer-while-held dmod))
         )
         (deflayer base
-         @caps @a @o @e @u @d @i @h @t @n @s spc
-        )
-        
-        ;; Layer when holding i
-        (deflayer imod
-         _ _ _ _ _ _ _ _ _ _ _ ret
-        )
-        
-        ;; Layer when holding d
-        (deflayer dmod
-         _ _ _ _ _ _ _ _ _ _ _ bspc
+         @caps @a  @o  @e  @u  @h  @t  @n  @s
         )
       '';
     };
@@ -319,9 +312,7 @@ services.kanata = {
 };
 
 
-
-
-  # --- SSH -------------------------------------------------------------------
+# --- SSH -------------------------------------------------------------------
   services.openssh.enable = true;
 
   # --- SYSTEM VERSION --------------------------------------------------------
