@@ -1,0 +1,14 @@
+let keybindings = [
+ { 
+  name: opencode-ai
+  modifier: control
+  keycode: char_o
+  mode: emacs
+  event: {
+    send: executehostcommand
+    cmd: "opencode"
+   }
+ }
+];
+
+$env.config.keybindings ++= $keybindings

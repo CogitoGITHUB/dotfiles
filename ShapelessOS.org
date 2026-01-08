@@ -1,0 +1,1169 @@
+
+#+TITLE: ShapelessOS - An Operating System That Doesn't Exist Without Its Documentation
+#+AUTHOR: ShapelessOS Project
+#+DATE: 2026-01-03
+#+STARTUP: overview
+#+OPTIONS: toc:3 num:nil
+
+* Introduction
+
+ShapelessOS (formerly LiterativeDeclarationOS) is a Linux-based operating system where *documentation and code are inseparable*. Built on Linux From Scratch methodology, enhanced with GNU Guix package management, and orchestrated through Emacs org-mode, this system embodies a simple principle:
+
+#+BEGIN_QUOTE
+*If there is no documentation, there is no code.*
+#+END_QUOTE
+
+Every package, every configuration, every decision exists as extensively documented org-mode files. The system doesn't just have documentation—the documentation *is* the system definition.
+
+* What Makes ShapelessOS Different
+
+** Documentation as Source Code
+Your system definition lives in org-mode files:
+- Full explanations of what each component does
+- Why it exists and what problems it solves  
+- How it works, down to assembly/machine code level
+- Historical context and design evolution
+- Source code analysis even for binary packages
+
+** Knowledge Graph Architecture
+Files are interconnected nodes, not hierarchical directories:
+- Navigate concepts via org-roam backlinks
+- Tag and categorize with supertags
+- Traverse dependency chains
+- Understand relationships between components
+- One file per concept, many links to it
+
+** Immutable/Atomic Foundation
+- Read-only root filesystem (SquashFS + OSTree + OverlayFS)
+- Locked after build—no runtime modifications
+- Updates create new system images
+- Instant rollback to any previous state
+- Zero-trust model: containers for everything except core services
+
+** Bleeding-Edge via Git
+- No version numbers, track git repositories directly
+- Always up-to-date with upstream
+- Automatic hash computation and updates
+- Hourly update checks via lightweight script
+- Fail-safe: keep old hash if upstream breaks
+
+** Hybrid Reproducibility
+- Guix builds packages reproducibly to /gnu/store
+- GNU Stow creates traditional FHS symlinks to /usr
+- Containers see normal paths, inherit from immutable base
+- Best of both worlds: Guix power + traditional compatibility
+
+* Architecture Overview
+
+** Layer 0: Immutable Root (Core)
+#+BEGIN_SRC
+Custom kernel
+bash (system compatibility)
+nushell (modern interactive shell)  
+scroll (Wayland window manager)
+Docker engine
+Headscale client (VPN mesh networking)
+GNU Stow (symlink management)
+#+END_SRC
+
+All installed to /gnu/store, stowed to /usr, frozen read-only after build.
+
+** Layer 1: Infrastructure Services
+Running on root system (not containerized):
+- Headscale server (mesh network control plane)
+- Passbolt server (password/secret management)
+- Atuin server (shell history sync)
+- K3s control plane container (orchestrates workloads)
+
+** Layer 2: Workload Containers
+All user applications run containerized, managed by K3s:
+- Web development environments
+- Pentesting tools (offense and defense)
+- Databases and services
+- Custom applications
+
+Each container based on same ShapelessOS root image.
+
+* Installation Paths
+
+** Quick Start (5-10 Minutes)
+1. Pull prebuilt ShapelessOS base image
+2. Extract and boot
+3. Start K3s container
+4. Deploy infrastructure services
+5. Working system ready
+
+** Custom Build (Hours to Days)
+1. Clone repository
+2. Review/modify org-mode system definition
+3. Execute build via MAAK
+4. System materializes from your documentation
+5. Full understanding of every component
+
+** Hybrid Approach (Recommended)
+1. Quick start for immediate usability
+2. Gradually study org-mode documentation
+3. Rebuild components you want to understand deeply
+4. Selective source builds for critical packages
+
+* Core Technologies
+
+** Guix Package Management
+- Reproducible builds
+- Binary substitutes (where available)
+- Functional package management
+- Rollback capability
+- We use Guix as build backend, not its DSL
+
+** MAAK (org-mode → Guix Bridge)
+- Reads org-mode package declarations
+- Fetches git sources, computes hashes
+- Generates Guix package definitions
+- Orchestrates builds and installations
+- Updates org-mode files with computed hashes
+- Integrates with Emacs for smooth workflow
+
+** Emacs Integration
+- Custom Emacs package (ldos-mode.el) included
+- Keybindings for package management
+- Automatic hash computation (C-c C-h)
+- Build packages from org blocks (C-c C-b)
+- Navigate knowledge graph via org-roam
+- Your custom Emacs distro comes preconfigured
+
+** SquashFS + OSTree + OverlayFS
+- SquashFS: Compressed immutable base
+- OSTree: Version management and atomic updates
+- OverlayFS: Configuration overlays
+- Combined: Secure, efficient, rollback-capable
+
+** GNU Stow
+- Manages symlinks from /gnu/store to /usr
+- Containers see traditional FHS layout
+- Coexistence of Guix + normal paths
+- Declared in org-mode, automated by MAAK
+
+* Package Management Philosophy
+
+** Three Categories of Packages
+
+*** Stable from Guix Upstream
+Core system components that rarely need updates:
+- glibc, gcc, binutils
+- Kernel (when not custom building)
+- bash, coreutils
+
+Use Guix's tested, stable versions.
+
+*** Bleeding Edge from Git
+Development tools tracking upstream HEAD:
+- neovim, helix, zellij
+- rust-analyzer, typescript servers
+- Modern CLI tools
+
+Rebuilt automatically, updated hourly.
+
+*** Custom ShapelessOS Packages
+Our own code and configurations:
+- ldos-tools, ldos-init
+- Custom system utilities
+- Specialization-specific software
+
+*** Package Definition in Org-Mode
+#+BEGIN_SRC org
+* Package: helix-editor
+** Why It Exists
+Modern modal editor written in Rust. Better treesitter integration
+than neovim, native LSP support, simpler configuration.
+
+** Design Philosophy
+[Deep dive into Helix architecture, comparison to vim/kakoune,
+explanation of selection-first editing model]
+
+** Source Code Analysis
+[Analysis of key modules, rendering pipeline, LSP integration]
+
+** Package Definition
+#+BEGIN_SRC scheme
+(package-definition
+  (name "helix")
+  (source (git-fetch "https://github.com/helix-editor/helix" 
+                     "a1b2c3d4e5f6"))
+  (hash "sha256:COMPUTED_BY_MAAK")
+  (build-system 'cargo)
+  (stow-target "/usr/local"))
+#+END_SRC
+#+END_SRC
+
+** Automatic Updates
+- Lightweight script checks git repos hourly
+- Computes new hashes if commits changed
+- Updates org-mode files automatically
+- Triggers rebuild if hash changes
+- Fail-safe: keeps old hash if fetch/build fails
+- You review and approve via git commits
+
+* Security Model
+
+** Defense in Depth
+1. Immutable root (can't be modified at runtime)
+2. All workloads containerized (isolation)
+3. K3s network policies (segmentation)  
+4. Headscale mesh (encrypted networking)
+5. Passbolt (centralized secret management)
+6. Read-only /gnu/store bind-mounted to containers
+
+** Zero-Trust Architecture
+- Only essential services on root system
+- Everything else in containers
+- Container compromise doesn't affect root
+- Network mesh authenticates all connections
+- Secrets never in environment variables
+
+** Perfect for Security Work
+Root system hardened and documented:
+- Pentesting tools isolated in containers
+- Can test exploits safely
+- Defense configurations proven secure
+- Every security decision explained in documentation
+
+* Specializations
+
+ShapelessOS serves as foundation for specialized environments, each fully documented:
+
+** Web Development
+- Node.js, Deno, Bun environments
+- Database containers (PostgreSQL, Redis, etc.)
+- Development tools and frameworks
+- Integration with Passbolt for API keys
+
+** Pentesting Offense  
+- Reconnaissance tools
+- Exploitation frameworks
+- Custom security tools
+- Network testing utilities
+
+** Pentesting Defense
+- Intrusion detection
+- System hardening
+- Monitoring and logging
+- Incident response tools
+
+Each specialization:
+- Documented in org-mode knowledge graph
+- Links back to core system concepts
+- Runs in isolated containers
+- Managed via K3s orchestration
+
+* Repository Structure
+
+#+BEGIN_SRC
+shapelessos/
+├── README.org (this file)
+├── docs/
+│   ├── 00-philosophy.org
+│   ├── 01-architecture.org
+│   ├── 02-package-management.org
+│   └── 03-roadmap.org
+│
+├── system/
+│   ├── 00-bootstrap.org
+│   ├── 01-kernel.org
+│   ├── 02-init.org
+│   ├── 03-core-packages.org
+│   └── ...
+│
+├── packages/
+│   ├── stable/
+│   ├── bleeding-edge/
+│   └── custom/
+│
+├── specializations/
+│   ├── web-development/
+│   ├── pentesting-offense/
+│   └── pentesting-defense/
+│
+├── infrastructure/
+│   ├── headscale.org
+│   ├── passbolt.org
+│   ├── atuin.org
+│   └── k3s.org
+│
+├── emacs/
+│   ├── ldos-mode.el
+│   └── configuration.org
+│
+└── maak/
+    └── core implementation
+#+END_SRC
+
+* Getting Started
+
+** Prerequisites
+- x86_64 or ARM64 hardware
+- 4GB+ RAM (more for building from source)
+- 50GB+ disk space
+- Emacs 29+ (for documentation navigation)
+- Docker installed (for quick start)
+
+** Quick Start
+#+BEGIN_SRC bash
+# Pull prebuilt base
+docker pull ghcr.io/shapelessos/base:latest
+
+# Bootstrap system
+curl -sSL https://shapelessos.org/bootstrap | bash
+
+# Follow prompts for initial configuration
+# System ready in 5-10 minutes
+#+END_SRC
+
+** Custom Build
+#+BEGIN_SRC bash
+# Clone repository
+git clone https://github.com/shapelessos/shapelessos.git
+cd shapelessos
+
+# Review system definition
+emacs system/00-bootstrap.org
+
+# Execute build (this will take time)
+maak build-system
+
+# Documentation guides you through each step
+#+END_SRC
+
+** Learning Path
+1. Start with prebuilt system (get working environment)
+2. Open docs/00-philosophy.org in Emacs
+3. Navigate knowledge graph via org-roam
+4. Study components you're interested in
+5. Rebuild pieces from source as you learn
+6. Customize and extend for your needs
+
+* Contributing
+
+** We Welcome
+- Documentation improvements
+- New package definitions
+- Specialization contributions
+- Bug reports and fixes
+- Ideas and discussions
+
+** How to Contribute
+- GitHub: https://github.com/shapelessos/shapelessos
+- GitLab: https://gitlab.com/shapelessos/shapelessos
+- Issues/PRs on either platform
+- Direct message maintainers
+- All contributions documented in org-mode
+
+** Contribution Philosophy
+Every contribution must include:
+- Full documentation in org-mode format
+- Explanation of what and why
+- Integration with knowledge graph
+- Links to related concepts
+
+No undocumented code accepted.
+
+* Philosophy & Principles
+
+** Core Beliefs
+1. *Documentation is not optional* - Understanding before execution
+2. *Immutability provides security* - Read-only prevents corruption
+3. *Atomicity ensures reliability* - Updates succeed or rollback
+4. *Bleeding edge without instability* - Git tracking + fail-safes
+5. *Knowledge graph over hierarchy* - Concepts connect, not nest
+6. *Explain everything from first principles* - Down to assembly level
+
+** Why This Matters
+Traditional operating systems:
+- Documentation separate from code (gets stale)
+- Updates can break systems (no atomicity)
+- Configuration scattered (hard to understand)
+- Black boxes everywhere (trust without understanding)
+
+ShapelessOS:
+- Documentation IS the system definition
+- Updates are atomic (safe by design)
+- Everything in knowledge graph (navigable)
+- Full transparency (understand everything)
+
+** Target Audience
+Anyone who values understanding over convenience:
+- Linux enthusiasts wanting deep knowledge
+- Security professionals needing auditable systems
+- Developers wanting reproducible environments
+- Teams needing documented infrastructure
+- Anyone with curiosity and patience
+
+"I have no enemy, only victims" - Everyone deserves to understand their computer.
+
+* Success Criteria
+
+A working ShapelessOS installation means:
+- System boots in under 10 minutes
+- All infrastructure services running (Headscale, Passbolt, Atuin, K3s)
+- At least one workload container deployed
+- Knowledge graph navigable in Emacs
+- Can execute org-mode package definitions
+- Rollback works to previous states
+- Documentation explains every component
+
+* Current State & Roadmap
+
+** Current Status
+- Architecture design complete ✓
+- Documentation framework established ✓
+- Core technologies selected ✓
+- Philosophy defined ✓
+- Implementation in progress...
+
+** Near-Term Goals (Months 1-3)
+- Working immutable base system
+- MAAK core functionality
+- Emacs integration package
+- Basic package set documented
+- Single-machine deployment
+
+** Mid-Term Goals (Months 4-6)
+- Automated update system
+- Multiple specializations
+- Multi-machine Headscale mesh
+- Container orchestration refined
+- Extensive package documentation
+
+** Long-Term Vision (Year 1+)
+- Complete LFS-level documentation for all packages
+- AI-assisted documentation generation
+- Community contributions growing
+- Production-ready for daily use
+- Reference implementation for documented systems
+
+See [[file:docs/03-roadmap.org][Full Roadmap]] for details.
+
+* Experimental Features
+
+Future exploration areas:
+- AI-powered documentation assistants
+- Automatic knowledge graph generation from source code
+- Alternative container runtimes
+- Different init systems
+- Custom kernel configurations
+- GPU passthrough for containers
+
+Experimental features documented but not yet stable.
+
+* License
+
+To be determined. Likely GPL-compatible to honor LFS heritage.
+
+Code and documentation will be free and open source.
+
+* Contact & Community
+
+- Website: https://shapelessos.org (coming soon)
+- GitHub: https://github.com/shapelessos/shapelessos
+- GitLab: https://gitlab.com/shapelessos/shapelessos
+- Matrix: #shapelessos:matrix.org (coming soon)
+- Email: maintainers@shapelessos.org
+
+* Acknowledgments
+
+Built on the shoulders of giants:
+- Linux From Scratch project (methodology and knowledge)
+- GNU Guix (reproducible package management)
+- Emacs and org-mode community (knowledge tools)
+- MAAK project (Scheme-based automation)
+- All the free software that makes this possible
+
+* Related Projects
+
+- Your custom Emacs distribution (100,000+ lines org-mode configuration)
+- LFS Book (foundational methodology)
+- GNU Guix (package management inspiration)
+- NixOS (atomic/immutable concepts)
+
+---
+
+*Remember: This is an operating system that doesn't exist without its documentation. Start with the docs, and the system follows.*
+
+#+BEGIN_CENTER
+[[file:docs/00-philosophy.org][Read the Philosophy]] | [[file:docs/01-architecture.org][Understand the Architecture]] | [[file:docs/02-package-management.org][Learn Package Management]]
+#+END_CENTER
+
+
+
+
+
+
+
+
+
+
+* roadmap 
+* Vision
+ShapelessOS aims to be:
+- An operating system that doesn't exist without its documentation
+- A knowledge graph of Linux internals, executable and navigable
+- A foundation for specialized environments (web dev, security research)
+- A reference implementation for documentation-first systems
+- Daily-drivable for those who value understanding
+* Current Status 
+** Completed
+- Architecture design finalized
+- Core technologies selected (Guix, MAAK, org-mode, SquashFS, OSTree, Stow)
+- Package management philosophy defined
+- Documentation framework established
+- README and core documentation written
+- Integration strategy (Guix + Stow + Git) clarified
+** In Progress
+- Emacs configuration (100,000+ lines, being reorganized)
+- MAAK core implementation
+- Base system definition in org-mode
+- Custom Emacs package (ldos-mode.el)
+** Not Started
+- Immutable base system build
+- Automated update system
+- Infrastructure service deployment
+- Container orchestration setup
+- Multi-machine Headscale mesh
+- Specialization containers
+- Community infrastructure
+* Development Phases
+** Phase 0: Foundation (Current - Month 2)
+*** Goal
+Establish the foundational infrastructure and tooling needed to build ShapelessOS.
+*** Milestones
+**** M0.1: Emacs Configuration Mastery 
+- [X] Reorganize 100,000+ line configuration
+- [X] Modularize with denote/org-roam
+- [X] Establish org-mode workflow
+- [X] Prove literate programming approach at scale
+- [ ] Final refinements and optimization
+*Status: 95% complete*
+
+**** M0.2: MAAK Core Implementation 
+- [ ] Basic org-mode parsing
+- [ ] Git fetching and hash computation
+- [ ] Guix package generation
+- [ ] Stow integration
+- [ ] Emacs integration (ldos-mode.el)
+- [ ] Error handling and rollback
+
+*Dependencies:* Emacs configuration
+*Estimated completion:* Month 2
+
+**** M0.3: Documentation Framework
+- [ ] Org-mode template for packages
+- [ ] Knowledge graph structure
+- [ ] Cross-referencing system
+- [ ] Export pipeline (HTML, PDF)
+- [ ] Example package fully documented (nginx)
+
+*Dependencies:* None (parallel with M0.2)
+*Estimated completion:* Month 2
+
+**** M0.4: Base System Definition
+- [ ] Core package list in org-mode
+- [ ] Kernel configuration documented
+- [ ] Init system choice and rationale
+- [ ] Essential services defined
+- [ ] Directory layout specification
+
+*Dependencies:* M0.3
+*Estimated completion:* Month 2
+
+*** Deliverables
+- Working MAAK implementation
+- ldos-mode.el Emacs package
+- Documentation templates
+- Initial package set defined in org-mode
+- Development environment ready
+
+*** Success Criteria
+- Can define package in org-mode
+- MAAK computes hash and generates Guix definition
+- Emacs integration functional (C-c C-h works)
+- At least 5 packages fully documented
+
+** Phase 1: Minimal Viable System (Months 3-4)
+
+*** Goal
+Create a bootable, immutable base system with core functionality.
+
+*** Milestones
+
+**** M1.1: Immutable Base Construction
+- [ ] SquashFS creation pipeline
+- [ ] OSTree integration
+- [ ] OverlayFS configuration overlays
+- [ ] Read-only root filesystem
+- [ ] First boot successful
+
+*Dependencies:* Phase 0 complete
+*Estimated completion:* Month 3
+
+**** M1.2: Core Package Set
+Build and document these packages:
+- [ ] Linux kernel (custom configuration)
+- [ ] glibc (from Guix)
+- [ ] bash (system shell)
+- [ ] nushell (modern shell)
+- [ ] coreutils (from Guix)
+- [ ] Docker engine
+- [ ] GNU Stow
+- [ ] 20 essential utilities
+
+*Dependencies:* M1.1
+*Estimated completion:* Month 3
+
+**** M1.3: Infrastructure Services
+- [ ] Headscale server and client
+- [ ] Passbolt deployment
+- [ ] Atuin server
+- [ ] Basic monitoring (logs, metrics)
+
+*Dependencies:* M1.2
+*Estimated completion:* Month 4
+
+**** M1.4: K3s Container Runtime
+- [ ] K3s in container
+- [ ] Pod networking configured
+- [ ] Basic workload deployment
+- [ ] Health checks and monitoring
+
+*Dependencies:* M1.3
+*Estimated completion:* Month 4
+
+*** Deliverables
+- Bootable ShapelessOS image
+- Core packages documented and built
+- Infrastructure services running
+- K3s orchestrating containers
+- Can deploy simple workload
+
+*** Success Criteria
+- System boots in < 10 minutes
+- All infrastructure services healthy
+- Can deploy and access containerized app
+- Rollback works (OSTree switch)
+- Documentation complete for all core packages
+
+** Phase 2: Automation & Usability (Months 5-6)
+
+*** Goal
+Make the system practical for daily use with automated updates and better tooling.
+
+*** Milestones
+
+**** M2.1: Automated Update System
+- [ ] Hourly git repository checker
+- [ ] Automatic hash recomputation
+- [ ] Org-mode file updater
+- [ ] Build queue management
+- [ ] Update notification system
+
+*Dependencies:* Phase 1 complete
+*Estimated completion:* Month 5
+
+**** M2.2: GUI Environment (Optional)
+- [ ] Scroll window manager
+- [ ] Wayland compositor
+- [ ] Basic desktop applications
+- [ ] Terminal emulator
+- [ ] File manager
+
+*Dependencies:* M2.1
+*Estimated completion:* Month 5-6 (if desktop needed)
+
+**** M2.3: Developer Tools
+- [ ] Build caching
+- [ ] Parallel builds
+- [ ] CI/CD integration
+- [ ] Testing framework
+- [ ] Performance profiling
+
+*Dependencies:* M2.1
+*Estimated completion:* Month 6
+
+**** M2.4: Documentation Expansion
+- [ ] 100+ packages fully documented
+- [ ] LFS-style explanations for all core components
+- [ ] Assembly-level analysis for critical packages
+- [ ] Knowledge graph fully linked
+- [ ] Export to HTML/PDF working
+
+*Dependencies:* Ongoing
+*Estimated completion:* Month 6
+
+*** Deliverables
+- Automated update pipeline
+- GUI environment (if needed)
+- Developer tooling suite
+- Extensive documentation (100+ packages)
+- Smooth daily-driver experience
+
+*** Success Criteria
+- Updates happen automatically, reviewed weekly
+- Build times optimized (caching effective)
+- Can use as primary development machine
+- Documentation navigable via org-roam
+- No manual intervention for routine tasks
+
+** Phase 3: Specializations & Multi-Machine (Months 7-9)
+
+*** Goal
+Expand system with specialized environments and multi-machine support.
+
+*** Milestones
+
+**** M3.1: Web Development Specialization
+- [ ] Node.js, Deno, Bun environments
+- [ ] Database containers (PostgreSQL, Redis, MongoDB)
+- [ ] Web frameworks documented
+- [ ] Development workflow optimized
+- [ ] Example projects included
+
+*Dependencies:* Phase 2 complete
+*Estimated completion:* Month 7
+
+**** M3.2: Security Research Specialization
+- [ ] Pentesting offense container
+  - Reconnaissance tools
+  - Exploitation frameworks
+  - Custom scripts
+- [ ] Pentesting defense container
+  - IDS/IPS systems
+  - Hardening tools
+  - Monitoring solutions
+- [ ] Isolated testing environment
+- [ ] Documentation of techniques
+
+*Dependencies:* Phase 2 complete
+*Estimated completion:* Month 8
+
+**** M3.3: Multi-Machine Deployment
+- [ ] Headscale mesh networking
+- [ ] Distributed builds
+- [ ] Shared storage (NFS/Ceph)
+- [ ] Multi-node K3s cluster
+- [ ] Workload scheduling across machines
+
+*Dependencies:* M3.1, M3.2
+*Estimated completion:* Month 9
+
+**** M3.4: Container Ecosystem
+- [ ] Base container images optimized
+- [ ] Container registry (local)
+- [ ] Image building pipeline
+- [ ] Security scanning
+- [ ] Update automation
+
+*Dependencies:* M3.3
+*Estimated completion:* Month 9
+
+*** Deliverables
+- Web development environment fully functional
+- Security research containers operational
+- Multi-machine deployment working
+- Container ecosystem mature
+- 3+ specializations documented
+
+*** Success Criteria
+- Can develop web apps on ShapelessOS
+- Can conduct security research safely
+- Can deploy across laptop + cloud VM
+- Containers build and deploy automatically
+- Specializations documented deeply
+
+** Phase 4: Community & Polish (Months 10-12)
+
+*** Goal
+Prepare for wider adoption, community contributions, and 1.0 release.
+
+*** Milestones
+
+**** M4.1: Community Infrastructure
+- [ ] Website (shapelessos.org)
+- [ ] Documentation hosting
+- [ ] GitHub/GitLab repositories public
+- [ ] Issue tracker configured
+- [ ] Discussion forum (Matrix/Discord)
+- [ ] Contribution guidelines
+
+*Dependencies:* Phase 3 complete
+*Estimated completion:* Month 10
+
+**** M4.2: Installation Experience
+- [ ] Installer (quick vs custom paths)
+- [ ] Pre-built images
+- [ ] Docker Hub / GHCR hosting
+- [ ] VM images (VirtualBox, QEMU)
+- [ ] Cloud deployment scripts (AWS, GCP, etc.)
+
+*Dependencies:* M4.1
+*Estimated completion:* Month 10
+
+**** M4.3: Documentation Completeness
+- [ ] All core packages documented
+- [ ] Tutorials for common tasks
+- [ ] Troubleshooting guide
+- [ ] FAQ
+- [ ] Video walkthroughs (optional)
+
+*Dependencies:* Ongoing
+*Estimated completion:* Month 11
+
+**** M4.4: Testing & Hardening
+- [ ] Automated test suite
+- [ ] Security audit
+- [ ] Performance benchmarks
+- [ ] Stress testing
+- [ ] Bug bash
+
+*Dependencies:* M4.2, M4.3
+*Estimated completion:* Month 11
+
+**** M4.5: 1.0 Release
+- [ ] Version tagging
+- [ ] Release notes
+- [ ] Public announcement
+- [ ] Media outreach
+- [ ] Celebration 🎉
+
+*Dependencies:* All previous milestones
+*Estimated completion:* Month 12
+
+*** Deliverables
+- Public website and repositories
+- Easy installation for newcomers
+- Comprehensive documentation
+- Tested and hardened system
+- 1.0 release
+
+*** Success Criteria
+- Someone can install and use ShapelessOS without help
+- Documentation answers common questions
+- No critical bugs
+- Community starting to form
+- Ready for daily driver use by early adopters
+
+* Beyond 1.0: Long-Term Vision (Year 2+)
+
+** Potential Features
+
+*** Advanced Documentation
+- [ ] AI-assisted documentation generation
+- [ ] Automatic knowledge graph updates from source code
+- [ ] Interactive documentation (live code examples)
+- [ ] Documentation quality metrics
+- [ ] Contribution bounties for documentation
+
+*** System Evolution
+- [ ] Alternative init systems (runit, s6)
+- [ ] Different container runtimes (Podman, containerd)
+- [ ] GPU passthrough for containers
+- [ ] Real-time kernel variant
+- [ ] Microkernel experiments
+
+*** Ecosystem Growth
+- [ ] 10+ specializations
+- [ ] 1000+ packages fully documented
+- [ ] Community-contributed specializations
+- [ ] Third-party channels/packages
+- [ ] Package review and quality standards
+
+*** Research Directions
+- [ ] Formal verification of core components
+- [ ] Capability-based security model
+- [ ] Distributed consensus for multi-machine
+- [ ] Self-healing systems
+- [ ] Adaptive optimization
+
+*** Education
+- [ ] University partnerships
+- [ ] Online courses based on ShapelessOS
+- [ ] Certification program
+- [ ] Bootcamps and workshops
+- [ ] Textbook: "Operating Systems via ShapelessOS"
+
+** Community Goals
+- 100+ active contributors
+- 1000+ daily users
+- 10+ companies using in production
+- Academic citations
+- Industry recognition
+
+* Development Principles
+** Throughout All Phases
+*** Documentation First
+Every feature must be documented before implementation:
+1. Write org-mode documentation explaining what and why
+2. Include design rationale and alternatives considered
+3. Link to related concepts
+4. Implement the feature
+5. Update documentation with actual implementation details
+
+No exceptions. If there's no documentation, there's no feature.
+
+*** Fail-Safe Design
+Every change must be rollback-able:
+- Work in overlays/branches
+- Test before commit to main system
+- Keep old versions accessible
+- Document rollback procedures
+- Automatic fallback on failure
+
+Users should never be stuck with broken system.
+
+*** Incremental Progress
+Small, working increments over big leaps:
+- Each milestone builds on previous
+- Working system at every stage
+- No "rewrite everything" moments
+- Gradual evolution, not revolution
+
+Users can adopt at any phase.
+
+*** Community Transparency
+Open development, open decisions:
+- Public repositories
+- Design discussions in open
+- Roadmap changes announced
+- User feedback incorporated
+- Mistakes acknowledged and learned from
+
+Trust through transparency.
+
+* Risk Mitigation
+
+** Technical Risks
+
+*** Risk: Guix integration more complex than expected
+*Mitigation:* Start with simple packages, learn incrementally, fall back to pure Nix if needed
+
+*** Risk: Stow doesn't scale to thousands of packages
+*Mitigation:* Test early with 100+ packages, have fallback plan (direct Guix)
+
+*** Risk: Immutable root too restrictive
+*Mitigation:* Design overlay system from start, allow escape hatches
+
+*** Risk: Automated updates break things
+*Mitigation:* Always test in overlay first, manual approval before deploy
+
+** Scope Risks
+
+*** Risk: Documentation too ambitious (millions of lines)
+*Mitigation:* Start with core (100 packages), expand gradually, accept some packages are lightly documented
+
+*** Risk: Feature creep
+*Mitigation:* Strict scope per phase, defer non-critical features, focus on 1.0 first
+
+*** Risk: Trying to support all use cases
+*Mitigation:* Define clear target audience, specialize for those needs, others can fork
+
+** Community Risks
+
+*** Risk: No adoption
+*Mitigation:* Document for yourself first, adoption is bonus not requirement
+
+*** Risk: Negative feedback
+*Mitigation:* Expect criticism, learn from valid points, ignore trolls, stay focused on vision
+
+*** Risk: Contributor conflicts
+*Mitigation:* Clear contribution guidelines, code of conduct, benevolent maintainership
+
+* Success Metrics
+
+** Phase 0 Success
+- MAAK can build at least one package from org-mode
+- Emacs integration works smoothly
+- Documentation template proven with 5 packages
+
+** Phase 1 Success
+- Can boot into ShapelessOS
+- Infrastructure services running
+- First container deployed successfully
+
+** Phase 2 Success
+- Using ShapelessOS as daily driver
+- Automated updates working
+- 100+ packages documented
+
+** Phase 3 Success
+- Web dev specialization used for real projects
+- Security research viable on ShapelessOS
+- Multi-machine deployment functional
+
+** Phase 4 Success
+- First external contributor
+- First external user successfully installs
+- 1.0 release shipped
+
+** Long-Term Success
+- Active community
+- Citations in academic work
+- Adoption by developers/researchers
+- Influence on other projects
+
+* Decision Points
+
+** Key Decisions to Make
+
+*** Month 2: Desktop vs Server
+*Question:* Does Phase 1 include GUI (Scroll WM) or stay server-only?
+
+*Options:*
+A. Server-only first, GUI later (faster to 1.0)
+B. Include GUI from start (more useful immediately)
+
+*Defer to:* After Phase 0, based on personal needs
+
+*** Month 4: Binary Cache Strategy
+*Question:* Do we host our own binary cache or rely on Guix substitutes?
+
+*Options:*
+A. Own cache (independence, but cost/maintenance)
+B. Guix substitutes (free, but less control)
+C. Hybrid (own for custom, Guix for standard)
+
+*Defer to:* After M1.2, when package count clear
+
+*** Month 6: Specialization Priority
+*Question:* Web dev first or security research first?
+
+*Options:*
+A. Web dev (more universal appeal)
+B. Security (your expertise, unique offering)
+C. Both in parallel (slower but complete)
+
+*Defer to:* After Phase 2, based on time available
+
+*** Month 9: Community Opening
+*Question:* Open to contributions at 1.0 or earlier?
+
+*Options:*
+A. Earlier (Phase 3, more feedback)
+B. At 1.0 (more polished, less churn)
+
+*Defer to:* After Phase 2, assess readiness
+
+* Alignment with Other Projects
+
+** Your Emacs Configuration
+- Proves literate programming at scale
+- Establishes org-mode workflow
+- Provides template for ShapelessOS docs
+- *Roadmap:* Finish Emacs config (Phase 0), then apply lessons to OS
+
+** MAAK Project
+- Provides automation layer
+- Integrates Guile Scheme and org-mode
+- *Roadmap:* Extend MAAK for ShapelessOS needs (Phase 0)
+
+** LFS Book
+- Inspires documentation depth
+- Provides package list and explanations
+- *Roadmap:* Transform LFS content into org-mode (Phase 1-2)
+
+** Guix
+- Provides package management backend
+- *Roadmap:* Use as-is, contribute upstream if needed (ongoing)
+
+* Call to Action
+
+** For You (The Creator)
+- [ ] Finish Emacs configuration reorganization
+- [ ] Implement MAAK core functionality
+- [ ] Document first 5 packages end-to-end
+- [ ] Build first immutable base system
+- [ ] Start using ShapelessOS for daily tasks
+
+** For Early Adopters (Future)
+- [ ] Try prebuilt images
+- [ ] Report bugs and feedback
+- [ ] Suggest missing features
+- [ ] Contribute documentation
+- [ ] Spread the word
+
+** For the Community (Future)
+- [ ] Contribute packages
+- [ ] Write specializations
+- [ ] Improve documentation
+- [ ] Build integrations
+- [ ] Teach others
+
+* Timeline Visualization
+
+#+BEGIN_SRC
+2026
+│
+├─ Jan-Feb (Phase 0: Foundation)
+│  ├─ Emacs config finalization
+│  ├─ MAAK implementation
+│  ├─ Documentation framework
+│  └─ Base system definition
+│
+├─ Mar-Apr (Phase 1: Minimal Viable)
+│  ├─ Immutable base construction
+│  ├─ Core package set
+│  ├─ Infrastructure services
+│  └─ K3s container runtime
+│
+├─ May-Jun (Phase 2: Automation)
+│  ├─ Automated updates
+│  ├─ GUI environment (optional)
+│  ├─ Developer tools
+│  └─ Documentation expansion (100+ packages)
+│
+├─ Jul-Sep (Phase 3: Specializations)
+│  ├─ Web development
+│  ├─ Security research
+│  ├─ Multi-machine
+│  └─ Container ecosystem
+│
+└─ Oct-Dec (Phase 4: Community & 1.0)
+   ├─ Community infrastructure
+   ├─ Installation experience
+   ├─ Documentation completeness
+   ├─ Testing & hardening
+   └─ 1.0 Release 🎉
+
+2027+
+│
+└─ Long-term evolution
+   ├─ Advanced features
+   ├─ Ecosystem growth
+   ├─ Research directions
+   └─ Education initiatives
+#+END_SRC
+
+* Conclusion
+
+ShapelessOS is an ambitious project, but with clear phases and milestones, it's achievable.
+
+**The key principles:**
+- Documentation before code
+- Small working increments
+- Fail-safe at every step
+- Transparency and community
+
+**The vision:**
+An operating system where understanding is paramount, documentation is inseparable from the system, and users are empowered to know their computers completely.
+
+**The path:**
+12 months to 1.0, steady progress, learning and documenting along the way.
+
+**The destination:**
+A reference implementation proving that operating systems CAN be fully documented, that understanding DOESN'T require sacrificing practicality, and that knowledge graphs ARE a viable system architecture.
+
+---
+
+#+BEGIN_QUOTE
+"If there is no documentation, there is no code."
+
+Let's build a system that embodies this principle, one documented package at a time.
+#+END_QUOTE
+
+---
