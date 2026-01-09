@@ -1,0 +1,117 @@
+#+TITLE: Emacs Configuration Structure
+#+AUTHOR: asdf
+#+STARTUP: content
+
+* Overview
+
+This Emacs configuration is written as a literate org-mode file that tangles to init.el,
+combining Straight.el, Leaf.el, and a custom literate configuration system.
+
+* Configuration Structure
+
+The main configuration follows the structure defined in [[file:init.org][init.org]]:
+
+** System Bootstrap
+The configuration initializes in a specific order:
+
+*** Straight bootstrap
+- Must be loaded first
+- Bootstraps straight.el from GitHub
+- Sets `straight-use-package-by-default t`
+
+*** Org (required, explicit, upstream)
+- Loads org-mode directly from git.savannah.gnu.org
+- Uses git type repository specification
+- Required before other packages
+
+*** Leaf system
+- Installs leaf and leaf-keywords via straight
+- Provides declarative configuration syntax
+- Includes builtin core configuration through `leaf cus-start`
+
+** Org-Based Configuration System
+- Adds custom literate-config-emacs to load-path
+- Enables live configuration management
+- Handles compilation and loading of org files
+
+** AI Integration
+- Configures agent-shell with OpenAI integration
+- Sets up opencode provider with GPT-4 model
+- Uses environment variable for API key
+- Provides `ai` command alias
+
+** Auto Tangle + Auto Reload
+- Automatically tangles init.org to init.el on save
+- Reloads configuration when tangle completes
+- Provides error handling and status messages
+
+* Directory Structure
+
+** Core Files
+- [[file:init.org][init.org]] - Main literate configuration (this file)
+- [[file:early-init.el][early-init.el]] - Early initialization, disables package.el
+- [[file:init.el][init.el]] - Generated tangled configuration from init.org
+
+** lisp/ - Custom Lisp Packages
+
+*** [[file:lisp/literate-config-emacs/][literate-config-emacs/]]
+Custom package that enables the org-based configuration system used in this config.
+
+*** [[file:lisp/scientific-mapping/][scientific-mapping/]]
+Academic research and knowledge management package.
+
+** Literative Configurations/
+Contains org-mode configuration files that are compiled by the literate-config-emacs system:
+- evil.org - Evil mode configuration
+- grease.el - File manager integration  
+- modus-theme.el - Theme configuration
+- nano-calendar.el - Calendar enhancements
+- org-superstar.el - Org-mode visual improvements
+- spacious-padding.el - UI spacing
+- tab-bar-echo-area.el - Tab bar improvements
+- tangled/ - Compiled .el files with .cache/ for performance
+
+** transient/
+- [[file:transient/history.el][history.el]] - Transient state history management
+
+* Bootstrap Process
+
+The configuration loads in this exact order as defined in init.org:
+
+1. **Straight.el Bootstrap** - Downloads and initializes straight.el from GitHub
+2. **Org Mode** - Loads org-mode directly from upstream git repository  
+3. **Leaf System** - Initializes leaf and leaf-keywords for declarative config
+4. **Literate Config System** - Enables the custom org-based configuration management
+
+* Package Management Approach
+
+This configuration demonstrates a combination of:
+- **Straight.el** - Git-based package management with `straight-use-package-by-default t`
+- **Leaf.el** - Declarative configuration syntax for cleaner package setup
+- **Literate Config** - Custom system for managing .org configuration files
+
+* Auto-Configuration Features
+
+The setup includes:
+- **Auto-tangle** - Automatically compiles init.org to init.el when saved
+- **Auto-reload** - Immediately loads the new configuration after tangling
+- **Error handling** - Graceful error reporting with display-warning
+- **Live editing** - Changes to .org files are instantly available
+
+* Installation & Usage
+
+1. Clone this configuration to ~/.config/emacs
+2. Start Emacs - it will bootstrap automatically
+3. Edit .org files to modify configuration
+4. Changes are auto-tangled and reloaded on save
+
+* Development
+
+The scientific-mapping package includes:
+- Comprehensive test suite in ~tests/~
+- MCP (Model Context Protocol) integration
+- Visualization engines
+- Academic workflow automation
+- Citation export functionality
+
+See [[file:lisp/scientific-mapping/README.org][scientific-mapping/README.org]] for detailed documentation.

@@ -77,21 +77,3 @@
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
    (defalias 'ai 'agent-shell-opencode-start-agent))
-
-(defun live-shaping/auto-tangle-and-reload ()
-  "Auto-tangle and reload when this Org file tangles to init.el."
-  (when (and buffer-file-name
-             (save-excursion
-               (goto-char (point-min))
-               (re-search-forward ":tangle[ \t]+init.el" nil t)))
-    (message "Tangling…")
-    (condition-case err
-        (progn
-          (org-babel-tangle)
-          (load-file (expand-file-name "init.el" user-emacs-directory))
-          (message "Reload complete ✓"))
-      (error
-       (display-warning
-        'live-shaping (format "%s" (error-message-string err)) :error)))))
-
-(add-hook 'after-save-hook #'live-shaping/auto-tangle-and-reload)
