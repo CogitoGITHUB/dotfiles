@@ -22,10 +22,10 @@
 (defgroup literate-config-emacs nil
   "Literate configuration system for Emacs."
   :group 'org
-  :prefix "literate-config-emacs-")
+  :prefix "literate-config-emacs")
 
 (defcustom literate-config-emacs-org-directory
-  (expand-file-name "literate-packages/" user-emacs-directory)
+  (expand-file-name "Literative Configurations/" user-emacs-directory)
   "Directory containing literate package configuration files."
   :type 'directory
   :group 'literate-config-emacs)
@@ -46,13 +46,12 @@
     (org-mode)
     (goto-char (point-min))
     (when (re-search-forward "^\\*+ " nil t)
-      (let* ((element (org-element-at-point))
-             (props (org-element-property :properties element)))
-        (list :package (cdr (assoc "PACKAGE" props))
-              :straight (cdr (assoc "STRAIGHT" props))
-              :after (cdr (assoc "AFTER" props))
-              :category (cdr (assoc "CATEGORY" props))
-              :lazy (cdr (assoc "LAZY" props))
+      (let* ((element (org-element-at-point)))
+        (list :package (org-element-property :PACKAGE element)
+              :straight (org-element-property :STRAIGHT element)
+              :after (org-element-property :AFTER element)
+              :category (org-element-property :CATEGORY element)
+              :lazy (org-element-property :LAZY element)
               :init-tag (when (member "init" (org-element-property :tags element)) t)
               :config-tag (when (member "config" (org-element-property :tags element)) t))))))
 

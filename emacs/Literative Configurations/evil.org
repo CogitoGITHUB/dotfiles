@@ -160,11 +160,48 @@
 (define-key shapeshifter-leader-map (kbd "tp")
 #'tab-bar-echo-area-print-tab-names))
 #+end_src
+** Dired — HTNS Movement & Leader Launch :config:
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § DIRED — DVORAK HTNS NAVIGATION
+;; ════════════════════════════════════════════════════════════
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map
+    ;; ──────────────────────────────────────────────
+    ;; Core Navigation (Dvorak HTNS)
+    ;; ──────────────────────────────────────────────
+    (kbd "h") #'dired-up-directory                      ; parent dir
+    (kbd "t") #'evil-next-line                          ; down
+    (kbd "n") #'evil-previous-line                      ; up
+    (kbd "s") #'dired-find-file                         ; open file/enter dir
+    
+    ;; ──────────────────────────────────────────────
+    ;; Space to open (alternative to 's')
+    ;; ──────────────────────────────────────────────
+    (kbd "SPC") #'dired-find-file
+    
+    ;; ──────────────────────────────────────────────
+    ;; Keep standard Dired actions
+    ;; ──────────────────────────────────────────────
+    (kbd "RET") #'dired-find-file
+    (kbd "d") #'dired-flag-file-deletion
+    (kbd "x") #'dired-do-flagged-delete
+    (kbd "m") #'dired-mark
+    (kbd "u") #'dired-unmark
+    (kbd "U") #'dired-unmark-all-marks
+    (kbd "g") #'revert-buffer                           ; refresh
+    (kbd "q") #'quit-window))                          ; close dired
+#+end_src
 * Annalist
 :PROPERTIES:
 :PACKAGE:  annalist
 :STRAIGHT: (annalist :type git :host github :repo "noctuid/annalist.el")
 :END:
+** Initialize :config:
+#+begin_src emacs-lisp
+(require 'evil-collection)
+(evil-collection-init)
+#+end_src
 * Evil Collection
 :PROPERTIES:
 :PACKAGE:  evil-collection
@@ -173,7 +210,9 @@
 :END:
 ** Initialize :config:
 #+begin_src emacs-lisp
-(evil-collection-init)
+(with-eval-after-load 'evil
+  (when (require 'evil-collection nil t)
+    (evil-collection-init)))
 #+end_src
 * Evil Surround
 :PROPERTIES:
