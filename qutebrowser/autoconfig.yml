@@ -7,5 +7,12 @@
 config_version: 2
 settings:
   content.javascript.clipboard:
+    https://chatgpt.com: access-paste
     https://claude.ai: access-paste
     https://github.com: access-paste
+    https://mail.proton.me: access-paste
+  content.notifications.enabled:
+    https://claude.ai: true
+    https://mail.proton.me: true
+  content.register_protocol_handler:
+    https://mail.proton.me#mailto=%25s: true

@@ -50,13 +50,8 @@
            (fringe-mode . 0)
            (mode-line-format . nil)))  ;; hide mode line
 
-;;──────────────────────────────────────────────────────────
-;; Org-Based Configuration System
-;;──────────────────────────────────────────────────────────
-
-
- (load "/home/asdf/.config/emacs/lisp/literate-config-emacs/literate-config-loader.el")
- (literate-config-initialize)
+(load-file "/home/asdf/.config/emacs/lisp/literate-config-system/literate-config-system.el")
+(literate-config-initialize)
 
 (defvar my/agent-shell-opencode-config
   '(:provider "opencode"
@@ -76,4 +71,4 @@
          agent-shell-preferred-agent-config my/agent-shell-opencode-config
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
-   (defalias 'ai 'opencode))
+   (defalias 'ai 'agent-shell-opencode-start-agent))

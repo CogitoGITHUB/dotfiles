@@ -52,49 +52,6 @@ Version: 1.4.0
 ** Keybindings
 
 #+begin_src emacs-lisp
-;; ════════════════════════════════════════════════════════════
-;; § MULTIPLE-CURSORS — KEYBINDINGS
-;; ════════════════════════════════════════════════════════════
-
-;; Add/remove cursors
-(global-set-key (kbd "C->") #'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") #'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") #'mc/mark-all-like-this)
-
-;; More sophisticated marking
-(global-set-key (kbd "C-S-<mouse-1>") #'mc/add-cursor-on-click)
-(global-set-key (kbd "C-c m a") #'mc/mark-all-dwim)
-(global-set-key (kbd "C-c m l") #'mc/edit-lines)
-(global-set-key (kbd "C-c m n") #'mc/mark-next-like-this)
-(global-set-key (kbd "C-c m p") #'mc/mark-previous-like-this)
-
-;; Skip/unmark cursors
-(global-set-key (kbd "C-c m s") #'mc/skip-to-next-like-this)
-(global-set-key (kbd "C-c m S") #'mc/skip-to-previous-like-this)
-(global-set-key (kbd "C-c m u") #'mc/unmark-next-like-this)
-(global-set-key (kbd "C-c m U") #'mc/unmark-previous-like-this)
-
-;; Insert numbers
-(global-set-key (kbd "C-c m #") #'mc/insert-numbers)
-
-;; Integration with avy for placing cursors
-(with-eval-after-load 'avy
-  (defun my-mc-mark-all-avy ()
-    "Use avy to place multiple cursors."
-    (interactive)
-    (avy-with my-mc-mark-all-avy
-      (let ((avy-action #'mc/create-fake-cursor-at-point))
-        (avy-jump "."))))
-  
-  (global-set-key (kbd "C-c m j") #'my-mc-mark-all-avy))
-
-;; Integration with god-mode
-(with-eval-after-load 'god-mode
-  (define-key god-local-mode-map (kbd "m n") #'mc/mark-next-like-this)
-  (define-key god-local-mode-map (kbd "m p") #'mc/mark-previous-like-this)
-  (define-key god-local-mode-map (kbd "m a") #'mc/mark-all-like-this))
-
-;; Note: helix-mode integration is handled automatically via helix-multiple-cursors-setup
 
 #+end_src
 

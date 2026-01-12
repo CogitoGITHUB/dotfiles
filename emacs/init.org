@@ -63,17 +63,11 @@
            (mode-line-format . nil)))  ;; hide mode line
 #+end_src
 
-** Org-Based Configuration System
+** Org Configuration System
 
 #+begin_src emacs-lisp :tangle init.el
-  ;;──────────────────────────────────────────────────────────
-  ;; Org-Based Configuration System
-  ;;──────────────────────────────────────────────────────────
-
-
-   (load "/home/asdf/.config/emacs/lisp/literate-config-emacs/literate-config-loader.el")
-   (literate-config-initialize)
-
+(load-file "/home/asdf/.config/emacs/lisp/literate-config-system/literate-config-system.el")
+(literate-config-initialize)
 #+end_src
 
 * AI

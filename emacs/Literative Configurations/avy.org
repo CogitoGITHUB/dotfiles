@@ -1,4 +1,3 @@
-
 * AVY — Jump Navigation
 :PROPERTIES:
 :PACKAGE:  avy

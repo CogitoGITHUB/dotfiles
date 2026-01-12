@@ -1,3 +1,9 @@
+# #+TITLE: Init.org
+#+STARTUP: content
+
+* System Bootstrap
+** Straight bootstrap
+#+begin_src emacs-lisp :tangle init.el
 ;;──────────────────────────────────────────────────────────
 ;; Straight bootstrap (must be first)
 ;;──────────────────────────────────────────────────────────
@@ -16,8 +22,11 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 (setq straight-use-package-by-default t)
+#+end_src
 
-;;──────────────────────────────────────────────────────────
+** Org (required, explicit, upstream)
+#+begin_src emacs-lisp :tangle init.el
+  ;;──────────────────────────────────────────────────────────
   ;; Org (required, explicit, upstream)
   ;;──────────────────────────────────────────────────────────
   (straight-use-package
@@ -25,7 +34,10 @@
        :host git
        :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"))
 (require 'org)
+#+end_src
 
+** Leaf 
+#+begin_src emacs-lisp :tangle init.el
 ;;──────────────────────────────────────────────────────────
 ;; Leaf system
 ;;──────────────────────────────────────────────────────────
@@ -49,15 +61,17 @@
            (frame-title-format . "%b")
            (fringe-mode . 0)
            (mode-line-format . nil)))  ;; hide mode line
+#+end_src
 
-;;──────────────────────────────────────────────────────────
-;; Org-Based Configuration System
-;;──────────────────────────────────────────────────────────
+** Org Configuration System
 
+#+begin_src emacs-lisp :tangle init.el
+(load-file "/home/asdf/.config/emacs/lisp/literate-config-system/literate-config-system.el")
+(literate-config-initialize)
+#+end_src
 
- (load "/home/asdf/.config/emacs/lisp/literate-config-emacs/literate-config-loader.el")
- (literate-config-initialize)
-
+* AI
+#+begin_src emacs-lisp :tangle init.el
 (defvar my/agent-shell-opencode-config
   '(:provider "opencode"
     :model "gpt-4"
@@ -77,3 +91,4 @@
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
    (defalias 'ai 'agent-shell-opencode-start-agent))
+#+end_src

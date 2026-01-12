@@ -1,0 +1,241 @@
+* ORG-VIEW — Org View
+:PROPERTIES:
+:PACKAGE:  org-view
+:STRAIGHT: (org-view :type git :host github :repo "CogitoGITHUB/org-view")
+:AFTER:    org modus-themes
+:DEPENDS:  olivetti
+:CATEGORY: utils
+:VERSION:  v1.0.0
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Word processor-style page layout for Org Mode (formerly page-view).
+
+Emulates the visual, page-based layout of word processors like LibreOffice Writer or Microsoft Word in org-mode. Divides your document into pages with visual pagebreaks/footers implemented as overlays. Integrates with modus-themes for beautiful, consistent styling.
+
+**Features:**
+- Visual page-based layout for org-mode
+- Pagebreak/footer overlays with modus-themes integration
+- Page formatting with customizable dimensions
+- Footnote support for anonymous and org-cite footnotes
+- Incremental updates with cache invalidation
+- Built on olivetti-mode for elegant margins
+- Debug mode for development
+
+**Note:** The purpose is to *look like* a word processor for comfortable writing, not to be a perfect layout engine. Use org-export to LaTeX, ODT, HTML, or other formats for publication/printing.
+
+Repository: [[https://github.com/CogitoGITHUB/org-view][GitHub]]
+
+Version: v1.0.0
+
+** Dependencies
+:PROPERTIES:
+:tangle: no
+:END:
+
+Dependencies automatically installed via DEPENDS property:
+- **olivetti** - Required for elegant page margins and width management
+- **modus-themes** - For consistent, beautiful theming (loaded via :AFTER)
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+Pre-load setup before org-view loads
+
+#+begin_src emacs-lisp
+;; Ensure dependencies are available
+(require 'org)
+(require 'modus-themes)
+#+end_src
+
+** Configuration
+
+Main org-view configuration
+
+#+begin_src emacs-lisp
+;; Remove any old hooks from page-view
+(remove-hook 'org-mode-hook #'page-view-mode)
+(remove-hook 'org-mode-hook #'maybe-enable-page-view)
+
+;; Customize page dimensions
+(setq org-view-lines-per-page 45)          ; Lines per page
+(setq org-view-olivetti-width 80)          ; Character width
+(setq org-view-line-spacing 6)             ; Line spacing
+
+;; Enable footnotes (optional)
+(setq org-view-use-footnotes t)
+
+;; Customize header/footer functions (optional)
+;; (setq org-view-document-header-function
+;;       (lambda (page target-line)
+;;         (format "%s - Draft" (or (org-get-title) "Document"))))
+
+;; (setq org-view-document-footer-function
+;;       (lambda (page target-line)
+;;         (format "Page %d | %s" page (format-time-string "%Y-%m-%d"))))
+
+;; Auto-enable org-view-mode for org files
+(defun maybe-enable-org-view ()
+  "Enable org-view-mode if it's available."
+  (when (fboundp 'org-view-mode)
+    (org-view-mode 1)))
+
+(add-hook 'org-mode-hook #'maybe-enable-org-view)
+#+end_src
+
+** Keybindings
+
+Convenient keybindings for org-view
+
+#+begin_src emacs-lisp
+;; Toggle org-view-mode
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c v v") 'org-view-mode)
+  (define-key org-mode-map (kbd "C-c v d") 'org-view-debug-mode)
+  (define-key org-mode-map (kbd "C-c v r") 'org-view-reset))
+
+;; Global keybinding for quick access (optional)
+;; (global-set-key (kbd "C-c v") 'org-view-mode)
+#+end_src
+
+** Customization Examples
+:PROPERTIES:
+:tangle: no
+:END:
+
+*** Custom Page Styling
+#+begin_src emacs-lisp :tangle no
+;; Example: Larger text with more spacing
+(setq org-view-lines-per-page 40)
+(setq org-view-olivetti-width 75)
+(setq org-view-line-spacing 10)
+
+;; Custom face for body text
+(with-eval-after-load 'org-view
+  (set-face-attribute 'org-view-body-face nil
+                      :height 1.2
+                      :family "Georgia"))
+#+end_src
+
+*** Custom Headers and Footers
+#+begin_src emacs-lisp :tangle no
+;; Example: Fancy header with title and date
+(setq org-view-document-header-function
+      (lambda (page target-line)
+        (format "%s | %s" 
+                (or (org-get-title) "Untitled")
+                (format-time-string "%B %d, %Y"))))
+
+;; Example: Footer with page and word count
+(setq org-view-document-footer-function
+      (lambda (page target-line)
+        (format "Page %d of %d | %d words"
+                page
+                org-view--max-page
+                (count-words (point-min) (point-max)))))
+#+end_src
+
+*** Selective Auto-Enable
+#+begin_src emacs-lisp :tangle no
+;; Only enable org-view for specific files
+(defun maybe-enable-org-view ()
+  "Enable org-view-mode only for writing files."
+  (when (and (fboundp 'org-view-mode)
+             (or (string-match-p "writing" (buffer-file-name))
+                 (string-match-p "notes" (buffer-file-name))))
+    (org-view-mode 1)))
+#+end_src
+
+** Usage Guide
+:PROPERTIES:
+:tangle: no
+:END:
+
+*** Basic Usage
+- Open any org file - org-view will activate automatically
+- Run =M-x org-view-mode= to toggle manually
+- Use =C-c v v= to toggle org-view-mode
+- Use =C-c v d= to toggle debug mode
+- Use =C-c v r= to reset page layout
+
+*** Debug Mode
+Debug mode shows:
+- Line heights in the left margin
+- Cumulative heights
+- Page break positions
+- Useful for troubleshooting pagination
+
+To enable: =M-x org-view-debug-mode= or =C-c v d=
+
+*** Tips
+1. **Performance**: Org-view uses incremental caching for good performance
+2. **Footnotes**: Use =[fn::Anonymous footnote]= or =[cite:@author]= syntax
+3. **Themes**: Works best with modus-themes (light or dark variants)
+4. **Customization**: All faces inherit from modus-themes for consistency
+5. **Olivetti**: org-view automatically configures olivetti for you
+
+** Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+*** What's New in v1.0.0
+- Renamed from page-view to org-view
+- Full modus-themes integration
+- Improved face definitions
+- Better footnote handling
+- Cleaned up and simplified code
+- Added comprehensive configuration options
+
+*** Customizable Variables
+- =org-view-lines-per-page= - Number of lines per page (default: 45)
+- =org-view-olivetti-width= - Page width in columns (default: 80)
+- =org-view-line-spacing= - Line spacing in pixels (default: 6)
+- =org-view-use-footnotes= - Enable footnote support (default: t)
+- =org-view-document-header-function= - Custom header function
+- =org-view-document-footer-function= - Custom footer function
+
+*** Customizable Faces
+All faces inherit from modus-themes for consistency:
+- =org-view-body-face= - Default body text face
+- =org-view-footer-face= - Footer text styling
+- =org-view-header-face= - Header text styling
+- =org-view-pagebreak-face= - Page break styling
+- =org-inline-fn-overlay-face= - Footnote styling
+- =org-view-debug-face= - Debug overlay styling
+
+*** Performance
+- Incremental updates with cache invalidation
+- Pagination updates during:
+  - jit-lock redisplay
+  - buffer changes
+  - window scrolling
+- Footnotes processed on-demand
+
+*** Known Limitations
+- Reflow while typing is functional but may be rough in some edge cases
+- Tested primarily with Org Mode and olivetti-mode
+- Page dimensions need manual adjustment if changing fonts significantly
+- Very large documents (>1000 pages) may experience slowdown
+
+*** Differences from page-view
+- Better naming (org-view instead of page-view)
+- Modus-themes integration throughout
+- Cleaner face hierarchy
+- Simplified configuration
+- Better hook management
+- Improved documentation
+- More customization options exposed
+
+*** Future Improvements
+- Automatic calculation of page size based on font attributes
+- More robust reflow handling
+- Additional export options
+- Page number navigation commands
+- Better large document performance

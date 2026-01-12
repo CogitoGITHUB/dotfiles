@@ -1,0 +1,127 @@
+* NOTEBOOK-MODE — Notebook Mode
+:PROPERTIES:
+:PACKAGE:  notebook-mode
+:STRAIGHT: (notebook-mode :type git :host github :repo "rougier/notebook-mode")
+:AFTER:    org
+:DEPENDS:  svg-tag-mode
+:CATEGORY: utils
+:VERSION:  latest
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Notebook mode configuration for Emacs.
+
+GNU Emacs computational notebook using the powerful org-mode. Provides a clean and legible interface for literate programming, allowing users to execute code blocks, mix multiple programming languages, and export to HTML or PDF.
+
+**Note**: This package works best with `svg-tag-mode` installed, which will be automatically installed via the DEPENDS property.
+
+Repository: [[https://github.com/rougier/notebook-mode][GitHub]]
+
+Version: latest
+
+** Dependencies
+:PROPERTIES:
+:tangle: no
+:END:
+
+Dependencies are automatically installed via the :DEPENDS: property:
+- svg-tag-mode - Enhanced visual tags (auto-installed)
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+Code here goes in :init section (runs BEFORE package loads)
+
+#+begin_src emacs-lisp
+;; svg-tag-mode will be auto-installed via DEPENDS
+;; No manual setup needed!
+#+end_src
+
+** Configuration
+
+Code here goes in :config section (runs AFTER package loads)
+Note: No :tangle: property needed - this is the default!
+
+#+begin_src emacs-lisp
+;; Enable notebook-mode for .org files that are notebooks
+;; You may want to enable this selectively based on file properties
+(add-hook 'org-mode-hook 'notebook-mode)
+
+;; Or use it only when you explicitly want notebook features
+;; M-x notebook-mode
+
+;; Configure notebook export settings if needed
+;; (setq notebook-export-html-style "custom-style.css")
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+;; Add keybindings for notebook operations
+;; These are just examples - adjust to your preference
+
+;; (with-eval-after-load 'notebook-mode
+;;   (define-key notebook-mode-map (kbd "C-c C-r") 'notebook-run)
+;;   (define-key notebook-mode-map (kbd "C-c C-e") 'notebook-export-html)
+;;   (define-key notebook-mode-map (kbd "C-c C-s") 'notebook-setup))
+#+end_src
+
+* SVG-TAG-MODE — Svg Tag Mode
+:PROPERTIES:
+:PACKAGE:  svg-tag-mode
+:STRAIGHT: (svg-tag-mode :type git :host github :repo "rougier/svg-tag-mode")
+:CATEGORY: utils
+:VERSION:  latest
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Replace keywords and patterns with SVG tags for a modern visual appearance.
+
+This package provides a minor mode to replace specific keywords or regular expressions with SVG tags. Perfect for making org-mode documents and code more visually appealing.
+
+Repository: [[https://github.com/rougier/svg-tag-mode][GitHub]]
+
+Version: latest
+
+** Dependencies
+:PROPERTIES:
+:tangle: no
+:END:
+
+No additional dependencies.
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; Optional pre-configuration
+#+end_src
+
+** Configuration
+
+#+begin_src emacs-lisp
+;; Enable svg-tag-mode globally or in specific modes
+;; (add-hook 'org-mode-hook 'svg-tag-mode)
+
+;; Configure custom tags
+;; (setq svg-tag-tags
+;;       '(("TODO" . ((lambda (tag) (svg-tag-make tag :face 'org-todo))))))
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+;; Add keybindings if needed
+#+end_src
