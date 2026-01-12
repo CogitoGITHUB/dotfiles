@@ -66,13 +66,13 @@
 ** Org-Based Configuration System
 
 #+begin_src emacs-lisp :tangle init.el
-;;──────────────────────────────────────────────────────────
-;; Org-Based Configuration System
-;;──────────────────────────────────────────────────────────
+  ;;──────────────────────────────────────────────────────────
+  ;; Org-Based Configuration System
+  ;;──────────────────────────────────────────────────────────
 
-(add-to-list 'load-path (expand-file-name "lisp/literate-config-emacs" user-emacs-directory))
-(require 'literate-config-emacs)
-(literate-config-emacs-enable)
+
+   (load "/home/asdf/.config/emacs/lisp/literate-config-emacs/literate-config-loader.el")
+   (literate-config-initialize)
 
 #+end_src
 

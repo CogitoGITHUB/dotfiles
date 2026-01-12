@@ -54,9 +54,9 @@
 ;; Org-Based Configuration System
 ;;──────────────────────────────────────────────────────────
 
-(add-to-list 'load-path (expand-file-name "lisp/literate-config-emacs" user-emacs-directory))
-(require 'literate-config-emacs)
-(literate-config-emacs-enable)
+
+ (load "/home/asdf/.config/emacs/lisp/literate-config-emacs/literate-config-loader.el")
+ (literate-config-initialize)
 
 (defvar my/agent-shell-opencode-config
   '(:provider "opencode"
@@ -76,4 +76,4 @@
          agent-shell-preferred-agent-config my/agent-shell-opencode-config
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
-   (defalias 'ai 'agent-shell-opencode-start-agent))
+   (defalias 'ai 'opencode))

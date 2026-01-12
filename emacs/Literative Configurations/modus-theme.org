@@ -1,250 +1,388 @@
-* Modus Themes — Grey Foundation
-  :PROPERTIES:
-  :PACKAGE:  modus-themes
-  :STRAIGHT: (modus-themes :type git :host github :repo "protesilaos/modus-themes")
-  :END:
+* Modus Themes — Pure Black-on-White Foundation
+:PROPERTIES:
+:PACKAGE:  modus-themes
+:STRAIGHT: (modus-themes :type git :host github :repo "protesilaos/modus-themes")
+:VERSION:  v4.4.0
+:CATEGORY: ui
+:END:
 
-** Core Setup :init:
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Modus Themes by Protesilaos Stavrou, configured here for pure black text on 
+white background with no color accents. Selection highlights use a subtle grey.
+
+Repository: [[https://github.com/protesilaos/modus-themes][GitHub]]
+
+** Core Setup
+:PROPERTIES:
+:tangle: init
+:END:
+
 #+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MODUS THEMES — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
 (setq modus-themes-bold-constructs t
-modus-themes-italic-constructs t
-modus-themes-org-blocks 'gray-background
-modus-themes-fringes 'intense
-modus-themes-mode-line '(borderless))
+      modus-themes-italic-constructs t
+      modus-themes-org-blocks 'gray-background
+      modus-themes-fringes 'intense
+      modus-themes-mode-line '(borderless))
 #+end_src
 
-** Load Theme :config:
+** Load Theme
+
 #+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MODUS THEMES — LOAD BASE THEME
+;; ════════════════════════════════════════════════════════════
+
 (load-theme 'modus-operandi :no-confirm)
 #+end_src
 
-** Grey Override Function :config:
+** Pure Black-on-White Override Function
+
 #+begin_src emacs-lisp
-(defun shapeshift/grey-world ()
-"Pure grey-on-grey monochrome for everything."
+;; ════════════════════════════════════════════════════════════
+;; § PURE BLACK-ON-WHITE — MONOCHROME OVERRIDE
+;; ════════════════════════════════════════════════════════════
 
-;; Canvas
-(set-face-attribute 'default nil
-:foreground "#000000"
-:background "#e0e0e0")
-(set-face-attribute 'fringe nil
-:background "#e0e0e0"
-:foreground "#000000")
-
-;; Org hierarchy
-(dolist (level '(org-document-title org-level-1 org-level-2 org-level-3
-org-level-4 org-level-5 org-level-6 org-level-7 org-level-8))
-(set-face-attribute level nil
-:foreground "#000000"
-:weight 'bold
-:inherit nil))
-(set-face-attribute 'org-document-title nil :height 2.0)
-(set-face-attribute 'org-level-1 nil :height 1.8)
-(set-face-attribute 'org-level-2 nil :height 1.6)
-(set-face-attribute 'org-level-3 nil :height 1.4)
-(set-face-attribute 'org-level-4 nil :height 1.2)
-
-;; Org elements
-(dolist (face '(org-link org-block org-block-begin-line org-block-end-line
-org-code org-verbatim org-meta-line org-todo org-done))
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#dcdcdc"
-:weight 'bold
-:inherit nil))
-
-;; Code syntax highlighting
-(dolist (face '(font-lock-comment-face
-font-lock-string-face
-font-lock-keyword-face
-font-lock-function-name-face
-font-lock-variable-name-face
-font-lock-type-face
-font-lock-constant-face
-font-lock-builtin-face
-font-lock-warning-face
-font-lock-doc-face))
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:inherit nil))
-
-;; LaTeX faces
-(with-eval-after-load 'tex-mode
-(dolist (face '(font-latex-math-face
-font-latex-script-char-face
-font-latex-string-face
-font-latex-warning-face
-font-latex-sedate-face
-font-latex-sectioning-0-face
-font-latex-sectioning-1-face
-font-latex-sectioning-2-face
-font-latex-sectioning-3-face
-font-latex-sectioning-4-face
-font-latex-sectioning-5-face))
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:inherit nil)))
-
-;; Dired
-(with-eval-after-load 'dired
-(dolist (face '(dired-directory
-dired-symlink
-dired-mark
-dired-marked
-dired-flagged
-dired-warning
-dired-perm-write
-dired-special
-dired-header
-dired-ignored))
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:weight 'bold
-:inherit nil)))
-
-;; Magit
-(with-eval-after-load 'magit
-(dolist (face '(magit-section-heading
-magit-section-highlight
-magit-branch-local
-magit-branch-remote
-magit-branch-current
-magit-hash
-magit-tag
-magit-diff-added
-magit-diff-removed
-magit-diff-added-highlight
-magit-diff-removed-highlight
-magit-diff-context
-magit-diff-context-highlight
-magit-diff-hunk-heading
-magit-diff-hunk-heading-highlight
-magit-diff-file-heading
-magit-diff-file-heading-highlight
-magit-log-author
-magit-log-date
-magit-log-graph
-magit-process-ok
-magit-process-ng
-magit-signature-good
-magit-signature-bad
-magit-signature-untrusted
-magit-cherry-equivalent
-magit-cherry-unmatched))
-(when (facep face)
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:inherit nil))))
-
-;; PDF-tools
-(with-eval-after-load 'pdf-view
-(setq pdf-view-midnight-colors '("#000000" . "#e0e0e0")))
-
-;; Line numbers
-(when (facep 'line-number)
-(set-face-attribute 'line-number nil
-:foreground "#000000"
-:background "#e0e0e0")
-(set-face-attribute 'line-number-current-line nil
-:foreground "#000000"
-:background "#dcdcdc"
-:weight 'bold))
-
-;; Highlighting
-(with-eval-after-load 'hl-line
-(set-face-attribute 'hl-line nil
-:background "#dcdcdc"
-:inherit nil))
-(set-face-attribute 'region nil
-:background "#cfcfcf"
-:foreground "#000000")
-(set-face-attribute 'highlight nil
-:background "#cfcfcf"
-:foreground "#000000")
-
-;; Minibuffer
-(dolist (face '(minibuffer-prompt completions-annotations completions-common-part
-completions-first-difference shadow help-key-binding))
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:weight 'bold
-:inherit nil))
-
-(when (facep 'completions-highlight)
-(set-face-attribute 'completions-highlight nil
-:foreground "#000000"
-:background "#dcdcdc"
-:inherit nil))
-
-;; Vertico
-(with-eval-after-load 'vertico
-(dolist (face '(vertico-current vertico-group-title vertico-group-separator vertico-multiline))
-(when (facep face)
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#dcdcdc"
-:inherit nil))))
-
-;; Orderless
-(with-eval-after-load 'orderless
-(dolist (face '(orderless-match-face-0 orderless-match-face-1
-orderless-match-face-2 orderless-match-face-3))
-(set-face-attribute face nil
-:foreground "#000000"
-:weight 'bold
-:background "#e0e0e0"
-:inherit nil)))
-
-;; Ivy
-(with-eval-after-load 'ivy
-(dolist (face '(ivy-current-match
-ivy-minibuffer-match-face-1
-ivy-minibuffer-match-face-2
-ivy-minibuffer-match-face-3
-ivy-minibuffer-match-face-4
-ivy-action
-ivy-highlight-face
-ivy-remote
-ivy-subdir
-ivy-virtual
-ivy-confirm-face
-ivy-match-required-face))
-(when (facep face)
-(set-face-attribute face nil
-:foreground "#000000"
-:weight 'bold
-:background "#e0e0e0"
-:inherit nil))))
-
-;; Helm
-(with-eval-after-load 'helm
-(dolist (face '(helm-selection helm-match helm-source-header helm-visible-mark
-helm-candidate-number helm-separator helm-M-x-key
-helm-buffer-directory helm-buffer-file helm-buffer-process
-helm-ff-directory helm-ff-file helm-grep-match))
-(when (facep face)
-(set-face-attribute face nil
-:foreground "#000000"
-:background "#e0e0e0"
-:weight 'bold
-:inherit nil)))))
+(defun shapeshift/pure-monochrome ()
+  "Pure black text on white background for everything.
+Only selection uses grey highlight."
+  
+  ;; ──────────────────────────────────────────────
+  ;; Canvas — Pure white background, black text
+  ;; ──────────────────────────────────────────────
+  (set-face-attribute 'default nil
+                      :foreground "#000000"
+                      :background "#ffffff")
+  
+  (set-face-attribute 'fringe nil
+                      :background "#ffffff"
+                      :foreground "#000000")
+  
+  ;; ──────────────────────────────────────────────
+  ;; Selection — Grey highlight only
+  ;; ──────────────────────────────────────────────
+  (set-face-attribute 'region nil
+                      :background "#d0d0d0"
+                      :foreground "#000000")
+  
+  (set-face-attribute 'highlight nil
+                      :background "#d0d0d0"
+                      :foreground "#000000")
+  
+  ;; ──────────────────────────────────────────────
+  ;; Org hierarchy — Black text, varying sizes
+  ;; ──────────────────────────────────────────────
+  (dolist (level '(org-document-title org-level-1 org-level-2 org-level-3
+                   org-level-4 org-level-5 org-level-6 org-level-7 org-level-8))
+    (set-face-attribute level nil
+                        :foreground "#000000"
+                        :background "#ffffff"
+                        :weight 'bold
+                        :inherit nil))
+  
+  (set-face-attribute 'org-document-title nil :height 2.0)
+  (set-face-attribute 'org-level-1 nil :height 1.8)
+  (set-face-attribute 'org-level-2 nil :height 1.6)
+  (set-face-attribute 'org-level-3 nil :height 1.4)
+  (set-face-attribute 'org-level-4 nil :height 1.2)
+  
+  ;; ──────────────────────────────────────────────
+  ;; Org elements — Pure black on white
+  ;; ──────────────────────────────────────────────
+  (dolist (face '(org-link org-block org-block-begin-line org-block-end-line
+                  org-code org-verbatim org-meta-line org-todo org-done
+                  org-date org-special-keyword org-tag org-drawer
+                  org-property-value org-table))
+    (set-face-attribute face nil
+                        :foreground "#000000"
+                        :background "#ffffff"
+                        :weight 'normal
+                        :inherit nil))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Code syntax — All black, no highlighting
+  ;; ──────────────────────────────────────────────
+  (dolist (face '(font-lock-comment-face
+                  font-lock-string-face
+                  font-lock-keyword-face
+                  font-lock-function-name-face
+                  font-lock-variable-name-face
+                  font-lock-type-face
+                  font-lock-constant-face
+                  font-lock-builtin-face
+                  font-lock-warning-face
+                  font-lock-doc-face
+                  font-lock-preprocessor-face
+                  font-lock-regexp-grouping-backslash
+                  font-lock-regexp-grouping-construct))
+    (set-face-attribute face nil
+                        :foreground "#000000"
+                        :background "#ffffff"
+                        :weight 'normal
+                        :inherit nil))
+  
+  ;; ──────────────────────────────────────────────
+  ;; LaTeX faces — Pure black
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'tex-mode
+    (dolist (face '(font-latex-math-face
+                    font-latex-script-char-face
+                    font-latex-string-face
+                    font-latex-warning-face
+                    font-latex-sedate-face
+                    font-latex-sectioning-0-face
+                    font-latex-sectioning-1-face
+                    font-latex-sectioning-2-face
+                    font-latex-sectioning-3-face
+                    font-latex-sectioning-4-face
+                    font-latex-sectioning-5-face))
+      (set-face-attribute face nil
+                          :foreground "#000000"
+                          :background "#ffffff"
+                          :inherit nil)))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Dired — Pure black
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'dired
+    (dolist (face '(dired-directory
+                    dired-symlink
+                    dired-mark
+                    dired-marked
+                    dired-flagged
+                    dired-warning
+                    dired-perm-write
+                    dired-special
+                    dired-header
+                    dired-ignored))
+      (set-face-attribute face nil
+                          :foreground "#000000"
+                          :background "#ffffff"
+                          :weight 'normal
+                          :inherit nil)))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Magit — Pure black, no colors
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'magit
+    (dolist (face '(magit-section-heading
+                    magit-section-highlight
+                    magit-branch-local
+                    magit-branch-remote
+                    magit-branch-current
+                    magit-hash
+                    magit-tag
+                    magit-diff-added
+                    magit-diff-removed
+                    magit-diff-added-highlight
+                    magit-diff-removed-highlight
+                    magit-diff-context
+                    magit-diff-context-highlight
+                    magit-diff-hunk-heading
+                    magit-diff-hunk-heading-highlight
+                    magit-diff-file-heading
+                    magit-diff-file-heading-highlight
+                    magit-log-author
+                    magit-log-date
+                    magit-log-graph
+                    magit-process-ok
+                    magit-process-ng
+                    magit-signature-good
+                    magit-signature-bad
+                    magit-signature-untrusted
+                    magit-cherry-equivalent
+                    magit-cherry-unmatched))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#000000"
+                            :background "#ffffff"
+                            :weight 'normal
+                            :inherit nil))))
+  
+  ;; ──────────────────────────────────────────────
+  ;; PDF-tools — Black on white
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'pdf-view
+    (setq pdf-view-midnight-colors '("#000000" . "#ffffff")))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Line numbers
+  ;; ──────────────────────────────────────────────
+  (when (facep 'line-number)
+    (set-face-attribute 'line-number nil
+                        :foreground "#000000"
+                        :background "#ffffff")
+    (set-face-attribute 'line-number-current-line nil
+                        :foreground "#000000"
+                        :background "#ffffff"
+                        :weight 'bold))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Current line highlight — Subtle grey
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'hl-line
+    (set-face-attribute 'hl-line nil
+                        :background "#f5f5f5"
+                        :inherit nil))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Minibuffer — Pure black
+  ;; ──────────────────────────────────────────────
+  (dolist (face '(minibuffer-prompt 
+                  completions-annotations 
+                  completions-common-part
+                  completions-first-difference 
+                  shadow 
+                  help-key-binding))
+    (set-face-attribute face nil
+                        :foreground "#000000"
+                        :background "#ffffff"
+                        :weight 'normal
+                        :inherit nil))
+  
+  (when (facep 'completions-highlight)
+    (set-face-attribute 'completions-highlight nil
+                        :foreground "#000000"
+                        :background "#d0d0d0"
+                        :inherit nil))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Vertico — Pure black with grey selection
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'vertico
+    (dolist (face '(vertico-current 
+                    vertico-group-title 
+                    vertico-group-separator 
+                    vertico-multiline))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#000000"
+                            :background (if (eq face 'vertico-current) "#d0d0d0" "#ffffff")
+                            :inherit nil))))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Orderless — Pure black
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'orderless
+    (dolist (face '(orderless-match-face-0 
+                    orderless-match-face-1
+                    orderless-match-face-2 
+                    orderless-match-face-3))
+      (set-face-attribute face nil
+                          :foreground "#000000"
+                          :weight 'bold
+                          :background "#ffffff"
+                          :inherit nil)))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Ivy — Pure black with grey selection
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'ivy
+    (dolist (face '(ivy-current-match
+                    ivy-minibuffer-match-face-1
+                    ivy-minibuffer-match-face-2
+                    ivy-minibuffer-match-face-3
+                    ivy-minibuffer-match-face-4
+                    ivy-action
+                    ivy-highlight-face
+                    ivy-remote
+                    ivy-subdir
+                    ivy-virtual
+                    ivy-confirm-face
+                    ivy-match-required-face))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#000000"
+                            :background (if (eq face 'ivy-current-match) "#d0d0d0" "#ffffff")
+                            :weight 'normal
+                            :inherit nil))))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Helm — Pure black with grey selection
+  ;; ──────────────────────────────────────────────
+  (with-eval-after-load 'helm
+    (dolist (face '(helm-selection 
+                    helm-match 
+                    helm-source-header 
+                    helm-visible-mark
+                    helm-candidate-number 
+                    helm-separator 
+                    helm-M-x-key
+                    helm-buffer-directory 
+                    helm-buffer-file 
+                    helm-buffer-process
+                    helm-ff-directory 
+                    helm-ff-file 
+                    helm-grep-match))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#000000"
+                            :background (if (eq face 'helm-selection) "#d0d0d0" "#ffffff")
+                            :weight 'normal
+                            :inherit nil))))
+  
+  ;; ──────────────────────────────────────────────
+  ;; Mode line — Pure black on white
+  ;; ──────────────────────────────────────────────
+  (set-face-attribute 'mode-line nil
+                      :foreground "#000000"
+                      :background "#ffffff"
+                      :box nil)
+  
+  (set-face-attribute 'mode-line-inactive nil
+                      :foreground "#000000"
+                      :background "#ffffff"
+                      :box nil)
+  
+  ;; ──────────────────────────────────────────────
+  ;; Header line
+  ;; ──────────────────────────────────────────────
+  (set-face-attribute 'header-line nil
+                      :foreground "#000000"
+                      :background "#ffffff"
+                      :box nil
+                      :inherit nil)
+  
+  ;; ──────────────────────────────────────────────
+  ;; Cursor — Black
+  ;; ──────────────────────────────────────────────
+  (set-face-attribute 'cursor nil
+                      :background "#000000"))
 #+end_src
 
-** Apply Grey :config:
+** Apply Pure Monochrome
+
 #+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § PURE MONOCHROME — APPLY & PERSIST
+;; ════════════════════════════════════════════════════════════
+
 ;; Apply immediately
-(shapeshift/grey-world)
+(shapeshift/pure-monochrome)
 
 ;; Persist after theme reload
 (advice-add 'load-theme :after
-(lambda (&rest _) (shapeshift/grey-world)))
+            (lambda (&rest _) (shapeshift/pure-monochrome)))
 
 ;; Apply after making frames
 (add-hook 'after-make-frame-functions
-(lambda (_frame) (shapeshift/grey-world)))
+          (lambda (_frame) (shapeshift/pure-monochrome)))
 #+end_src
+
+** Performance Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+The pure monochrome override applies face attributes globally after theme load.
+This ensures consistent black-on-white appearance across all modes and packages.
+
+Selection uses grey (#d0d0d0) for visibility, all other text is pure black (#000000)
+on white (#ffffff) background.

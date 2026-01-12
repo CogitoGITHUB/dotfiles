@@ -3,6 +3,9 @@
 ;; Copyright (C) 2025
 ;; Package-Requires: ((emacs "26.1") (org "9.0"))
 
+;;; Commentary:
+;; Package scanning, category detection, and profiling for literate configs.
+
 ;;; Code:
 
 (require 'org)
@@ -63,6 +66,9 @@
                   :after (alist-get "AFTER" props nil nil #'string=)
                   :category (alist-get "CATEGORY" props nil nil #'string=)
                   :lazy (alist-get "LAZY" props nil nil #'string=)
+                  :version (alist-get "VERSION" props nil nil #'string=)
+                  :enforce-version (alist-get "ENFORCE-VERSION" props nil nil #'string=)
+                  :built-in (alist-get "BUILT-IN" props nil nil #'string=)
                   :status 'unknown))))
     (error
      (message "Error scanning %s: %s" file (error-message-string err))
@@ -71,13 +77,14 @@
 (defun literate-config-scanner-scan-all ()
   "Scan all package .org files and populate package database."
   (setq literate-config-scanner--packages nil)
-  (let ((files (directory-files-recursively 
-                literate-config-emacs-org-directory
-                "^[^#.].*\\.org$")))
-    (dolist (file files)
-      (when-let* ((props (literate-config-scanner--extract-properties file))
-                  (package (plist-get props :package)))
-        (push (cons package props) literate-config-scanner--packages)))))
+  (when (file-exists-p literate-config-emacs-org-directory)
+    (let ((files (directory-files-recursively 
+                  literate-config-emacs-org-directory
+                  "^[^#.].*\\.org$")))
+      (dolist (file files)
+        (when-let* ((props (literate-config-scanner--extract-properties file))
+                    (package (plist-get props :package)))
+          (push (cons package props) literate-config-scanner--packages))))))
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § PROFILING

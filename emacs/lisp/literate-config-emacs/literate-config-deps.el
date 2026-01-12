@@ -3,6 +3,9 @@
 ;; Copyright (C) 2025
 ;; Package-Requires: ((emacs "26.1"))
 
+;;; Commentary:
+;; Smart dependency detection and resolution for package configurations.
+
 ;;; Code:
 
 (require 'cl-lib)
@@ -12,12 +15,7 @@
 ;; ════════════════════════════════════════════════════════════════════
 
 (defconst literate-config-deps--rules
-  '(("evil-collection" . ("evil"))
-    ("evil-surround" . ("evil"))
-    ("evil-nerd-commenter" . ("evil"))
-    ("evil-numbers" . ("evil"))
-    ("evil-matchit" . ("evil"))
-    ("lsp-ui" . ("lsp-mode"))
+  ' ("lsp-ui" . ("lsp-mode"))
     ("lsp-treemacs" . ("lsp-mode" "treemacs"))
     ("company-lsp" . ("company" "lsp-mode"))
     ("helm-lsp" . ("helm" "lsp-mode"))
@@ -28,7 +26,6 @@
     ("org-modern" . ("org"))
     ("magit-forge" . ("magit"))
     ("magit-todos" . ("magit"))
-    ("doom-modeline" . ("all-the-icons"))
     ("treemacs-evil" . ("treemacs" "evil"))
     ("treemacs-projectile" . ("treemacs" "projectile"))
     ("counsel-projectile" . ("counsel" "projectile"))

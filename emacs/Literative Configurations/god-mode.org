@@ -1,0 +1,95 @@
+
+* GOD-MODE — Modal Editing
+:PROPERTIES:
+:PACKAGE:  god-mode
+:STRAIGHT: (god-mode :type git :host github :repo "emacsorphanage/god-mode")
+:CATEGORY: editing
+:VERSION:  2.18.0
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+God mode configuration for Emacs. Provides modal editing similar to Vim's normal mode.
+
+Repository: [[https://github.com/emacsorphanage/god-mode][GitHub]]
+
+Version: 2.18.0
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GOD-MODE — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'god-mode)
+
+#+end_src
+
+** Configuration
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GOD-MODE — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Don't enable god-mode globally if using helix-mode
+;; Instead, use it as an alternative modal system
+;; (god-mode-all)
+
+;; Update cursor appearance in god-mode
+(defun my-god-mode-update-cursor ()
+  "Update cursor appearance based on god-mode state."
+  (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        'box
+                      'bar)))
+
+(add-hook 'post-command-hook #'my-god-mode-update-cursor)
+
+;; Show god-mode state in mode-line
+(add-to-list 'mode-line-format
+             '(:eval (if god-local-mode " [GOD]" "")))
+
+;; Exempt certain modes from god-mode
+(dolist (mode '(special-mode
+                dired-mode
+                ibuffer-mode
+                Custom-mode))
+  (add-to-list 'god-exempt-major-modes mode))
+
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GOD-MODE — KEYBINDINGS
+;; ════════════════════════════════════════════════════════════
+
+;; Toggle god-mode
+(global-set-key (kbd "<escape>") #'god-mode-all)
+(global-set-key (kbd "C-c g") #'god-local-mode)
+
+;; Exit god-mode with 'i' (insert mode)
+(define-key god-local-mode-map (kbd "i") #'god-local-mode)
+
+;; Convenient access to C-x and C-c prefixes
+(define-key god-local-mode-map (kbd ".") #'repeat)
+(define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+(define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+
+#+end_src
+
+** Performance Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+Startup time will be tracked automatically.
+

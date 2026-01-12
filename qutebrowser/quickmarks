@@ -12,3 +12,5 @@ docker hub https://hub.docker.com/repositories/vlasceanupaulinoionut
 gemini https://gemini.google.com/app
 gitlab https://gitlab.com/
 whatsapp https://web.whatsapp.com/
+workflows http://localhost:5678/home/workflows
+slack https://app.slack.com/client/T0A7Z3WGKK8/C0A8VE25JC8?entry_point=redirect_flow

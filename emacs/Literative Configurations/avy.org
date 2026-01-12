@@ -1,0 +1,105 @@
+
+* AVY — Jump Navigation
+:PROPERTIES:
+:PACKAGE:  avy
+:STRAIGHT: avy
+:CATEGORY: navigation
+:VERSION:  0.5.0
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Avy configuration for Emacs. Jump to visible text using character-based decision tree.
+
+Version: 0.5.0
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § AVY — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'avy)
+
+#+end_src
+
+** Configuration
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § AVY — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Use home row keys for avy jumps
+(setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+;; Highlight first decision char with a custom face
+(setq avy-highlight-first t)
+
+;; Use a gray background for avy overlays
+(setq avy-background t)
+
+;; All windows mode by default
+(setq avy-all-windows t)
+
+;; Case sensitivity
+(setq avy-case-fold-search t)
+
+;; Timeout for char input (in seconds)
+(setq avy-timeout-seconds 0.5)
+
+;; Style of avy overlays
+(setq avy-style 'at-full)
+
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § AVY — KEYBINDINGS
+;; ════════════════════════════════════════════════════════════
+
+;; Jump to char
+(global-set-key (kbd "C-:") #'avy-goto-char)
+(global-set-key (kbd "C-'") #'avy-goto-char-2)
+
+;; Jump to line
+(global-set-key (kbd "M-g f") #'avy-goto-line)
+(global-set-key (kbd "M-g w") #'avy-goto-word-1)
+
+;; Jump to word beginning
+(global-set-key (kbd "C-c j w") #'avy-goto-word-0)
+(global-set-key (kbd "C-c j c") #'avy-goto-char)
+
+;; Jump and copy region
+(global-set-key (kbd "C-c j y") #'avy-copy-region)
+(global-set-key (kbd "C-c j k") #'avy-kill-region)
+(global-set-key (kbd "C-c j m") #'avy-move-region)
+
+;; Avy integration with god-mode
+(with-eval-after-load 'god-mode
+  (define-key god-local-mode-map (kbd "j") #'avy-goto-char)
+  (define-key god-local-mode-map (kbd "J") #'avy-goto-char-2))
+
+;; Avy integration with helix-mode
+(with-eval-after-load 'helix
+  (helix-define-key 'normal (kbd "SPC j") #'avy-goto-char)
+  (helix-define-key 'normal (kbd "SPC J") #'avy-goto-line))
+
+#+end_src
+
+** Performance Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+Startup time will be tracked automatically.
+

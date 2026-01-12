@@ -3,9 +3,13 @@
 ;; Copyright (C) 2025
 ;; Package-Requires: ((emacs "26.1"))
 
+;;; Commentary:
+;; Template generation for new package configurations with version detection.
+
 ;;; Code:
 
 (require 'literate-config-deps)
+(require 'literate-config-version)
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § GITHUB URL PARSER
@@ -17,18 +21,21 @@ Returns (package-name . user/repo) or nil if invalid."
   (when (stringp url)
     (let ((clean-url (string-trim url)))
       (cond
+       ;; Full GitHub URL
        ((string-match "https?://github\\.com/\\([^/]+\\)/\\([^/\n]+?\\)\\(?:\\.git\\)?/?$" clean-url)
         (let* ((user (match-string 1 clean-url))
                (repo (match-string 2 clean-url))
                (package-name (replace-regexp-in-string "\\.el$" "" repo)))
           (cons package-name (format "%s/%s" user repo))))
        
+       ;; user/repo format
        ((string-match "^\\([^/]+\\)/\\([^/\n]+\\)$" clean-url)
         (let* ((user (match-string 1 clean-url))
                (repo (match-string 2 clean-url))
                (package-name (replace-regexp-in-string "\\.el$" "" repo)))
           (cons package-name (format "%s/%s" user repo))))
        
+       ;; Just package name
        ((string-match "^[a-zA-Z0-9-]+$" clean-url)
         (cons clean-url nil))
        
@@ -44,11 +51,12 @@ Returns (package-name . user/repo) or nil if invalid."
       (format "(%s :type git :host github :repo \"%s\")" package-name repo-path)
     package-name))
 
-(defun literate-config-templates--generate (package-name repo-path dependencies category)
+(defun literate-config-templates--generate (package-name repo-path dependencies category version)
   "Generate org template for PACKAGE-NAME.
 REPO-PATH: GitHub user/repo path
 DEPENDENCIES: list of dependency package names
-CATEGORY: package category"
+CATEGORY: package category
+VERSION: detected version string"
   (let* ((pkg-upper (upcase package-name))
          (desc (capitalize (replace-regexp-in-string "-" " " package-name)))
          (straight-spec (literate-config-templates--generate-straight-spec package-name repo-path))
@@ -64,15 +72,24 @@ CATEGORY: package category"
        (format ":AFTER:    %s\n" after-clause))
      (when category
        (format ":CATEGORY: %s\n" category))
-     ":PROFILE:  t\n"
+     (when version
+       (format ":VERSION:  %s\n" version))
      ":END:\n\n"
      
-     (format "** Description\n\n")
+     "** Description\n"
+     ":PROPERTIES:\n"
+     ":tangle: no\n"
+     ":END:\n\n"
      (format "%s configuration for Emacs.\n\n" desc)
      (when repo-path
        (format "Repository: [[https://github.com/%s][GitHub]]\n\n" repo-path))
+     (when version
+       (format "Version: %s\n\n" version))
      
-     "** Initialization :init:\n"
+     "** Initialization\n"
+     ":PROPERTIES:\n"
+     ":tangle: init\n"
+     ":END:\n\n"
      "#+begin_src emacs-lisp\n"
      ";; ════════════════════════════════════════════════════════════\n"
      (format ";; § %s — INITIALIZATION\n" pkg-upper)
@@ -80,7 +97,7 @@ CATEGORY: package category"
      (format "(require '%s)\n\n" package-name)
      "#+end_src\n\n"
      
-     "** Configuration :config:\n"
+     "** Configuration\n\n"
      "#+begin_src emacs-lisp\n"
      ";; ════════════════════════════════════════════════════════════\n"
      (format ";; § %s — CONFIGURATION\n" pkg-upper)
@@ -88,7 +105,7 @@ CATEGORY: package category"
      ";; Add configuration here\n\n"
      "#+end_src\n\n"
      
-     "** Keybindings :config:\n"
+     "** Keybindings\n\n"
      "#+begin_src emacs-lisp\n"
      ";; ════════════════════════════════════════════════════════════\n"
      (format ";; § %s — KEYBINDINGS\n" pkg-upper)
@@ -96,7 +113,10 @@ CATEGORY: package category"
      ";; Add keybindings here\n\n"
      "#+end_src\n\n"
      
-     "** Performance Notes\n\n"
+     "** Performance Notes\n"
+     ":PROPERTIES:\n"
+     ":tangle: no\n"
+     ":END:\n\n"
      "Startup time will be tracked automatically.\n\n")))
 
 (provide 'literate-config-templates)

@@ -1,0 +1,96 @@
+* HELIX — Helix-Inspired Modal Editing
+:PROPERTIES:
+:PACKAGE:  helix
+:STRAIGHT: (helix :type git :host github :repo "mgmarlow/helix-mode")
+:AFTER:    multiple-cursors
+:CATEGORY: editing
+:VERSION:  0.1.0
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Helix modal editing for Emacs. Brings Helix editor keybindings and selection-first workflow to Emacs.
+
+Repository: [[https://github.com/mgmarlow/helix-mode][GitHub]]
+
+Version: 0.1.0
+
+Requires Emacs >= 29.1
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § HELIX — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'helix)
+
+#+end_src
+
+** Configuration
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § HELIX — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Enable helix-mode globally
+(helix-mode)
+
+;; Enable multiple-cursors integration
+(when (featurep 'multiple-cursors)
+  (helix-multiple-cursors-setup))
+
+;; Optional: Enable "jj" as escape sequence
+;; (helix-jj-setup 0.2)
+
+;; Configure relative line numbers in normal mode
+(add-hook 'helix-normal-mode-hook
+          (lambda ()
+            (setq display-line-numbers 'relative)))
+
+(add-hook 'helix-insert-mode-hook
+          (lambda ()
+            (setq display-line-numbers t)))
+
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § HELIX — KEYBINDINGS
+;; ════════════════════════════════════════════════════════════
+
+;; Toggle helix-normal-mode in buffer
+(global-set-key (kbd "C-c h") #'helix-normal-mode)
+
+;; Example custom keybindings using helix-define-key
+;; (helix-define-key 'normal (kbd "C-j") #'scroll-up-command)
+;; (helix-define-key 'normal (kbd "C-k") #'scroll-down-command)
+
+;; Example custom typable command
+;; (helix-define-typable-command "my-command" #'my-function
+;;   "Custom command description")
+
+#+end_src
+
+** Performance Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+Startup time will be tracked automatically.
+
+
+
+
+
+

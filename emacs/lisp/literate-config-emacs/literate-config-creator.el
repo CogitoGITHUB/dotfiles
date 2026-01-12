@@ -3,11 +3,15 @@
 ;; Copyright (C) 2025
 ;; Package-Requires: ((emacs "26.1"))
 
+;;; Commentary:
+;; Interactive commands for creating and editing package configurations.
+
 ;;; Code:
 
 (require 'literate-config-templates)
 (require 'literate-config-deps)
 (require 'literate-config-scanner)
+(require 'literate-config-version)
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § CONFIGURATION
@@ -67,6 +71,19 @@
              (repo-path (cdr parsed))
              (category (literate-config-scanner--detect-category package-name))
              
+             ;; Generate straight spec for version detection
+             (straight-spec (literate-config-templates--generate-straight-spec 
+                             package-name repo-path))
+             
+             ;; Detect version
+             (detected-version (literate-config-version--detect-for-new-package 
+                                package-name straight-spec))
+             (version (if detected-version
+                          (if (y-or-n-p (format "Detected version: %s. Use this? " detected-version))
+                              detected-version
+                            (read-string "Version (e.g., v1.0.0): " "v"))
+                        (read-string "Version (e.g., v1.0.0): " "v")))
+             
              ;; Get dependencies
              (guessed-deps (literate-config-deps--resolve-dependencies package-name))
              (deps-prompt (if guessed-deps
@@ -81,7 +98,7 @@
              
              ;; Generate template
              (content (literate-config-templates--generate 
-                      package-name repo-path dependencies category))
+                      package-name repo-path dependencies category version))
              
              ;; Create file
              (filepath (literate-config-creator--create-file 
@@ -90,7 +107,7 @@
         ;; Open file
         (find-file filepath)
         (org-mode)
-        (message "Created %s in %s" package-name category)))))
+        (message "Created %s in %s with version %s" package-name category version)))))
 
 ;;;###autoload
 (defun literate-config-create-package-from-name (package-name)
@@ -99,8 +116,9 @@
   (let* ((repo-path nil)
          (dependencies (literate-config-deps--resolve-dependencies package-name))
          (category (literate-config-scanner--detect-category package-name))
+         (version (read-string (format "Version for %s (e.g., v1.0.0): " package-name) "v"))
          (content (literate-config-templates--generate 
-                  package-name repo-path dependencies category))
+                  package-name repo-path dependencies category version))
          (filepath (literate-config-creator--create-file 
                    package-name content category)))
     (find-file filepath)
