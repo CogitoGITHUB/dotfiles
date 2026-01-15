@@ -35,7 +35,6 @@ Requires Emacs >= 29.1
 #+end_src
 
 ** Configuration
-
 #+begin_src emacs-lisp
 ;; ════════════════════════════════════════════════════════════
 ;; § HELIX — CONFIGURATION
@@ -85,7 +84,7 @@ Requires Emacs >= 29.1
 ** Performance Notes
 :PROPERTIES:
 :tangle: no
-:END:
+:jjjjEND:
 
 Startup time will be tracked automatically.
 

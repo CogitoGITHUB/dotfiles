@@ -50,9 +50,6 @@
            (fringe-mode . 0)
            (mode-line-format . nil)))  ;; hide mode line
 
-(load-file "/home/asdf/.config/emacs/lisp/literate-config-system/literate-config-system.el")
-(literate-config-initialize)
-
 (defvar my/agent-shell-opencode-config
   '(:provider "opencode"
     :model "gpt-4"
@@ -72,3 +69,25 @@
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
    (defalias 'ai 'agent-shell-opencode-start-agent))
+
+(leaf literate-config-system
+  :straight (literate-config-system
+             :type git
+             :host github
+             :repo "CogitoGITHUB/literate-config-system"
+             :files ("*.el"))
+  :init
+  ;; nothing loads yet
+  :config
+  (literate-config-initialize))
+
+(leaf org-mapping
+  :straight (org-mapping
+             :type git
+             :host github
+             :repo "CogitoGITHUB/org-mapping"
+             :files ("*.el"))
+  :after org
+  :hook (org-mode . org-mapping-mode)
+  :config
+  (org-mapping-setup-defaults))

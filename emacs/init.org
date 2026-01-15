@@ -63,12 +63,7 @@
            (mode-line-format . nil)))  ;; hide mode line
 #+end_src
 
-** Org Configuration System
-
-#+begin_src emacs-lisp :tangle init.el
-(load-file "/home/asdf/.config/emacs/lisp/literate-config-system/literate-config-system.el")
-(literate-config-initialize)
-#+end_src
+** Org Configurati
 
 * AI
 #+begin_src emacs-lisp :tangle init.el
@@ -91,4 +86,31 @@
          agent-shell-start-function 'agent-shell-opencode-start-agent)
    :config
    (defalias 'ai 'agent-shell-opencode-start-agent))
+# #+end_src
+* Literate Config System
+#+begin_src emacs-lisp :tangle init.el
+(leaf literate-config-system
+  :straight (literate-config-system
+             :type git
+             :host github
+             :repo "CogitoGITHUB/literate-config-system"
+             :files ("*.el"))
+  :init
+  ;; nothing loads yet
+  :config
+  (literate-config-initialize))
 #+end_src
+* Org Mapping
+#+begin_src emacs-lisp :tangle init.el
+(leaf org-mapping
+  :straight (org-mapping
+             :type git
+             :host github
+             :repo "CogitoGITHUB/org-mapping"
+             :files ("*.el"))
+  :after org
+  :hook (org-mode . org-mapping-mode)
+  :config
+  (org-mapping-setup-defaults))
+#+end_src
+

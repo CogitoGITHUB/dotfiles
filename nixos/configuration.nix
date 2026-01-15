@@ -188,7 +188,9 @@ services.seatd.enable = true;
 
 # --- SYSTEM PACKAGES -------------------------------------------------------
   environment.systemPackages = with pkgs; [
+    cargo
     docker
+    
     lazydocker
     docker-compose
     k3s

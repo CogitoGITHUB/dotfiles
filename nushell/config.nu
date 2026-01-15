@@ -30,5 +30,3 @@ def start_zellij [] {
 start_zellij
 
 
-
-# maybe : https://github.com/lasantosr/intelli-shell
