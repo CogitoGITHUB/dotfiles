@@ -1,3 +1,6 @@
+set $lua_scripts /home/asdf/.config/scroll/scripts
+lua $lua_scripts/center_always.lua
+
 # Start DankMaterialShell
 exec dms run --session
 
@@ -104,10 +107,6 @@ default_decoration border_radius 6 \
 
 # Idle inhibit for fullscreen windows
 for_window [all] inhibit_idle fullscreen
-
-# Center every new window automatically
-for_window [all] exec_always scrollmsg align center
-
 
 # Layout settings — proportional, intentional
 
@@ -277,16 +276,16 @@ bindsym $mod+m mode "modifiers"
 #
 
 # Move your focus around and automatically center the window
-bindsym $mod+$left focus left; align center
-bindsym $mod+$down focus down; align center
-bindsym $mod+$up focus up; align center
-bindsym $mod+$right focus right; align center
+bindsym $mod+$left focus left; 
+bindsym $mod+$down focus down; 
+bindsym $mod+$up focus up; 
+bindsym $mod+$right focus right; 
 
 # Move your focus around and automatically center the window
-bindsym $mod+h focus left; align center
-bindsym $mod+t focus down; align center
-bindsym $mod+n focus up; align center
-bindsym $mod+s focus right; align center
+bindsym $mod+h focus left; 
+bindsym $mod+t focus down; 
+bindsym $mod+n focus up; 
+bindsym $mod+s focus right; 
 
 
 
@@ -707,18 +706,6 @@ bindgesture swipe:4:up scale_workspace overview
 # Workspace rules:
 #
 
-
-# Comment out or remove the entire bar section
-# bar {
-#     position top
-#     status_command while date +'%Y-%m-%d %X'; do sleep 1; done
-#     colors {
-#         statusline #ffffff
-#         background #323232
-#         inactive_workspace #32323200 #32323200 #5c5c5c
-#         scroller #2F343AFF #055E20FF #FFFFFFFF
-#     }
-# }
 
 # Keep the include if you have other configs
 #include @sysconfdir@/scroll/config.d/*
