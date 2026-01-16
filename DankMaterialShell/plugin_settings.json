@@ -13,5 +13,37 @@
   },
   "dankPomodoroTimer": {
     "enabled": true
+  },
+  "dankLauncherKeys": {
+    "enabled": true
+  },
+  "tailscale": {
+    "enabled": true
+  },
+  "powerUsagePlugin": {
+    "enabled": true
+  },
+  "gitmojiLauncher": {
+    "enabled": true
+  },
+  "dockerManager": {
+    "enabled": true,
+    "terminalApp": "wezterm --hold",
+    "shellPath": "/bin/nu"
+  },
+  "kubernetes": {
+    "enabled": true
+  },
+  "worldClock": {
+    "enabled": true,
+    "timezones": [
+      {
+        "timezone": "Asia/Seol",
+        "label": "Seol"
+      }
+    ]
+  },
+  "desktopCommand": {
+    "enabled": true
   }
 }

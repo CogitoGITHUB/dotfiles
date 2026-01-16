@@ -1,49 +1,38 @@
-"$schema" = 'https://starship.rs/config-schema.json'
+"$schema" = "https://starship.rs/config-schema.json"
 
 add_newline = false
 scan_timeout = 10
 
 format = """
-$status$username${hostname}:${directory} $git_branch$git_status
+$status$username${hostname}:${directory} 
 $character
 """
 
 [status]
 disabled = false
 format = "[$symbol]($style)"
-symbol = "✖"
-success_symbol = "◆"
+symbol = "ERROR       "
+success_symbol = "OK     "
 style = "bold red"
 success_style = "bold black"
 
 [username]
-disabled = false
 show_always = true
 style_user = "bold black"
 style_root = "bold red"
 
 [hostname]
-disabled = false
 format = "[$hostname]($style)"
 style = "bold black"
 trim_at = "."
 
 [directory]
+format = "[$path]($style)"
 style = "bold black"
 truncation_length = 3
-truncation_symbol = "…/"
-format = "[$path]($style)"
-
-[git_branch]
-style = "bold black"
-symbol = ""
-format = "⟪$branch⟫ "
-
-[git_status]
-style = "bold red"
-format = "⟦$all_status⟧"
+truncation_symbol = "../"
 
 [character]
-success_symbol = "▮"
-error_symbol = "▯"
-vicmd_symbol = "▱"
+success_symbol = ">"
+error_symbol = "!"
+vicmd_symbol = "<"

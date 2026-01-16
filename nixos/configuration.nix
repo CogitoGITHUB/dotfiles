@@ -188,6 +188,7 @@ services.seatd.enable = true;
 
 # --- SYSTEM PACKAGES -------------------------------------------------------
   environment.systemPackages = with pkgs; [
+    rofi
     cargo
     docker
     

@@ -75,7 +75,7 @@ c.colors.downloads.start.fg = black
 c.window.hide_decoration = True
 
 
-c.hints.chars = "asdf"
+c.hints.chars = "aoeu"
 # PURE MINIMAL HINTS
 c.hints.border = "0px solid " + white
 c.colors.hints.bg = white

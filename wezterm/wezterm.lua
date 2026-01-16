@@ -107,5 +107,6 @@ tabline.apply_to_config(config)
 -- Force these settings after tabline
 config.use_fancy_tab_bar = false
 config.window_decorations = "NONE"
+config.window_close_confirmation = "NeverPrompt"
 
 return config
