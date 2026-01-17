@@ -18,3 +18,7 @@ emacs/straight-build-cache.el
 
 # ---- Nushell runtime ----
 nushell/history.sqlite3*
+
+
+
+DankMaterialShell/plugins/.repos/

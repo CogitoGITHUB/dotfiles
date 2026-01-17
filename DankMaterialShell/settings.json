@@ -111,7 +111,7 @@
   "clockDateFormat": "dddd, MMMM d",
   "lockDateFormat": "dddd, MMMM d",
   "mediaSize": 1,
-  "appLauncherViewMode": "grid",
+  "appLauncherViewMode": "list",
   "spotlightModalViewMode": "list",
   "sortAppsAlphabetically": false,
   "appLauncherGridColumns": 8,
@@ -343,9 +343,9 @@
           "enabled": true
         }
       ],
-      "spacing": 12,
-      "innerPadding": -8,
-      "bottomGap": -1,
+      "spacing": 4,
+      "innerPadding": -1,
+      "bottomGap": -8,
       "transparency": 0,
       "widgetTransparency": 1,
       "squareCorners": false,
@@ -361,13 +361,13 @@
       "widgetOutlineColor": "primary",
       "widgetOutlineOpacity": 1,
       "widgetOutlineThickness": 1,
-      "fontScale": 1.28,
+      "fontScale": 1.8,
       "autoHide": false,
       "autoHideDelay": 250,
       "openOnOverview": false,
       "visible": true,
       "popupGapsAuto": true,
-      "popupGapsManual": 25,
+      "popupGapsManual": 7,
       "maximizeDetection": true
     }
   ],
