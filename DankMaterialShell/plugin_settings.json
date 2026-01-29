@@ -45,5 +45,11 @@
   },
   "desktopCommand": {
     "enabled": true
+  },
+  "powerOptions": {
+    "enabled": true
+  },
+  "nixMonitor": {
+    "enabled": true
   }
 }

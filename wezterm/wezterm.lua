@@ -1,25 +1,25 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- ===== Terminal colors & minimal ANSI palette =====
-local colors = {
-  foreground = '#000000',  -- Black text
-  background = '#ffffff',  -- White background
-  cursor_bg = '#000000',
-  cursor_fg = '#ffffff',
-  selection_fg = '#000000',
-  selection_bg = '#cccccc',
-  -- Minimal ANSI palette
-  ansi = {
-    "#000000", "#000000", "#000000", "#000000",
-    "#000000", "#000000", "#000000", "#000000"
-  },
-  brights = {
-    "#000000", "#000000", "#000000", "#000000",
-    "#000000", "#000000", "#000000", "#000000"
-  }
-}
-config.colors = colors
+ -- ===== Terminal colors & minimal ANSI palette =====
+ local colors = {
+   foreground = '#000000',  -- Black text
+   background = '#ffffff',  -- White background
+   cursor_bg = '#000000',
+   cursor_fg = '#ffffff',
+   selection_fg = '#000000',
+   selection_bg = '#cccccc',
+   -- Minimal ANSI palette
+   ansi = {
+     "#000000", "#000000", "#000000", "#000000",
+     "#000000", "#000000", "#000000", "#000000"
+   },
+   brights = {
+     "#000000", "#000000", "#000000", "#000000",
+     "#000000", "#000000", "#000000", "#000000"
+   }
+ }
+ config.colors = colors
 
 -- ===== Font and basic terminal settings =====
 config.font = wezterm.font('JetBrains Mono')

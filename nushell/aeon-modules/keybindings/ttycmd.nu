@@ -33,7 +33,7 @@ let keybindings = [
       }
     },
 
-    # Launch Niri from TTY
+    # Launch scroll from TTY
     {
       name: scroll
       modifier: control

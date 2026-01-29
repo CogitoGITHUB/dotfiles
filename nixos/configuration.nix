@@ -48,29 +48,14 @@
   };
 
   # --- USER ------------------------------------------------------------------
-  users.users.asdf = {
+  users.users.aoeu = {
     isNormalUser = true;
-    description = "asdf";
+    description = "aoeu";
     extraGroups = [ "uinput" "seat" "video" "render" "networkmanager" "wheel" "docker" ];
     shell = pkgs.nushell;
-
     packages = with pkgs; [
-      docker-compose
-      kubectl
-      k9s
-      helm
-      prometheus
-      grafana
-      istioctl
-      linkerd
-      traefik
-      nginx
-      lens
     ];
   };
-
-# Make sure uinput group exists ( katana )
-users.groups.uinput = {};
 
   # --- BLUETOOTH -------------------------------------------------------------
   hardware.bluetooth = {
@@ -91,7 +76,7 @@ users.groups.uinput = {};
   ];
 
 # TTY settings
-console.keyMap = "dvorak";  # Use "dvorak" not "us(dvorak)" for console
+console.keyMap = "dvorak";
 
 
   # --- PORTALS ---------------------------------------------------------------
@@ -148,15 +133,6 @@ services.tailscale.extraSetFlags = [
 ];
 
 
-services.guix = {
-    enable = true;
-    package = pkgs.guix;
-    gc = {
-      enable = true;
-      dates = "03:15";
-    };
-  };
-
 
   # --- DOCKER ---------------------------------------------------------------
   virtualisation.docker.enable = true;
@@ -176,18 +152,26 @@ programs.dankMaterialShell = {
   systemd.restartIfChanged = false;
   quickshell.package = pkgs.quickshell;
   enableSystemMonitoring = true;
-  enableClipboard        = true;
   enableVPN              = true;
   enableDynamicTheming   = true;
   enableAudioWavelength  = true;
   enableCalendarEvents   = true;
 };
 
+
+
 services.seatd.enable = true;
 
 
+services.ollama = {
+    enable = true;
+    package = pkgs.ollama-cpu;  # CPU-only version
+};
+
 # --- SYSTEM PACKAGES -------------------------------------------------------
   environment.systemPackages = with pkgs; [
+    pass
+    ollama
     rofi
     cargo
     docker
@@ -198,7 +182,6 @@ services.seatd.enable = true;
     kubectl
     helm
     k9s
-    n8n
     gemini-cli
     opencode
     ardour
@@ -237,7 +220,6 @@ services.seatd.enable = true;
 
     qutebrowser
     nyxt
-    fuzzel
     zathura
     mpv
     mpvpaper
@@ -252,9 +234,6 @@ services.seatd.enable = true;
     git
     lazygit
     gh
-    jujutsu
-    jj-fzf
-    lazyjj
 
     bat
     lsd
@@ -278,8 +257,20 @@ services.seatd.enable = true;
     poppler
     zip
     wget
+
+
+    # LSP servers
+  lua-language-server  # lua_ls
+  pyright             # Python
+  nodePackages.typescript-language-server  # TypeScript/JavaScript
+  texlab              # LaTeX (you already have this via texlive)
+
+
   ];
 
+
+# Make sure uinput group exists ( katana )
+users.groups.uinput = {};
 
 
 services.kanata = {

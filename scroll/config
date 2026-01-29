@@ -1,4 +1,4 @@
-set $lua_scripts /home/asdf/.config/scroll/scripts
+set $lua_scripts /home/aoeu/.config/scroll/scripts
 lua $lua_scripts/center_always.lua
 
 # Start DankMaterialShell
@@ -7,11 +7,10 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 
 # Start Emacs daemon
 exec emacs --daemon
-exec emacs
-exec qutebrowser
 
 # Your preferred terminal emulator
 set $term wezterm
+set $qutebrowser qutebrowser
 
 # Your preferred application launcher
 set $menu rofi -show drun
@@ -172,15 +171,14 @@ animations {
 
 
     # Start a terminal
-    bindsym $mod+u exec $term
+    bindsym $mod+return exec $term
 
     # Kill focused window
     bindsym $mod+Backspace kill
     bindsym $mod+Shift+Backspace kill unfocused
     bindsym $mod+Ctrl+Backspace kill all
 
-    # Start your launcher
-    #bindsym $mod+o exec $menu
+    bindsym $mod+o exec $qutebrowser
 
 # Open Emacs client
 bindsym $mod+e exec emacsclient -c -a 'emacs'
@@ -400,10 +398,10 @@ bindsym $mod+Shift+backslash mode "wssplit"
     # jump_labels_background #15309eFF
     # jump_labels_scale 0.9
     # jump_labels_keys aoeu
-    bindsym --no-repeat $mod+return jump
-    bindsym --no-repeat $mod+Shift+return jump container
-    bindsym --no-repeat $mod+Ctrl+return jump workspaces
-    bindsym --no-repeat $mod+Alt+return jump floating
+    bindsym --no-repeat $mod+u jump
+    bindsym --no-repeat $mod+Shift+u jump container
+    bindsym --no-repeat $mod+Ctrl+u jump workspaces
+    bindsym --no-repeat $mod+Alt+u jump floating
 
     # Content
     bindsym $mod+comma scale_content incr -0.05
