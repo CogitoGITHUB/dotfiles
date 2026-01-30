@@ -28,7 +28,10 @@
   {
     nixosConfigurations.${systemName} = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
+      specialArgs = { 
+        inherit inputs;
+        secretsPath = ./user-space/secrets;  # Define secrets path here
+      };
       modules = [
         # Hardware config
         ./hardware-configuration.nix
@@ -39,10 +42,10 @@
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         
-        # Core loader - automatically imports all system modules and packages
+        # Core loader
         ./user-space/core/core-loader.nix
         
-        # Home loader - automatically imports all home modules and users
+        # Home loader
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
