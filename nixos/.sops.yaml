@@ -1,0 +1,9 @@
+keys:
+  - &aoeu_user age1fjg33sqr4pdzh5ddpexk95kde4u2jlju7mu80583vwgs44qrhy4qcwvpsv
+  - &host_shapeless age1q2yp7f60h59n8j94zr5htgt4lrk7qmslzfcv0326lllfly4ecsaq0z0znk
+creation_rules:
+  - path_regex: secrets/secrets.yaml$
+    key_groups:
+      - age:
+          - *aoeu_user
+          - *host_shapeless

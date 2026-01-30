@@ -1,6 +1,6 @@
 {
-  "currentThemeName": "dynamic",
-  "currentThemeCategory": "dynamic",
+  "currentThemeName": "monochrome",
+  "currentThemeCategory": "generic",
   "customThemeFile": "/home/aoeu/.config/DankMaterialShell/themes/amoledBlack/theme.json",
   "registryThemeVariants": {
     "amoledBlack": {
@@ -17,7 +17,7 @@
   "popupTransparency": 1,
   "dockTransparency": 0,
   "widgetBackgroundColor": "s",
-  "widgetColorMode": "colorful",
+  "widgetColorMode": "default",
   "cornerRadius": 32,
   "niriLayoutGapsOverride": -1,
   "niriLayoutRadiusOverride": -1,

@@ -48,14 +48,14 @@
   };
 
   # --- USER ------------------------------------------------------------------
-  users.users.aoeu = {
+ users.users.aoeu = {
     isNormalUser = true;
     description = "aoeu";
     extraGroups = [ "uinput" "seat" "video" "render" "networkmanager" "wheel" "docker" ];
     shell = pkgs.nushell;
-    packages = with pkgs; [
-    ];
+    hashedPasswordFile = config.sops.secrets.aoeu-password.path;
   };
+
 
   # --- BLUETOOTH -------------------------------------------------------------
   hardware.bluetooth = {
@@ -146,7 +146,7 @@ services.tailscale.extraSetFlags = [
   };
 
 
-programs.dankMaterialShell = {
+ programs.dank-material-shell = {
   enable = true;
   systemd.enable = false;
   systemd.restartIfChanged = false;
@@ -168,14 +168,41 @@ services.ollama = {
     package = pkgs.ollama-cpu;  # CPU-only version
 };
 
+
+
+  # Configure sops-nix
+  sops = {
+    defaultSopsFile = ./secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    
+    age = {
+      # This will automatically use SSH host key
+      sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      
+      # Fallback key file location
+      keyFile = "/var/lib/sops-nix/key.txt";
+      
+      # THIS IS THE KEY: Auto-generate if it doesn't exist
+      generateKey = true;
+    };
+    
+    secrets = {
+      aoeu-password = {
+        neededForUsers = true;
+      };
+    };
+  };
+
+
 # --- SYSTEM PACKAGES -------------------------------------------------------
   environment.systemPackages = with pkgs; [
+    sops
+    age
     pass
     ollama
     rofi
     cargo
     docker
-    
     lazydocker
     docker-compose
     k3s
@@ -191,17 +218,14 @@ services.ollama = {
     supercollider
     sox
     sonic-pi
-
     qemu
     waydroid
     waydroid-nftables
     waydroid-helper
-
     krita
     gimp
     inkscape
     blender
-
     emacs
     neovim
     gcc
@@ -211,13 +235,10 @@ services.ollama = {
     nodejs
     python3
     python3Packages.mutagen
-
-    tmux
     zellij
     wezterm
     starship
     nushell
-
     qutebrowser
     nyxt
     zathura
@@ -225,16 +246,13 @@ services.ollama = {
     mpvpaper
     yt-dlp
     ffmpeg
-
     mpd
     mpdcron
     cava
     rmpc
-
     git
     lazygit
     gh
-
     bat
     lsd
     htop
@@ -246,10 +264,8 @@ services.ollama = {
     atuin
     fzf
     zoxide
-
     obs-studio
     obs-cli
-
     texlive.combined.scheme-full
     texlivePackages.latexmk
     ghostscript
@@ -257,8 +273,6 @@ services.ollama = {
     poppler
     zip
     wget
-
-
     # LSP servers
   lua-language-server  # lua_ls
   pyright             # Python

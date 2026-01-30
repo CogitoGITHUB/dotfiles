@@ -3,3 +3,4 @@ atuin
 mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
 emacs -nw
 mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
+source ~/.local/share/atuin/init.nu
