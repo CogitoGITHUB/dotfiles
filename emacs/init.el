@@ -17,14 +17,6 @@
   (load bootstrap-file nil 'nomessage))
 (setq straight-use-package-by-default t)
 
-;;──────────────────────────────────────────────────────────
-  ;; Org (required, explicit, upstream)
-  ;;──────────────────────────────────────────────────────────
-  (straight-use-package
- '(org :type git
-       :host git
-       :repo "https://git.savannah.gnu.org/git/emacs/org-mode.git"))
-(require 'org)
 
 ;;──────────────────────────────────────────────────────────
 ;; Leaf system
@@ -50,26 +42,6 @@
            (fringe-mode . 0)
            (mode-line-format . nil)))  ;; hide mode line
 
-(defvar my/agent-shell-opencode-config
-  '(:provider "opencode"
-    :model "gpt-4"
-    :api-key (lambda () (getenv "OPENAI_API_KEY"))))
-
-(leaf agent-shell
-   :straight (agent-shell
-              :type git
-              :host github
-              :repo "xenodium/agent-shell")
-   :after (acp shell-maker)
-   :commands (agent-shell)
-   :init
-   ;; Inject BEFORE agent-shell loads
-   (setq agent-shell-agent-configs (list my/agent-shell-opencode-config)
-         agent-shell-preferred-agent-config my/agent-shell-opencode-config
-         agent-shell-start-function 'agent-shell-opencode-start-agent)
-   :config
-   (defalias 'ai 'agent-shell-opencode-start-agent))
-
 (leaf literate-config-system
   :straight (literate-config-system
              :type git
@@ -80,14 +52,3 @@
   ;; nothing loads yet
   :config
   (literate-config-initialize))
-
-(leaf org-mapping
-  :straight (org-mapping
-             :type git
-             :host github
-             :repo "CogitoGITHUB/org-mapping"
-             :files ("*.el"))
-  :after org
-  :hook (org-mode . org-mapping-mode)
-  :config
-  (org-mapping-setup-defaults))

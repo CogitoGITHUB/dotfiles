@@ -65,28 +65,6 @@
 
 ** Org Configurati
 
-* AI
-#+begin_src emacs-lisp :tangle init.el
-(defvar my/agent-shell-opencode-config
-  '(:provider "opencode"
-    :model "gpt-4"
-    :api-key (lambda () (getenv "OPENAI_API_KEY"))))
-
-(leaf agent-shell
-   :straight (agent-shell
-              :type git
-              :host github
-              :repo "xenodium/agent-shell")
-   :after (acp shell-maker)
-   :commands (agent-shell)
-   :init
-   ;; Inject BEFORE agent-shell loads
-   (setq agent-shell-agent-configs (list my/agent-shell-opencode-config)
-         agent-shell-preferred-agent-config my/agent-shell-opencode-config
-         agent-shell-start-function 'agent-shell-opencode-start-agent)
-   :config
-   (defalias 'ai 'agent-shell-opencode-start-agent))
-# #+end_src
 * Literate Config System
 #+begin_src emacs-lisp :tangle init.el
 (leaf literate-config-system
@@ -101,7 +79,7 @@
   (literate-config-initialize))
 #+end_src
 * Org Mapping
-#+begin_src emacs-lisp :tangle init.el
++begin_src emacs-lisp :tangle init.el
 (leaf org-mapping
   :straight (org-mapping
              :type git
@@ -112,5 +90,5 @@
   :hook (org-mode . org-mapping-mode)
   :config
   (org-mapping-setup-defaults))
-#+end_src
++end_src
 
