@@ -17,9 +17,11 @@
       user.name = "CogitoGITHUB";
       user.email = "vlasceanupaulinoionut@gmail.com";
       core.editor = "nvim";
-      commit.gpgsign = true;
-      gpg.format = "ssh";
-      user.signingkey = "~/.ssh/id_ed25519.pub";
+      
+      # Remove or comment out these lines:
+      # commit.gpgsign = true;
+      # gpg.format = "ssh";
+      # user.signingkey = "~/.ssh/id_ed25519.pub";
       
       # Aliases
       alias = {
