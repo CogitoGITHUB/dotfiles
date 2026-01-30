@@ -23,7 +23,7 @@
   
   outputs = inputs@{ self, nixpkgs, home-manager, scroll-flake, dms, sops-nix, ... }:
   let
-    systemName = "shapeless";  # Changed back to lowercase - convention
+    systemName = "shapeless";
   in
   {
     nixosConfigurations.${systemName} = nixpkgs.lib.nixosSystem {
@@ -39,17 +39,15 @@
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         
-        # Core loader - automatically imports all modules and packages
+        # Core loader - automatically imports all system modules and packages
         ./user-space/core/core-loader.nix
         
-        # Home manager configuration
+        # Home loader - automatically imports all home modules and users
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users = {
-            aoeu = import ./puppets/aoeu.nix;  # Assuming you moved user configs to puppets
-          };
         }
+        ./user-space/home/home-loader.nix
       ];
     };
   };

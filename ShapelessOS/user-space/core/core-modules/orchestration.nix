@@ -1,6 +1,5 @@
 # modules/orchestration.nix
 { config, pkgs, ... }:
-
 {
   # Kubernetes / container orchestration
   services.k3s = {
@@ -9,13 +8,10 @@
     clusterInit = true;
     extraFlags = [ "--docker" ];
   };
-
-  # Optional swarm / task runners
-  virtualisation.dockerSwarm.enable = false;
-
+  
   # Optional workflow automation
   services.nomad.enable = false;
-
+  
   # System packages for orchestration tooling
   environment.systemPackages = with pkgs; [
     kubectl
