@@ -1,14 +1,13 @@
 { lib, ... }:
 
-let
-  modulesFrom = dir:
-    lib.fileset.toList
-      (path: lib.hasSuffix ".nix" path && !(lib.hasInfix "/_" path))
-      { root = dir; };
-
-  coreModules = modulesFrom ./core-modules;
-  corePackages = modulesFrom ./core-packages;
-in
 {
-  imports = coreModules ++ corePackages;
+  imports =
+    builtins.filter (path:
+      lib.hasSuffix ".nix" path
+      && !(lib.hasInfix "/_" path) # ignore dirs/files starting with _
+    ) (lib.fileset.toList ./core-modules)
+    ++ builtins.filter (path:
+      lib.hasSuffix ".nix" path
+      && !(lib.hasInfix "/_" path)
+    ) (lib.fileset.toList ./core-packages);
 }
