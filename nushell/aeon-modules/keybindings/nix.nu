@@ -6,7 +6,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS' 'Starting rebuild...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before switch' --no-gpg-sign }; if (sudo nixos-rebuild switch --flake .#shapeless --show-trace) { notify-send 'NixOS' '✅ Rebuild successful!' --urgency=normal } else { notify-send 'NixOS' '❌ Rebuild failed!' --urgency=critical }; try { git push }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS' 'Starting rebuild...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before switch' --no-gpg-sign }; sudo nixos-rebuild switch --flake .#shapeless --show-trace; if $env.STATUS == 0 { notify-send 'NixOS' '✅ Rebuild successful!' --urgency=normal } else { notify-send 'NixOS' '❌ Rebuild failed!' --urgency=critical }; try { git push }"
    }
  }
  {
@@ -16,7 +16,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS VM' 'Building VM...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before VM build' --no-gpg-sign }; if (nixos-rebuild build-vm --flake .#shapeless --show-trace) { notify-send 'NixOS VM' '✅ VM built! Starting...' --urgency=normal; ./result/bin/run-ShapelessOS-vm } else { notify-send 'NixOS VM' '❌ VM build failed!' --urgency=critical }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS VM' 'Building VM...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before VM build' --no-gpg-sign }; nixos-rebuild build-vm --flake .#shapeless --show-trace; if $env.STATUS == 0 { notify-send 'NixOS VM' '✅ VM built! Starting...' --urgency=normal; ./result/bin/run-ShapelessOS-vm } else { notify-send 'NixOS VM' '❌ VM build failed!' --urgency=critical }"
    }
  }
  {
@@ -26,7 +26,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS' 'Testing config...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before test' --no-gpg-sign }; if (sudo nixos-rebuild test --flake .#shapeless --show-trace) { notify-send 'NixOS' '✅ Test passed!' --urgency=normal } else { notify-send 'NixOS' '❌ Test failed!' --urgency=critical }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS' 'Testing config...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before test' --no-gpg-sign }; sudo nixos-rebuild test --flake .#shapeless --show-trace; if $env.STATUS == 0 { notify-send 'NixOS' '✅ Test passed!' --urgency=normal } else { notify-send 'NixOS' '❌ Test failed!' --urgency=critical }"
    }
  }
  {
@@ -36,7 +36,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; if (nix build .#nixosConfigurations.shapeless.config.system.build.isoImage --show-trace --out-link ./iso/result) { let iso = (ls iso/result/iso/*.iso | first | get name); notify-send 'ISO' $'✅ ISO built: ($iso)' --urgency=normal } else { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; nix build .#nixosConfigurations.shapeless.config.system.build.isoImage --show-trace --out-link ./iso/result; if $env.STATUS == 0 { notify-send 'ISO' '✅ ISO built!' --urgency=normal; ls -lh iso/result/iso/*.iso } else { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
    }
  }
  {
@@ -46,7 +46,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; try { git pull --rebase --autostash }; let user = (ls user-space/home/users/*.nix | get name | path basename | str replace '.nix' '' | str join (char newline) | fzf --prompt='Select user: ' --height=40% --border); if ($user | is-not-empty) { notify-send 'Home-Manager' $'Switching ($user)...' --urgency=low; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m $'Auto-commit before switching user ($user)' --no-gpg-sign }; if (sudo nixos-rebuild switch --flake .#shapeless --show-trace) { notify-send 'Home-Manager' $'✅ ($user) switched!' --urgency=normal; try { git push } } else { notify-send 'Home-Manager' $'❌ ($user) failed!' --urgency=critical } }"
+    cmd: "cd ~/.config/ShapelessOS; try { git pull --rebase --autostash }; let user = (ls user-space/home/users/*.nix | get name | path basename | str replace '.nix' '' | str join (char newline) | fzf --prompt='Select user: ' --height=40% --border); if ($user | is-not-empty) { notify-send 'Home-Manager' $'Switching ($user)...' --urgency=low; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m $'Auto-commit before switching user ($user)' --no-gpg-sign }; sudo nixos-rebuild switch --flake .#shapeless --show-trace; if $env.STATUS == 0 { notify-send 'Home-Manager' $'✅ ($user) switched!' --urgency=normal; try { git push } } else { notify-send 'Home-Manager' $'❌ ($user) failed!' --urgency=critical } }"
    }
  }
 ];
