@@ -1,14 +1,7 @@
 { config, pkgs, inputs, ... }:
 
 {
-  # --- PORTALS ---------------------------------------------------------------
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [
-    pkgs.xdg-desktop-portal-wlr
-    pkgs.xdg-desktop-portal-gtk
-  ];
-
-  # --- WAYLAND / COMPOSITOR --------------------------------------------------
+  # --- WAYLAND / COMPOSITOR (USER SESSION) ----------------------------------
   programs.scroll = {
     enable = true;
     package =
@@ -23,13 +16,7 @@
     '';
   };
 
-  # --- GRAPHICS --------------------------------------------------------------
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-  };
-
-  # --- SHELL / DESKTOP LAYER --------------------------------------------------
+  # --- DESKTOP / SHELL (USER-LEVEL) ------------------------------------------
   programs.dank-material-shell = {
     enable = true;
     systemd.enable = false;
@@ -42,10 +29,7 @@
     enableCalendarEvents   = true;
   };
 
-  # --- SEAT / INPUT SESSION --------------------------------------------------
-  services.seatd.enable = true;
-
-services.mako.enable = true;
-
-
+  # --- NOTIFICATIONS ---------------------------------------------------------
+  services.mako.enable = true;
 }
+
