@@ -22,7 +22,7 @@
       
       # Build ISO
       echo "Building ShapelessOS ISO..."
-      nix build .#nixosConfigurations.shapeless.config.system.build.isoImage \
+      ${pkgs.nix}/bin/nix build .#nixosConfigurations.shapeless.config.system.build.isoImage \
         --out-link "$ISO_DIR"/result \
         2>&1 | logger -t iso-builder
       
