@@ -12,6 +12,6 @@
     bluetui exiftool evtest wl-clipboard atuin fzf zoxide obs-studio obs-cli
     texlive.combined.scheme-full texlivePackages.latexmk ghostscript texinfo
     poppler zip wget lua-language-server pyright nodePackages.typescript-language-server
-    texlab n8n
+    texlab n8n libnotify
   ];
 }
