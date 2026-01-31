@@ -13,6 +13,7 @@
     ;
     initialScript = pkgs.writeText "init.sql" 
       CREATE ROLE aoeu WITH LOGIN SUPERUSER;
+    ;
   };
   
   # Redis
