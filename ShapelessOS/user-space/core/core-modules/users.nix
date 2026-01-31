@@ -5,8 +5,7 @@
     description = "aoeu";
     extraGroups = [ "uinput" "seat" "video" "render" "networkmanager" "wheel" "docker" ];
     shell = pkgs.nushell;
-    # Simple password instead of sops
-    password = "aoeu";  # Change this to whatever you want
+    password = "aoeu";
   };
   
   users.groups.uinput = {};
