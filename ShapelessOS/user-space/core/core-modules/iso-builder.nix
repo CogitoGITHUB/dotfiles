@@ -3,7 +3,7 @@
   # Automatic ISO building and old generation cleanup
   
   # Build ISO after successful rebuild
-  system.activationScripts.buildIso = lib.stringAfter [ "etc" ] 
+  system.activationScripts.buildIso = lib.stringAfter [ "etc" ] ''
     # Only run if not building in a VM
     if [ ! -e /run/current-system/sw/bin/qemu-system-x86_64 ]; then
       echo "Skipping ISO build in VM environment"
@@ -11,7 +11,7 @@
     fi
     
     # Build ISO in background
-    ${pkgs.writeShellScript "build-iso-bg" 
+    ${pkgs.writeShellScript "build-iso-bg" ''
       #!/usr/bin/env bash
       set -e
       
@@ -37,11 +37,11 @@
         
         echo "ISO built successfully: $ISO_DIR/shapeless-$TIMESTAMP.iso"
       fi
-    } &
-  ;
+    ''} &
+  '';
   
   # Automatic generation cleanup after successful rebuild
-  system.activationScripts.cleanupGenerations = lib.stringAfter [ "etc" ] 
+  system.activationScripts.cleanupGenerations = lib.stringAfter [ "etc" ] ''
     echo "Cleaning up old NixOS generations..."
     
     # Keep last 5 generations
@@ -54,7 +54,7 @@
     ${pkgs.nix}/bin/nix-store --optimize
     
     echo "Generation cleanup complete"
-  ;
+  '';
   
   # Enable automatic store optimization
   nix.settings.auto-optimise-store = true;
