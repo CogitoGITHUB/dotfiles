@@ -36,7 +36,7 @@
       modules = [
         ./hardware-configuration.nix
 
-        ./kernel-space/core/core-loader.nix
+        ./kernel-space/core-loader.nix
         ./user-space/core/core-loader.nix
 
         scroll-flake.nixosModules.default
