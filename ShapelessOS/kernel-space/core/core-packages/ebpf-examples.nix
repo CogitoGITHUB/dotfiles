@@ -6,12 +6,12 @@
     
     BEGIN
     {
-      printf("Hello, eBPF!\nTracing system calls...\n");
+      printf("Hello, eBPF! Tracing system calls...");
     }
     
     tracepoint:syscalls:sys_enter_execve
     {
-      printf("%-8s %-16s %s\n", comm, probe, str(args->filename));
+      printf("%-8s %-16s %s", comm, probe, str(args->filename));
     }
   ;
   
@@ -21,7 +21,7 @@
     // Trace TCP connections
     kprobe:tcp_connect
     {
-      printf("%s connecting to port %d\n", comm, args->sin_port);
+      printf("%s connecting to port %d", comm, args->sin_port);
     }
   ;
 }
