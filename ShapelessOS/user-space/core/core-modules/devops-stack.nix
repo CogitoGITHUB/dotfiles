@@ -57,7 +57,7 @@
       
       security = {
         admin_user = "admin";
-        admin_password = "admin";  # Change this in secrets!
+        admin_password = "admin";
       };
     };
     
@@ -76,38 +76,21 @@
   
   # Development packages
   environment.systemPackages = with pkgs; [
-    # Database tools
     postgresql
     redis
-    
-    # Monitoring
     prometheus
     grafana
-    
-    # DevOps tools
     kubectl
     helm
     terraform
     ansible
-    
-    # Container tools (already have docker)
-    dive  # Docker image explorer
-    ctop  # Container monitoring
-    
-    # API testing
+    dive
+    ctop
     httpie
     curl
-    
-    # Jupyter for data science
     jupyter
     python3Packages.pandas
     python3Packages.numpy
     python3Packages.matplotlib
-  ];
-  
-  # Open firewall for services (localhost only by default)
-  networking.firewall.allowedTCPPorts = [ 
-    # 3000  # Grafana (uncomment for network access)
-    # 9090  # Prometheus
   ];
 }
