@@ -29,5 +29,4 @@
   
   # Enable debugfs for BPF (mounted at /sys/kernel/debug)
   boot.kernel.enable = true;
-  systemd.enableCgroupAccounting = true;
 }
