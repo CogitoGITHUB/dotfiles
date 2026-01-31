@@ -1,8 +1,5 @@
 { config, pkgs, lib, ... }:
 
-let
-  dashboardsDir = "/etc/grafana-dashboards";
-in
 {
   #######
   # Grafana
@@ -191,10 +188,6 @@ in
     };
   };
 
-  #######
-  # Dashboards directory (mutable)
-  #######
-  environment.etc."grafana-dashboards".source = ./grafana-dashboards;
 
   #######
   # Firewall: closed by default
