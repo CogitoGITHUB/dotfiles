@@ -11,7 +11,7 @@
     bcc               # BPF Compiler Collection (Python tools)
     
     # Kernel tracing
-    linux-perf  # Performance monitoring
+    linuxPackages.perf  # Performance monitoring
     trace-cmd         # Kernel tracing
     
     # Development
