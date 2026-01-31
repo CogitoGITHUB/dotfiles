@@ -29,7 +29,5 @@
     enableCalendarEvents   = true;
   };
 
-  # --- NOTIFICATIONS ---------------------------------------------------------
-  programs.mako.enable = true;
 }
 
