@@ -3,7 +3,7 @@
   # ZFS with automatic snapshots
   # NOTE: Only enable if you have ZFS filesystems
   
-  boot.supportedFilesystems = [ "zfs" ];
+  # boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.forceImportRoot = false;
   
   # ZFS services
