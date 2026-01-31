@@ -40,17 +40,7 @@ let keybindings = [
    }
  }
 
-{
-  name: "home-manager switch with fzf",
-  modifier: "control",
-  keycode: "char_x",
-  mode: "emacs",
-  event: {
-    send: "executehostcommand",
-    cmd: "cd ~/.config/ShapelessOS; git pull --rebase --autostash; let user = (ls user-space/home/users/*.nix | get name | path basename | str replace '.nix' '' | str join (char newline) | fzf --prompt='Select user: ' --height=40% --border); if ($user | is-not-empty) { git add -A; try { git diff-index --quiet HEAD } catch { git commit -m $'Auto-commit before switching user ($user)' --no-gpg-sign }; print $'Switching home-manager for ($user)...'; home-manager switch --flake .#$user; try { git push }; }"
-  }
-}
-
+{ name: "home-manager switch with fzf" modifier: control keycode: char_x mode: emacs event: { send: executehostcommand cmd: "cd ~/.config/ShapelessOS; try { git pull --rebase --autostash }; let user = (ls user-space/home/users/*.nix | get name | path basename | str replace '.nix' '' | str join (char newline) | fzf --prompt='Select user: ' --height=40% --border); if ($user | is-not-empty) { git add -A; try { git diff-index --quiet HEAD } catch { git commit -m $'Auto-commit before switching user ($user)' --no-gpg-sign }; print $'Switching home-manager for ($user)...'; sudo nixos-rebuild switch --flake .#shapeless --show-trace; try { git push } }" } }
 
 ];
 $env.config.keybindings ++= $keybindings
