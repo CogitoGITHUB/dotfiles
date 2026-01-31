@@ -194,7 +194,7 @@ in
   #######
   # Dashboards directory (mutable)
   #######
-  environment.etc."grafana-dashboards".source = ./dashboards;
+  environment.etc."grafana-dashboards".source = ./grafana-dashboards;
 
   #######
   # Firewall: closed by default
