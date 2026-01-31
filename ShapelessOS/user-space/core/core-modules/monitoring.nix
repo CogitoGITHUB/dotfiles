@@ -13,6 +13,4 @@
     glances
   ];
 
-  # Optional watchdog patterns
-   services.systemd-watchdog.enable = true;
 }
