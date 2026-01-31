@@ -11,7 +11,8 @@ let
     in
       lib.concatMap (name:
         let path = "${dir}/${name}";
-        in if builtins.isDirectory path then
+            isDir = lib.isAttrs (builtins.tryEval (builtins.readDir path)).success;
+        in if isDir then
              nixFilesRecursive path
            else if lib.hasSuffix ".nix" name then
              [ path ]
