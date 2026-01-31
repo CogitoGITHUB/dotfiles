@@ -85,8 +85,7 @@
         "dms": "dms",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "scroll-flake": "scroll-flake",
-        "sops-nix": "sops-nix"
+        "scroll-flake": "scroll-flake"
       }
     },
     "scroll-flake": {
@@ -143,26 +142,6 @@
         "ref": "refs/tags/1.12.4",
         "type": "git",
         "url": "https://github.com/dawsers/scroll"
-      }
-    },
-    "sops-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1769469829,
-        "narHash": "sha256-wFcr32ZqspCxk4+FvIxIL0AZktRs6DuF8oOsLt59YBU=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "c5eebd4eb2e3372fe12a8d70a248a6ee9dd02eff",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "type": "github"
       }
     }
   },
