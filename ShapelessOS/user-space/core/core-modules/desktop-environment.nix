@@ -44,4 +44,9 @@
 
   # --- SEAT / INPUT SESSION --------------------------------------------------
   services.seatd.enable = true;
+
+services.mako = {
+  enable = true;
+};
+
 }
