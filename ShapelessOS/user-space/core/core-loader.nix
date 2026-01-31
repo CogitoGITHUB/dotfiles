@@ -1,9 +1,19 @@
 { lib, ... }:
 
+let
+  nixFilesRecursive = dir:
+    builtins.concatMap (name:
+      let
+        path = "${dir}/${name}";
+        isDir = builtins.tryEval (builtins.readDir path).success;
+      in if isDir then
+        nixFilesRecursive path
+      else if lib.hasSuffix ".nix" path && !(lib.hasInfix "/_" path) then
+        [ path ]
+      else
+        []
+    ) (builtins.attrNames (builtins.readDir dir));
+in
 {
-  imports =
-    builtins.filter (path:
-      lib.hasSuffix ".nix" path
-      && !(lib.hasInfix "/_" path)  # ignore files/dirs starting with _
-    ) (lib.fileset.toList ./core-modules);
+  imports = nixFilesRecursive ./core-modules;
 }
