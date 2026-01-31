@@ -1,5 +1,8 @@
 { config, pkgs, lib, ... }:
-
+let
+  # dashboards live inside the devops folder
+  dashboardsDir = ./grafana-dashboards;
+in
 {
   #######
   # Grafana
