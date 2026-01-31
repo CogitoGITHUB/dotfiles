@@ -30,6 +30,6 @@
   };
 
   # --- NOTIFICATIONS ---------------------------------------------------------
-  services.mako.enable = true;
+  programs.mako.enable = true;
 }
 
