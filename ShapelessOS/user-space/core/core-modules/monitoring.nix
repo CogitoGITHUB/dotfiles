@@ -1,18 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # Core monitoring services
-  services.prometheus = {
-    enable = false;  # enable when ready
-  };
-
-  services.prometheus.exporters = {
-    node = {
-      enable = false;  # enable later
-      port = 9100;
-    };
-  };
-
   services.grafana = {
     enable = false;  # enable when you want dashboards
   };
@@ -26,5 +14,5 @@
   ];
 
   # Optional watchdog patterns
-  # services.systemd-watchdog.enable = true;
+   services.systemd-watchdog.enable = true;
 }
