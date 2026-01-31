@@ -46,15 +46,15 @@
   };
  
 
-  services.hydra = {
-    enable = true;
-    hydraURL = "http://localhost:3000"; # externally visible URL
-    notificationSender = "hydra@localhost"; # e-mail of Hydra service
-    # a standalone Hydra will require you to unset the buildMachinesFiles list to avoid using a nonexistant /etc/nix/machines
-    buildMachinesFiles = [];
-    # you will probably also want this, otherwise *everything* will be built from scratch
-    useSubstitutes = true;
-  };
+#  services.hydra = {
+#    enable = true;
+#    hydraURL = "http://localhost:3000"; # externally visible URL
+#    notificationSender = "hydra@localhost"; # e-mail of Hydra service
+#    # a standalone Hydra will require you to unset the buildMachinesFiles list to avoid using a nonexistant /etc/nix/machines
+#    buildMachinesFiles = [];
+#    # you will probably also want this, otherwise *everything* will be built from scratch
+#    useSubstitutes = true;
+#  };
 
   # Grafana dashboards
   services.grafana = {
