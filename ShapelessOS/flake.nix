@@ -33,6 +33,7 @@
   outputs = inputs@{ self, nixpkgs, home-manager, scroll-flake, dms, stylix, wrappers, ... }:
   let
     lib = nixpkgs.lib;
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;   # <- define pkgs early
 
     findNixFiles = dir:
       let
@@ -64,13 +65,14 @@
       map (u: { name = u.name; value = import u.file; }) (findUserFiles ./user-space/home/users)
     );
 
+    # Now pkgs is in scope for imports
     stylixLib   = import stylix { inherit pkgs lib; };
     wrappersLib = import wrappers { inherit pkgs lib; };
   in
   {
     nixosConfigurations.shapeless = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs stylixLib wrappersLib; };
+      specialArgs = { inherit inputs pkgs stylixLib wrappersLib; };
       modules =
         [ ./hardware-configuration.nix ]
         ++ kernelModules
@@ -92,7 +94,7 @@
 
     nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs stylixLib wrappersLib; };
+      specialArgs = { inherit inputs pkgs stylixLib wrappersLib; };
       modules =
         kernelModules
         ++ [
