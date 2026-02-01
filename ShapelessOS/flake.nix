@@ -64,7 +64,6 @@
           scroll-flake.nixosModules.default
           dms.nixosModules.dank-material-shell
           stylix.nixosModules.default
-          wrappers.nixosModules.default
         ]
         ++ coreModules
         ++ [
@@ -74,6 +73,8 @@
             home-manager.useUserPackages = true;
             imports = homeModules;
             home-manager.users = userConfigs;
+            # Make wrappers available to home-manager user configs via specialArgs
+            home-manager.extraSpecialArgs = { inherit (inputs) wrappers; };
           }
         ];
     };
@@ -86,7 +87,6 @@
           scroll-flake.nixosModules.default
           dms.nixosModules.dank-material-shell
           stylix.nixosModules.default
-          wrappers.nixosModules.default
         ]
         ++ coreModules
         ++ [
@@ -96,6 +96,7 @@
             home-manager.useUserPackages = true;
             imports = homeModules;
             home-manager.users = userConfigs;
+            home-manager.extraSpecialArgs = { inherit (inputs) wrappers; };
           }
         ]
         ++ [
