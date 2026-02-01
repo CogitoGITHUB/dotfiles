@@ -10,7 +10,7 @@ exec emacs --daemon
 
 # Your preferred terminal emulator
 set $term wezterm
-set $qutebrowser qutebrowser
+set $nyxt nyxt
 
 # Your preferred application launcher
 set $menu rofi -show drun
