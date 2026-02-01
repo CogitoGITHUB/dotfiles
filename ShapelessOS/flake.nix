@@ -1,23 +1,39 @@
 {
   description = "Shapeshifter flake";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     scroll-flake = {
       url = "github:AsahiRocks/scroll-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     dms = {
       url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    wrappers = {
+      url = "github:Lassulus/wrappers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = inputs@{ self, nixpkgs, home-manager, scroll-flake, dms, ... }:
+
+  outputs = inputs@{ self, nixpkgs, home-manager, scroll-flake, dms, stylix, wrappers, ... }:
   let
     lib = nixpkgs.lib;
+
     findNixFiles = dir:
       let
         entries = builtins.readDir dir;
@@ -28,6 +44,7 @@
       in
         map (f: "${dir}/${f}") files
         ++ lib.concatMap (d: findNixFiles "${dir}/${d}") dirs;
+
     findUserFiles = dir:
       let
         entries = builtins.readDir dir;
@@ -38,17 +55,22 @@
       in
         map (f: { name = lib.removeSuffix ".nix" f; file = "${dir}/${f}"; }) files
         ++ lib.concatMap (d: findUserFiles "${dir}/${d}") dirs;
+
     kernelModules = findNixFiles ./kernel-space/kernel-modules;
-    coreModules = findNixFiles ./user-space/core/core-modules;
-    homeModules = findNixFiles ./user-space/home/home-modules;
+    coreModules   = findNixFiles ./user-space/core/core-modules;
+    homeModules   = findNixFiles ./user-space/home/home-modules;
+
     userConfigs = builtins.listToAttrs (
       map (u: { name = u.name; value = import u.file; }) (findUserFiles ./user-space/home/users)
     );
+
+    stylixLib   = import stylix { inherit pkgs lib; };
+    wrappersLib = import wrappers { inherit pkgs lib; };
   in
   {
     nixosConfigurations.shapeless = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs stylixLib wrappersLib; };
       modules =
         [ ./hardware-configuration.nix ]
         ++ kernelModules
@@ -68,9 +90,9 @@
         ];
     };
 
-nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs stylixLib wrappersLib; };
       modules =
         kernelModules
         ++ [
@@ -94,8 +116,6 @@ nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
             boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
             networking.hostName = lib.mkForce "shapeless-iso";
             isoImage.squashfsCompression = "gzip -Xcompression-level 1";
-            # No hardware config - ISO runs on anything
-            # Override things that conflict with live media
             services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
             users.users.root.password = lib.mkForce "shapeless";
           })
