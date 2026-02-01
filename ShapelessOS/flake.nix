@@ -68,18 +68,38 @@
         ];
     };
 
-    nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
+nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [
-        ({ pkgs, modulesPath, lib, ... }: {
-          imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
-          boot.supportedFilesystems = lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
-          boot.kernelPackages = pkgs.linuxPackages_latest;
-          networking.hostName = "shapeless-iso";
-          isoImage.squashfsCompression = "gzip -Xcompression-level 1";
-          environment.systemPackages = with pkgs; [ git nix neovim ];
-        })
-      ];
+      specialArgs = { inherit inputs; };
+      modules =
+        kernelModules
+        ++ [
+          scroll-flake.nixosModules.default
+          dms.nixosModules.dank-material-shell
+        ]
+        ++ coreModules
+        ++ [
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            imports = homeModules;
+            home-manager.users = userConfigs;
+          }
+        ]
+        ++ [
+          ({ pkgs, modulesPath, lib, ... }: {
+            imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
+            boot.supportedFilesystems = lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
+            boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
+            networking.hostName = lib.mkForce "shapeless-iso";
+            isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+            # No hardware config - ISO runs on anything
+            # Override things that conflict with live media
+            services.openssh.settings.PermitRootLogin = lib.mkForce "yes";
+            users.users.root.password = lib.mkForce "shapeless";
+          })
+        ];
     };
 
     packages.x86_64-linux.isoImage = self.nixosConfigurations.shapeless-iso.config.system.build.isoImage;
