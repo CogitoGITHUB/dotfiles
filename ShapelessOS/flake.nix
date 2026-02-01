@@ -1,6 +1,5 @@
 {
   description = "Shapeshifter flake";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
@@ -16,11 +15,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-
   outputs = inputs@{ self, nixpkgs, home-manager, scroll-flake, dms, ... }:
   let
     lib = nixpkgs.lib;
-
     findNixFiles = dir:
       let
         entries = builtins.readDir dir;
@@ -31,7 +28,6 @@
       in
         map (f: "${dir}/${f}") files
         ++ lib.concatMap (d: findNixFiles "${dir}/${d}") dirs;
-
     findUserFiles = dir:
       let
         entries = builtins.readDir dir;
@@ -42,7 +38,6 @@
       in
         map (f: { name = lib.removeSuffix ".nix" f; file = "${dir}/${f}"; }) files
         ++ lib.concatMap (d: findUserFiles "${dir}/${d}") dirs;
-
     kernelModules = findNixFiles ./kernel-space/kernel-modules;
     coreModules = findNixFiles ./user-space/core/core-modules;
     homeModules = findNixFiles ./user-space/home/home-modules;
@@ -72,6 +67,21 @@
           }
         ];
     };
-    packages.x86_64-linux.isoImage = self.nixosConfigurations.shapeless.config.system.build.isoImage;
+
+    nixosConfigurations.shapeless-iso = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ({ pkgs, modulesPath, lib, ... }: {
+          imports = [ (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix") ];
+          boot.supportedFilesystems = lib.mkForce [ "btrfs" "reiserfs" "vfat" "f2fs" "xfs" "ntfs" "cifs" ];
+          boot.kernelPackages = pkgs.linuxPackages_latest;
+          networking.hostName = "shapeless-iso";
+          isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+          environment.systemPackages = with pkgs; [ git nix neovim ];
+        })
+      ];
+    };
+
+    packages.x86_64-linux.isoImage = self.nixosConfigurations.shapeless-iso.config.system.build.isoImage;
   };
 }
