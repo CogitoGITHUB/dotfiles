@@ -22,7 +22,7 @@ let keybindings = [
  {
   name: "nix test config"
   modifier: control
-  keycode: char_k
+  keycode: char_q
   mode: emacs
   event: {
     send: executehostcommand

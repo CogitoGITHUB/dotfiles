@@ -33,17 +33,6 @@ let keybindings = [
         cmd: "scroll"
       }
     },
-    # Reboot system
-    {
-      name: reboot
-      modifier: control
-      keycode: char_q
-      mode: emacs
-      event: {
-        send: executehostcommand
-        cmd: "systemctl reboot"
-      }
-    }
-];
+   ];
 
 $env.config.keybindings ++= $keybindings
