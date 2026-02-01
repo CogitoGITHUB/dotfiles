@@ -29,14 +29,14 @@ let keybindings = [
     cmd: "cd ~/.config/ShapelessOS; notify-send 'NixOS' 'Testing config...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before test' --no-gpg-sign }; try { sudo nixos-rebuild test --flake .#shapeless --show-trace; notify-send 'NixOS' '✅ Test passed!' --urgency=normal } catch { notify-send 'NixOS' '❌ Test failed!' --urgency=critical }"
    }
  }
- {
+{
   name: "build iso"
   modifier: control
   keycode: char_a
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; try { nix build .#nixosConfigurations.shapeless.config.system.build.isoImage --show-trace --out-link ./iso/result; notify-send 'ISO' '✅ ISO built!' --urgency=normal; ls iso/result/iso/ } catch { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; try { nix build --flake .#shapeless.config.system.build.isoImage --show-trace --out-link ./iso/result; notify-send 'ISO' '✅ ISO built!' --urgency=normal; ls iso/result/iso/ } catch { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
    }
  }
  {
