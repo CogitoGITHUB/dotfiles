@@ -10,18 +10,7 @@ let keybindings = [
    }
  }
 
-    {
-      name: zoxide_fzf
-      modifier: control
-      keycode: char_a
-      mode: emacs
-      event: {
-        send: executehostcommand
-        cmd: "fa"
-      }
-    },
-        
-    # zellij
+      # zellij
     {
       name: zellij
       modifier: control

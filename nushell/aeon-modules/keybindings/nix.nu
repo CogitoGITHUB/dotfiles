@@ -32,7 +32,7 @@ let keybindings = [
  {
   name: "build iso"
   modifier: control
-  keycode: char_m
+  keycode: char_a
   mode: emacs
   event: {
     send: executehostcommand
