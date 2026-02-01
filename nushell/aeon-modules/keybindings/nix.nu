@@ -36,7 +36,7 @@ let keybindings = [
   mode: emacs
   event: {
     send: executehostcommand
-    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; try { nix build path:.#nixosConfigurations.shapeless.config.system.build.isoImage --out-link ./iso/result; notify-send 'ISO' '✅ ISO built!' --urgency=normal; ls iso/result/iso/ } catch { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
+    cmd: "cd ~/.config/ShapelessOS; notify-send 'ISO' 'Building ISO...' --urgency=low; try { git pull --rebase --autostash }; git add -A; try { git diff-index --quiet HEAD } catch { git commit -m 'Auto-commit before ISO build' --no-gpg-sign }; try { nix build path:.#packages.x86_64-linux.isoImage --out-link ./iso/result; notify-send 'ISO' '✅ ISO built!' --urgency=normal; ls iso/result/iso/ } catch { notify-send 'ISO' '❌ ISO build failed!' --urgency=critical }"
    }
  }
  {

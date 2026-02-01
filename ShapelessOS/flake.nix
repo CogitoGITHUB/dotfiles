@@ -72,5 +72,6 @@
           }
         ];
     };
+    packages.x86_64-linux.isoImage = self.nixosConfigurations.shapeless.config.system.build.isoImage;
   };
 }
