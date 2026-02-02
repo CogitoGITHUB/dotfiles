@@ -57,8 +57,8 @@ def --env --wrapped __zoxide_zi [...rest:string] {
 # Commands for zoxide. Disable these using --no-cmd.
 #
 
-alias au = __zoxide_z       # Jump instantly — like 'cd' but smarter
-alias ua = __zoxide_zi      # Fuzzy finder — 'fzf'-enhanced navigation
+alias cd = __zoxide_z       # Jump instantly — like 'cd' but smarter
+alias u = __zoxide_zi      # Fuzzy finder — 'fzf'-enhanced navigation
 
 
 # =============================================================================

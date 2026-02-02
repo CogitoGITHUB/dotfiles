@@ -1,8 +1,10 @@
 alias ll = lsd -all
 alias e = emacs -nw
+alias n = nvim
+
 
 alias gt = git status
-alias ga = git add .
+alias ga = git add - A
 alias gc = git commit
 alias gp = git push
 
