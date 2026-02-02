@@ -215,11 +215,11 @@
   # ===========================================================================
   # ALIASES
   # ===========================================================================
-  home.shellAliases = {
-    pci  = "pc-init";
-    pcc  = "pc-check";
-    pcu  = "pc-update";
-    pcr  = "pre-commit run";
-    pcra = "pre-commit run --all-files";
-  };
+  # home.shellAliases = {
+  #   pci  = "pc-init";
+  #   pcc  = "pc-check";
+  #   pcu  = "pc-update";
+  #   pcr  = "pre-commit run";
+  #   pcra = "pre-commit run --all-files";
+  # };
 }
