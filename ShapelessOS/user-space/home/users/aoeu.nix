@@ -5,6 +5,22 @@
   home.stateVersion = "24.11";
   programs.home-manager.enable = true;
 
+  # Basic Home Manager setup
+  home.packages = [
+    (wrappers.wrapperModules.mpv.apply {
+      inherit pkgs;
+      scripts = [ pkgs.mpvScripts.mpris ];
+      "mpv.conf".content = ''
+        vo=gpu
+        hwdec=auto
+      '';
+      "mpv.input".content = ''
+        WHEEL_UP seek 10
+        WHEEL_DOWN seek -10
+      '';
+    }).wrapper
+  ];
+
   # Example: wrap mpv with config and scripts
   home.packages = [
     (wrappers.wrapperModules.mpv.apply {
