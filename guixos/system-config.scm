@@ -24,28 +24,7 @@
              (gnu services base)
              (guix config))
 
-;; Build limits to prevent OOM - limit parallel builds
-;; Note: Use NIX_BUILD_CORES=1 environment variable at runtime instead
 
-;; Git configuration
-(define %git-config
-  (plain-file "gitconfig"
-    "[user]
-	name = CogitoGITHUB
-	email = vlasceanupaulinoionut@gmail.com
-[core]
-	editor = nvim
-"))
-
-;; Git configuration
-(define %git-config
-  (plain-file "gitconfig"
-    "[user]
-	name = CogitoGITHUB
-	email = vlasceanupaulinoionut@gmail.com
-[core]
-	editor = nvim
-"))
 
 ;; Load local config files
 (load (string-append %config-dir "/root/file-systems.scm"))
