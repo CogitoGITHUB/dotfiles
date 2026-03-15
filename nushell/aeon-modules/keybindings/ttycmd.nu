@@ -22,15 +22,15 @@ let keybindings = [
       }
     },
 
-    # Launch scroll from TTY
+    # zoxide with fzf
     {
-      name: scroll
+      name: zoxide-fzf
       modifier: control
-      keycode: char_s
+      keycode: char_u
       mode: emacs
       event: {
         send: executehostcommand
-        cmd: "scroll"
+        cmd: "cdf"
       }
     },
    ];

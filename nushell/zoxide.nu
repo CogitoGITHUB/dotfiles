@@ -43,14 +43,11 @@ def --env --wrapped __zoxide_z [...rest: string] {
   cd $path
 }
 
-# Jump to a directory using interactive search.
-def --env --wrapped __zoxide_zi [...rest:string] {
-  cd $'(zoxide query --interactive -- ...$rest | str trim -r -c "\n")'
+# Jump to a directory using interactive search with fzf.
+def --env cdf [] {
+  let sel = (zoxide query --interactive | fzf --height=40% --reverse)
+  if $sel != "" { cd $sel }
 }
-
-
-
-
 
 # =============================================================================
 #
@@ -58,7 +55,6 @@ def --env --wrapped __zoxide_zi [...rest:string] {
 #
 
 alias cd = __zoxide_z       # Jump instantly — like 'cd' but smarter
-alias u = __zoxide_zi      # Fuzzy finder — 'fzf'-enhanced navigation
 
 
 # =============================================================================
