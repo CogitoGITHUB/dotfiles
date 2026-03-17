@@ -10,3 +10,26 @@ mkdir ~/.local/share/atuin/<\n>atuin init nu | save ~/.local/share/atuin/init.nu
 source ~/.local/share/atuin/init.nu
 nvim 
 nvim
+atuin
+tailscale up
+sudo tailscale up
+atuin
+guix pull
+GUIX_PROFILE="/home/aoeu/.config/guix/current"<\n>     . "$GUIX_PROFILE/etc/profile"<\n>     unset GUIX_PROFILE<\n>
+emacs -nw
+nh
+emacs -nw
+which guix
+emacs -nw
+which guix
+echo $env.PATH
+ls atuin.scm
+cat atuin.scm
+emacs -nw
+sudo guix reconfigure config.scm
+guix --help
+sudo guix syntem reconfigure config.scm
+sudo guix system reconfigure config.scm
+cd ..
+gh
+gh auth login

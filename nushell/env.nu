@@ -16,3 +16,12 @@ zoxide init nushell | save -f ~/.zoxide.nu
 $env.NIX_BUILD_CORES = 1
 $env.GUIX_SUBSTITUTE_URLS = "https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
 
+
+
+$env.GUIX_PROFILE = "/home/aoeu/.config/guix/current"
+
+$env.PATH = (
+    [ $"($env.GUIX_PROFILE)/bin"
+      $"($env.GUIX_PROFILE)/sbin"
+    ] ++ $env.PATH
+)

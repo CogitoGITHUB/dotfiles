@@ -18,7 +18,7 @@ source "~/.config/nushell/aeon-modules/keybindings/wallpaper.nu"
 source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
 source "~/.config/nushell/aeon-modules/keybindings/nix.nu"
 source "~/.config/nushell/zoxide.nu"
-source "~/.local/share/atuin/init.nu"
+source "~/.guix-profile/share/atuin/init.nu"
 source "~/.config/nushell/core-modules/completion.nu"
 source ~/.zoxide.nu
 
