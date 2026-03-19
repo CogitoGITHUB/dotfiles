@@ -1,19 +1,18 @@
-(define-module (vpn tailscale)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix utils)
-  #:use-module (guix gexp)
-  #:use-module (guix download)
-  #:use-module (guix packages)
-  #:use-module (guix build-system go)
-  #:use-module (gnu packages golang)
-  #:use-module (guix records)
-  #:use-module (ice-9 match)
-  #:use-module (guix git-download)
-  #:use-module (gnu packages nss)
-  #:use-module (gnu packages compression)
-  #:use-module (gnu packages base)
-  #:use-module (gnu)
-  #:use-module (gnu services shepherd))
+(use-modules ((guix licenses) #:prefix license:)
+             (guix utils)
+             (guix gexp)
+             (guix download)
+             (guix packages)
+             (guix build-system go)
+             (gnu packages golang)
+             (guix records)
+             (ice-9 match)
+             (guix git-download)
+             (gnu packages nss)
+             (gnu packages compression)
+             (gnu packages base)
+             (gnu)
+             (gnu services shepherd))
 
 (define-record-type* <go-git-reference>
   go-git-reference make-go-git-reference
@@ -43,58 +42,58 @@
               (method url-fetch)
               (uri url)              
               (sha256 sha)))))
-        (name (or name "go-git-checkout")))
-    (gexp->derivation
-     (string-append name "-vendored.tar.gz")
-      (with-imported-modules '((guix build utils))
-        #~(begin
-            (use-modules (guix build utils)
-                         (ice-9 pop)
-                         (srfi srfi-1))
-            (set! delete delete)
-           (let ((inputs (list
-                          #+go-1.23
-                          #+tar
-                          #+bzip2
-                          #+gzip)))
-             (set-path-environment-variable "PATH" '("/bin") inputs))
-           (mkdir "source")
-           (chdir "source")
-           (if (file-is-directory? #$src)
-               (begin
-                 (copy-recursively #$src "."
-                                   #:keep-mtime? #t)
-                 (for-each (lambda (f)
-                             (false-if-exception (make-file-writable f)))
-                           (find-files ".")))
-               (begin
-                 (cond
-                  ((string-suffix? ".zip" #$src)
-                   (invoke "unzip" #$src))
-                  ((tarball? #$src)
-                   (invoke "tar" "xvf" #$src))
-                  (else
-                   (let ((name (strip-store-file-name #$src))
-                         (command (compressor #$src)))
-                     (copy-file #$src name)
-                     (when command
-                       (invoke command "--decompress" name)))))))
-           
-           (setenv "GOCACHE" "/tmp/gc")
-           (setenv "GOMODCACHE" "/tmp/gmc")
-           (setenv "SSL_CERT_DIR" #+(file-append nss-certs "/etc/ssl/certs/"))        
-           
-           (invoke "go" "mod" "vendor")
+       (name (or name "go-git-checkout")))
+   (gexp->derivation
+    (string-append name "-vendored.tar.gz")
+    (with-imported-modules '((guix build utils))
+      #~(begin
+          (use-modules (guix build utils)
+                       (ice-9 pop)
+                       (srfi srfi-1))
+          (set! delete delete)
+         (let ((inputs (list
+                        #+go-1.23
+                        #+tar
+                        #+bzip2
+                        #+gzip)))
+          (set-path-environment-variable "PATH" '("/bin") inputs))
+         (mkdir "source")
+         (chdir "source")
+         (if (file-is-directory? #$src)
+             (begin
+               (copy-recursively #$src "."
+                                 #:keep-mtime? #t)
+               (for-each (lambda (f)
+                           (false-if-exception (make-file-writable f)))
+                         (find-files ".")))
+             (begin
+               (cond
+                ((string-suffix? ".zip" #$src)
+                 (invoke "unzip" #$src))
+                ((tarball? #$src)
+                 (invoke "tar" "xvf" #$src))
+                (else
+                 (let ((name (strip-store-file-name #$src))
+                       (command (compressor #$src)))
+                   (copy-file #$src name)
+                   (when command
+                     (invoke command "--decompress" name)))))))
+         
+         (setenv "GOCACHE" "/tmp/gc")
+         (setenv "GOMODCACHE" "/tmp/gmc")
+         (setenv "SSL_CERT_DIR" #+(file-append nss-certs "/etc/ssl/certs/"))        
+         
+         (invoke "go" "mod" "vendor")
 
-           (invoke "tar" "czvf" #$output
-                   "--mtime=@0"
-                   "--owner=root:0"
-                   "--group=root:0"
-                   "--sort=name"
-                   "--hard-dereference"
-                   ".")))
-     #:hash hash-value
-     #:hash-algo hash-algorithm)))
+         (invoke "tar" "czvf" #$output
+                 "--mtime=@0"
+                 "--owner=root:0"
+                 "--group=root:0"
+                 "--sort=name"
+                 "--hard-dereference"
+                 ".")))
+    #:hash hash-value
+    #:hash-algo hash-algorithm)))
 
 (define-public tailscale
   (let ((version "1.74.1"))

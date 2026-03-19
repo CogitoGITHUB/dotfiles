@@ -1,12 +1,10 @@
 ;; Zellij - Terminal multiplexer
-;; Pre-built binary from GitHub
-(define-module (shells zellij)
-  #:use-module (guix packages)
-  #:use-module (guix download)
-  #:use-module (guix build-system trivial)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages base)
-  #:use-module (gnu packages compression))
+(use-modules (guix packages)
+             (guix download)
+             (guix build-system trivial)
+             ((guix licenses) #:prefix license:)
+             (gnu packages base)
+             (gnu packages compression))
 
 (define-public zellij
   (package
@@ -34,9 +32,9 @@
               (mvbin (string-append coreutils "/bin/mv"))
               (chmodbin (string-append coreutils "/bin/chmod"))
               (mkdirbin (string-append coreutils "/bin/mkdir")))
-         (setenv "PATH" (string-append coreutils "/bin:" tar "/bin:" gzip "/bin"))
-         (system (string-append mkdirbin " -p " out))
-         (system (string-append tarbin " -xzf " src " -C " out))
-         (system (string-append chmodbin " a+x " out "/zellij"))
-         (system (string-append mkdirbin " -p " out "/bin"))
-         (system (string-append mvbin " " out "/zellij " out "/bin/zellij")))))))
+          (setenv "PATH" (string-append coreutils "/bin:" tar "/bin:" gzip "/bin"))
+          (system (string-append mkdirbin " -p " out))
+          (system (string-append tarbin " -xzf " src " -C " out))
+          (system (string-append chmodbin " a+x " out "/zellij"))
+          (system (string-append mkdirbin " -p " out "/bin"))
+          (system (string-append mvbin " " out "/zellij " out "/bin/zellij")))))))

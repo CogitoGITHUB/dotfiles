@@ -6,8 +6,9 @@ $env.GIT_COMMITTER_EMAIL = "vlasceanupaulinoionut@gmail.com"
 $env.EDITOR = "nvim"
 $env.VISUAL = "nvim"
 
-# Source Guix system profile
-$env.PATH = ($env.PATH | split row ':' | prepend "/run/current-system/profile/bin" | prepend "/run/current-system/profile/sbin" | prepend "$HOME/.guix-profile/bin" | prepend "$HOME/.guix-profile/sbin" | str join ":")
+# Fix sudo PATH - prepend setuid-programs to string PATH before converting
+let clean_path = ($env.PATH | split row ':' | where {|x| $x != "/run/setuid-programs"} | str join ":")
+$env.PATH = $"/run/setuid-programs:($clean_path)"
 
 source "~/.config/nushell/core-modules/general.nu"
 source "~/.config/nushell/core-modules/theme.nu"
@@ -18,7 +19,6 @@ source "~/.config/nushell/aeon-modules/keybindings/wallpaper.nu"
 source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
 source "~/.config/nushell/aeon-modules/keybindings/nix.nu"
 source "~/.config/nushell/zoxide.nu"
-source "~/.guix-profile/share/atuin/init.nu"
 source "~/.config/nushell/core-modules/completion.nu"
 source ~/.zoxide.nu
 

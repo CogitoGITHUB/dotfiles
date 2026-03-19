@@ -20,8 +20,10 @@ $env.GUIX_SUBSTITUTE_URLS = "https://ci.guix.gnu.org https://bordeaux.guix.gnu.o
 
 $env.GUIX_PROFILE = "/home/aoeu/.config/guix/current"
 
-$env.PATH = (
-    [ $"($env.GUIX_PROFILE)/bin"
-      $"($env.GUIX_PROFILE)/sbin"
-    ] ++ $env.PATH
-)
+let path_without_setuid = ($env.PATH | where {|x| $x != "/run/setuid-programs" })
+$env.PATH = [
+    "/run/setuid-programs"
+    $"($env.GUIX_PROFILE)/bin"
+    $"($env.GUIX_PROFILE)/sbin"
+    ...$path_without_setuid
+]

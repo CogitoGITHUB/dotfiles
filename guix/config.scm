@@ -1,13 +1,28 @@
 ;; LiterativeOS - System Configuration
+;;
+;; REBUILD/RECONFIGURE INSTRUCTIONS:
+;; --------------------------------
+;; Once the system has working sudo (setuid-programs configured), you can:
+;;
+;;   guix system reconfigure ~/.config/guix/config.scm
+;;
+;; This will prompt for sudo password (NOPASSWD is configured for wheel group).
+;;
+;; If you ever break sudo again, use 'guix system build' to test config:
+;;   guix system build ~/.config/guix/config.scm
+;; This builds without activating - safe to test changes.
+;;
+;; The setuid-programs and sudoers-file fields are REQUIRED for passwordless sudo.
+;; DO NOT remove them unless you have another way to get root access.
 
 (define %config-dir "/home/aoeu/.config/guix")
 (set! %load-path (cons %config-dir %load-path))
 
 (use-modules (gnu)
-             (gnu packages linux)
+              (gnu services networking)
+              (gnu packages linux)
              (gnu packages shells)
              (gnu packages bash)
-             (gnu packages nushell)
              (gnu packages terminals)
              (gnu packages version-control)
              (gnu packages admin)
@@ -16,64 +31,57 @@
              (gnu packages freedesktop)
              (gnu packages xdisorg)
              (gnu packages rust-apps)
+             (gnu packages emacs)
+             (gnu packages vim)
+             (gnu packages shellutils)
+             (gnu packages compression)
+             (gnu packages base)
              (gnu bootloader)
              (gnu bootloader grub)
              (gnu system)
              (gnu system shadow)
+             (gnu system setuid)
              (gnu services)
              (gnu services desktop)
              (gnu services ssh)
              (gnu services shepherd)
-             (gnu services base)
              (gnu services xorg)
-             (guix config))
+             (guix config)
+             (guix packages))
 
-;; Load custom packages
-(load (string-append %config-dir "/opencode.scm"))
-(load (string-append %config-dir "/gh.scm"))
-(load (string-append %config-dir "/tailscale.scm"))
-(load (string-append %config-dir "/atuin.scm"))
-(load (string-append %config-dir "/zellij.scm"))
-(load (string-append %config-dir "/emacs/emacs.scm"))
-
-(use-modules (shells atuin)
-             (shells zellij)
-             (tools opencode)
-             (tools gh)
-             (vpn tailscale))
+(load (string-append %config-dir "/modules/opencode.scm"))
+(load (string-append %config-dir "/modules/gh.scm"))
+(load (string-append %config-dir "/modules/tailscale.scm"))
+(load (string-append %config-dir "/modules/zellij.scm"))
+(load (string-append %config-dir "/modules/fzf.scm"))
+(load (string-append %config-dir "/modules/wezterm.scm"))
+(load (string-append %config-dir "/modules/zoxide.scm"))
+(load (string-append %config-dir "/modules/nushell.scm"))
+(load (string-append %config-dir "/modules/starship.scm"))
+(load (string-append %config-dir "/modules/desktop-env.scm"))
+(load (string-append %config-dir "/modules/keyboard.scm"))
 
 (define %literativeos-packages
-  (list nushell fzf wezterm atuin zellij zoxide tailscale tailscaled opencode gh git nss-certs sudo coreutils bash hyprland hypridle hyprlock hyprpaper hyprsunset grimblast xdg-desktop-portal-hyprland greetd quickshell cage emacs))
+  (list nushell fzf wezterm starship zellij zoxide tailscale tailscaled opencode gh git nss-certs sudo coreutils grep bash 
+        hyprland hypridle hyprlock hyprpaper hyprsunset grimblast xdg-desktop-portal-hyprland greetd quickshell cage 
+        emacs neovim
+        kanata
+        gzip bzip2 xz))
 
-(define (hyprland-etc-service config)
-  `(("wayland-sessions/hyprland.desktop"
-     ,(plain-file "hyprland.desktop"
-       "[Desktop Entry]
-Name=Hyprland
-Comment=Dynamic tiling Wayland compositor
-Exec=Hyprland
-Type=WaylandSession
-DesktopNames=Hyprland
-"))))
+  (define (remove-gdm services)
+    (filter (lambda (s)
+              (not (memq (service-type-name (service-kind s))
+                        '(gdm gdm-autologin gdm-launch-environment))))
+            services))
 
-(define hyprland-service-type
-  (service-type (name 'hyprland)
-                (extensions
-                 (list (service-extension etc-service-type
-                                          hyprland-etc-service)))
-                (default-value #f)
-                (description "Hyprland Wayland compositor service")))
-
-(define literativeos-root-services
-  (modify-services
-    (append (list (service openssh-service-type)
-                  (service tailscale-service-type)
-                  (service hyprland-service-type))
-            (delete gdm-service-type %desktop-services))
-    (mingetty-service-type config =>
-                           (mingetty-configuration
-                            (inherit config)
-                            (auto-login "aoeu")))))
+  (define literativeos-root-services
+    (remove-gdm
+      (append (list (service tailscale-service-type)
+                    (service hyprland-service-type)
+                    (service kanata-service-type)
+                    (service openssh-service-type)
+                    (service greetd-service-type))
+              %desktop-services)))
 
 (operating-system
   (locale "en_US.utf8")
@@ -82,19 +90,31 @@ DesktopNames=Hyprland
   (host-name "aoeu")
   (sudoers-file (plain-file "sudoers" "root ALL=(ALL) ALL\n%wheel ALL=(ALL) NOPASSWD: ALL\n"))
 
+  ;; NOTE: This is REQUIRED for sudo to work - without it, sudo won't have
+  ;; the setuid bit set and regular users can't run privileged commands.
+  ;; DO NOT REMOVE THIS unless you have another way to get root access.
+  ;; Also keep sudo in %literativeos-packages above.
+  (setuid-programs (list (setuid-program
+                          (program (file-append sudo "/bin/sudo")))))
+
   (kernel linux-libre)
   (firmware '())
 
   (packages %literativeos-packages)
 
-  (users (cons* (user-account
-                  (name "aoeu")
-                  (comment "Aoeu")
-                  (group "users")
-                  (home-directory "/home/aoeu")
-                  (shell (file-append nushell "/bin/nu"))
-                  (supplementary-groups '("wheel" "netdev" "audio" "video")))
-                %base-user-accounts))
+  (users (list (user-account
+                (name "root")
+                (comment "System Administrator")
+                (group "root")
+                (home-directory "/root")
+                (shell (file-append nushell "/bin/nu")))
+               (user-account
+                (name "aoeu")
+                (comment "Aoeu")
+                (group "users")
+                (home-directory "/home/aoeu")
+                (supplementary-groups '("wheel" "netdev" "audio" "video"))
+                (shell (file-append nushell "/bin/nu")))))
 
   (services literativeos-root-services)
 

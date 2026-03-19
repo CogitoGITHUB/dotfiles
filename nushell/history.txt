@@ -33,3 +33,36 @@ sudo guix system reconfigure config.scm
 cd ..
 gh
 gh auth login
+git add .
+git commit
+git commit -m "!"
+gp
+git push
+fzf
+zoxide 
+cdf
+cd
+cd .config/
+cdf
+zoxide 
+nu
+nu
+nu
+aoeu
+tailscale up
+tailscale status
+atuin
+Hyprland 
+emacs -nw
+nu
+opencode 
+zellij
+opencode 
+cd .config/guix/
+sudo guix system reconfigure /home/aoeu/.config/guix/config.scm
+sudo
+opencode 
+cd .config/guix/
+opencode 
+sudo
+sudo su

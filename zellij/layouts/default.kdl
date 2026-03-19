@@ -5,7 +5,7 @@ layout {
             plugin location="zjstatus" {
                 format_left   "{mode} {tabs}"
                 format_center ""
-                format_right  "{pipe_zjstatus_hints}{datetime}#[bg=#ffffff,fg=#000000,bold] {session} "
+                format_right  "{pipe_zjstatus_hints}{datetime} {session} "
                 format_space  ""
                 
                 pipe_zjstatus_hints_format "#[bg=#ffffff,fg=#000000,bold] {output} "

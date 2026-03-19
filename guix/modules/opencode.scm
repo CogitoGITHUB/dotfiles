@@ -1,26 +1,25 @@
-;;; GitHub CLI - GitHub command line tool
-(define-module (tools gh)
-  #:use-module (guix packages)
-  #:use-module (guix download)
-  #:use-module (guix build-system trivial)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages base)
-  #:use-module (gnu packages compression)
-  #:use-module (gnu packages elf))
+;;; OpenCode - AI Coding Assistant
+(use-modules (guix packages)
+             (guix download)
+             (guix build-system trivial)
+             ((guix licenses) #:prefix license:)
+             (gnu packages base)
+             (gnu packages compression)
+             (gnu packages elf))
 
-(define-public gh
+(define-public opencode
   (package
-    (name "gh")
-    (version "2.63.0")
-    (synopsis "GitHub CLI tool")
-    (description "gh is GitHub CLI tool for GitHub")
-    (home-page "https://cli.github.com")
-    (license license:expat)
+    (name "opencode")
+    (version "1.2.26")
+    (synopsis "AI-powered coding assistant")
+    (description "OpenCode is an AI-powered coding assistant that helps with software development tasks")
+    (home-page "https://opencode.ai")
+    (license license:asl2.0)
     (source
      (origin
        (method url-fetch)
-       (uri (string-append "https://github.com/cli/cli/releases/download/v" version "/gh_" version "_linux_amd64.tar.gz"))
-       (sha256 (base32 "1yymhcng5vdwcv241injwhjwm2hsvai662q0z6n82gk9ci8xza53"))))
+       (uri "https://github.com/anomalyco/opencode/releases/download/v1.2.26/opencode-linux-x64.tar.gz")
+        (sha256 (base32 "0m140rr127s9j44ng6z2h6b3vgvg2xqz7qp0c2df7qs6vk8nsyiw"))))
     (build-system trivial-build-system)
     (native-inputs (list coreutils tar gzip patchelf glibc))
     (arguments
@@ -41,7 +40,7 @@
           (setenv "PATH" (string-append coreutils "/bin:" tar "/bin:" gzip "/bin"))
           (system (string-append mkdirbin " -p " out))
           (system (string-append tarbin " -xzf " src " -C " out))
-          (system (string-append chmodbin " a+x " out "/bin/gh"))
+          (system (string-append chmodbin " a+x " out "/opencode"))
           (system (string-append mkdirbin " -p " out "/bin"))
-          (system (string-append mvbin " " out "/gh_2.63.0_linux_amd64/bin/gh " out "/bin/gh"))
-          (system (string-append patchelf-bin " --set-interpreter " ld-linux " " out "/bin/gh")))))))
+          (system (string-append mvbin " " out "/opencode " out "/bin/opencode"))
+          (system (string-append patchelf-bin " --set-interpreter " ld-linux " " out "/bin/opencode")))))))
