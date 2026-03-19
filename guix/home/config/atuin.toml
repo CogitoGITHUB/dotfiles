@@ -1,0 +1,46 @@
+# Atuin Theme Configuration - White theme with dark red accents
+# Theme: #8B0000 (dark red), #A52A2A (light red), #FFFFFF (white)
+
+[general]
+inline_height = 2
+show_time = true
+show_host = false
+show_db_info = false
+exit = 0
+
+[style]
+border = "rounded"
+separator = "❯"
+
+[style.header]
+hidden = false
+left = ""
+right = ""
+
+[style.footer]
+hidden = false
+left = ""
+right = ""
+
+[style.selected]
+bg = "#FFFFFF"
+fg = "#8B0000"
+bold = true
+
+[style.cmd]
+fg = "#8B0000"
+bold = true
+
+[style.dir]
+fg = "#A52A2A"
+
+[style.error]
+fg = "#8B0000"
+bold = true
+
+[style.timestamp]
+bg = "#FFFFFF"
+fg = "#A52A2A"
+
+[style.newline]
+hidden = false

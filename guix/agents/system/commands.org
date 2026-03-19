@@ -1,0 +1,124 @@
+#+TITLE: Guix System Commands
+#+AUTHOR: LiterativeOS
+#+DESCRIPTION: System commands reference for AI agents
+#+STARTUP: fold
+
+* Guix REPL (PRIMARY!)
+
+Primary tool for all interactive work:
+
+#+BEGIN_SRC bash
+# Standard REPL
+guix repl
+
+# With development environment
+guix shell -D -f /home/aoeu/.config/guix/config.scm -- guix repl
+#+END_SRC
+
+** Key REPL Commands
+
+| Command | Description |
+|---------|-------------|
+| =,build <pkg>= | Build package, return path |
+| =,phases <pkg>= | Show build phases |
+| =,lower <obj>= | Lower to derivation |
+| =,help guix= | All commands |
+
+* DECLARATIVE SYSTEM (CRITICAL!)
+
+This Guix system is DECLARATIVE. EVERYTHING must be in config.scm!
+
+The entire system rebuilds with:
+  =sudo guix system reconfigure ~/.config/guix/config.scm=
+
+If it exists on the system but is NOT declared, it's not reproducible!
+
+** What must be declared:**
+
+- ALL packages (home/packages/*)
+- ALL services (root/services/*)
+- ALL kernel config (kernel/*)
+- ALL users/permissions
+- ALL configurations
+
+If you add something to the system, it MUST be declared in Guix!
+
+* Missing Tools Rule
+
+When you discover a missing tool, ADD IT PERMANENTLY!
+- Add to appropriate category
+- Add comment explaining WHY it's needed
+- Build and test with REPL
+- This prevents the same problem twice
+
+* System Build Script (USE THIS!)
+
+This script builds the system, checks for errors/warnings, and sends notifications:
+
+#+BEGIN_SRC bash
+cd ~/.config/guix
+guix repl -- agents/scripts/sys-build-complete.scm
+#+END_SRC
+
+** What the script does:
+1. Runs =sudo guix system reconfigure=
+2. Checks exit code - fails if non-zero
+3. Scans output for "error:" - fails if found
+4. Scans output for "warning:" - warns if found
+5. Sends ntfy notification on completion
+6. If SUCCESS: asks "Git push changes?"
+7. If errors OR warnings: EXIT IMMEDIATELY, fix before continuing!
+
+* Notifications
+
+Ntfy is configured for notifications. Topics:
+- =literativeos= - Main notifications
+
+** Send notification manually:
+#+BEGIN_SRC bash
+curl -s -H "Title: YOUR TITLE" -d "Your message" ntfy.sh/literativeos
+#+END_SRC
+
+** Session Summary Required!
+
+After any significant work, ALWAYS send a summary notification with:
+- What changed
+- What was tested
+- Current status
+- What's pending
+
+* Package Testing Workflow (ALWAYS FOLLOW THIS!)
+
+IMPORTANT: After creating/modifying a package, ALWAYS test in this order:
+
+1. *Create* the .scm file in =home/packages/=
+2. *Test* with Guix REPL: =guix repl= then =,load "path.scm"= then =,build <pkg>=
+3. *Debug* if needed: =guix build <pkg> -K= to keep failed build
+4. *Test* the package: =guix package -i <name>= then =<name> --version=
+5. *Build* system (only if package works): =sudo guix system reconfigure config.scm=
+6. *Ask user*: "Rebuild system now?"
+7. *After system works*: Ask "Git push changes?"
+
+This saves huge time/energy - never skip to reconfigure without testing package first!
+
+* Git Workflow (MANDATORY!)
+
+- Location: =~/.config/guix/=
+- After ANY significant change: Ask "Git push changes?"
+- Commands:
+#+BEGIN_SRC bash
+cd ~/.config/guix
+git add -A
+git commit -m "describe changes"
+git push
+#+END_SRC
+
+* Important Notes
+
+- Main config: ~/home/aoeu/.config/guix/config.scm
+- System profile: ~/var/guix/profiles/system-
+- sudo is PASSWORDLESS (wheel group configured)
+
+* IMPORTANT
+
+If any method here doesn't work or a better approach is found, update this file immediately!

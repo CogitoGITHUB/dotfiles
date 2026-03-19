@@ -1,0 +1,308 @@
+#+TITLE: LiterativeOS Agent Starting Point
+#+AUTHOR: AI Agent
+#+DESCRIPTION: Read this file first at the start of EVERY session!
+#+STARTUP: fold
+#+TODO: READY WAITING DONE
+
+* Confirmation Checklist
+
+** System Location
+- [X] Config: ~/home/aoeu/.config/guix/config.scm
+- [X] Root: ~/home/aoeu/.config/guix/
+- [X] Git: Yes, always ask to push after changes!
+
+** DECLARATIVE SYSTEM (CRITICAL! THIS IS THE CORE PRINCIPLE!)
+
+This is a DECLARATIVE Guix system - EVERYTHING must be declared in config.scm!
+
+The entire system should be rebuildable from scratch using ONLY:
+  =guix system reconfigure ~/.config/guix/config.scm=
+
+If ANY change is made outside of Guix declarations, the system is NO LONGER reproducible!
+This defeats the entire purpose of using Guix!
+
+** What MUST be declared:**
+
+- ALL packages (home/packages/*)
+- ALL system services (root/services/*)
+- ALL kernel/boot config (kernel/*)
+- ALL users and permissions (root/users.scm)
+- ALL locale/timezone settings
+- ALL desktop configuration
+- ALL shell initialization (nushell, atuin, starship, zoxide)
+- ALL user configs that should persist
+
+** THE RULE: If it exists on the system, it should be declared in Guix!**
+
+Not declared = not reproducible = system backup is incomplete
+
+This is NOT optional - it is the FOUNDATION of why we use Guix!
+
+*** Nushell Configuration
+All nushell configuration must be in the Guix config or loaded from declared paths:
+- Main config: ~/home/aoeu/.config/nushell/config.nu
+- Env config: ~/home/aoeu/.config/nushell/env.nu
+- Modules: ~/home/aoeu/.config/nushell/core-modules/
+- Vendor autoload: ~/.local/share/nushell/vendor/autoload/
+
+When adding new shell features (like atuin), must:
+1. Add package to Guix (home/packages/shell/atuin.scm)
+2. Add to packages.scm
+3. Add initialization to nushell config
+4. Document in README
+
+** Git Workflow (MANDATORY)
+- Location: =~/.config/guix/=
+- After ANY significant change: Ask "Git push changes?"
+- Use:
+  #+BEGIN_SRC bash
+  cd ~/.config/guix
+  git add -A
+  git commit -m "changes"
+  git push
+  #+END_SRC
+
+** TODO Guix REPL Workflow (PRIMARY METHOD!)
+USE =guix repl= for all interactive work!
+
+#+BEGIN_SRC bash
+# Start REPL with full Guix available
+guix repl
+
+# Or with development environment
+guix shell -D -f /home/aoeu/.config/guix/config.scm -- guix repl
+#+END_SRC
+
+In REPL:
+#+BEGIN_SRC scheme
+,use (guix)
+,use (gnu packages base)
+
+;; Load your package module
+,load "/home/aoeu/.config/guix/home/packages/shell/atuin.scm"
+
+;; Get package info
+,phases atuin
+,build atuin
+
+;; Or use the package-derivation procedure
+(use-modules (guix derivations) (guix store))
+(define store (open-connection))
+(define der (package-derivation store atuin))
+#+END_SRC
+
+*** REPL Commands (start with comma)
+- =,build <package>= - Build package, return output path
+- =,phases <package>= - Show build phases
+- =,configure-flags <package>= - Show configure flags
+- =,make-flags <package>= - Show make flags
+- =,lower <object>= - Lower to derivation
+- =,help guix= - Show all commands
+
+** TODO Missing Tools Rule (CRITICAL!)
+When you discover a missing tool during work, ADD IT PERMANENTLY to the system!
+
+1. Add to appropriate category in =home/packages/=
+2. Add full comment explaining WHY it's needed
+3. Add to =home/packages.scm=
+4. Load in =config.scm=
+5. Build and test with REPL
+6. This prevents the same problem from happening twice!
+
+** TODO Package Declaration Rule (CRITICAL!)
+EVERY package module must have the FULL, COMPLETE declaration!
+
+*** WRONG (one-liner re-export):
+#+BEGIN_SRC scheme
+(define-public nushell (module-ref (resolve-interface '(gnu packages nushell)) 'nushell))
+#+END_SRC
+
+*** CORRECT (complete declaration with module):
+#+BEGIN_SRC scheme
+;;;; Atuin shell history
+(define-module (home packages shell atuin)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix build-system gnu))
+
+(define-public atuin
+  (package
+    (name "atuin")
+    (version "18.13.3")
+    (synopsis "Shell history with cloud sync")
+    (description "Atuin replaces your existing shell history with a SQLite database.")
+    (home-page "https://atuin.sh")
+    (license license:expat)
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/atuinsh/atuin/releases/download/v" version "/atuin-x86_64-unknown-linux-musl.tar.gz"))
+       (sha256 (base32 "0s184mnkz6hmiy2bc2gf2ywx817vniz3075jz25zjpmpkq27yd5r"))
+       (file-name (string-append "atuin-" version ".tar.gz"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:phases (modify-phases %standard-phases
+                  (delete 'build)
+                  (delete 'check)
+                  (delete 'configure)
+                  (replace 'install
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (let ((out (assoc-ref outputs "out")))
+                        (install-file "atuin" (string-append out "/bin"))
+                        #t)))))))
+#+END_SRC
+
+This is MANDATORY - every package file must be self-contained with the full declaration!
+
+** TODO Package Workflow (MANDATORY ORDER!)
+
+1. *Create* .scm file in =home/packages/<category>/=
+2. *REPL Test*: =guix repl= then =,load "path/to/package.scm"=
+3. *Build Package*: In REPL: =,build <package-name>= OR =guix build -f path.scm=
+4. *Debug if needed*: =guix build <package> -K= (keeps failed build in /tmp)
+5. *Test package works*: =guix package -i <name>= then =<name> --version=
+6. *Build system* (only if package works):
+   #+BEGIN_SRC bash
+   cd ~/.config/guix
+   guix repl -- agents/scripts/sys-build-complete.scm
+   #+END_SRC
+7. *IF build succeeds with NO errors AND NO warnings*: 
+   - Ask "Git push changes?"
+   - Send session summary via ntfy!
+8. *IF build has errors OR warnings*: Fix them IMMEDIATELY, no exceptions!
+
+*** CRITICAL: NEVER GIVE UP ON A PACKAGE!
+
+When user says "add X package":
+- Add EXACTLY that package - no alternatives!
+- NEVER stop until it's working
+- NEVER suggest "skip for now" or "try something else"
+- NEVER give up and rollback without permission
+
+If it fails, keep trying different approaches:
+- Try different download URL
+- Try different build system
+- Try from source
+- Research the correct method
+
+Only stop when it works OR user explicitly says to stop!
+
+Example:
+- User: "add carapace"
+- WRONG: "carapace failed, I'll skip it"
+- CORRECT: "carapace failed, let me try another approach"
+
+** TODO README UPDATE (ALWAYS!)
+
+After ANY change to the system, UPDATE ~/home/aoeu/.config/guix/README.org!
+
+The README must ALWAYS reflect the current state of the system.
+
+When updating, include:
+- New packages added (with version, purpose)
+- New services
+- Configuration changes
+- Directory structure changes
+- Failed package attempts (document what didn't work and why)
+
+This ensures the system is reproducible - new installs can use README as reference!
+
+** TODO Carapace Completion (PENDING)
+
+Carapace provides CLI completions for many tools (kubectl, docker, terraform, etc).
+
+Currently NOT in system - needs different installation approach.
+- Tried: downloading from GitHub releases (URL format issues)
+- Tried: building from go source (too slow)
+- Need: find working install method
+
+When solved, add:
+1. Package: home/packages/utils/carapace.scm
+2. Nushell env.nu: $env.CARAPACE_BRIDGES + carapace generate
+3. Nushell config.nu: source carapace.nu
+
+** TODO Session Summary (ALWAYS!)
+
+After ANY significant work, send a summary notification:
+
+1. What was changed
+2. What was tested
+3. Current status
+4. What's pending
+
+Example notification:
+- "Added curl package to home/packages/utils/"
+- "Tested: guix build curl - OK"
+- "System: reconfigured - OK"
+- "Next: git push pending"
+
+Use: =curl -s -H "Title: Session Summary" -d "summary" ntfy.sh/topic=
+
+** Scripts Available
+Use these for Guix operations (Guile/Scheme only):
+
+| Script | Description |
+|--------|-------------|
+| =guix repl -- agents/scripts/sys-build-complete.scm= | Build system, check errors/warnings, ask git push |
+| =guix repl -- agents/scripts/repl-commands.scm= | REPL helper functions |
+
+*Never use .sh or .nu files for Guix operations!*
+
+** Key Directories
+- =home/packages/shell/= - Shell packages (nushell, starship, atuin, zoxide, fzf)
+- =home/packages/terminal/= - Terminal apps (wezterm, zellij)
+- =home/packages/desktop/= - Desktop (hyprland, etc)
+- =home/packages/dev/= - Dev tools (opencode)
+- =home/packages/version-control/= - Git tools (git, gh, lazygit)
+- =home/packages/utils/= - Utils (kanata, tailscale, gzip, curl, etc)
+- =agents/= - Agent docs and scripts
+
+** Important Notes
+- sudo is PASSWORDLESS (wheel group configured)
+- Root duplicate warning exists but doesn't break anything
+- If anything in docs is wrong: UPDATE THE FILE IMMEDIATELY!
+- *FULL DECLARATIONS ONLY - no re-exports!*
+- *USE REPL AS PRIMARY WORKFLOW*
+
+** Guix PATH Issue (CRITICAL!)
+Nushell may use system guix at =/run/current-system/profile/bin/guix= instead of custom guix.
+
+FIX: Run guix from within =~/.config/guix/= directory:
+#+BEGIN_SRC bash
+cd ~/.config/guix
+guix system build config.scm
+#+END_SRC
+
+If getting "No such file or directory" errors even with correct path:
+1. Check if config.scm has duplicate =load= statements for moved files
+2. Verify all loaded module files actually exist
+3. Run from within the guix config directory itself
+
+* First Action
+
+At start of session, confirm to user:
+1. You have read this file
+2. You understand the FULL DECLARATION rule
+3. You understand the "add missing tools permanently" rule
+4. You understand REPL is the primary workflow
+5. You will ask to git push after changes
+
+** Org-Mode Requirement (CRITICAL!)
+
+ALL documentation files MUST be in org-mode format:
+- Use =#+TITLE=, =#+DESCRIPTION= headers
+- Use =*= for headings (=*=, =**=, =***=, etc.)
+- Use =| Table | Format | For | Data = for lists
+- Use =#+begin_src= for code examples
+- Use =:PROPERTIES:= for metadata
+- Use TODO states for tracking
+
+See [[file:ORG-MODE_GUIDE.org][ORG-MODE_GUIDE.org]] for full guide.
+
+Never write in Markdown - always use org-mode!
+
+Example:
+#+BEGIN_QUOTE
+Ready! I've read the agent guide - I understand: (1) EVERY package needs COMPLETE declaration, (2) If I find a missing tool, I'll add it permanently with explanation, (3) Use =guix repl= as primary workflow with commands like =,build=, =,phases=, (4) Always ask to git push after changes, (5) Use org-mode format, not Markdown. What would you like to work on?
+#+END_QUOTE

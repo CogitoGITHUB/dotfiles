@@ -1,0 +1,220 @@
+#+TITLE: LiterativeOS - GNU Guix System Configuration
+#+AUTHOR: LiterativeOS
+#+DESCRIPTION: My personal Guix system configuration - modular, declarative, reproducible
+#+STARTUP: fold
+#+TODO: READY WAITING DONE
+
+* Overview
+
+LiterativeOS is my personal GNU Guix system configuration. It provides a fully declarative, reproducible operating system built on Guix.
+
+* Directory Structure
+
+#+BEGIN_SRC org
+/config/guix/
+├── README.org                  <- You are here!
+├── config.scm                  <- Main entry point
+├── current                     <- Symlink to current Guix
+│
+├── docs/                       <- Documentation
+│   └── theme.org               <- Theme configuration
+│
+├── agents/                     <- AI agent documentation & scripts
+│   ├── START.org               <- First file to read at session start
+│   ├── README.org               <- Agent documentation index
+│   ├── ORG-MODE_GUIDE.org       <- How to use org-mode format
+│   ├── system/
+│   │   └── commands.org         <- System commands reference
+│   ├── packages/
+│   │   └── management.org       <- Package management reference
+│   └── scripts/
+│       ├── sys-build-complete.scm  <- Build system with notifications
+│       ├── notifications.scm        <- Notification module
+│       ├── repl-commands.scm        <- REPL helper functions
+│       ├── hash-get.nu             <- Get guix hash
+│       ├── pkg-search.nu           <- Search packages
+│       └── package-new.nu          <- Generate package template
+│
+├── home/                       <- User-level configuration
+│   └── packages/
+│       ├── packages.scm             <- Package aggregator
+│       ├── shell/                   <- Shell packages
+│       │   ├── nushell.scm          <- Nushell shell
+│       │   ├── starship.scm         <- Prompt
+│       │   ├── atuin.scm            <- Shell history
+│       │   ├── carapace.scm         <- CLI completions
+│       │   ├── zoxide.scm           <- Smart cd
+│       │   └── fzf.scm              <- Fuzzy finder
+│       ├── terminal/                <- Terminal apps
+│       │   ├── wezterm.scm          <- Terminal emulator
+│       │   └── zellij.scm           <- Terminal multiplexer
+│       ├── desktop/                 <- Desktop apps
+│       │   ├── hyprland.scm         <- Wayland compositor
+│       │   ├── hypridle.scm         <- Idle daemon
+│       │   ├── hyprlock.scm         <- Screen lock
+│       │   ├── hyprpaper.scm        <- Wallpaper
+│       │   ├── hyprsunset.scm       <- Blue light filter
+│       │   ├── grimblast.scm        <- Screenshot
+│       │   ├── quickshell.scm       <- Desktop panel
+│       │   └── xdg-desktop-portal-hyprland.scm
+│       ├── editors/                 <- Editors
+│       │   ├── emacs.scm            <- Emacs
+│       │   └── neovim.scm            <- Neovim
+│       ├── dev/                     <- Development tools
+│       │   ├── gh.scm               <- GitHub CLI
+│       │   └── opencode.scm         <- AI coding assistant
+│       └── utils/                   <- Utilities
+│           ├── curl.scm             <- HTTP client
+│           ├── gzip.scm             <- Compression
+│           ├── bzip2.scm            <- Compression
+│           ├── xz.scm               <- Compression
+│           ├── findutils.scm        <- File utilities
+│           ├── kanata.scm           <- Keyboard remap
+│           ├── tailscale.scm        <- VPN
+│           └── cage.scm             <- Wayland sandbox
+│
+├── root/                       <- System-level configuration
+│   ├── hostname.scm            <- Host name
+│   ├── locale.scm              <- Locale settings
+│   ├── users.scm               <- User accounts
+│   ├── sudoers.scm             <- Sudo configuration
+│   ├── packages.scm            <- System packages
+│   ├── services/               <- System services
+│   │   ├── services.scm        <- Service aggregator
+│   │   ├── openssh.scm         <- SSH
+│   │   ├── greetd.scm          <- Display manager
+│   │   ├── hyprland.scm        <- Wayland compositor service
+│   │   ├── kanata.scm          <- Keyboard service
+│   │   ├── tailscale.scm       <- VPN service
+│   │   └── docker.scm          <- Docker service
+│   └── ...
+│
+├── kernel/                     <- Kernel configuration
+│   ├── kernel.scm              <- Linux kernel
+│   ├── bootloader.scm          <- GRUB configuration
+│   ├── filesystem.scm          <- File systems
+│   └── swap.scm                <- Swap configuration
+│
+├── docker/                     <- Docker images (for testing)
+│   ├── pentest-red/
+│   ├── pentest-blue/
+│   ├── webmaster/
+│   └── devops/
+│
+└── profiles/                   <- Development profiles
+    └── wip.scm                 <- Work in progress
+#+END_SRC
+
+* Quick Start
+
+** Build System
+
+#+BEGIN_SRC bash
+cd ~/.config/guix
+sudo guix system reconfigure config.scm
+#+END_SRC
+
+** Or use the build script (with notifications)
+
+#+BEGIN_SRC bash
+cd ~/.config/guix
+guix repl -- agents/scripts/sys-build-complete.scm
+#+END_SRC
+
+* DECLARATIVE SYSTEM PRINCIPLE (CRITICAL!)
+
+This is a DECLARATIVE Guix system. EVERYTHING is defined in config.scm and related .scm files.
+
+The entire system can be rebuilt from scratch using only:
+  =guix system reconfigure ~/.config/guix/config.scm=
+
+If something exists on the system but is NOT declared in Guix config, it breaks reproducibility!
+
+** What MUST be declared:**
+
+- ALL packages in home/packages/* and root/packages.scm
+- ALL system services in root/services/*
+- ALL kernel/boot/bootloader config in kernel/*
+- ALL user accounts and permissions in root/users.scm
+- ALL locale, timezone, keyboard settings
+- ALL desktop environment (hyprland, wezterm, zellij)
+- ALL shell integrations (nushell config, atuin, starship, zoxide)
+- ALL user configurations that should persist
+
+** Nushell Configuration
+
+Nushell config files are in Guix at home/config/nushell/ and get symlinked to ~/.config/nushell:
+
+- nushell package: home/packages/shell/nushell.scm
+- atuin: home/packages/shell/atuin.scm (loaded via source in config.nu)
+- starship: home/packages/shell/starship.scm (loaded via source in config.nu)
+- carapace: home/packages/shell/carapace.scm (generates completions in config.nu)
+- zoxide: home/packages/shell/zoxide.scm (loaded in env.nu)
+
+Shell integration config: home/config/nushell/env.nu, config.nu
+
+The Guix packages provide the binaries, nushell config loads them.
+
+** Or use the build script (with notifications)
+
+#+BEGIN_SRC bash
+cd ~/.config/guix
+guix repl -- agents/scripts/sys-build-complete.scm
+#+END_SRC
+
+* Package Declaration Rule
+
+Every package in =home/packages/= MUST have a COMPLETE declaration, not re-exports.
+
+#+BEGIN_SRC scheme
+;;;; Atuin shell history
+(define-public atuin
+  (package
+    (name "atuin")
+    (version "18.13.3")
+    (synopsis "Shell history with cloud sync")
+    (description "Atuin replaces your existing shell history with a SQLite database.")
+    (home-page "https://atuin.sh")
+    (license expat)
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/atuinsh/atuin/releases/download/v" version "/atuin-x86_64-unknown-linux-musl.tar.gz"))
+       (sha256 (base32 "0s184mnkz6hmiy2bc2gf2ywx817vniz3075jz25zjpmpkq27yd5r"))
+       (file-name (string-append "atuin-" version ".tar.gz"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:phases (modify-phases %standard-phases
+                  (delete 'build)
+                  (delete 'check)
+                  (delete 'configure)
+                  (replace 'install
+                    (lambda* (#:key outputs #:allow-other-keys)
+                      (let ((out (assoc-ref outputs "out")))
+                        (install-file "atuin" (string-append out "/bin"))
+                        #t)))))))
+#+END_SRC
+
+* Workflow
+
+1. Create/modify .scm files in appropriate directory
+2. Test with Guix REPL: =guix repl= then =,load "path.scm"=
+3. Build package: =guix build -f path.scm=
+4. Build system: =sudo guix system reconfigure config.scm=
+5. Git push: =cd ~/.config/guix && git add -A && git commit -m "..." && git push=
+
+* Theme Configuration
+
+See [[file:docs/theme.org][docs/theme.org]] for full theme documentation.
+
+* Notifications
+
+System sends ntfy notifications on successful builds:
+- Topic: =literativeos=
+- Server: =ntfy.sh=
+
+* Contact
+
+- Author: LiterativeOS
+- Configuration: GNU Guix
+- Format: Org-mode for documentation

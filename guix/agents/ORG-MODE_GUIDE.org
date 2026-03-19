@@ -1,0 +1,138 @@
+#+TITLE: LiterativeOS Agent Org-Mode Guide
+#+AUTHOR: LiterativeOS
+#+DESCRIPTION: How to use Org-mode for Guix configuration
+#+STARTUP: fold
+
+* Introduction
+
+Org-mode is Emacs's powerful markup format for notes, tasks, and literate programming. This system uses org-mode to organize all agent documentation and configuration.
+
+* Why Org-mode?
+
+- Structured headings with folding
+- Tables for data
+- Code blocks with syntax highlighting
+- Literate programming (mix prose with code)
+- Export to multiple formats
+- Task management with TODO states
+- Links between documents
+
+* Org-mode Basics
+
+** Headings
+#+BEGIN_SRC org
+* Top Level (1 star)
+** Second Level (2 stars)
+*** Third Level (3 stars)
+#+END_SRC
+
+** Folding
+- =TAB= on heading to fold/unfold
+- =S-TAB= to fold all
+- =C-c C-b= (org-shifttab) cycle visibility
+
+** Tables
+#+BEGIN_SRC org
+| Package | Version | Reason |
+|---------|---------|--------|
+| atuin   | 18.13.3 | Shell history |
+| starship| 1.21.0  | Prompt |
+#+END_SRC
+
+** Code Blocks
+#+BEGIN_SRC org
+#+begin_src scheme :tangle yes
+(define-public hello
+  (package
+    (name "hello")))
+#+end_src
+#+END_SRC
+
+** Links
+#+BEGIN_SRC org
+[[file:packages/management.org][Package Management]]
+[[https://guix.gnu.org][Guix Website]]
+#+END_SRC
+
+** TODO States
+#+BEGIN_SRC org
+* TODO Install curl
+* DONE Add to packages.scm
+* WAITING Test package
+#+END_SRC
+
+** Properties
+#+BEGIN_SRC org
+:PROPERTIES:
+:CATEGORY: shell
+:PRIORITY: high
+:END:
+#+END_SRC
+
+* Org-mode with Guix
+
+** Literate Guix Configuration
+
+Each package can be documented with:
+1. Purpose and description
+2. Dependencies
+3. Build system used
+4. Usage instructions
+5. Related packages
+
+** Source Block Headers
+
+Common headers for Guix:
+#+BEGIN_SRC org
+#+begin_src scheme :noweb yes :results output :tangle yes
+<package-definition>
+#+end_src
+#+END_SRC
+
+- =:tangle yes= - Write to file
+- =:noweb yes= - Enable template expansion
+- =:results output= - Capture output
+- =:exports code= - Export code only
+
+* Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| C-c C-c | Execute code block |
+| C-c C-t | Toggle TODO state |
+| TAB | Fold heading |
+| S-TAB | Cycle visibility |
+| C-c C-o | Open link |
+| M-RET | New heading |
+| C-c | Show all dispatchers |
+
+* Using Org-mode in This Project
+
+** Reading Org Files
+1. Open file in Emacs
+2. Use TAB to fold sections
+3. Navigate with outlines
+4. Execute code blocks with C-c C-c
+
+** Editing Org Files
+1. Keep structure clean
+2. Use tables for lists
+3. Use code blocks for examples
+4. Add TODO states for tasks
+5. Use properties for metadata
+
+** Exporting
+- =C-c C-e= to access export menu
+- Export to HTML, PDF, etc.
+
+* Agent Instructions
+
+When working with this system, ALWAYS use org-mode format:
+1. Use =#+TITLE=, =#+DESCRIPTION= headers
+2. Use =*=, =**=, =***= for headings
+3. Use =| Table | Format | For | Data =
+4. Use =#+begin_src= for code examples
+5. Use =:PROPERTIES:= for metadata
+6. Use TODO states for tracking
+
+All agent documentation files should be in org-mode!

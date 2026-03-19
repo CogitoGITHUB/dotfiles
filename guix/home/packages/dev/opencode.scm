@@ -1,0 +1,38 @@
+;;; OpenCode AI coding assistant
+(define-public opencode
+  (package
+    (name "opencode")
+    (version "1.2.26")
+    (synopsis "AI-powered coding assistant")
+    (description "OpenCode is an AI-powered coding assistant that helps with software development tasks")
+    (home-page "https://opencode.ai")
+    (license asl2.0)
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/anomalyco/opencode/releases/download/v1.2.26/opencode-linux-x64.tar.gz")
+        (sha256 (base32 "0m140rr127s9j44ng6z2h6b3vgvg2xqz7qp0c2df7qs6vk8nsyiw"))))
+    (build-system trivial-build-system)
+    (native-inputs (list coreutils tar gzip patchelf glibc))
+    (arguments
+     '(#:builder
+       (let* ((out (assoc-ref %outputs "out"))
+              (src (assoc-ref %build-inputs "source"))
+              (coreutils (assoc-ref %build-inputs "coreutils"))
+              (tar (assoc-ref %build-inputs "tar"))
+              (gzip (assoc-ref %build-inputs "gzip"))
+              (patchelf (assoc-ref %build-inputs "patchelf"))
+              (glibc (assoc-ref %build-inputs "glibc"))
+              (tarbin (string-append tar "/bin/tar"))
+              (mvbin (string-append coreutils "/bin/mv"))
+              (chmodbin (string-append coreutils "/bin/chmod"))
+              (mkdirbin (string-append coreutils "/bin/mkdir"))
+              (patchelf-bin (string-append patchelf "/bin/patchelf"))
+              (ld-linux (string-append glibc "/lib/ld-linux-x86-64.so.2")))
+           (setenv "PATH" (string-append coreutils "/bin:" tar "/bin:" gzip "/bin"))
+           (system (string-append mkdirbin " -p " out))
+           (system (string-append tarbin " -xzf " src " -C " out))
+           (system (string-append chmodbin " a+x " out "/opencode"))
+           (system (string-append mkdirbin " -p " out "/bin"))
+           (system (string-append mvbin " " out "/opencode " out "/bin/opencode"))
+           (system (string-append patchelf-bin " --set-interpreter " ld-linux " " out "/bin/opencode")))))))

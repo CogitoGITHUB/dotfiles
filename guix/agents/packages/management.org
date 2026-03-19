@@ -1,0 +1,228 @@
+#+TITLE: Guix Package Management
+#+AUTHOR: LiterativeOS
+#+DESCRIPTION: Package management reference for AI agents
+#+STARTUP: fold
+
+* CRITICAL: Full Package Declarations ONLY!
+
+EVERY package module MUST have the COMPLETE, FULL declaration!
+
+** DECLARATIVE SYSTEM REQUIREMENT
+
+This is a DECLARATIVE Guix system. If a package is installed, it MUST be declared in Guix config!
+
+Any manual changes outside Guix break reproducibility.
+
+** Shell Integration (nushell, starship, atuin, zoxide, fzf)
+
+When adding new shell features:
+1. Add package to Guix (home/packages/shell/<name>.scm)
+2. Add to packages.scm
+3. Load in config.scm
+4. Add initialization to nushell config (~/.config/nushell/config.nu)
+5. Update README
+
+Example: Atuin
+- Package: home/packages/shell/atuin.scm
+- Config: source ~/.local/share/nushell/vendor/autoload/atuin.nu in config.nu
+
+** Missing Tools Rule (ALWAYS DO THIS!)
+
+When you discover a missing tool during work, ADD IT PERMANENTLY to the system!
+
+1. Create package in appropriate category
+2. Add comment explaining WHY it's needed
+3. Add to =home/packages.scm=
+4. Load in =config.scm=
+5. Build and test
+6. This prevents the same problem from happening twice!
+
+Example comments:
+#+BEGIN_SRC scheme
+;;;; Curl - HTTP client (needed for downloading package hashes)
+;;;; Atuin - Shell history (needed for better history management)
+#+END_SRC
+
+* Guix REPL (PRIMARY METHOD!)
+
+The REPL is the primary tool for interactive package work:
+
+#+BEGIN_SRC bash
+# Start REPL with Guix available
+guix repl
+
+# Or with development environment
+guix shell -D -f /home/aoeu/.config/guix/config.scm -- guix repl
+#+END_SRC
+
+** REPL Commands (all start with comma)
+
+| Command | Description |
+|---------|-------------|
+| =,use (guix)= | Import Guix module |
+| =,load "path.scm"= | Load a package file |
+| =,build <package>= | Build package, return output path |
+| =,phases <package>= | Show build phases |
+| =,configure-flags <package>= | Show configure flags |
+| =,make-flags <package>= | Show make flags |
+| =,lower <object>= | Lower to derivation |
+| =,help guix= | Show all REPL commands |
+
+** Example REPL Session
+
+#+BEGIN_SRC scheme
+scheme@(guix-user)>,use (guix)
+scheme@(guix-user)>,load "/home/aoeu/.config/guix/home/packages/shell/atuin.scm"
+scheme@(guix-user)>,phases atuin
+scheme@(guix-user)>,build atuin
+$1 = "/gnu/store/...-atuin-18.13.3"
+#+END_SRC
+
+** Building from REPL programmatically
+
+#+BEGIN_SRC scheme
+(use-modules (guix store) (guix derivations) (guix packages))
+
+(define store (open-connection))
+(define der (package-derivation store atuin))
+(build-derivations store (list der))
+#+END_SRC
+
+* Package Definition Reference
+
+** Required Fields
+
+#+BEGIN_SRC scheme
+(define-public <name>
+  (package
+    (name "<name>")
+    (version "<version>")
+    (synopsis "<short description>")
+    (description "<long description>")
+    (home-page "<url>")
+    (license <license>)
+    (source <origin>)
+    (build-system <build-system>)
+    (arguments <phases-and-flags>)
+    (inputs <runtime-deps>)
+    (native-inputs <build-time-deps>)))
+#+END_SRC
+
+** Common Build Systems
+
+| Build System | Use For | Module |
+|--------------|---------|--------|
+| =gnu-build-system= | Standard =./configure && make install= | =(guix build-system gnu)= |
+| =trivial-build-system= | Simple custom scripts | =(guix build-system trivial)= |
+| =copy-build-system= | Copy files | =(guix build-system copy)= |
+| =cmake-build-system= | CMake projects | =(guix build-system cmake)= |
+| =python-build-system= | Python packages | =(guix build-system python)= |
+| =rust-build-system= | Rust/Cargo | =(guix build-system rust)= |
+| =go-build-system= | Go packages | =(guix build-system go)= |
+
+** Common Arguments
+
+| Argument | Description | Example |
+|----------|-------------|---------|
+| =#:phases= | Customize build phases | See below |
+| =#:configure-flags= | Configure script flags | ='("--prefix=/foo")= |
+| =#:make-flags= | Make flags | ='("VERBOSE=1")= |
+| =#:tests?= | Run tests? | =#f= to disable |
+| =#:outputs= | Multiple outputs | ='("out" "doc")= |
+
+** Modify-Phases Reference
+
+#+BEGIN_SRC scheme
+`(#:phases (modify-phases %standard-phases
+  (delete 'phase-name)           ; Remove phase
+  (replace 'phase-name           ; Replace phase
+    (lambda* (#:key outputs #:allow-other-keys)
+      ...))
+  (add-before 'existing 'new     ; Add before existing
+    (lambda _ ...))
+  (add-after 'existing 'new      ; Add after existing
+    (lambda _ ...))))
+#+END_SRC
+
+** Standard Build Phases (gnu-build-system)
+
+1. =set-SOURCE-DATE-EPOCH= - Set timestamps
+2. =set-paths= - Setup environment paths
+3. =install-locale= - Setup locale
+4. =unpack= - Extract source
+5. =bootstrap= - Run bootstrap if needed
+6. =patch-usr-bin-file= - Fix shebangs
+7. =patch-source-shebangs= - Fix script shebangs
+8. =configure= - Run ./configure
+9. =build= - Run make
+10. =check= - Run make check
+11. =install= - Run make install
+12. =patch-shebangs= - Fix installed scripts
+13. =strip= - Strip binaries
+14. =validate-runpath= - Check dependencies
+15. =compress-documentation= - Compress info pages
+
+* Quick Scripts
+
+#+BEGIN_SRC bash
+# Search packages
+nu agents/scripts/pkg-search.nu <query>
+
+# Get hash for new package
+nu agents/scripts/hash-get.nu <url>
+
+# Generate package template
+nu agents/scripts/package-new.nu <name> <version> <url> [gnu|trivial]
+#+END_SRC
+
+* Debugging Build Failures
+
+#+BEGIN_SRC bash
+# Keep failed build tree
+guix build <package> -K
+
+# Go to build directory
+cd /tmp/guix-build-<package>.drv-0
+source ./environment-variables
+
+# Debug in container similar to daemon
+guix shell -C -D <package> strace gdb
+#+END_SRC
+
+* Package Creation Workflow
+
+IMPORTANT: Always follow this order to save time/energy!
+
+** Step 1: Create the .scm file
+Create package file in appropriate category under =home/packages/=
+
+** Step 2: Test with Guix REPL
+#+BEGIN_SRC bash
+guix repl
+,load "/home/aoeu/.config/guix/home/packages/shell/<package>.scm"
+,build <package-name>
+#+END_SRC
+
+** Step 3: Build package
+#+BEGIN_SRC bash
+guix build -f /home/aoeu/.config/guix/home/packages/shell/<package>.scm
+#+END_SRC
+
+** Step 4: Verify package works
+#+BEGIN_SRC bash
+./pre-inst-env guix package -i <package-name>
+<package-name> --version
+#+END_SRC
+
+** Step 5: Only THEN reconfigure full system
+Ask user: "Package builds and works. Rebuild system now?"
+
+** Step 6: Git push (ALWAYS ASK!)
+After system works, ask user: "Git push changes?"
+
+** Why This Order Matters
+
+- Full system reconfigure takes MUCH longer
+- Package build alone is fast
+- You can test package before committing to full system rebuild
+- Git push ensures changes are backed up/versions

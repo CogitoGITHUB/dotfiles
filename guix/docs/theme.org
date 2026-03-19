@@ -1,0 +1,56 @@
+#+TITLE: Theme Configuration
+#+AUTHOR: LiterativeOS
+#+DESCRIPTION: Unified "white" theme across terminal applications
+#+STARTUP: fold
+
+* Overview
+
+The system uses a unified theme system with 3 backgrounds and red accents.
+
+* Color Palettes
+
+| Theme | Background | Primary Accent | Secondary Accent | Intensity |
+|-------|------------|----------------|------------------|-----------|
+| Day | #FFFFFF (white) | #8B0000 (dark red) | #A52A2A (light red) | Bright |
+| Dusk | #808080 (grey) | #8B0000 (dark red) | #A52A2A (light red) | Medium |
+| Night | #000000 (black) | #8B0000 (dark red) | #A52A2A (light red) | Dark |
+
+* Apps Covered
+
+All apps use the same red accent colors across themes:
+
+| App | Category | Config Location |
+|-----|----------|-----------------|
+| Starship | Shell prompt | home/config/starship.toml |
+| Zellij | Terminal multiplexer | home/config/zellij.yaml |
+| Nushell | Shell | home/config/nushell/theme.nu |
+| Atuin | Shell history | home/config/atuin.toml |
+| FZF | Fuzzy finder | home/config/fzf/fzf.nu |
+| OpenCode | AI assistant | home/config/opencode/themes/white.json |
+| Wezterm | Terminal emulator | home/config/wezterm/wezterm.lua |
+| Hyprland | Wayland compositor | home/config/hypr/themes/ |
+
+* Theme Implementation
+
+** Phase 1 (DONE): Day theme with red accents
+- All 8 apps configured with red (#8B0000) on white/black backgrounds
+- Colors unified across Starship, Zellij, Nushell, Atuin, FZF, OpenCode, Wezterm, Hyprland
+
+** Phase 2 (PENDING): Dusk theme (grey background)
+- Create home/config/hypr/themes/dusk.conf
+- Create home/config/wezterm/themes/dusk.lua
+- Update Wezterm and Hyprland for grey background
+
+** Phase 3 (PENDING): Night theme (black background)
+- Create home/config/hypr/themes/night.conf
+- Create home/config/wezterm/themes/night.lua
+- Update Wezterm and Hyprland for black background
+
+** Phase 4 (PENDING): Theme switching mechanism
+- Implement runtime theme switching
+- User command or automatic (time-based)
+
+* Notes
+
+- Wezterm and Hyprland configs exist on-system only (NOT in Guix yet)
+- Theme switching will require symlink or runtime variable approach

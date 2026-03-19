@@ -1,4 +1,4 @@
-;; LiterativeOS - System Configuration
+;; LiterativeOS - Modular System Configuration
 ;;
 ;; REBUILD/RECONFIGURE INSTRUCTIONS:
 ;; --------------------------------
@@ -16,15 +16,14 @@
 ;; DO NOT remove them unless you have another way to get root access.
 
 (define %config-dir "/home/aoeu/.config/guix")
-(set! %load-path (cons %config-dir %load-path))
 
 (use-modules (gnu)
-              (gnu services networking)
-              (gnu packages linux)
+             (gnu services networking)
+             (gnu packages linux)
              (gnu packages shells)
              (gnu packages bash)
              (gnu packages terminals)
-             (gnu packages version-control)
+
              (gnu packages admin)
              (gnu packages nss)
              (gnu packages wm)
@@ -35,6 +34,7 @@
              (gnu packages vim)
              (gnu packages shellutils)
              (gnu packages compression)
+             (gnu packages curl)
              (gnu packages base)
              (gnu bootloader)
              (gnu bootloader grub)
@@ -47,89 +47,93 @@
              (gnu services shepherd)
              (gnu services xorg)
              (guix config)
-             (guix packages))
+             (guix packages)
+             (guix licenses)
+             (guix download)
+             (guix build-system trivial)
+             (guix build-system copy)
+             (guix build-system go)
+             (guix build-system gnu)
+             (guix records)
+             (guix gexp)
+             (guix utils)
+             (gnu packages elf)
+             (ice-9 match))
 
-(load (string-append %config-dir "/modules/opencode.scm"))
-(load (string-append %config-dir "/modules/gh.scm"))
-(load (string-append %config-dir "/modules/tailscale.scm"))
-(load (string-append %config-dir "/modules/zellij.scm"))
-(load (string-append %config-dir "/modules/fzf.scm"))
-(load (string-append %config-dir "/modules/wezterm.scm"))
-(load (string-append %config-dir "/modules/zoxide.scm"))
-(load (string-append %config-dir "/modules/nushell.scm"))
-(load (string-append %config-dir "/modules/starship.scm"))
-(load (string-append %config-dir "/modules/desktop-env.scm"))
-(load (string-append %config-dir "/modules/keyboard.scm"))
+(load (string-append %config-dir "/kernel/kernel.scm"))
+(load (string-append %config-dir "/kernel/bootloader.scm"))
+(load (string-append %config-dir "/kernel/filesystem.scm"))
+(load (string-append %config-dir "/kernel/swap.scm"))
+
+(load (string-append %config-dir "/root/hostname.scm"))
+(load (string-append %config-dir "/root/locale.scm"))
+(load (string-append %config-dir "/root/users.scm"))
+(load (string-append %config-dir "/root/sudoers.scm"))
+(load (string-append %config-dir "/root/packages.scm"))
+
+(load (string-append %config-dir "/root/services/openssh.scm"))
+(load (string-append %config-dir "/root/services/greetd.scm"))
+(load (string-append %config-dir "/root/services/hyprland.scm"))
+(load (string-append %config-dir "/root/services/kanata.scm"))
+(load (string-append %config-dir "/root/services/tailscale.scm"))
+(load (string-append %config-dir "/root/services/docker.scm"))
+(load (string-append %config-dir "/root/services/services.scm"))
+
+(load (string-append %config-dir "/home/packages/shell/nushell.scm"))
+(load (string-append %config-dir "/home/packages/shell/starship.scm"))
+(load (string-append %config-dir "/home/packages/shell/atuin.scm"))
+(load (string-append %config-dir "/home/packages/shell/carapace.scm"))
+(load (string-append %config-dir "/home/packages/shell/zoxide.scm"))
+(load (string-append %config-dir "/home/packages/shell/fzf.scm"))
+(load (string-append %config-dir "/home/packages/terminal/wezterm.scm"))
+(load (string-append %config-dir "/home/packages/terminal/zellij.scm"))
+(load (string-append %config-dir "/home/packages/desktop/hyprland.scm"))
+(load (string-append %config-dir "/home/packages/desktop/hypridle.scm"))
+(load (string-append %config-dir "/home/packages/desktop/hyprlock.scm"))
+(load (string-append %config-dir "/home/packages/desktop/hyprpaper.scm"))
+(load (string-append %config-dir "/home/packages/desktop/hyprsunset.scm"))
+(load (string-append %config-dir "/home/packages/desktop/grimblast.scm"))
+(load (string-append %config-dir "/home/packages/desktop/quickshell.scm"))
+(load (string-append %config-dir "/home/packages/desktop/xdg-desktop-portal-hyprland.scm"))
+(load (string-append %config-dir "/home/packages/editors/emacs.scm"))
+(load (string-append %config-dir "/home/packages/editors/neovim.scm"))
+(load (string-append %config-dir "/home/packages/dev/opencode.scm"))
+(load (string-append %config-dir "/home/packages/utils/kanata.scm"))
+(load (string-append %config-dir "/home/packages/utils/tailscale.scm"))
+(load (string-append %config-dir "/home/packages/utils/cage.scm"))
+(load (string-append %config-dir "/home/packages/utils/gzip.scm"))
+(load (string-append %config-dir "/home/packages/utils/bzip2.scm"))
+(load (string-append %config-dir "/home/packages/utils/xz.scm"))
+(load (string-append %config-dir "/home/packages/utils/findutils.scm"))
+(load (string-append %config-dir "/home/packages/version-control/git.scm"))
+(load (string-append %config-dir "/home/packages/version-control/gh.scm"))
+(load (string-append %config-dir "/home/packages/version-control/lazygit.scm"))
+
+(load (string-append %config-dir "/home/packages.scm"))
 
 (define %literativeos-packages
-  (list nushell fzf wezterm starship zellij zoxide tailscale tailscaled opencode gh git nss-certs sudo coreutils grep bash 
-        hyprland hypridle hyprlock hyprpaper hyprsunset grimblast xdg-desktop-portal-hyprland greetd quickshell cage 
-        emacs neovim
-        kanata
-        gzip bzip2 xz))
-
-  (define (remove-gdm services)
-    (filter (lambda (s)
-              (not (memq (service-type-name (service-kind s))
-                        '(gdm gdm-autologin gdm-launch-environment))))
-            services))
-
-  (define literativeos-root-services
-    (remove-gdm
-      (append (list (service tailscale-service-type)
-                    (service hyprland-service-type)
-                    (service kanata-service-type)
-                    (service openssh-service-type)
-                    (service greetd-service-type))
-              %desktop-services)))
+  (append literativeos-home-packages
+           literativeos-system-packages))
 
 (operating-system
-  (locale "en_US.utf8")
-  (timezone "Europe/Bucharest")
-  (keyboard-layout (keyboard-layout "us" "dvorak"))
-  (host-name "aoeu")
-  (sudoers-file (plain-file "sudoers" "root ALL=(ALL) ALL\n%wheel ALL=(ALL) NOPASSWD: ALL\n"))
+  (locale literativeos-locale)
+  (timezone literativeos-timezone)
+  (keyboard-layout literativeos-keyboard-layout)
+  (host-name literativeos-host-name)
+  (sudoers-file literativeos-sudoers-file)
+  (setuid-programs literativeos-setuid-programs)
 
-  ;; NOTE: This is REQUIRED for sudo to work - without it, sudo won't have
-  ;; the setuid bit set and regular users can't run privileged commands.
-  ;; DO NOT REMOVE THIS unless you have another way to get root access.
-  ;; Also keep sudo in %literativeos-packages above.
-  (setuid-programs (list (setuid-program
-                          (program (file-append sudo "/bin/sudo")))))
-
-  (kernel linux-libre)
+  (kernel literativeos-kernel)
   (firmware '())
 
   (packages %literativeos-packages)
 
-  (users (list (user-account
-                (name "root")
-                (comment "System Administrator")
-                (group "root")
-                (home-directory "/root")
-                (shell (file-append nushell "/bin/nu")))
-               (user-account
-                (name "aoeu")
-                (comment "Aoeu")
-                (group "users")
-                (home-directory "/home/aoeu")
-                (supplementary-groups '("wheel" "netdev" "audio" "video"))
-                (shell (file-append nushell "/bin/nu")))))
+  (users literativeos-users)
 
-  (services literativeos-root-services)
+  (services literativeos-services)
 
-  (bootloader (bootloader-configuration
-                (bootloader grub-efi-bootloader)
-                (keyboard-layout keyboard-layout)))
+  (bootloader literativeos-bootloader-configuration)
 
-  (swap-devices (list))
+  (swap-devices literativeos-swap-devices)
 
-  (file-systems (cons* (file-system
-                         (mount-point "/boot/efi")
-                         (device (uuid "84F3-3015" 'fat32))
-                         (type "vfat"))
-                       (file-system
-                         (mount-point "/")
-                         (device (uuid "83df32a9-e416-44b3-a6f8-5a7275da5786" 'ext4))
-                         (type "ext4"))
-                       %base-file-systems)))
+  (file-systems literativeos-file-systems))
