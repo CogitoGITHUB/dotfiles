@@ -60,25 +60,35 @@
              (gnu packages elf)
              (ice-9 match))
 
+;; Kernel config
 (load (string-append %config-dir "/kernel/kernel.scm"))
+(load (string-append %config-dir "/kernel/keyboard.scm"))
 (load (string-append %config-dir "/kernel/bootloader.scm"))
 (load (string-append %config-dir "/kernel/filesystem.scm"))
 (load (string-append %config-dir "/kernel/swap.scm"))
 
+;; Root config
 (load (string-append %config-dir "/root/hostname.scm"))
 (load (string-append %config-dir "/root/locale.scm"))
 (load (string-append %config-dir "/root/users.scm"))
 (load (string-append %config-dir "/root/sudoers.scm"))
 (load (string-append %config-dir "/root/packages.scm"))
 
+;; Root services (requires root privileges)
 (load (string-append %config-dir "/root/services/openssh.scm"))
 (load (string-append %config-dir "/root/services/greetd.scm"))
 (load (string-append %config-dir "/root/services/hyprland.scm"))
-(load (string-append %config-dir "/root/services/kanata.scm"))
 (load (string-append %config-dir "/root/services/tailscale.scm"))
 (load (string-append %config-dir "/root/services/docker.scm"))
+
+;; Home packages with services (must load BEFORE services.scm)
+(load (string-append %config-dir "/home/packages/utils/keyd.scm"))
+(load (string-append %config-dir "/home/packages/utils/kanata.scm"))
+
+;; System services aggregator
 (load (string-append %config-dir "/root/services/services.scm"))
 
+;; Home packages (without system services)
 (load (string-append %config-dir "/home/packages/shell/nushell.scm"))
 (load (string-append %config-dir "/home/packages/shell/starship.scm"))
 (load (string-append %config-dir "/home/packages/shell/atuin.scm"))
@@ -98,7 +108,6 @@
 (load (string-append %config-dir "/home/packages/editors/emacs.scm"))
 (load (string-append %config-dir "/home/packages/editors/neovim.scm"))
 (load (string-append %config-dir "/home/packages/dev/opencode.scm"))
-(load (string-append %config-dir "/home/packages/utils/kanata.scm"))
 (load (string-append %config-dir "/home/packages/utils/tailscale.scm"))
 (load (string-append %config-dir "/home/packages/utils/cage.scm"))
 (load (string-append %config-dir "/home/packages/utils/gzip.scm"))

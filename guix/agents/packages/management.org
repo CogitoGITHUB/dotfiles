@@ -43,6 +43,29 @@ Example comments:
 ;;;; Atuin - Shell history (needed for better history management)
 #+END_SRC
 
+** Package + Service Organization (CRITICAL!)
+
+Each package file MUST include its related service definition!
+
+*** Structure:
+- home/packages/utils/keyd.scm → package + shepherd service
+- home/packages/utils/kanata.scm → package + shepherd service
+- home/packages/desktop/hypridle.scm → package + config
+
+*** root/services/ is ONLY for:
+- Services requiring root privileges (openssh, tailscale, docker, greetd)
+
+*** Example: Correct organization
+#+BEGIN_SRC scheme
+;;;; Kanata - keyboard customization daemon
+(define-public kanata ...)
+
+(define (kanata-shepherd-service config)
+  ...)
+
+(define-public literativeos-kanata-service-type ...)
+#+END_SRC
+
 * Guix REPL (PRIMARY METHOD!)
 
 The REPL is the primary tool for interactive package work:

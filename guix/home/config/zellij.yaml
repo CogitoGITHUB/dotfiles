@@ -10,7 +10,7 @@ themes:
     palette:
       black: "#FFFFFF"
       red: "#8B0000"
-      green: "#A52A2A"
+      green: "#8B0000"
       yellow: "#8B0000"
       blue: "#A52A2A"
       magenta: "#8B0000"
@@ -18,7 +18,7 @@ themes:
       white: "#8B0000"
       bright_black: "#FFFFFF"
       bright_red: "#A52A2A"
-      bright_green: "#8B0000"
+      bright_green: "#A52A2A"
       bright_yellow: "#A52A2A"
       bright_blue: "#8B0000"
       bright_magenta: "#A52A2A"

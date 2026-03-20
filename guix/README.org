@@ -16,9 +16,6 @@ LiterativeOS is my personal GNU Guix system configuration. It provides a fully d
 ├── config.scm                  <- Main entry point
 ├── current                     <- Symlink to current Guix
 │
-├── docs/                       <- Documentation
-│   └── theme.org               <- Theme configuration
-│
 ├── agents/                     <- AI agent documentation & scripts
 │   ├── START.org               <- First file to read at session start
 │   ├── README.org               <- Agent documentation index
@@ -50,7 +47,7 @@ LiterativeOS is my personal GNU Guix system configuration. It provides a fully d
 │       │   └── zellij.scm           <- Terminal multiplexer
 │       ├── desktop/                 <- Desktop apps
 │       │   ├── hyprland.scm         <- Wayland compositor
-│       │   ├── hypridle.scm         <- Idle daemon
+│       │   ├── hypridle.scm         <- Idle daemon (prevents sleep)
 │       │   ├── hyprlock.scm         <- Screen lock
 │       │   ├── hyprpaper.scm        <- Wallpaper
 │       │   ├── hyprsunset.scm       <- Blue light filter
@@ -61,17 +58,16 @@ LiterativeOS is my personal GNU Guix system configuration. It provides a fully d
 │       │   ├── emacs.scm            <- Emacs
 │       │   └── neovim.scm            <- Neovim
 │       ├── dev/                     <- Development tools
-│       │   ├── gh.scm               <- GitHub CLI
 │       │   └── opencode.scm         <- AI coding assistant
-│       └── utils/                   <- Utilities
-│           ├── curl.scm             <- HTTP client
+│       └── utils/                   <- Utilities (each file has package + service)
+│           ├── keyd.scm             <- Keyboard remap daemon + service
+│           ├── kanata.scm           <- Keyboard customization + service
+│           ├── tailscale.scm        <- VPN
+│           ├── cage.scm             <- Wayland sandbox
 │           ├── gzip.scm             <- Compression
 │           ├── bzip2.scm            <- Compression
 │           ├── xz.scm               <- Compression
-│           ├── findutils.scm        <- File utilities
-│           ├── kanata.scm           <- Keyboard remap
-│           ├── tailscale.scm        <- VPN
-│           └── cage.scm             <- Wayland sandbox
+│           └── findutils.scm        <- File utilities
 │
 ├── root/                       <- System-level configuration
 │   ├── hostname.scm            <- Host name
@@ -79,30 +75,23 @@ LiterativeOS is my personal GNU Guix system configuration. It provides a fully d
 │   ├── users.scm               <- User accounts
 │   ├── sudoers.scm             <- Sudo configuration
 │   ├── packages.scm            <- System packages
-│   ├── services/               <- System services
+│   ├── services/               <- System services (root privileges only)
 │   │   ├── services.scm        <- Service aggregator
 │   │   ├── openssh.scm         <- SSH
 │   │   ├── greetd.scm          <- Display manager
 │   │   ├── hyprland.scm        <- Wayland compositor service
-│   │   ├── kanata.scm          <- Keyboard service
 │   │   ├── tailscale.scm       <- VPN service
 │   │   └── docker.scm          <- Docker service
 │   └── ...
 │
 ├── kernel/                     <- Kernel configuration
 │   ├── kernel.scm              <- Linux kernel
+│   ├── keyboard.scm            <- Keyboard layout (Dvorak)
 │   ├── bootloader.scm          <- GRUB configuration
 │   ├── filesystem.scm          <- File systems
 │   └── swap.scm                <- Swap configuration
 │
-├── docker/                     <- Docker images (for testing)
-│   ├── pentest-red/
-│   ├── pentest-blue/
-│   ├── webmaster/
-│   └── devops/
-│
-└── profiles/                   <- Development profiles
-    └── wip.scm                 <- Work in progress
+└── ...
 #+END_SRC
 
 * Quick Start
@@ -141,6 +130,15 @@ If something exists on the system but is NOT declared in Guix config, it breaks 
 - ALL shell integrations (nushell config, atuin, starship, zoxide)
 - ALL user configurations that should persist
 
+** Package + Service Organization (IMPORTANT!)
+
+Each package file in home/packages/ MUST include its related service definition!
+
+- home/packages/utils/keyd.scm → package + shepherd service
+- home/packages/utils/kanata.scm → package + shepherd service
+
+root/services/ is ONLY for services requiring root privileges (openssh, tailscale, docker, greetd).
+
 ** Nushell Configuration
 
 Nushell config files are in Guix at home/config/nushell/ and get symlinked to ~/.config/nushell:
@@ -151,50 +149,6 @@ Nushell config files are in Guix at home/config/nushell/ and get symlinked to ~/
 - carapace: home/packages/shell/carapace.scm (generates completions in config.nu)
 - zoxide: home/packages/shell/zoxide.scm (loaded in env.nu)
 
-Shell integration config: home/config/nushell/env.nu, config.nu
-
-The Guix packages provide the binaries, nushell config loads them.
-
-** Or use the build script (with notifications)
-
-#+BEGIN_SRC bash
-cd ~/.config/guix
-guix repl -- agents/scripts/sys-build-complete.scm
-#+END_SRC
-
-* Package Declaration Rule
-
-Every package in =home/packages/= MUST have a COMPLETE declaration, not re-exports.
-
-#+BEGIN_SRC scheme
-;;;; Atuin shell history
-(define-public atuin
-  (package
-    (name "atuin")
-    (version "18.13.3")
-    (synopsis "Shell history with cloud sync")
-    (description "Atuin replaces your existing shell history with a SQLite database.")
-    (home-page "https://atuin.sh")
-    (license expat)
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "https://github.com/atuinsh/atuin/releases/download/v" version "/atuin-x86_64-unknown-linux-musl.tar.gz"))
-       (sha256 (base32 "0s184mnkz6hmiy2bc2gf2ywx817vniz3075jz25zjpmpkq27yd5r"))
-       (file-name (string-append "atuin-" version ".tar.gz"))))
-    (build-system gnu-build-system)
-    (arguments
-     `(#:phases (modify-phases %standard-phases
-                  (delete 'build)
-                  (delete 'check)
-                  (delete 'configure)
-                  (replace 'install
-                    (lambda* (#:key outputs #:allow-other-keys)
-                      (let ((out (assoc-ref outputs "out")))
-                        (install-file "atuin" (string-append out "/bin"))
-                        #t)))))))
-#+END_SRC
-
 * Workflow
 
 1. Create/modify .scm files in appropriate directory
@@ -203,9 +157,21 @@ Every package in =home/packages/= MUST have a COMPLETE declaration, not re-expor
 4. Build system: =sudo guix system reconfigure config.scm=
 5. Git push: =cd ~/.config/guix && git add -A && git commit -m "..." && git push=
 
-* Theme Configuration
+* Key Services
 
-See [[file:docs/theme.org][docs/theme.org]] for full theme documentation.
+** Keyboard (Dvorak)
+- keyd: System-wide key remapping (TTY + Wayland)
+- kanata: Wayland keyboard layers/macros/tap-dance
+- Config: /home/aoeu/.config/kanata/kanata.kbd
+
+** Idle/Sleep Prevention
+- hypridle: Hyprland idle daemon (24hr timeout)
+- elogind: Lid switch ignored, power/suspend/hibernate keys ignored
+- System stays on with lid closed
+
+** Tailscale
+- VPN for remote access via Termux
+- Topic: LiterativeOS VPN
 
 * Notifications
 

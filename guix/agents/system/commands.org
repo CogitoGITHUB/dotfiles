@@ -48,6 +48,33 @@ If you add something to the system, it MUST be declared in Guix!
 When you discover a missing tool, ADD IT PERMANENTLY!
 - Add to appropriate category
 - Add comment explaining WHY it's needed
+
+* Package + Service Organization (CRITICAL!)
+
+Each package file must include its related service definition!
+
+** Structure:
+- home/packages/utils/keyd.scm → package + shepherd service
+- home/packages/utils/kanata.scm → package + shepherd service
+- home/packages/desktop/hypridle.scm → package + config
+
+** root/services/ is ONLY for:
+- Services requiring root privileges (openssh, tailscale, docker, greetd)
+
+* CRITICAL: NO SUDO FOR READING FILES!
+
+ALL files in the system are world-readable. NEVER use sudo to read files!
+
+Common locations:
+- /gnu/store/* - world-readable
+- /tmp/* - world-readable
+- /etc/* - world-readable
+- /var/log/* - world-readable
+
+ONLY use sudo for:
+- Writing/modifying system files
+- Service management (herd, systemctl)
+- System operations (reboot, mount)
 - Build and test with REPL
 - This prevents the same problem twice
 

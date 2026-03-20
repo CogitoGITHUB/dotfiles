@@ -112,6 +112,44 @@ When you discover a missing tool during work, ADD IT PERMANENTLY to the system!
 ** TODO Package Declaration Rule (CRITICAL!)
 EVERY package module must have the FULL, COMPLETE declaration!
 
+** PACKAGE + SERVICE ORGANIZATION (CRITICAL!)
+
+Each package file MUST include its related service definitions!
+
+*** Structure Rule:
+- home/packages/utils/keyd.scm → package + shepherd service
+- home/packages/utils/kanata.scm → package + shepherd service
+- home/packages/desktop/hypridle.scm → package + hyprland config
+
+*** System services (root/services/) are ONLY for:
+- Services requiring root privileges (openssh, tailscale, docker, greetd)
+- Services that don't have user-level package files
+
+*** For user-level packages with services:
+1. Define package in home/packages/<category>/*.scm
+2. Define service in the SAME file
+3. Service is loaded when config.scm loads that file
+
+*** WRONG - scattered:
+#+BEGIN_SRC scheme
+;; package in one file
+(define-public kanata ...)
+
+;; service in another file
+(define literativeos-kanata-service-type ...)
+#+END_SRC
+
+*** CORRECT - together:
+#+BEGIN_SRC scheme
+;;;; Kanata - keyboard customization daemon
+(define-public kanata ...)
+
+(define (kanata-shepherd-service config)
+  ...)
+
+(define-public literativeos-kanata-service-type ...)
+#+END_SRC
+
 *** WRONG (one-liner re-export):
 #+BEGIN_SRC scheme
 (define-public nushell (module-ref (resolve-interface '(gnu packages nushell)) 'nushell))
@@ -265,6 +303,20 @@ Use these for Guix operations (Guile/Scheme only):
 - *FULL DECLARATIONS ONLY - no re-exports!*
 - *USE REPL AS PRIMARY WORKFLOW*
 
+** CRITICAL: NO SUDO FOR READING FILES!
+ALL files in the system are world-readable. NEVER use sudo to read files!
+- /gnu/store/* - world-readable, no sudo
+- /tmp/* - world-readable, no sudo
+- /etc/* - world-readable, no sudo
+- /home/* - readable by owner, no sudo needed
+- /var/log/* - world-readable, no sudo
+- /run/* - varies, try without sudo first
+
+ONLY use sudo for:
+- Writing to system directories (/etc, /var, /run, etc.)
+- Starting/stopping services (herd, systemctl)
+- System modifications (reboot, mount, etc.)
+
 ** Guix PATH Issue (CRITICAL!)
 Nushell may use system guix at =/run/current-system/profile/bin/guix= instead of custom guix.
 
@@ -287,6 +339,8 @@ At start of session, confirm to user:
 3. You understand the "add missing tools permanently" rule
 4. You understand REPL is the primary workflow
 5. You will ask to git push after changes
+6. You understand ALL files are world-readable - never sudo for reading
+7. You understand PACKAGE + SERVICE must be in the SAME file!
 
 ** Org-Mode Requirement (CRITICAL!)
 
@@ -304,5 +358,5 @@ Never write in Markdown - always use org-mode!
 
 Example:
 #+BEGIN_QUOTE
-Ready! I've read the agent guide - I understand: (1) EVERY package needs COMPLETE declaration, (2) If I find a missing tool, I'll add it permanently with explanation, (3) Use =guix repl= as primary workflow with commands like =,build=, =,phases=, (4) Always ask to git push after changes, (5) Use org-mode format, not Markdown. What would you like to work on?
+Ready! I've read the agent guide - I understand: (1) EVERY package needs COMPLETE declaration, (2) Package + service in SAME file, (3) Use =guix repl= as primary workflow, (4) Always ask to git push after changes, (5) Use org-mode format, (6) NEVER use sudo to read files. What would you like to work on?
 #+END_QUOTE
