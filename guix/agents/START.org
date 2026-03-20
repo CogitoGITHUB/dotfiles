@@ -278,14 +278,12 @@ Example notification:
 Use: =curl -s -H "Title: Session Summary" -d "summary" ntfy.sh/topic=
 
 ** Scripts Available
-Use these for Guix operations (Guile/Scheme only):
+Use the Nushell script for Guix operations:
 
-| Script | Description |
-|--------|-------------|
-| =guix repl -- agents/scripts/sys-build-complete.scm= | Build system, check errors/warnings, ask git push |
-| =guix repl -- agents/scripts/repl-commands.scm= | REPL helper functions |
-
-*Never use .sh or .nu files for Guix operations!*
+#+BEGIN_SRC bash
+source ~/.config/nushell/aeon-modules/scripts/guix/rebuild.nu
+guix-rebuild
+#+END_SRC
 
 ** Key Directories
 - =home/packages/shell/= - Shell packages (nushell, starship, atuin, zoxide, fzf)
