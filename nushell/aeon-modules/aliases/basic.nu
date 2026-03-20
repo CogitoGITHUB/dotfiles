@@ -2,11 +2,7 @@ alias ll = lsd -all
 alias e = emacs -nw
 alias n = nvim
 
-
-alias gt = git status
-alias ga = git add .
-alias gc = git commit -m "!"
-alias gp = git push
+alias gg = cd ~/.config; git gg
 
 alias gms = git submodule status
 alias gmi = git submodule init

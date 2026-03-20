@@ -4,10 +4,11 @@
    "90-uinput.rules"
    (string-append "KERNEL==\"uinput\", GROUP=\"uinput\", MODE=\"0660\"\n")))
 
-;; Add uinput group
+;; Add uinput and keyd groups
 (define uinput-group-service
   (simple-service 'uinput-group account-service-type
-                  (list (user-group (name "uinput")))))
+                  (list (user-group (name "uinput"))
+                        (user-group (name "keyd")))))
 
 (define-public literativeos-udev-rules
   (list uinput-udev-rule))

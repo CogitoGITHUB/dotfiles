@@ -1,4 +1,4 @@
-;;; Tailscale packages
+;;; Tailscale packages and service
 (define-public tailscaled
   (package
     (name "tailscaled")
@@ -34,3 +34,31 @@
     (license bsd-3)))
 
 (define-public tailscale tailscaled)
+
+(define (tailscale-shepherd-service config)
+  (let ((tailscaled-bin (file-append tailscaled "/bin/tailscaled")))
+    (list (shepherd-service
+           (documentation "Run the tailscale daemon")
+           (provision '(tailscaled tailscale))
+           (requirement '(user-processes))
+           (actions '())
+           (start #~(lambda _
+                     (fork+exec-command (list #$tailscaled-bin))))
+           (stop #~(make-kill-destructor))))))
+
+(define-public literativeos-tailscaled-service-type
+  (service-type
+   (name 'literativeos-tailscaled)
+   (extensions
+    (list (service-extension shepherd-root-service-type tailscale-shepherd-service)))
+   (default-value '())
+   (description "Run tailscaled daemon")))
+
+(define-public literativeos-tailscale-service-type
+  (service-type
+   (name 'literativeos-tailscale)
+   (extensions
+    (list (service-extension shepherd-root-service-type
+                            (const '()))))
+   (default-value '())
+   (description "Tailscale client")))
