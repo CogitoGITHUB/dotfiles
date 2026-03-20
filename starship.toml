@@ -1,38 +1,61 @@
-"$schema" = "https://starship.rs/config-schema.json"
-
-add_newline = false
-scan_timeout = 10
-
 format = """
-$status$username${hostname}:${directory} 
-$character
-"""
-
-[status]
-disabled = false
-format = "[$symbol]($style)"
-symbol = "ERROR       "
-success_symbol = "OK     "
-style = "bold red"
-success_style = "bold black"
-
-[username]
-show_always = true
-style_user = "bold black"
-style_root = "bold red"
-
-[hostname]
-format = "[$hostname]($style)"
-style = "bold black"
-trim_at = "."
-
-[directory]
-format = "[$path]($style)"
-style = "bold black"
-truncation_length = 3
-truncation_symbol = "../"
+$directory$git_branch$git_status$character"""
 
 [character]
-success_symbol = ">"
-error_symbol = "!"
-vicmd_symbol = "<"
+success_symbol = "[❯](#8B0000)"
+error_symbol = "[❯](#8B0000)"
+vimcmd_symbol = "[❮](#8B0000)"
+
+[directory]
+style = "bold #8B0000"
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+symbol = " "
+style = "#8B0000"
+
+[git_status]
+style = "#A52A2A"
+conflicted = "#8B0000"
+ahead = "#8B0000"
+behind = "#A52A2A"
+diverged = "#8B0000"
+untracked = "#A52A2A"
+stashed = "#A52A2A"
+modified = "#8B0000"
+staged = "[++](#8B0000)"
+renamed = "[»](#8B0000)"
+deleted = "[✘](#8B0000)"
+
+[cmd_duration]
+style = "#A52A2A"
+format = "[$duration]($style)"
+
+[status]
+style = "#8B0000"
+disabled = false
+
+[aws]
+style = "#8B0000"
+symbol = "☁ "
+
+[package]
+symbol = "📦 "
+style = "#8B0000"
+
+[python]
+symbol = "🐍 "
+style = "#8B0000"
+
+[rust]
+symbol = "⚙️ "
+style = "#8B0000"
+
+[nodejs]
+symbol = "🌙 "
+style = "#8B0000"
+
+[golang]
+symbol = "🐹 "
+style = "#8B0000"

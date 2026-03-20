@@ -14,7 +14,7 @@ Read [[file:START.org][START.org]] FIRST at the start of every session!
 
 This entire system is under git version control:
 - Location: =~/.config/guix/=
-- *ALWAYS ask user to git push after significant changes!*
+- Use =gr= to rebuild and auto-commit
 - Commit regularly to maintain version history
 
 * IMPORTANT: NO SUDO FOR READING FILES!

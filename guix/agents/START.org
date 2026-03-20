@@ -200,11 +200,7 @@ This is MANDATORY - every package file must be self-contained with the full decl
 3. *Build Package*: In REPL: =,build <package-name>= OR =guix build -f path.scm=
 4. *Debug if needed*: =guix build <package> -K= (keeps failed build in /tmp)
 5. *Test package works*: =guix package -i <name>= then =<name> --version=
-6. *Build system* (only if package works):
-   #+BEGIN_SRC bash
-   cd ~/.config/guix
-   guix repl -- agents/scripts/sys-build-complete.scm
-   #+END_SRC
+6. *Build system* (only if package works): =gr=
 7. *IF build succeeds with NO errors AND NO warnings*: 
    - Ask "Git push changes?"
    - Send session summary via ntfy!
@@ -278,11 +274,10 @@ Example notification:
 Use: =curl -s -H "Title: Session Summary" -d "summary" ntfy.sh/topic=
 
 ** Scripts Available
-Use the Nushell script for Guix operations:
+Use the =gr= alias (works from any directory):
 
 #+BEGIN_SRC bash
-source ~/.config/nushell/aeon-modules/scripts/guix/rebuild.nu
-guix-rebuild
+gr
 #+END_SRC
 
 ** Key Directories

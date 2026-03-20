@@ -78,18 +78,13 @@ ONLY use sudo for:
 - Build and test with REPL
 - This prevents the same problem twice
 
-* System Build Script (USE THIS!)
-
-Use the Nushell script for building:
+* System Build (ALWAYS USE THIS!)
 
 #+BEGIN_SRC bash
-source ~/.config/nushell/aeon-modules/scripts/guix/rebuild.nu
-guix-rebuild
+gr
 #+END_SRC
 
-This script:
-1. Runs =sudo guix system reconfigure ~/.config/guix/config.scm=
-2. On success: =git add .=, =git commit -m "timestamp"=, =git push=
+Works from any directory. Rebuilds, commits, and pushes on success.
 
 ** What the script does:
 1. Runs =sudo guix system reconfigure=

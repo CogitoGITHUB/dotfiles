@@ -190,7 +190,7 @@ default_shell "nu"
 default_cwd ""
 // default_layout "compact"
 // layout_dir "/tmp"
-// theme_dir "/tmp"
+theme_dir "/home/aoeu/.config/zellij/themes"
 mouse_mode true
 pane_frame true
 mirror_session true

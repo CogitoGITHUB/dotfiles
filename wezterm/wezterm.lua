@@ -1,24 +1,24 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
- -- ===== Terminal colors & minimal ANSI palette =====
- local colors = {
-   foreground = '#000000',  -- Black text
-   background = '#ffffff',  -- White background
-   cursor_bg = '#000000',
-   cursor_fg = '#ffffff',
-   selection_fg = '#000000',
-   selection_bg = '#cccccc',
-   -- Minimal ANSI palette
-   ansi = {
-     "#000000", "#000000", "#000000", "#000000",
-     "#000000", "#000000", "#000000", "#000000"
-   },
-   brights = {
-     "#000000", "#000000", "#000000", "#000000",
-     "#000000", "#000000", "#000000", "#000000"
-   }
- }
+ -- ===== Terminal colors - White theme with dark red accents =====
+  local colors = {
+    foreground = '#8B0000',  -- Dark red text
+    background = '#ffffff',   -- White background
+    cursor_bg = '#8B0000',
+    cursor_fg = '#ffffff',
+    selection_fg = '#ffffff',
+    selection_bg = '#8B0000',
+    -- Minimal ANSI palette - red tones
+    ansi = {
+      "#8B0000", "#A52A2A", "#8B0000", "#A52A2A",
+      "#8B0000", "#A52A2A", "#8B0000", "#A52A2A"
+    },
+    brights = {
+      "#8B0000", "#A52A2A", "#8B0000", "#A52A2A",
+      "#8B0000", "#A52A2A", "#8B0000", "#A52A2A"
+    }
+  }
  config.colors = colors
 
 -- ===== Font and basic terminal settings =====
@@ -50,39 +50,39 @@ tabline.setup({
     icons_enabled = true,
     tabs_enabled = true,
     theme = {
-      foreground = '#000000',
+      foreground = '#8B0000',
       background = '#ffffff',
-      cursor_bg = '#000000',
+      cursor_bg = '#8B0000',
       cursor_fg = '#ffffff',
       ansi = {
-        "#000000", "#000000", "#000000", "#000000",
-        "#000000", "#000000", "#000000", "#000000"
+        "#8B0000", "#A52A2A", "#8B0000", "#A52A2A",
+        "#8B0000", "#A52A2A", "#8B0000", "#A52A2A"
       },
       brights = {
-        "#000000", "#000000", "#000000", "#000000",
-        "#000000", "#000000", "#000000", "#000000"
+        "#8B0000", "#A52A2A", "#8B0000", "#A52A2A",
+        "#8B0000", "#A52A2A", "#8B0000", "#A52A2A"
       }
     },
     theme_overrides = {
       normal_mode = {
-        a = { fg = '#000000', bg = '#ffffff' },
-        b = { fg = '#000000', bg = '#ffffff' },
-        c = { fg = '#000000', bg = '#ffffff' },
+        a = { fg = '#ffffff', bg = '#8B0000' },
+        b = { fg = '#8B0000', bg = '#ffffff' },
+        c = { fg = '#A52A2A', bg = '#ffffff' },
       },
       copy_mode = {
-        a = { fg = '#000000', bg = '#ffffff' },
-        b = { fg = '#000000', bg = '#ffffff' },
-        c = { fg = '#000000', bg = '#ffffff' },
+        a = { fg = '#ffffff', bg = '#8B0000' },
+        b = { fg = '#8B0000', bg = '#ffffff' },
+        c = { fg = '#A52A2A', bg = '#ffffff' },
       },
       search_mode = {
-        a = { fg = '#000000', bg = '#ffffff' },
-        b = { fg = '#000000', bg = '#ffffff' },
-        c = { fg = '#000000', bg = '#ffffff' },
+        a = { fg = '#ffffff', bg = '#8B0000' },
+        b = { fg = '#8B0000', bg = '#ffffff' },
+        c = { fg = '#A52A2A', bg = '#ffffff' },
       },
       tab = {
-        active = { fg = '#000000', bg = '#ffffff' },
-        inactive = { fg = '#000000', bg = '#ffffff' },
-        inactive_hover = { fg = '#000000', bg = '#eeeeee' },
+        active = { fg = '#ffffff', bg = '#8B0000' },
+        inactive = { fg = '#8B0000', bg = '#ffffff' },
+        inactive_hover = { fg = '#8B0000', bg = '#eeeeee' },
       },
     },
     section_separators = '',

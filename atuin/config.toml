@@ -65,7 +65,7 @@ search_mode_shell_up_key_binding = "fuzzy"
 
 ## which style to use
 ## possible values: auto, full, compact
-# style = "auto"
+style = "compact"
 
 ## the maximum number of lines the interface should take up
 ## set it to 0 to always go full screen
@@ -81,11 +81,11 @@ invert = false
 
 ## enable or disable showing a preview of the selected command
 ## useful when the command is longer than the terminal width and is cut off
-show_preview = true
+show_preview = false
 
 ## what to do when the escape key is pressed when searching
 ## possible values: return-original, return-query
-# exit_mode = "return-original"
+ exit_mode = "return-original"
 
 ## possible values: emacs, subl
 word_jump_mode = "emacs"
@@ -98,7 +98,7 @@ word_jump_mode = "emacs"
 
 ## use ctrl instead of alt as the shortcut modifier key for numerical UI shortcuts
 ## alt-0 .. alt-9
-# ctrl_n_shortcuts = false
+ ctrl_n_shortcuts = true
 
 ## Show numeric shortcuts (1..9) beside list items in the TUI
 ## set to false to hide the moving numbers if you find them distracting
@@ -267,20 +267,22 @@ strategy = "auto"
 # tcp_port = 8889
 
 # [theme]
-## Color theme to use for rendering in the terminal.
-## There are some built-in themes, including the base theme ("default"),
-## "autumn" and "marine". You can add your own themes to the "./themes" subdirectory of your
-## Atuin config (or ATUIN_THEME_DIR, if provided) as TOML files whose keys should be one or
-## more of AlertInfo, AlertWarn, AlertError, Annotation, Base, Guidance, Important, and
-## the string values as lowercase entries from this list:
-##    https://ogeon.github.io/docs/palette/master/palette/named/index.html
-## If you provide a custom theme file, it should be  called "NAME.toml" and the theme below
-## should be the stem, i.e. `theme = "NAME"` for your chosen NAME.
+# ## Color theme to use for rendering in the terminal.
+# ## There are some built-in themes, including the base theme ("default"),
+# ## "autumn" and "marine". You can add your own themes to the "./themes" subdirectory of your
+# ## Atuin config (or ATUIN_THEME_DIR, if provided) as TOML files whose keys should be one or
+# ## more of AlertInfo, AlertWarn, AlertError, Annotation, Base, Guidance, Important, and
+# ## the string values as lowercase entries from this list:
+# ##    https://ogeon.github.io/docs/palette/master/palette/named/index.html
+# ## If you provide a custom theme file, it should be  called "NAME.toml" and the theme below
+# ## should be the stem, i.e. `theme = "NAME"` for your chosen NAME.
 # name = "autumn"
 
-## Whether the theme manager should output normal or extra information to help fix themes.
-## Boolean, true or false. If unset, left up to the theme manager.
- debug = true
+[theme]
+name = "white-red"
+
+
+debug = true
 
 [search]
 ## The list of enabled filter modes, in order of priority.

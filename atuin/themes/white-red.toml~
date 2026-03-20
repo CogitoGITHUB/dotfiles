@@ -1,0 +1,11 @@
+[theme]
+name = "white-red"
+
+[colors]
+Base = "darkred"
+Guidance = "darkred"
+Important = "darkred"
+Annotation = "darkred"
+AlertInfo = "darkred"
+AlertWarn = "darkred"
+AlertError = "darkred"

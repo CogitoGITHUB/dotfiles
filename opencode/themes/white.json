@@ -2,217 +2,209 @@
   "$schema": "https://opencode.ai/theme.json",
   "defs": {
     "white": "#FFFFFF",
-    "black": "#000000",
-    "gray100": "#F3F4F6",
-    "gray200": "#E5E7EB",
-    "gray300": "#D1D5DB",
-    "gray400": "#9CA3AF",
-    "gray500": "#6B7280",
-    "gray600": "#4B5563",
-    "gray700": "#374151",
-    "gray800": "#1F2937",
-    "gray900": "#111827"
+    "red": "#8B0000",
+    "redLight": "#A52A2A"
   },
   "theme": {
     "primary": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "secondary": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "accent": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "error": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "warning": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "success": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "info": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "text": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "textMuted": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "redLight",
+      "light": "redLight"
     },
     "background": {
       "dark": "white",
       "light": "white"
     },
     "backgroundPanel": {
-      "dark": "gray100",
-      "light": "gray100"
+      "dark": "white",
+      "light": "white"
     },
     "backgroundElement": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "white",
+      "light": "white"
     },
     "border": {
-      "dark": "gray300",
-      "light": "gray300"
+      "dark": "red",
+      "light": "red"
     },
     "borderActive": {
-      "dark": "gray400",
-      "light": "gray400"
+      "dark": "red",
+      "light": "red"
     },
     "borderSubtle": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "red",
+      "light": "red"
     },
     "diffAdded": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "diffRemoved": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "diffContext": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "diffHunkHeader": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "diffHighlightAdded": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "white",
+      "light": "white"
     },
     "diffHighlightRemoved": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "white",
+      "light": "white"
     },
     "diffAddedBg": {
-      "dark": "gray100",
-      "light": "gray100"
+      "dark": "white",
+      "light": "white"
     },
     "diffRemovedBg": {
-      "dark": "gray100",
-      "light": "gray100"
+      "dark": "white",
+      "light": "white"
     },
     "diffContextBg": {
       "dark": "white",
       "light": "white"
     },
     "diffLineNumber": {
-      "dark": "gray400",
-      "light": "gray400"
+      "dark": "red",
+      "light": "red"
     },
     "diffAddedLineNumberBg": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "white",
+      "light": "white"
     },
     "diffRemovedLineNumberBg": {
-      "dark": "gray200",
-      "light": "gray200"
+      "dark": "white",
+      "light": "white"
     },
     "markdownText": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "markdownHeading": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "markdownLink": {
-      "dark": "gray700",
-      "light": "gray700"
+      "dark": "red",
+      "light": "red"
     },
     "markdownLinkText": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "markdownCode": {
-      "dark": "gray800",
-      "light": "gray800"
+      "dark": "red",
+      "light": "red"
     },
     "markdownBlockQuote": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "markdownEmph": {
-      "dark": "gray700",
-      "light": "gray700"
+      "dark": "red",
+      "light": "red"
     },
     "markdownStrong": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "markdownHorizontalRule": {
-      "dark": "gray300",
-      "light": "gray300"
+      "dark": "red",
+      "light": "red"
     },
     "markdownListItem": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "markdownListEnumeration": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "markdownImage": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "markdownImageText": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "markdownCodeBlock": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxComment": {
-      "dark": "gray500",
-      "light": "gray500"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxKeyword": {
-      "dark": "gray700",
-      "light": "gray700"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxFunction": {
-      "dark": "gray800",
-      "light": "gray800"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxVariable": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxString": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxNumber": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxType": {
-      "dark": "gray600",
-      "light": "gray600"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxOperator": {
-      "dark": "gray700",
-      "light": "gray700"
+      "dark": "red",
+      "light": "red"
     },
     "syntaxPunctuation": {
-      "dark": "black",
-      "light": "black"
+      "dark": "red",
+      "light": "red"
     }
   }
 }

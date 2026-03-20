@@ -66,3 +66,7 @@ cd .config/guix/
 opencode 
 sudo
 sudo su
+cd .config/guix/
+emacs -
+emacs
+nu

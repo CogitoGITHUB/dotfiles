@@ -1,0 +1,48 @@
+[user]
+    name = CogitoGITHUB
+    email = vlasceanupaulinoionut@gmail.com
+
+[core]
+    pager = cat
+    editor = emacs -nw
+    autocrlf = false
+
+[color]
+    ui = auto
+
+[color "status"]
+    added = red bold
+    changed = red
+    untracked = brightred
+
+[color "branch"]
+    current = red bold
+    local = red
+    remote = brightred
+
+[color "diff"]
+    meta = red bold
+    frag = brightred
+    old = red
+    new = red bold
+
+[color "decorate"]
+    tag = red bold
+    branch = red
+    remoteBranch = brightred
+    HEAD = red bold
+
+[push]
+    default = current
+    autoSetupRemote = true
+
+[pull]
+    rebase = false
+
+[init]
+    defaultBranch = main
+
+[alias]
+    lg = log --oneline --graph --decorate
+    st = status
+    gg = "!git add -A && git commit -m 'update' && git push"

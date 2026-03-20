@@ -103,12 +103,13 @@ cd ~/.config/guix
 sudo guix system reconfigure config.scm
 #+END_SRC
 
-** Or use the build script (with notifications)
+** Build System
 
 #+BEGIN_SRC bash
-cd ~/.config/guix
-guix repl -- agents/scripts/sys-build-complete.scm
+gr
 #+END_SRC
+
+Works from any directory. Rebuilds, commits, and pushes on success.
 
 * DECLARATIVE SYSTEM PRINCIPLE (CRITICAL!)
 

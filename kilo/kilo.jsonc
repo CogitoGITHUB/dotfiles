@@ -1,0 +1,10 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "/tmp/*": "allow",
+      "/run/current-system/profile/share/guile/site/*": "allow",
+      "/gnu/store/vx7apxahrlvafizyac47r3xmp3lik3b1-udev-rules.d/*": "allow"
+    }
+  }
+}

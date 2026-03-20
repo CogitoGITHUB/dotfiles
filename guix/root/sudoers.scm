@@ -4,4 +4,6 @@
 
 (define-public literativeos-setuid-programs
   (list (setuid-program
-          (program (file-append sudo "/bin/sudo")))))
+          (program (file-append sudo "/bin/sudo")))
+        (setuid-program
+          (program (file-append inetutils "/bin/reboot")))))

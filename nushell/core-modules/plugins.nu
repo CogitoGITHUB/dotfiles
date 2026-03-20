@@ -6,7 +6,7 @@ let plugins = {} # Per-plugin configuration
 # Plugin garbage collection configuration
 let plugin_gc = {
     "default": {
-        enabled: true        # automatically stop inactive plugins
+        enabled: false        # automatically stop inactive plugins
         stop_after: 10sec
     }
     plugins: {}
