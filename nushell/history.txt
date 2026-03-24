@@ -70,3 +70,6 @@ cd .config/guix/
 emacs -
 emacs
 nu
+openrode
+opencode 
+nu

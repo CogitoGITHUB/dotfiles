@@ -1,0 +1,14 @@
+(define-module (core-system user-space root shell)
+  #:use-module (core-system user-space root shell nushell)
+  #:use-module (core-system user-space root shell fzf)
+  #:use-module (core-system user-space root shell starship)
+  #:use-module (core-system user-space root shell bash)
+  #:use-module (core-system user-space root shell zoxide)
+  #:use-module (core-system user-space root shell zellij)
+  #:use-module (core-system user-space root shell carapace)
+  #:use-module (core-system user-space root shell atuin)
+  #:re-export (nushell fzf starship bash zoxide zellij carapace atuin)
+  #:export (root-shell-packages))
+
+(define root-shell-packages
+  (list nushell fzf starship bash zoxide zellij carapace atuin))
