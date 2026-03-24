@@ -1,5 +1,6 @@
 (define-module (core-system user-space root shell)
   #:use-module (core-system user-space root shell nushell)
+  #:use-module (core-system user-space root shell television)
   #:use-module (core-system user-space root shell fzf)
   #:use-module (core-system user-space root shell starship)
   #:use-module (core-system user-space root shell bash)
@@ -11,4 +12,4 @@
   #:export (root-shell-packages))
 
 (define root-shell-packages
-  (list nushell fzf starship bash zoxide zellij carapace atuin))
+  (list nushell television fzf starship bash zoxide zellij carapace atuin))

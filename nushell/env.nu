@@ -12,10 +12,11 @@ $env.GUILE_LOAD_PATH = $"/home/aoeu/.config/LiterativeOS/Operating-System:($env.
 let path_without_setuid = ($env.PATH | where {|x| $x != "/run/setuid-programs" })
 $env.PATH = [
     "/run/setuid-programs"
-        $"($env.GUIX_PROFILE)/bin"
-	    $"($env.GUIX_PROFILE)/sbin"
-	        ...$path_without_setuid
-		]
+    "$($env.GUIX_PROFILE)/bin"
+    "$($env.GUIX_PROFILE)/sbin"
+    "/home/aoeu/.guix-profile/bin"
+    ...$path_without_setuid
+]
 
 # Initialize zoxide
 zoxide init nushell | save -f ~/.zoxide.nu
