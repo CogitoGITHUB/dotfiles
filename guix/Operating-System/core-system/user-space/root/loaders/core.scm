@@ -1,4 +1,4 @@
-(define-module (core-system user-space root core)
+(define-module (core-system user-space root loaders core)
   #:use-module (gnu packages base)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages linux)

@@ -1,4 +1,4 @@
-(define-module (core-system user-space root desktop)
+(define-module (core-system user-space root loaders desktop)
   #:use-module (core-system user-space root desktop hyprland)
   #:use-module (core-system user-space root desktop hypridle)
   #:use-module (core-system user-space root desktop qutebrowser)

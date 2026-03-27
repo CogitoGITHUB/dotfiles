@@ -1,0 +1,89 @@
+* Module Reference
+
+** Kernel Space Modules
+
+| Module          | Purpose                              |
+|-----------------|--------------------------------------|
+| linux.scm      | Linux-libre kernel + uinput module  |
+| bootloader.scm | GRUB EFI configuration               |
+| filesystem.scm | Mount points (EFI + ext4 root)       |
+| keyboard.scm   | Keyboard layout                      |
+| hostname.scm   | System hostname                      |
+| locale.scm     | System locale                        |
+| elogind.scm    | Login/session management            |
+| udev.scm       | Device management                    |
+| kmod.scm       | Kernel module handling               |
+
+** User Space Loaders (=loaders/=)
+
+Each loader exports packages/services for its category:
+
+| Loader                    | Category      | Exports                              |
+|--------------------------|---------------|--------------------------------------|
+| loaders/core.scm         | core/        | root-core-packages                   |
+| loaders/networking.scm   | networking/  | root-networking-packages/services    |
+| loaders/shell.scm        | shell/       | root-shell-packages                  |
+| loaders/editors.scm      | editors/     | root-editors-packages                |
+| loaders/desktop.scm      | desktop/     | root-desktop-packages                |
+| loaders/terminal.scm     | terminal/    | root-terminal-packages               |
+| loaders/containers.scm   | containers/  | root-containers-packages/services    |
+| loaders/keyboard.scm     | keyboard/    | root-keyboard-packages               |
+| loaders/ai.scm          | ai/          | root-ai-packages                     |
+| loaders/programming-languages.scm | programming-languages/ | root-programming-languages-packages |
+| loaders/custom-guix.scm  | custom-guix/ | %custom-guix-channels/service        |
+
+** Package Lists
+
+| Category        | Packages                                    |
+|-----------------|---------------------------------------------|
+| core/          | coreutils, findutils, grep, inetutils, kmod, sudo, util-linux, patchelf, file, wget, gzip, tar, unzip, ripgrep, fd, bat, man-db |
+| networking/    | git, github-cli, openssh, curl, tailscale, nss-certs |
+| shell/         | nushell, television, fzf, starship, bash, zoxide, zellij, carapace, atuin |
+| editors/       | emacs, neovim (+ root-emacs-packages)      |
+| desktop/       | hyprland, hypridle, qutebrowser, quickshell |
+| terminal/      | wezterm                                     |
+| containers/    | docker, lazydocker                         |
+| keyboard/      | keyd, kanata                               |
+| ai/            | opencode, kilo                             |
+| programming-languages/ | guile                               |
+
+** Service Lists
+
+| Category      | Services                                      |
+|---------------|----------------------------------------------|
+| networking/   | iwd-service-type, config-tailscaled-service-type |
+| containers/   | containerd-service-type, docker-service-type |
+| root/         | dhcpcd-service-type, openssh-service-type   |
+
+** Submodule Files
+
+Each category directory contains submodules that its loader imports:
+
+| Category      | Submodules                                   |
+|---------------|---------------------------------------------|
+| networking/   | curl.scm, openssh.scm, tailscale.scm, git.scm, github-cli.scm, lazygit.scm, version-control.scm |
+| shell/        | nushell.scm, starship.scm, zoxide.scm, atuin.scm, zellij.scm, fzf.scm, bash.scm, carapace.scm, television.scm |
+| editors/      | emacs.scm, neovim.scm, emacs-packages.scm, geiser.scm |
+| desktop/      | hyprland.scm, hypridle.scm, qutebrowser.scm, quickshell.scm |
+| terminal/     | wezterm.scm                                 |
+| keyboard/     | keyd.scm, kanata.scm                        |
+| ai/           | opencode.scm, kilo.scm                      |
+| containers/   | docker.scm, lazydocker.scm                  |
+| custom-guix/  | channel.scm                                 |
+
+** Users
+
+| File           | Purpose                                      |
+|----------------|---------------------------------------------|
+| users/users.scm | Aggregates all user accounts               |
+| users/aoeu.scm | User account definition                    |
+
+Example =users/aoeu.scm=:
+#+BEGIN_SRC scheme
+(user-account
+  (name "aoeu")
+  (group "users")
+  (home-directory "/home/aoeu")
+  (supplementary-groups '("wheel" "netdev" "audio" "video" "uinput" "keyd" "docker"))
+  (shell (file-append nushell "/bin/nu")))
+#+END_SRC

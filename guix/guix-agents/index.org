@@ -1,0 +1,24 @@
+* Guix Agents Index
+
+This directory contains documentation for your Guix configuration.
+
+** Guides
+
+- [[./getting-started.org][Getting Started]] - Essential CLI commands
+- [[./architecture.org][Architecture]] - How your system is organized
+- [[./adding-packages.org][Adding Packages & Services]] - Add software and services
+- [[./module-reference.org][Module Reference]] - Quick reference for all modules
+- [[./troubleshooting.org][Troubleshooting]] - Common problems and fixes
+
+** Quick Commands
+
+| Action                    | Command                              |
+|---------------------------|-------------------------------------|
+| Update Guix              | =guix pull=                        |
+| Apply config             | =sudo guix system reconfigure ...= |
+| Rollback                 | =guix system roll-back=            |
+| List generations         | =guix system list-generations=     |
+
+** Learning Org Mode
+
+See [[./org-mode-guide.org][Org Mode Guide]] for documentation syntax help.

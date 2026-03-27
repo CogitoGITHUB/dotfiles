@@ -1,4 +1,4 @@
-(define-module (core-system user-space root containers)
+(define-module (core-system user-space root loaders containers)
   #:use-module (gnu services)
   #:use-module (gnu services docker)
   #:use-module (core-system user-space root containers docker)

@@ -1,0 +1,94 @@
+* Architecture
+
+** Overview
+
+Your Guix config is organized in two main layers:
+
+- =kernel-space/= - Low-level system configuration
+- =user-space/root/= - User-facing packages and services
+
+** Directory Structure
+
+#+BEGIN_SRC
+guix/
+├── guixos.scm              # Main entry point
+├── channels.scm            # Guix channel definition
+└── Operating-System/
+    └── core-system/
+        ├── core-system.scm # Aggregates kernel + user space
+        ├── kernel-space/   # Bootloader, kernel, filesystem, etc.
+        └── user-space/
+            └── root/
+                ├── root.scm          # Main aggregator
+                ├── loaders/          # Loader files
+                │   ├── core.scm
+                │   ├── networking.scm
+                │   ├── shell.scm
+                │   ├── editors.scm
+                │   ├── desktop.scm
+                │   ├── terminal.scm
+                │   ├── containers.scm
+                │   ├── keyboard.scm
+                │   ├── ai.scm
+                │   ├── programming-languages.scm
+                │   └── custom-guix.scm
+                ├── core/             # Submodule files
+                ├── networking/
+                ├── shell/
+                ├── editors/
+                ├── desktop/
+                ├── terminal/
+                ├── containers/
+                ├── keyboard/
+                ├── ai/
+                ├── programming-languages/
+                ├── custom-guix/
+                └── users/
+#+END_SRC
+
+** Kernel Space (=kernel-space/=)
+
+Handles low-level system configuration:
+
+| Module          | Purpose                              |
+|-----------------|--------------------------------------|
+| linux.scm      | Linux-libre kernel + uinput module  |
+| bootloader.scm | GRUB EFI configuration               |
+| filesystem.scm | Mount points (EFI + ext4 root)       |
+| keyboard.scm   | Keyboard layout                      |
+| hostname.scm   | System hostname                      |
+| locale.scm     | System locale                        |
+| elogind.scm    | Login/session management            |
+| udev.scm       | Device management                    |
+| kmod.scm       | Kernel module handling               |
+
+** User Space (=user-space/root/=)
+
+Each category has:
+- A loader file in =loaders/= directory
+- Submodule files in category directories
+
+| Loader          | Category dir   | Exports                       |
+|-----------------|---------------|-------------------------------|
+| loaders/core.scm | core/       | root-core-packages            |
+| loaders/networking.scm | networking/ | root-networking-packages/services |
+| loaders/shell.scm | shell/     | root-shell-packages           |
+| loaders/editors.scm | editors/ | root-editors-packages        |
+| loaders/desktop.scm | desktop/ | root-desktop-packages        |
+| loaders/terminal.scm | terminal/ | root-terminal-packages      |
+| loaders/containers.scm | containers/ | root-containers-packages/services |
+| loaders/keyboard.scm | keyboard/ | root-keyboard-packages      |
+| loaders/ai.scm | ai/         | root-ai-packages             |
+| loaders/programming-languages.scm | programming-languages/ | root-programming-languages-packages |
+| loaders/custom-guix.scm | custom-guix/ | %custom-guix-channels/service |
+
+** How It All Connects
+
+1. =guixos.scm= imports =core-system=
+2. =core-system.scm= exports =os= which combines:
+   - kernel-space exports (kernel, bootloader, file-systems, etc.)
+   - root-system-packages (all user packages)
+   - root-system-services (dhcpcd, openssh, iwd, docker, etc.)
+3. =root.scm= imports each =loaders/*.scm=
+4. Each loader imports submodules from its category directory
+5. Each loader exports =root-*-packages= and sometimes =root-*-services=

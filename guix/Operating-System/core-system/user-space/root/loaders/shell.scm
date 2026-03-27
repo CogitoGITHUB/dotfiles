@@ -1,4 +1,4 @@
-(define-module (core-system user-space root shell)
+(define-module (core-system user-space root loaders shell)
   #:use-module (core-system user-space root shell nushell)
   #:use-module (core-system user-space root shell television)
   #:use-module (core-system user-space root shell fzf)

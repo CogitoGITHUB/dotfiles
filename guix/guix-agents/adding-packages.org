@@ -1,0 +1,88 @@
+* Adding Packages and Services
+
+** Packages and Services Stay in the Same File
+
+In this setup, packages and services are defined together in each loader file. For example, =loaders/containers.scm= has both =root-containers-packages= and =root-containers-services=.
+
+** Where to Add
+
+| Category        | File to edit                  |
+|-----------------|------------------------------|
+| Core utils      | loaders/core.scm             |
+| Networking      | loaders/networking.scm       |
+| Containers      | loaders/containers.scm       |
+| Shell           | loaders/shell.scm            |
+| Editors         | loaders/editors.scm          |
+| Desktop         | loaders/desktop.scm          |
+| Terminal        | loaders/terminal.scm         |
+| Keyboard        | loaders/keyboard.scm         |
+| Programming     | loaders/programming-languages.scm |
+| AI              | loaders/ai.scm              |
+| Custom Guix     | loaders/custom-guix.scm      |
+
+** Adding a New Submodule
+
+If you want to add a new tool, create a new submodule file in the category directory, then import it in the loader.
+
+Example: Adding =starship= to =shell/=
+
+1. Create =shell/starship.scm=:
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root shell starship)
+  #:use-module (gnu packages rust)
+  #:export (starship))
+
+(define-public starship starship)
+#+END_SRC
+
+2. Update =loaders/shell.scm= to import it:
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root loaders shell)
+  #:use-module (core-system user-space root shell nushell)
+  #:use-module (core-system user-space root shell starship)  ; <-- add
+  #:re-export (nushell starship)
+  #:export (root-shell-packages))
+
+(define root-shell-packages
+  (list nushell starship))  ; <-- add to list
+#+END_SRC
+
+** Adding a Package to Existing Loader
+
+Example: Adding a package to =loaders/core.scm=:
+#+BEGIN_SRC scheme
+(define-public root-core-packages
+  (list coreutils
+        findutils
+        grep
+        ;; ... existing packages ...
+        your-new-package))
+#+END_SRC
+
+** Adding a Service
+
+Example: Adding a service to =loaders/containers.scm=:
+#+BEGIN_SRC scheme
+(define-public root-containers-services
+  (list (service containerd-service-type)
+        (service docker-service-type)
+        (service your-new-service-type)))
+#+END_SRC
+
+** Finding Package Names
+
+#+BEGIN_SRC sh
+guix search package-name
+guix package --show-package=package-name
+#+END_SRC
+
+** Common Service Types
+
+| Service Type              | Module to import              |
+|---------------------------|------------------------------|
+| openssh-service-type      | (gnu services ssh)           |
+| dhcpcd-service-type      | (gnu services networking)   |
+| iwd-service-type         | (gnu services networking)   |
+| docker-service-type      | (gnu services docker)        |
+| containerd-service-type  | (gnu services docker)        |
+| config-tailscaled-service-type | (gnu services networking)|

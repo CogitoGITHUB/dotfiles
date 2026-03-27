@@ -1,4 +1,4 @@
-(define-module (core-system user-space root editors)
+(define-module (core-system user-space root loaders editors)
   #:use-module (core-system user-space root editors emacs)
   #:use-module (core-system user-space root editors neovim)
   #:use-module (core-system user-space root editors emacs-packages)

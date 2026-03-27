@@ -1,0 +1,76 @@
+* Troubleshooting
+
+** Reconfigure Fails
+
+*** Syntax errors in .scm files
+Check the error message - it will show line number and issue.
+
+#+BEGIN_SRC sh
+# Test syntax without applying
+guix system build /home/aoeu/.config/guix/guixos.scm
+#+END_SRC
+
+*** Package not found
+Make sure the package is in Guix:
+
+#+BEGIN_SRC sh
+guix search package-name
+guix package --show-package=package-name
+#+END_SRC
+
+** System Won't Boot
+
+*** Boot into previous generation
+At GRUB menu, select previous generation (usually the second entry).
+
+*** Rollback from terminal
+If you can boot into a previous generation:
+#+BEGIN_SRC sh
+sudo guix system roll-back
+sudo guix system switch-generation N
+#+END_SRC
+
+** Services Not Starting
+
+*** Check service status
+#+BEGIN_SRC sh
+sudo herd status service-name
+sudo herd log service-name
+#+END_SRC
+
+*** Manual service start
+#+BEGIN_SRC sh
+sudo herd start service-name
+#+END_SRC
+
+** Package Issues
+
+*** Remove a package
+#+BEGIN_SRC sh
+guix remove package-name
+sudo guix system reconfigure ...
+#+END_SRC
+
+*** List installed packages
+#+BEGIN_SRC sh
+guix package -p ~/.config/guix/current --list-installed
+#+END_SRC
+
+** Profile Problems
+
+*** Recreate profile symlink
+If =current= symlink is broken:
+#+BEGIN_SRC sh
+ls -la /var/guix/profiles/per-user/aoeu/
+# Pick the latest generation
+ln -sf /var/guix/profiles/per-user/aoeu/guix-system-N ~/.<location>/current
+#+END_SRC
+
+** Common Error Messages
+
+| Error | Fix |
+|-------|-----|
+| "no such package" | Check package name with =guix search= |
+| "service not found" | Import correct service module |
+| "module not found" | Check #:use-module path |
+| " unbound variable" | Export variable from module |

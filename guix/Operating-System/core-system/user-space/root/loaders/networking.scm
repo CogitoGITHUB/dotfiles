@@ -1,16 +1,17 @@
-(define-module (core-system user-space root networking)
+(define-module (core-system user-space root loaders networking)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages nss)
   #:use-module (core-system user-space root networking version-control github-cli)
+  #:use-module (core-system user-space root networking version-control lazygit)
   #:use-module (core-system user-space root networking tailscale)
   #:use-module (gnu services)
   #:use-module (gnu services networking)
   #:export (root-networking-packages root-networking-services))
 
 (define-public root-networking-packages
-  (list git github-cli openssh curl tailscale nss-certs))
+  (list git github-cli lazygit openssh curl tailscale nss-certs))
 
 (define-public root-networking-services
   (list (service iwd-service-type)
