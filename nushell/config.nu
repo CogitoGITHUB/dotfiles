@@ -11,6 +11,12 @@ source ~/.zoxide.nu
 source ~/.local/share/nushell/vendor/autoload/atuin.nu
 
 
+mkdir ($nu.data-dir | path join "vendor/autoload")
+tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
+
+
+
+
 
 # zellij
 def start_zellij [] {
