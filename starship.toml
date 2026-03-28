@@ -1,32 +1,32 @@
-# Clean + Aggressive Dark Red Starship - Single Line (Fixed)
+# Clean + Dark Red Starship - Single Line
 add_newline = false
 command_timeout = 800
 
 format = "$directory$git_branch$git_status$cmd_duration$status$character"
 
-# Prompt character - sharp and dominant
+# Prompt character - dark red
 [character]
 success_symbol = "[❯](bold #8B0000)"
-error_symbol = "[❯](bold #FF1A1A)"
+error_symbol = "[❯](bold #8B0000)"
 vimcmd_symbol = "[❮](bold #8B0000)"
 
-# Directory - bold deep crimson
+# Directory - dark red
 [directory]
-style = "bold #C8102E"
+style = "bold #8B0000"
 truncation_length = 3
 truncate_to_repo = true
 truncation_symbol = "…/"
 format = "[$path]($style) "
 
-# Git branch - bright blood red
+# Git branch - dark red
 [git_branch]
 symbol = " "
-style = "bold #E30613"
+style = "bold #8B0000"
 format = "[$symbol$branch]($style) "
 
-# Git status - minimal & aggressive (symbols fixed with single quotes)
+# Git status - dark red
 [git_status]
-style = "#FF3333"
+style = "#8B0000"
 format = '([$all_status]($style)) '
 conflicted = '⚔'
 ahead = '↑'
@@ -39,15 +39,15 @@ staged = '[+](#8B0000)'
 renamed = '»'
 deleted = '✘'
 
-# Command duration - only when slow
+# Command duration - dark red
 [cmd_duration]
 min_time = 1500
-format = "[ $duration](#FF3333)"
-style = "#FF3333"
+format = "[ $duration](#8B0000)"
+style = "#8B0000"
 
 # Exit status on failure
 [status]
-style = "bold #FF1A1A"
+style = "bold #8B0000"
 symbol = "✘ "
 format = "[$symbol$status]($style) "
 disabled = false

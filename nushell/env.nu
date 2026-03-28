@@ -1,5 +1,7 @@
 # /home/aoeu/.config/nushell/env.nu
 
+$env.EDITOR = "nvim"
+
 # --- Guix Configuration ---
 $env.GUIX_PROFILE = "/home/aoeu/.config/guix/current"
 $env.GUIX_SUBSTITUTE_URLS = "https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"

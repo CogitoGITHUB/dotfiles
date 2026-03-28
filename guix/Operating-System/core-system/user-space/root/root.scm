@@ -39,9 +39,9 @@
 ;; Services
 (define-public root-system-services
   (append
-   (list
-    (service dhcpcd-service-type)
-    (service openssh-service-type))
+    (list
+     (service dhcpcd-service-type)
+     (service openssh-service-type))
    root-networking-services
    root-containers-services
    %base-services))

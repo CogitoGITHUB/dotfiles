@@ -8,8 +8,9 @@
   #:use-module (core-system user-space root shell zellij)
   #:use-module (core-system user-space root shell carapace)
   #:use-module (core-system user-space root shell atuin)
-  #:re-export (nushell fzf starship bash zoxide zellij carapace atuin)
+  #:use-module (core-system user-space root shell superfile)
+  #:re-export (nushell fzf starship bash zoxide zellij carapace atuin superfile)
   #:export (root-shell-packages))
 
 (define root-shell-packages
-  (list nushell television fzf starship bash zoxide zellij carapace atuin))
+  (list nushell television fzf starship bash zoxide zellij carapace atuin superfile))
