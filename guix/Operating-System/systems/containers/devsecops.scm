@@ -1,5 +1,6 @@
 (define-module (systems containers devsecops)
   #:use-module (gnu system)
+  #:use-module (gnu services)
   #:use-module (gnu packages version-control)
   #:use-module (gnu services docker)
   #:use-module (systems containers core-container)

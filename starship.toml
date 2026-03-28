@@ -1,61 +1,53 @@
-format = """
-$directory$git_branch$git_status$character"""
+# Clean + Aggressive Dark Red Starship - Single Line (Fixed)
+add_newline = false
+command_timeout = 800
 
+format = "$directory$git_branch$git_status$cmd_duration$status$character"
+
+# Prompt character - sharp and dominant
 [character]
-success_symbol = "[❯](#8B0000)"
-error_symbol = "[❯](#8B0000)"
-vimcmd_symbol = "[❮](#8B0000)"
+success_symbol = "[❯](bold #8B0000)"
+error_symbol = "[❯](bold #FF1A1A)"
+vimcmd_symbol = "[❮](bold #8B0000)"
 
+# Directory - bold deep crimson
 [directory]
-style = "bold #8B0000"
+style = "bold #C8102E"
 truncation_length = 3
 truncate_to_repo = true
+truncation_symbol = "…/"
+format = "[$path]($style) "
 
+# Git branch - bright blood red
 [git_branch]
-symbol = " "
-style = "#8B0000"
+symbol = " "
+style = "bold #E30613"
+format = "[$symbol$branch]($style) "
 
+# Git status - minimal & aggressive (symbols fixed with single quotes)
 [git_status]
-style = "#A52A2A"
-conflicted = "#8B0000"
-ahead = "#8B0000"
-behind = "#A52A2A"
-diverged = "#8B0000"
-untracked = "#A52A2A"
-stashed = "#A52A2A"
-modified = "#8B0000"
-staged = "[++](#8B0000)"
-renamed = "[»](#8B0000)"
-deleted = "[✘](#8B0000)"
+style = "#FF3333"
+format = '([$all_status]($style)) '
+conflicted = '⚔'
+ahead = '↑'
+behind = '↓'
+diverged = '↕'
+untracked = '?'
+stashed = '↪'
+modified = '\~'
+staged = '[+](#8B0000)'
+renamed = '»'
+deleted = '✘'
 
+# Command duration - only when slow
 [cmd_duration]
-style = "#A52A2A"
-format = "[$duration]($style)"
+min_time = 1500
+format = "[ $duration](#FF3333)"
+style = "#FF3333"
 
+# Exit status on failure
 [status]
-style = "#8B0000"
+style = "bold #FF1A1A"
+symbol = "✘ "
+format = "[$symbol$status]($style) "
 disabled = false
-
-[aws]
-style = "#8B0000"
-symbol = "☁ "
-
-[package]
-symbol = "📦 "
-style = "#8B0000"
-
-[python]
-symbol = "🐍 "
-style = "#8B0000"
-
-[rust]
-symbol = "⚙️ "
-style = "#8B0000"
-
-[nodejs]
-symbol = "🌙 "
-style = "#8B0000"
-
-[golang]
-symbol = "🐹 "
-style = "#8B0000"
