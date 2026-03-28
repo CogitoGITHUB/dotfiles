@@ -43,6 +43,8 @@ guix/
                 ├── ai/
                 ├── programming-languages/
                 ├── custom-guix/
+                ├── formatters/        # Code formatters
+                ├── lsp/              # Language servers
                 └── users/
 #+END_SRC
 
@@ -81,6 +83,23 @@ Each category has:
 | loaders/ai.scm | ai/         | root-ai-packages             |
 | loaders/programming-languages.scm | programming-languages/ | root-programming-languages-packages |
 | loaders/custom-guix.scm | custom-guix/ | %custom-guix-channels/service |
+| loaders/formatters.scm | formatters/ | root-formatters-packages |
+| loaders/lsp.scm | lsp/ | root-lsp-packages |
+
+** Formatters Available
+
+| Package | Extensions | Purpose |
+|---------|------------|---------|
+| nixfmt | .nix, .scm | Nix/Guix formatting |
+| ruff | .py | Python formatting |
+| texlive-latexindent | .tex | LaTeX formatting |
+| node | .js, .ts, etc. | JavaScript/TypeScript (via npx prettier) |
+
+** LSP Servers
+
+| Package | Extensions | Purpose |
+|---------|------------|---------|
+| rust-analyzer | .rs | Rust language server |
 
 ** How It All Connects
 

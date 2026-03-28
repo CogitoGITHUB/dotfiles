@@ -10,14 +10,14 @@
 (define-public zellij
   (package
     (name "zellij")
-    (version "0.42.0")
+    (version "0.44.0")
     (source
       (origin
         (method url-fetch)
         (uri (string-append
               "https://github.com/zellij-org/zellij/releases/download/v" version
               "/zellij-x86_64-unknown-linux-musl.tar.gz"))
-        (sha256 (base32 "0s16924xx02d788gk5qbh13fw45d8zkmj2wrz5kw4d1ivnqj237b"))))
+        (sha256 (base32 "1cxd8xw5kssknyrd3l4znvb4sm1jvaj8qbl8rkb3mhcfr581v63y"))))
     (build-system trivial-build-system)
     (inputs (list tar gzip))
     (arguments

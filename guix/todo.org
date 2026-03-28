@@ -1,0 +1,11 @@
+# LiterativeOS TODO
+
+* System
+** TODO Persist Tailscale serve
+   - Currently: sudo tailscale serve --bg 4096
+   - Need to add shepherd service or systemd unit
+
+** TODO Setup Slack MCP server
+   - Need Slack app tokens
+   - Run: opencode mcp auth slack
+   - Enable in opencode.json when ready

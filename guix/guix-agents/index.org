@@ -1,4 +1,4 @@
-* Guix Agents Index
+* LiterativeOS - Guix Agents Index
 
 This directory contains documentation for your Guix configuration.
 
@@ -18,6 +18,25 @@ This directory contains documentation for your Guix configuration.
 | Apply config             | =sudo guix system reconfigure ...= |
 | Rollback                 | =guix system roll-back=            |
 | List generations         | =guix system list-generations=     |
+
+** System Overview
+
+| Component | Description |
+|-----------|-------------|
+| Kernel | Linux-libre + GRUB EFI |
+| Shell | Nushell |
+| Desktop | Hyprland + Waybar |
+| Terminal | Wezterm |
+| AI | OpenCode |
+| Editors | Emacs, Neovim |
+| Containers | Docker |
+
+** Formatters & LSP
+
+- nixfmt (Nix/Guix)
+- ruff (Python)
+- latexindent (LaTeX)
+- rust-analyzer (Rust)
 
 ** Learning Org Mode
 

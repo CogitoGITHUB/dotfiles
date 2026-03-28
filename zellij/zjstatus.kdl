@@ -1,0 +1,27 @@
+// Simplified zjstatus config with dark red theme
+theme {
+    fg 139 0 0
+    bg 255 255 255
+    sepfg 139 0 0
+}
+
+mode "normal" {
+    left = [
+        { name = "session" }
+    ]
+    right = [
+        { name = "mode" }
+        { name = "date" }
+        { name = "time" }
+    ]
+}
+
+mode "locked" {
+    left = [
+        { name = "session" }
+    ]
+    right = [
+        { name = "mode" }
+        { name = "time" }
+    ]
+}

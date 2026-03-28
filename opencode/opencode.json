@@ -1,0 +1,102 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["/home/aoeu/.config/opencode/INSTRUCTIONS.md"],
+  "permission": {
+    "bash": "allow",
+    "edit": "allow",
+    "write": "allow"
+  },
+  "formatter": {
+    "nixfmt": {
+      "command": ["nixfmt", "$FILE"],
+      "extensions": [".nix", ".scm"]
+    },
+    "ruff": {
+      "command": ["ruff", "format", "$FILE"],
+      "extensions": [".py", ".pyi"]
+    },
+    "latexindent": {
+      "command": ["latexindent", "$FILE"],
+      "extensions": [".tex"]
+    },
+    "prettier": {
+      "command": ["prettier", "--write", "$FILE"],
+      "environment": {},
+      "extensions": [".js", ".jsx", ".ts", ".tsx", ".css", ".html", ".json", ".yaml", ".yml", ".md"]
+    }
+  },
+  "plugin": [
+    "opencode-zellij-tab-status",
+    "opencode-zellij-namer",
+    "zellij-pane-tracker",
+    "./plugins/falcode.js"
+  ],
+
+  "command": {
+    "guix-reconfigure": {
+      "template": "Run `sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm` to apply configuration changes.",
+      "description": "Reconfigure Guix system",
+      "agent": "build"
+    },
+    "guix-pull": {
+      "template": "Run `guix pull` to update Guix channels and package definitions.",
+      "description": "Update Guix",
+      "agent": "build"
+    },
+    "rollback": {
+      "template": "Run `sudo guix system roll-back` to revert to previous generation.",
+      "description": "Rollback Guix system"
+    },
+    "show-generations": {
+      "template": "Run `guix system list-generations` to see available system generations.",
+      "description": "List Guix generations"
+    }
+  },
+  "mcp": {
+    "everything": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-everything"],
+      "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "gh_grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
+      "enabled": true
+    },
+    "filesystem": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/home/aoeu"],
+      "enabled": true
+    },
+    "sqlite": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-sqlite-server"],
+      "enabled": true
+    },
+    "memory": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-github"],
+      "enabled": true
+    },
+    "slack": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-slack"],
+      "enabled": false
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp"],
+      "enabled": true
+    }
+  }
+}

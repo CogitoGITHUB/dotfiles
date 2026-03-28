@@ -15,6 +15,8 @@
   #:use-module (core-system user-space root loaders terminal)
   #:use-module (core-system user-space root loaders desktop)
   #:use-module (core-system user-space root loaders ai)
+  #:use-module (core-system user-space root loaders formatters)
+  #:use-module (core-system user-space root loaders lsp)
   #:use-module (core-system user-space root loaders custom-guix)
   #:re-export (users sudoers-file setuid-programs)
   #:export (root-system-packages root-system-services))
@@ -29,8 +31,10 @@
           root-containers-packages
           root-keyboard-packages
           root-terminal-packages
-          root-desktop-packages
-          root-ai-packages))
+           root-desktop-packages
+           root-ai-packages
+           root-formatters-packages
+           root-lsp-packages))
 
 ;; Services
 (define-public root-system-services

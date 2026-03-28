@@ -22,21 +22,27 @@
     (build-system trivial-build-system)
     (inputs (list tar gzip patchelf glibc))
     (arguments
-      (list #:modules (quote ((guix build utils)))
-            #:builder
-        (quasiquote (begin
-          (use-modules (guix build utils))
-          (let* ((out (assoc-ref %outputs "out"))
-                 (src (assoc-ref %build-inputs "source"))
-                 (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
-                 (gzip (string-append (assoc-ref %build-inputs "gzip") "/bin"))
-                 (patchelf (string-append (assoc-ref %build-inputs "patchelf") "/bin/patchelf"))
-                 (interp (string-append (assoc-ref %build-inputs "glibc") "/lib/ld-linux-x86-64.so.2")))
-            (setenv "PATH" gzip)
-            (mkdir-p (string-append out "/bin"))
-            (invoke tar "-xzf" src "-C" (string-append out "/bin"))
-            (invoke patchelf "--set-interpreter" interp
-                    (string-append out "/bin/opencode")))))))
+     (list #:modules (quote ((guix build utils)))
+           #:builder
+       (quasiquote (begin
+         (use-modules (guix build utils))
+         (let* ((out (assoc-ref %outputs "out"))
+                (src (assoc-ref %build-inputs "source"))
+                (tar (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+                (gzip (string-append (assoc-ref %build-inputs "gzip") "/bin"))
+                (patchelf (string-append (assoc-ref %build-inputs "patchelf") "/bin/patchelf"))
+                (interp (string-append (assoc-ref %build-inputs "glibc") "/lib/ld-linux-x86-64.so.2"))
+                (opencode-real (string-append out "/bin/opencode-real"))
+                (opencode-bin (string-append out "/bin/opencode")))
+           (setenv "PATH" gzip)
+           (mkdir-p (string-append out "/bin"))
+           (invoke tar "-xzf" src "-C" (string-append out "/bin"))
+           (rename-file opencode-bin opencode-real)
+           (invoke patchelf "--set-interpreter" interp opencode-real)
+           (call-with-output-file opencode-bin
+             (lambda (port)
+               (format port "#!/bin/sh\nOPENCODE_EXPERIMENTAL_MARKDOWN=0 exec ~a \"$@\"\n" opencode-real)))
+           (chmod opencode-bin #o555))))))
     (home-page "https://opencode.ai")
     (synopsis "The open source AI coding agent")
     (description "OpenCode is an AI coding agent built for the terminal.")
