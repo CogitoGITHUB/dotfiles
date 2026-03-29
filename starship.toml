@@ -5,7 +5,7 @@ command_timeout = 800
 format = """
  $username $hostname $directory
 $git_branch$git_status$cmd_duration
-╰─$character"""
+ • $character"""
 
 # Directory — breadcrumb path in dark red
 [directory]
