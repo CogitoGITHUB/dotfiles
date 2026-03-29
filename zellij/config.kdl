@@ -1,7 +1,7 @@
 
 keybinds clear-defaults=true {
   locked {
-    bind "Ctrl u" { SwitchToMode "normal"; }
+    bind "Ctrl i" { SwitchToMode "normal"; }
     bind "Alt d" { MoveFocusOrTab "Left"; }
     bind "Alt h" { MoveFocus "Down"; }
     bind "Alt t" { MoveFocus "Up"; }

@@ -27,4 +27,5 @@
         ripgrep
         fd
         bat
-        man-db))
+        man-db
+        procps))

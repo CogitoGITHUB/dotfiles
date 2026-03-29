@@ -73,3 +73,7 @@ nu
 openrode
 opencode 
 nu
+emacs ~/.config/nushell/aeon-modules/keybindings/nix.nu
+cd ..
+emacs nushell/aeon-modules/keybindings/
+nu

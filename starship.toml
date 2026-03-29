@@ -1,53 +1,79 @@
-# Clean + Dark Red Starship - Single Line
+# Multi-line Structured — Dark Red #8B0000
 add_newline = false
 command_timeout = 800
 
-format = "$directory$git_branch$git_status$cmd_duration$status$character"
+format = """
+$username$hostname$directory
+$git_branch$git_status$cmd_duration
+╰─$character"""
 
-# Prompt character - dark red
-[character]
-success_symbol = "[❯](bold #8B0000)"
-error_symbol = "[❯](bold #8B0000)"
-vimcmd_symbol = "[❮](bold #8B0000)"
-
-# Directory - dark red
+# Directory — breadcrumb path in dark red
 [directory]
 style = "bold #8B0000"
-truncation_length = 3
-truncate_to_repo = true
-truncation_symbol = "…/"
-format = "[$path]($style) "
+format = "[$path]($style)"
+truncation_length = 4
+truncation_symbol = ""
+home_symbol = "home"
 
-# Git branch - dark red
+# Git branch — slightly dimmer red
 [git_branch]
-symbol = " "
+symbol = " "
 style = "bold #8B0000"
 format = "[$symbol$branch]($style) "
 
-# Git status - dark red
+# Git status — labeled counts, separated by dim │
 [git_status]
 style = "#8B0000"
-format = '([$all_status]($style)) '
-conflicted = '⚔'
-ahead = '↑'
-behind = '↓'
-diverged = '↕'
-untracked = '?'
-stashed = '↪'
-modified = '~'
-staged = '[+](#8B0000)'
-renamed = '»'
-deleted = '✘'
+format = '([│](#3d0000) [$ahead_behind](#6b0000)[│](#3d0000) [$all_status](#6b0000) )'
+conflicted  = "⚔ "
+ahead       = "↑$count ahead "
+behind      = "↓$count behind "
+diverged    = "↕ diverged "
+untracked   = "? untracked "
+stashed     = "↪ stashed "
+modified    = "~$count modified "
+staged      = "+$count staged "
+renamed     = "» renamed "
+deleted     = "✘ deleted "
 
-# Command duration - dark red
+# Command duration — dim, separated by │
 [cmd_duration]
-min_time = 1500
-format = "[ $duration](#8B0000)"
-style = "#8B0000"
+min_time = 200
+style = "#3d0000"
+format = "[│](#3d0000) [⏱ $duration](#3d0000) "
 
-# Exit status on failure
-[status]
-style = "bold #8B0000"
-symbol = "✘ "
-format = "[$symbol$status]($style) "
+# Optional language versions (only show when in a project)
+[nodejs]
+format = "[│](#3d0000) [node $version](#3d0000) "
+symbol = ""
+
+[python]
+format = "[│](#3d0000) [py $version](#3d0000) "
+symbol = ""
+
+[rust]
+format = "[│](#3d0000) [rs $version](#3d0000) "
+symbol = ""
+
+# Prompt character
+[character]
+success_symbol = "[❯](bold #8B0000)"
+error_symbol   = "[❯](bold #8B0000)"
+vimcmd_symbol  = "[❮](bold #8B0000)"
+
+# Disable modules not in use
+[package]
+disabled = true
+
+[username]
 disabled = false
+style_user = "#8B0000"
+style_root = "bold #8B0000"
+format = "[$user]($style)[@](#3d0000)"
+show_always = true
+
+[hostname]
+disabled = false
+style = "#6b0000"
+format = "[$hostname](#6b0000) "
+ssh_only = false
