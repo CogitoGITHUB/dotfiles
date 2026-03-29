@@ -1,7 +1,8 @@
 
 keybinds clear-defaults=true {
   locked {
-    bind "Ctrl i" { SwitchToMode "normal"; }
+    bind "Ctrl a" { SwitchToMode "normal"; }
+    bind "Ctrl q" { Detach; }
     bind "Alt d" { MoveFocusOrTab "Left"; }
     bind "Alt h" { MoveFocus "Down"; }
     bind "Alt t" { MoveFocus "Up"; }
@@ -202,8 +203,8 @@ theme "dark-red"
 default_mode "locked"
 default_shell "nu"
 default_cwd ""
-// default_layout "compact"
-// layout_dir "/tmp"
+default_layout "default"
+layout_dir "/home/aoeu/.config/zellij/layouts"
 theme_dir "/home/aoeu/.config/zellij/themes"
 mouse_mode true
 pane_frame true

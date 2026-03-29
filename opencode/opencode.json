@@ -29,7 +29,8 @@
     "opencode-zellij-tab-status",
     "opencode-zellij-namer",
     "zellij-pane-tracker",
-    "./plugins/falcode.js"
+    "./plugins/falcode.js",
+    "opencode-mem"
   ],
 
   "command": {
