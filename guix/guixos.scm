@@ -4,8 +4,8 @@
 ;;(use-modules (systems containers containers))
 ;; ADD DOCKER WITH IMPURITIVE FS !! 
 
-;; (operating-system
-;;   (inherit os)
-;;   (services (append all-container-services
-;;                     (operating-system-user-services os))))
+ ;; (operating-system
+ ;;  (inherit os)
+ ;;  (services (append all-container-services
+ ;;                    (operating-system-user-services os))))
 os
