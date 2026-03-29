@@ -1,14 +1,13 @@
-#+TITLE: ShapelessOS 
+#+TITLE: ShapelessOS
 An Operating System That Doesn't Exist Without Its Documentation
 
 * Introduction
 
-ShapelessOS (formerly LiterativeDeclarationOS) is a Linux-based os.
+ShapelessOS is a Linux-based operating system built on one principle:
 *documentation and code are inseparable*.
-Built on Linux From Scratch methodology,
-enhanced with GNU Guix package management,
-and orchestrated through Emacs org-mode,
-this system embodies a simple principle:
+
+Built on Linux From Scratch methodology and powered by GNU Guix,
+this system embodies a simple truth:
 
 #+BEGIN_QUOTE
 *If there is no documentation, there is no code.*
@@ -16,8 +15,10 @@ this system embodies a simple principle:
 
 Every package, every configuration, every decision exists
 as extensively documented org-mode files.
-The system doesn't just have documentation..
+The system doesn't just have documentation —
 the documentation *is* the system definition.
+
+"I have no enemy, only victims."
 
 * Architecture Overview
 
@@ -25,21 +26,19 @@ the documentation *is* the system definition.
 #+BEGIN_SRC
 Custom kernel
 bash (system compatibility)
-nushell (modern interactive shell)  
-scroll (Wayland window manager)
+nushell (modern interactive shell)
 Docker engine
 Headscale client (VPN mesh networking)
-GNU Stow (symlink management)
 #+END_SRC
 
-All installed to /gnu/store, stowed to /usr, frozen read-only after build.
+All installed to /gnu/store, frozen read-only after build.
 
 ** Layer 1: Infrastructure Services
 Running on root system (not containerized):
 - Headscale server (mesh network control plane)
 - Passbolt server (password/secret management)
 - Atuin server (shell history sync)
-- K3s control plane container (orchestrates workloads)
+- K3s control plane — orchestrates all system-declared Docker containers
 
 ** Layer 2: Workload Containers
 All user applications run containerized, managed by K3s:
@@ -48,14 +47,14 @@ All user applications run containerized, managed by K3s:
 - Databases and services
 - Custom applications
 
-Each container based on same ShapelessOS root image.
+Each container based on the same ShapelessOS root image.
 
-* What Makes ShapelessOS, SHAPELESSOS..
+* What Makes ShapelessOS, SHAPELESSOS
 
 ** Documentation as Source Code
 Your system definition lives in org-mode files:
 - Full explanations of what each component does
-- Why it exists and what problems it solves  
+- Why it exists and what problems it solves
 - How it works, down to assembly/machine code level
 - Historical context and design evolution
 - Source code analysis even for binary packages
@@ -70,7 +69,7 @@ Files are interconnected nodes, not hierarchical directories:
 
 ** Immutable/Atomic Foundation
 - Read-only root filesystem (SquashFS + OSTree + OverlayFS)
-- Locked after build—no runtime modifications
+- Locked after build — no runtime modifications
 - Updates create new system images
 - Instant rollback to any previous state
 - Zero-trust model: containers for everything except core services
@@ -78,32 +77,53 @@ Files are interconnected nodes, not hierarchical directories:
 ** Bleeding-Edge via Git
 - No version numbers, track git repositories directly
 - Always up-to-date with upstream
-- Automatic hash computation and updates
-- Hourly update checks via lightweight script
-- Fail-safe: keep old hash if upstream breaks
+- MAAK monitors local =sources/= clones for new commits and notifies you
+- You review, approve, and trigger rebuilds manually
+- Fail-safe: nothing updates automatically, you are always in control
 
 ** Hybrid Reproducibility
-- Guix builds packages reproducibly to /gnu/store
-- GNU Stow creates traditional FHS symlinks to /usr
-- Containers see normal paths, inherit from immutable base
-- Best of both worlds: Guix power + traditional compatibility
+- Guix builds packages reproducibly to =/gnu/store=
+- Containers inherit from immutable base
+- Best of both worlds: Guix power + full source sovereignty
 
 * Core Technologies
 
 ** Guix Package Management
-- Reproducible builds
-- Binary substitutes (where available)
+- Reproducible builds from source
 - Functional package management
 - Rollback capability
-- We use Guix as build backend, not its DSL
+- Full Guix DSL — the stack from top to bottom
 
-** MAAK (org-mode → Guix Bridge)
-- Reads org-mode package declarations
-- Fetches git sources, computes hashes
-- Generates Guix package definitions
-- Orchestrates builds and installations
-- Updates org-mode files with computed hashes
-- Integrates with Emacs for smooth workflow
+** MAAK — Automation Backbone
+MAAK is a Guile Scheme command runner and project automator.
+It is ShapelessOS's automation layer — every system task
+is a Scheme function you own, read, and extend.
+
+MAAK owns the following responsibilities:
+
+*** System Build
+=maak reconfigure= — runs =guix system reconfigure= against =guixos.scm=
+
+*** Database Population
+=maak populate-database= — reads the local Guix source clone
+and extracts definitions into =definitions-database/=.
+This runs automatically as part of every system build.
+You never populate the database manually.
+
+*** Source Monitoring
+=maak check-updates= — scans all =sources/= clones,
+detects new commits upstream, and notifies you.
+Nothing updates automatically. You approve every change.
+
+*** Package Builds
+=maak build <package>= — compiles a package from its local =sources/= clone,
+using its self-contained =.scm= module definition.
+
+*** ISO Build
+=maak build-iso= — produces a bootable ShapelessOS ISO
+declared directly in the system configuration.
+If your machine dies and you have the repo,
+this is how you get back to a running system.
 
 ** Emacs Integration
 - Custom Emacs package (ldos-mode.el) included
@@ -119,11 +139,114 @@ Files are interconnected nodes, not hierarchical directories:
 - OverlayFS: Configuration overlays
 - Combined: Secure, efficient, rollback-capable
 
-** GNU Stow
-- Manages symlinks from /gnu/store to /usr
-- Containers see traditional FHS layout
-- Coexistence of Guix + normal paths
-- Declared in org-mode, automated by MAAK
+* Package Sovereignty
+
+ShapelessOS has zero runtime external dependencies.
+No channels pointing to remote servers.
+No network fetches during build.
+No substitute servers.
+GuixOS servers going dark is completely irrelevant.
+
+** How It Works
+
+The Guix and nonguix repositories are cloned once into =~/.config/guix/=
+and treated as a read-only reference database — never imported,
+never referenced at runtime. From them, MAAK extracts raw definitions
+into =definitions-database/= at every system build.
+
+When you write a package module, you open =definitions-database/=,
+copy the definitions you need directly into the file,
+and point the source at your local =sources/= clone.
+The file becomes a closed world. No imports from anywhere outside itself.
+
+Delete the file → the package never existed on your machine.
+
+** Directory Structure
+
+#+BEGIN_SRC
+~/.config/guix/                        ← current location, will move
+├── definitions-database/
+│   ├── build-systems/
+│   │   └── trivial.scm                ← raw definition, never imported
+│   ├── licenses/
+│   │   └── asl2.0.scm                 ← raw definition, never imported
+│   ├── packages/
+│   │   ├── tar.scm                    ← raw definition, never imported
+│   │   └── gzip.scm                   ← raw definition, never imported
+│   └── download/
+│       └── url-fetch.scm              ← raw definition, never imported
+│
+├── sources/
+│   └── atuin/
+│       └── repo/                      ← full git clone of atuin source
+│           ├── src/
+│           ├── Cargo.toml
+│           └── ...
+│
+└── Operating-System/
+    └── core-system/
+        └── user-space/
+            └── root/
+                └── shell/
+                    └── atuin.scm      ← closed world, self-contained
+#+END_SRC
+
+** Self-Contained Modules
+
+Each =.scm= package file:
+- Copies definitions directly from =definitions-database/=
+- Points source at =file://= URI inside =sources/=
+- Has zero =use-module= references outside itself
+- Is the single source of truth for that package
+
+This means:
+- You own the source code
+- You own the build definitions
+- You can patch anything directly in =sources/=
+- Rollback is git history — no extra mechanism needed
+
+* Module Architecture — Loaders
+
+ShapelessOS uses a modular loader architecture
+to organize and compose system packages and services.
+
+Every concern lives in its own focused =.scm= file.
+Loaders aggregate those files into named groups.
+The system declaration consumes loaders — never individual files.
+
+** Structure
+
+#+BEGIN_SRC
+Operating-System/
+└── core-system/
+    └── user-space/
+        └── root/
+            ├── loaders/
+            │   ├── core.scm
+            │   ├── networking.scm
+            │   ├── shell.scm
+            │   ├── editors.scm
+            │   ├── desktop.scm
+            │   ├── containers.scm
+            │   ├── keyboard.scm
+            │   ├── terminal.scm
+            │   ├── ai.scm
+            │   ├── formatters.scm
+            │   ├── lsp.scm
+            │   └── programming-languages.scm
+            ├── shell/
+            │   ├── atuin.scm          ← self-contained module
+            │   ├── nushell.scm
+            │   └── ...
+            └── root.scm               ← consumes loaders
+#+END_SRC
+
+** Why This Matters
+
+- Add a package: create one =.scm= file, add it to the relevant loader
+- Remove a package: delete the =.scm= file and its =sources/= clone
+- Nothing else in the system needs to change
+- The loader is the only coupling point between a module and the system
 
 * Package Management Philosophy
 
@@ -135,7 +258,7 @@ Core system components that rarely need updates:
 - Kernel (when not custom building)
 - bash, coreutils
 
-Use Guix's tested, stable versions.
+Definitions extracted from =definitions-database/=, sources vendored locally.
 
 *** Bleeding Edge from Git
 Development tools tracking upstream HEAD:
@@ -143,7 +266,8 @@ Development tools tracking upstream HEAD:
 - rust-analyzer, typescript servers
 - Modern CLI tools
 
-Rebuilt automatically, updated hourly.
+MAAK notifies you of new commits in =sources/=.
+You approve. You rebuild.
 
 *** Custom ShapelessOS Packages
 Our own code and configurations:
@@ -151,49 +275,17 @@ Our own code and configurations:
 - Custom system utilities
 - Specialization-specific software
 
-*** Package Definition in Org-Mode
-#+BEGIN_SRC org
-* Package: helix-editor
-** Why It Exists
-Modern modal editor written in Rust. Better treesitter integration
-than neovim, native LSP support, simpler configuration.
-
-** Design Philosophy
-[Deep dive into Helix architecture, comparison to vim/kakoune,
-explanation of selection-first editing model]
-
-** Source Code Analysis
-[Analysis of key modules, rendering pipeline, LSP integration]
-
-** Package Definition
-#+BEGIN_SRC scheme
-(package-definition
-  (name "helix")
-  (source (git-fetch "https://github.com/helix-editor/helix" 
-                     "a1b2c3d4e5f6"))
-  (hash "sha256:COMPUTED_BY_MAAK")
-  (build-system 'cargo)
-  (stow-target "/usr/local"))
-#+END_SRC
-#+END_SRC
-
-** Automatic Updates
-- Lightweight script checks git repos hourly
-- Computes new hashes if commits changed
-- Updates org-mode files automatically
-- Triggers rebuild if hash changes
-- Fail-safe: keeps old hash if fetch/build fails
-- You review and approve via git commits
+Fully owned — source in =sources/=, definitions written from scratch.
 
 * Security Model
 
 ** Defense in Depth
 1. Immutable root (can't be modified at runtime)
 2. All workloads containerized (isolation)
-3. K3s network policies (segmentation)  
+3. K3s network policies (segmentation)
 4. Headscale mesh (encrypted networking)
 5. Passbolt (centralized secret management)
-6. Read-only /gnu/store bind-mounted to containers
+6. Read-only =/gnu/store= bind-mounted to containers
 
 ** Zero-Trust Architecture
 - Only essential services on root system
@@ -211,7 +303,8 @@ Root system hardened and documented:
 
 * Specializations
 
-ShapelessOS serves as foundation for specialized environments, each fully documented:
+ShapelessOS serves as foundation for specialized environments,
+each fully documented:
 
 ** Web Development
 - Node.js, Deno, Bun environments
@@ -219,7 +312,7 @@ ShapelessOS serves as foundation for specialized environments, each fully docume
 - Development tools and frameworks
 - Integration with Passbolt for API keys
 
-** Pentesting Offense  
+** Pentesting Offense
 - Reconnaissance tools
 - Exploitation frameworks
 - Custom security tools
@@ -240,66 +333,43 @@ Each specialization:
 * Philosophy & Principles
 
 ** Core Beliefs
-1. *Documentation is not optional* - Understanding before execution
-2. *Immutability provides security* - Read-only prevents corruption
-3. *Atomicity ensures reliability* - Updates succeed or rollback
-4. *Bleeding edge without instability* - Git tracking + fail-safes
-5. *Knowledge graph over hierarchy* - Concepts connect, not nest
-6. *Explain everything from first principles* - Down to assembly level
+1. *Documentation is not optional* — Understanding before execution
+2. *Sovereignty is not optional* — Own everything from source to build
+3. *Immutability provides security* — Read-only prevents corruption
+4. *Atomicity ensures reliability* — Updates succeed or rollback
+5. *Bleeding edge without instability* — Git tracking + manual approval
+6. *Knowledge graph over hierarchy* — Concepts connect, not nest
+7. *Explain everything from first principles* — Down to assembly level
 
 ** Why This Matters
 Traditional operating systems:
 - Documentation separate from code (gets stale)
 - Updates can break systems (no atomicity)
 - Configuration scattered (hard to understand)
+- External dependencies you don't control
 - Black boxes everywhere (trust without understanding)
 
 ShapelessOS:
 - Documentation IS the system definition
 - Updates are atomic (safe by design)
 - Everything in knowledge graph (navigable)
-- Full transparency (understand everything)
-
-** Target Audience
-Anyone who values understanding over convenience:
-- Linux enthusiasts wanting deep knowledge
-- Security professionals needing auditable systems
-- Developers wanting reproducible environments
-- Teams needing documented infrastructure
-- Anyone with curiosity and patience
-
-"I have no enemy, only victims" - Everyone deserves to understand their computer.
-
-* Experimental Features
-
-Future exploration areas:
-- AI-powered documentation assistants
-- Automatic knowledge graph generation from source code
-- Alternative container runtimes
-- Different init systems
-- Custom kernel configurations
-- GPU passthrough for containers
-
-Experimental features documented but not yet stable.
-
-* Acknowledgments
-
-Built on the shoulders of giants:
-- Linux From Scratch project (methodology and knowledge)
-- GNU Guix (reproducible package management)
-- Emacs and org-mode community (knowledge tools)
-- MAAK project (Scheme-based automation)
-- All the free software that makes this possible
+- Zero runtime external dependencies
+- Full transparency — understand everything
 
 * Vision
+
 ShapelessOS aims to be:
 - An operating system that doesn't exist without its documentation
 - A knowledge graph of Linux internals, executable and navigable
 - A foundation for specialized environments (web dev, security research)
 - A reference implementation for documentation-first systems
+- A fully sovereign system — if the internet disappears, nothing changes
 - Daily-drivable for those who value understanding
+
 * Development Principles
+
 ** Throughout All Phases
+
 *** Documentation First
 Every feature must be documented before implementation:
 1. Write org-mode documentation explaining what and why
@@ -314,11 +384,11 @@ No exceptions. If there's no documentation, there's no feature.
 Every change must be rollback-able:
 - Work in overlays/branches
 - Test before commit to main system
-- Keep old versions accessible
+- Keep old versions accessible via git history
 - Document rollback procedures
 - Automatic fallback on failure
 
-Users should never be stuck with broken system.
+Users should never be stuck with a broken system.
 
 *** Incremental Progress
 Small, working increments over big leaps:
@@ -326,8 +396,6 @@ Small, working increments over big leaps:
 - Working system at every stage
 - No "rewrite everything" moments
 - Gradual evolution, not revolution
-
-Users can adopt at any phase.
 
 *** Community Transparency
 Open development, open decisions:
@@ -344,27 +412,23 @@ Trust through transparency.
 ** Technical Risks
 
 *** Risk: Guix integration more complex than expected
-*Mitigation:* Start with simple packages, learn incrementally, fall back to pure Nix if needed
-
-*** Risk: Stow doesn't scale to thousands of packages
-*Mitigation:* Test early with 100+ packages, have fallback plan (direct Guix)
+*Mitigation:* Start with simple packages, learn incrementally
 
 *** Risk: Immutable root too restrictive
 *Mitigation:* Design overlay system from start, allow escape hatches
 
-*** Risk: Automated updates break things
-*Mitigation:* Always test in overlay first, manual approval before deploy
+*** Risk: Source monitoring misses breaking changes
+*Mitigation:* MAAK notifies, human approves — no silent updates ever
 
 ** Scope Risks
 
-*** Risk: Documentation too ambitious (millions of lines)
-*Mitigation:* Start with core (100 packages), expand gradually, accept some packages are lightly documented
+*** Risk: Documentation too ambitious
+*Mitigation:* Start with core packages, expand gradually,
+accept some packages are lightly documented initially
 
 *** Risk: Feature creep
-*Mitigation:* Strict scope per phase, defer non-critical features, focus on 1.0 first
-
-*** Risk: Trying to support all use cases
-*Mitigation:* Define clear target audience, specialize for those needs, others can fork
+*Mitigation:* Strict scope per phase, defer non-critical features,
+focus on 1.0 first
 
 ** Community Risks
 
@@ -372,8 +436,9 @@ Trust through transparency.
 *Mitigation:* Document for yourself first, adoption is bonus not requirement
 
 *** Risk: Negative feedback
-*Mitigation:* Expect criticism, learn from valid points, ignore trolls, stay focused on vision
+*Mitigation:* Expect criticism, learn from valid points,
+ignore trolls, stay focused on vision
 
 *** Risk: Contributor conflicts
-*Mitigation:* Clear contribution guidelines, code of conduct, benevolent maintainership
-
+*Mitigation:* Clear contribution guidelines, code of conduct,
+benevolent maintainership
