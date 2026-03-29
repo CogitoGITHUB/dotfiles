@@ -30,6 +30,7 @@ Each loader exports packages/services for its category:
 | loaders/keyboard.scm     | keyboard/    | root-keyboard-packages               |
 | loaders/ai.scm          | ai/          | root-ai-packages                     |
 | loaders/programming-languages.scm | programming-languages/ | root-programming-languages-packages |
+| loaders/music.scm       | music/       | root-music-packages, root-music-services |
 | loaders/custom-guix.scm  | custom-guix/ | %custom-guix-channels/service        |
 
 ** Package Lists
@@ -45,6 +46,7 @@ Each loader exports packages/services for its category:
 | containers/    | docker, lazydocker                         |
 | keyboard/      | keyd, kanata                               |
 | ai/            | opencode, kilo                             |
+| music/         | rmpc                                      |
 | programming-languages/ | guile                               |
 
 ** Service Lists
@@ -69,6 +71,7 @@ Each category directory contains submodules that its loader imports:
 | keyboard/     | keyd.scm, kanata.scm                        |
 | ai/           | opencode.scm, kilo.scm                      |
 | containers/   | docker.scm, lazydocker.scm                  |
+| music/        | rmpc.scm, mpd.scm                          |
 | custom-guix/  | channel.scm                                 |
 
 ** Users

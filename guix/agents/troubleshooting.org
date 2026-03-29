@@ -74,3 +74,5 @@ ln -sf /var/guix/profiles/per-user/aoeu/guix-system-N ~/.<location>/current
 | "service not found" | Import correct service module |
 | "module not found" | Check #:use-module path |
 | " unbound variable" | Export variable from module |
+| "invalid-base32-character" | Use =guix download= to get correct hash |
+| "missing '(' in vector" | Hash format is wrong - use base32 format from =guix download= |

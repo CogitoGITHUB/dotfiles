@@ -17,6 +17,7 @@
   #:use-module (core-system user-space root loaders ai)
   #:use-module (core-system user-space root loaders formatters)
   #:use-module (core-system user-space root loaders lsp)
+  #:use-module (core-system user-space root loaders music)
   #:use-module (core-system user-space root loaders custom-guix)
   #:re-export (users sudoers-file setuid-programs)
   #:export (root-system-packages root-system-services))
@@ -34,7 +35,8 @@
            root-desktop-packages
            root-ai-packages
            root-formatters-packages
-           root-lsp-packages))
+           root-lsp-packages
+           root-music-packages))
 
 ;; Services
 (define-public root-system-services
@@ -44,4 +46,5 @@
      (service openssh-service-type))
    root-networking-services
    root-containers-services
+   root-music-services
    %base-services))

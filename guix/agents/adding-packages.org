@@ -1,5 +1,20 @@
 * Adding Packages and Services
 
+** Getting the Correct Hash
+
+Use =guix download= to get the hash - it returns the correct format automatically:
+
+#+BEGIN_SRC sh
+guix download https://github.com/author/repo/releases/download/v1.0.0/package.tar.gz
+#+END_SRC
+
+This returns a hash like =0nlcy211lrvj7vyl6zrd1v3hv3s264m0pd69xc7c3df6rc41ywsv= that you can use directly with =(base32 "...")=
+
+*** Common Errors
+- Don't use =sha256sum | base32= - it produces invalid base32
+- Don't use =guix hash= - it returns nix-store format
+- Use =guix download= for the correct hash format
+
 ** Packages and Services Stay in the Same File
 
 In this setup, packages and services are defined together in each loader file. For example, =loaders/containers.scm= has both =root-containers-packages= and =root-containers-services=.
@@ -18,6 +33,7 @@ In this setup, packages and services are defined together in each loader file. F
 | Keyboard        | loaders/keyboard.scm         |
 | Programming     | loaders/programming-languages.scm |
 | AI              | loaders/ai.scm              |
+| Music           | loaders/music.scm           |
 | Custom Guix     | loaders/custom-guix.scm      |
 
 ** Adding a New Submodule
