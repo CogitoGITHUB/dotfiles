@@ -3,7 +3,7 @@ add_newline = false
 command_timeout = 800
 
 format = """
-$username$hostname$directory
+ $username $hostname $directory
 $git_branch$git_status$cmd_duration
 ╰─$character"""
 
