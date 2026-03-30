@@ -5,10 +5,8 @@
   #:use-module (guix gexp)
   #:export (kernel kernel-arguments kernel-modules))
 
-;;;;; Linux kernel - linux-libre (free kernel)
-
 (define-public kernel linux-libre)
-(define-public kernel-arguments '())
+(define-public kernel-arguments '("snd_intel_dspcfg.dsp_driver=1"))
 
 (define kernel-modules
   (service kernel-module-loader-service-type

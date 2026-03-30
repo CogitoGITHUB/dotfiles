@@ -4,6 +4,7 @@
   #:use-module (gnu services ssh)
   #:use-module (gnu services networking)
   #:use-module (gnu services docker)
+  #:use-module (gnu services audio)
   #:use-module (core-system user-space root users users)
   #:use-module (core-system user-space root loaders core)
   #:use-module (core-system user-space root loaders networking)
@@ -19,10 +20,9 @@
   #:use-module (core-system user-space root loaders lsp)
   #:use-module (core-system user-space root loaders music)
   #:use-module (core-system user-space root loaders custom-guix)
-  #:re-export (users sudoers-file setuid-programs)
+  #:re-export (users groups sudoers-file setuid-programs)
   #:export (root-system-packages root-system-services))
 
-;; Packages
 (define-public root-system-packages
   (append root-core-packages
           root-networking-packages
@@ -32,13 +32,12 @@
           root-containers-packages
           root-keyboard-packages
           root-terminal-packages
-           root-desktop-packages
-           root-ai-packages
-           root-formatters-packages
-           root-lsp-packages
-           root-music-packages))
+          root-desktop-packages
+          root-ai-packages
+          root-formatters-packages
+          root-lsp-packages
+          root-music-packages))
 
-;; Services
 (define-public root-system-services
   (append
     (list

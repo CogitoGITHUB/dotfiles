@@ -69,7 +69,7 @@ disabled = true
 disabled = false
 style_user = "#8B0000"
 style_root = "bold #8B0000"
-format = "[$user]($style)[@](#3d0000)"
+format = "[$user ]($style)[>](#3d0000)"
 show_always = true
 
 [hostname]

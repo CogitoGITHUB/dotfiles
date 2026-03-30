@@ -1,0 +1,56 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+(
+    background_color: "#FFFFFF",
+    text_color: "#8B0000",
+    preview_label_style: (fg: "#8B0000"),
+    preview_metadata_group_style: (fg: "#8B0000", modifiers: "Bold"),
+    level_styles: (
+        info: (fg: "#8B0000", bg: "#FFFFFF"),
+        warn: (fg: "#8B0000", bg: "#FFFFFF"),
+        error: (fg: "#8B0000", bg: "#FFFFFF"),
+        debug: (fg: "#8B0000", bg: "#FFFFFF"),
+        trace: (fg: "#8B0000", bg: "#FFFFFF"),
+    ),
+    cava: (
+        bar_width: 2,
+        bar_spacing: 1,
+        orientation: Bottom,
+        bar_color: Gradient({
+            0: "#8B0000",
+            50: "#A52A2A",
+            100: "#8B0000",
+        }),
+    ),
+    lyrics: (
+        timestamp: false,
+    ),
+    symbols: (
+        song: "♪",
+        dir: "📁",
+        playlist: "🎼",
+        marker: "»",
+        ellipsis: "…",
+    ),
+    progress_bar: (
+        symbols: ["", "█", "", "█", ""],
+        track_style: (fg: "#8B0000"),
+        elapsed_style: (fg: "#8B0000"),
+        thumb_style: (fg: "#8B0000", bg: "#FFFFFF"),
+    ),
+    scrollbar: (
+        symbols: ["│", "█", "▲", "▼"],
+        thumb_style: (fg: "#8B0000"),
+    ),
+    tab_bar: (
+        active_style: (fg: "#FFFFFF", bg: "#8B0000", modifiers: "Bold"),
+        inactive_style: (fg: "#8B0000"),
+    ),
+    highlighted_item_style: (fg: "#8B0000", modifiers: "Bold"),
+    current_item_style: (fg: "#FFFFFF", bg: "#8B0000", modifiers: "Bold"),
+    borders_style: (fg: "#8B0000"),
+    highlight_border_style: (fg: "#8B0000"),
+    header: (rows: []),
+)

@@ -1,0 +1,18 @@
+(define-module (core-system user-space root music alsa)
+  #:use-module (gnu services)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu services sound)
+  #:use-module (guix gexp)
+  #:export (alsa-utils alsa-service))
+
+(define-public alsa-utils
+  (@@ (gnu packages linux) alsa-utils))
+
+(define-public alsa-service
+  (simple-service 'alsa-unmute
+                  boot-service-type
+                  #~(begin
+                      (system* #$(file-append (@@ (gnu packages linux) alsa-utils) "/bin/amixer")
+                               "sset" "Master" "unmute")
+                      (system* #$(file-append (@@ (gnu packages linux) alsa-utils) "/bin/amixer")
+                               "sset" "Master" "100%"))))

@@ -1,0 +1,9 @@
+[input]
+method = fifo
+source = /tmp/mpd.fifo
+sample_rate = 44100
+sample_bits = 16
+
+[color]
+background = '#FFFFFF'
+foreground = '#8B0000'

@@ -4,7 +4,7 @@
 (
     address:  "127.0.0.1:6600",
     password: None,
-    theme: None,
+    theme: Some("white"),
     cache_dir: Some("/tmp/rmpc/cache"),
     on_song_change: None,
     volume_step: 5,
@@ -25,6 +25,23 @@
         disabled_protocols: ["http://", "https://"],
         vertical_align: Center,
         horizontal_align: Center,
+    ),
+    cava: (
+        framerate: 60,
+        autosens: true,
+        sensitivity: 100,
+        input: (
+            method: Fifo,
+            source: "/tmp/mpd.fifo",
+            sample_rate: 44100,
+            channels: 2,
+            sample_bits: 16,
+        ),
+        smoothing: (
+            noise_reduction: 25,
+            monstercat: false,
+            waves: false,
+        ),
     ),
     keybinds: (
         global: {
@@ -125,7 +142,16 @@
             name: "Queue",
             pane: Split(
                 direction: Horizontal,
-                panes: [(size: "40%", pane: Pane(AlbumArt)), (size: "60%", pane: Pane(Queue))],
+                panes: [
+                    (size: "40%", pane: Pane(AlbumArt)),
+                    (size: "60%", pane: Split(
+                        direction: Vertical,
+                        panes: [
+                            (size: "50%", pane: Pane(Queue)),
+                            (size: "50%", pane: Pane(Cava)),
+                        ],
+                    )),
+                ],
             ),
         ),
         (
