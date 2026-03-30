@@ -9,3 +9,12 @@
    - Need Slack app tokens
    - Run: opencode mcp auth slack
    - Enable in opencode.json when ready
+
+** TODO Fill new category loaders with packages
+   - security.scm - auth, secrets, sandbox, audit, network
+   - observability.scm - metrics, visualization, logging (grafana, prometheus)
+   - hardware.scm - GPU drivers, power management
+   - scheduling.scm - mcron jobs, backup timers
+   - virtualization.scm - qemu, libvirt
+   - ci.scm - guix-ci configurations
+   - data.scm - data processing tools
