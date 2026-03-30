@@ -1,3 +1,8 @@
+;;; GRAFANA PROMETEUS AND SOPS NEED FIXING - DO NOT DELETE OR UNCOMMENT UNTIL FIXED !!!
+;;; DO NOT DELETE OR UNCOMMENT until these are fixed:
+;;;   1. #:use-module (core-system user-space root grafana-stack sops services sops)
+;;;   2. #:use-module (core-system user-space root loaders grafana-stack)
+;;;   3. (service sops-secrets-service-type ...)
 (define-module (core-system user-space root root)
   #:use-module (gnu services)
   #:use-module (gnu services base)
@@ -6,6 +11,7 @@
   #:use-module (gnu services docker)
   #:use-module (gnu services audio)
   #:use-module (core-system user-space root users users)
+  ;; #:use-module (core-system user-space root grafana-stack sops services sops)
   #:use-module (core-system user-space root loaders core)
   #:use-module (core-system user-space root loaders networking)
   #:use-module (core-system user-space root loaders programming-languages)
@@ -20,6 +26,7 @@
   #:use-module (core-system user-space root loaders lsp)
   #:use-module (core-system user-space root loaders music)
   #:use-module (core-system user-space root loaders custom-guix)
+  ;; #:use-module (core-system user-space root loaders grafana-stack)
   #:re-export (users groups sudoers-file setuid-programs)
   #:export (root-system-packages root-system-services))
 
@@ -42,8 +49,11 @@
   (append
     (list
      (service dhcpcd-service-type)
-     (service openssh-service-type))
-   root-networking-services
-   root-containers-services
-   root-music-services
-   %base-services))
+     (service openssh-service-type)
+     ;; (service sops-secrets-service-type (sops-service-configuration)))
+     )
+    root-networking-services
+    root-containers-services
+    root-music-services
+    ;; root-grafana-stack-services
+    %base-services))
