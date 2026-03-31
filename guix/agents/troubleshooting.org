@@ -81,3 +81,37 @@ sudo herd status <service-name>
 sudo herd log <service-name>
 sudo herd start <service-name>
 #+END_SRC
+
+** Error: "error while loading shared libraries: libstdc++.so.6" (prebuilt binary)
+
+Cause: Prebuilt binary needs libstdc++ at runtime but the rpath doesn't include gcc's lib output.
+
+Fix: Add gcc (lib output) to inputs and set rpath with patchelf:
+#+BEGIN_SRC scheme
+(inputs (list bash tar zstd patchelf glibc `(,gcc "lib")))
+;; In builder:
+(let* ((glibc (assoc-ref %build-inputs "glibc"))
+       (gcc (assoc-ref %build-inputs "gcc"))  ; this is the "lib" output
+       (interp (string-append glibc "/lib/ld-linux-x86-64.so.2"))
+       (libstdc++ (string-append gcc "/lib")))
+  (invoke patchelf "--set-interpreter" interp "--set-rpath"
+          (string-append glibc "/lib:" libstdc++) binary))
+#+END_SRC
+
+Note: Guix splits gcc into multiple outputs. The "lib" output contains libstdc++.so.6.
+When using `(,gcc "lib")` as an input, it's still named "gcc" in %build-inputs but
+points to the lib output directory (e.g. gcc-14.3.0-lib).
+
+** Error: "Cannot open: No such file or directory" during tar extraction
+
+Cause: The output directory doesn't exist before tar tries to extract to it.
+
+Fix: Add `(mkdir-p out)` before the tar extraction command.
+
+** Error: "rename-file: No such file or directory" with prebuilt tarball
+
+Cause: Extracting to wrong directory. If archive has `bin/ollama` inside it and you
+use `tar xf - -C out/bin`, it extracts to `out/bin/bin/ollama`.
+
+Fix: Extract to `out/` instead of `out/bin/`. The archive's internal directory
+structure will resolve correctly: `bin/ollama` -> `out/bin/ollama`.

@@ -49,4 +49,4 @@
 
 (define-public setuid-programs
   (list (setuid-program
-         (program (file-append sudo "/bin/sudo")))))
+          (program (file-append sudo "/bin/sudo")))))

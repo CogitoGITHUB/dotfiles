@@ -48,9 +48,13 @@
            (documentation "Run the tailscale daemon")
            (provision (quote (tailscaled tailscale)))
            (requirement (quote (user-processes)))
-           (start #~(lambda _
-                      (fork+exec-command (list #$tailscaled-bin))))
-           (stop #~(make-kill-destructor))))))
+            (start #~(begin
+                       (use-modules (srfi srfi-1) (srfi srfi-26))
+                       (lambda _
+                         (fork+exec-command (list #$tailscaled-bin)))))
+             (stop #~(begin
+                       (use-modules (srfi srfi-1) (srfi srfi-26))
+                       (make-kill-destructor)))))))
 
 (define-public config-tailscaled-service-type
   (service-type

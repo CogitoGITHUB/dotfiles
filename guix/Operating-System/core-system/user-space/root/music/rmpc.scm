@@ -24,8 +24,9 @@
     (arguments
       (list #:modules '((guix build utils))
             #:builder
-            #~(begin
-                (use-modules (guix build utils))
+             #~(begin
+                 (use-modules (srfi srfi-1) (srfi srfi-26))
+                 (use-modules (guix build utils))
                 (let* ((out  (assoc-ref %outputs "out"))
                        (src  (assoc-ref %build-inputs "source"))
                        (tar  (string-append (assoc-ref %build-inputs "tar")  "/bin/tar"))

@@ -59,8 +59,9 @@
      (service openssh-service-type)
      ;; (service sops-secrets-service-type (sops-service-configuration)))
      )
-    root-networking-services
-    root-containers-services
-    root-music-services
-    ;; root-grafana-stack-services
+     root-networking-services
+     root-containers-services
+     root-music-services
+     ;; root-ai-services
+     ;; root-grafana-stack-services
     %base-services))

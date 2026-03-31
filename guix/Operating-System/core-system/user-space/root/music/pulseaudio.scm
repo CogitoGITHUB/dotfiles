@@ -15,12 +15,16 @@
                   (list (shepherd-service
                           (provision '(pulseaudio))
                           (requirement '(user-processes))
-                          (start #~(make-forkexec-constructor
-                                    (list #$(file-append (@@ (gnu packages pulseaudio) pulseaudio)
-                                                         "/bin/pulseaudio")
-                                          "--system"
-                                          "--disallow-exit"
-                                          "--log-target=syslog")
-                                    #:user "root"))
-                          (stop #~(make-kill-destructor))
+                           (start #~(begin
+                                      (use-modules (srfi srfi-1) (srfi srfi-26))
+                                      (make-forkexec-constructor
+                                     (list #$(file-append (@@ (gnu packages pulseaudio) pulseaudio)
+                                                          "/bin/pulseaudio")
+                                           "--system"
+                                           "--disallow-exit"
+                                           "--log-target=syslog")
+                                     #:user "root")))
+                           (stop #~(begin
+                                     (use-modules (srfi srfi-1) (srfi srfi-26))
+                                     (make-kill-destructor)))
                           (respawn? #t)))))

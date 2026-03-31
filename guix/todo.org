@@ -10,7 +10,11 @@
    - Run: opencode mcp auth slack
    - Enable in opencode.json when ready
 
-** TODO Fill new category loaders with packages
+** TODO Add Ollama shepherd service
+   - Ollama binary is installed but server doesn't auto-start
+   - Need to create a shepherd service for `ollama serve`
+   - Consider: GPU support, model storage location, environment variables
+   - Related: opencode provider already configured for localhost:11434
    - security.scm - auth, secrets, sandbox, audit, network
    - observability.scm - metrics, visualization, logging (grafana, prometheus)
    - hardware.scm - GPU drivers, power management
