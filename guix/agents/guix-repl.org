@@ -7,8 +7,12 @@ Never reconfigure to test a module. REPL first, always.
 
 Both system and container modules use the same flag:
 #+BEGIN_SRC sh
-guix repl -- -L /home/aoeu/.config/guix/Operating-System
+guix repl --load-path=/home/aoeu/.config/guix/Operating-System
 #+END_SRC
+
+Note: The older syntax `guix repl -- -L /path` no longer works. Also, the warning
+"note: source file ... newer than compiled ..." is harmless noise — it just means
+the cache is stale. The module loads correctly regardless.
 
 ** REPL command cheatsheet
 
@@ -28,15 +32,16 @@ guix repl -- -L /home/aoeu/.config/guix/Operating-System
 ;; 1. Load it
 (use-modules (core-system user-space root <category> <name>))
 
-;; 2. Symbol must be accessible
-<name>   ; must return package object
-
-;; 3. Check exports
+;; 2. Check exports — name may throw "unbound variable" even when module loaded
 ,module (core-system user-space root <category> <name>)
 ,bindings
 #+END_SRC
 
-Clean load + symbol visible = safe to add to loader.
+Clean load + symbol visible in bindings = safe to add to loader.
+
+Note: For packages defined with #:export (not #:re-export), directly evaluating
+the symbol name in REPL may throw "unbound variable" even when the module loaded
+correctly. Use ,bindings to verify instead.
 
 ** Workflow: validate loader after adding a submodule
 

@@ -62,6 +62,67 @@ guix download https://example.com/package-1.0.tar.gz
 #+END_SRC
 Never use sha256sum or guix hash — wrong format.
 
+** npm packages
+
+For packages installed via npm (Node.js):
+
+1. Find version:
+   #+BEGIN_SRC sh
+   npm show <package> version   # or check npmjs.com
+   #+END_SRC
+
+2. Construct tarball URL:
+   #+BEGIN_SRC
+   https://registry.npmjs.org/<package>/-/<package>-<version>.tgz
+   #+END_SRC
+   Example for openclaw v2026.3.28:
+   https://registry.npmjs.org/openclaw/-/openclaw-2026.3.28.tgz
+
+3. Get hash:
+   #+BEGIN_SRC sh
+   guix download https://registry.npmjs.org/openclaw/-/openclaw-2026.3.28.tgz
+   #+END_SRC
+
+4. Use node-build-system in Template B.
+
+** npm packages with dependencies
+
+When an npm package has runtime dependencies (most do), the npm tarball from
+the registry does NOT include node_modules. The build sandbox blocks network
+access, so `npm install` fails. Two approaches:
+
+*** Approach 1: Pre-built tarball (simplest for personal use)
+
+1. Install the package locally: `npm install -g <package>`
+2. Find the global node_modules directory: `npm prefix -g`
+3. Create a tarball of the entire node_modules:
+   #+BEGIN_SRC sh
+   cd $(npm prefix -g)/lib
+   tar czf <package>-<version>-with-deps.tar.gz node_modules
+   #+END_SRC
+4. Place the tarball in your config tree (e.g., `ai/sources/<package>-<version>.tar.gz`)
+5. Use `local-file` as source with `trivial-build-system`:
+   #+BEGIN_SRC scheme
+   (source (local-file "sources/<package>-<version>.tar.gz"))
+   ;; Builder: extract to out/, create wrapper script pointing to entry point
+   #+END_SRC
+6. Set `propagated-inputs` to `(list node)` so node is available at runtime
+
+*** Approach 2: guix import npm-binary (for full Guix integration)
+
+The `guix import npm-binary <package>` command generates a package expression
+that lists all dependencies as individual `node-*` package inputs. This requires
+all dependencies to exist in Guix — if any are missing, you must package them
+too. Works well for small packages with few dependencies, impractical for large
+ones like openclaw (~90 deps).
+
+*** Key insight
+
+The npm registry tarball (`registry.npmjs.org/<pkg>/-/<pkg>-<version>.tgz`)
+contains only source code, NOT node_modules. Any approach using this as source
+must either: (a) run npm install during build (needs network, not available
+in sandbox), or (b) bundle node_modules separately (approach 1 above).
+
 ** Adding a service
 #+BEGIN_SRC scheme
 ;; In the loader:

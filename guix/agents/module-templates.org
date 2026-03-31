@@ -32,7 +32,7 @@ Real example:
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system <BUILD-SYSTEM>)
-  #:use-module (guix licenses)
+  #:use-module ((guix licenses) #:prefix license:)   ; note: prefix required!
   #:use-module (gnu packages <DEPS>)
   #:export (<NAME>))
 
@@ -51,6 +51,19 @@ Real example:
     (home-page "<url>")
     (license license:<license>)))
 #+END_SRC
+
+*** Common build systems
+
+| Build system             | Use case                               |
+|--------------------------|----------------------------------------|
+| node-build-system        | npm packages                           |
+| gnu-build-system         | autotools/configure scripts           |
+| cmake-build-system       | CMake-based projects                  |
+| cargo-build-system       | Rust crates                            |
+| python-build-system      | Python packages (setup.py/pyproject)  |
+| trivial-build-system     | Copy/patch binaries, no build         |
+| go-build-system          | Go packages                           |
+| maven-build-system       | Java (Maven)                          |
 
 ** Template C — Loader file
 

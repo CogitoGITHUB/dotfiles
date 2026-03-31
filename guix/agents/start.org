@@ -13,6 +13,24 @@ Before doing anything, read ALL of the following files in order:
 8. [[./containers.org][containers.org]]
 9. [[./org-mode-guide.org][org-mode-guide.org]]
 
+** Core Directive — NEVER GIVE UP
+
+If the user says they want something, YOU MAKE IT WORK. There is no backing down.
+- NEVER suggest removing or deleting a module you're building
+- NEVER say "this can't be done" or "this package can't be packaged"
+- If an approach fails, try another — there is always a way
+- If you don't know how, research, search the web, check Guix channels, read source code
+- Every failure is a learning opportunity — update the docs with what you learned
+
+** Documentation is Living — Update on Every Discovery
+
+Every time something doesn't work, you find a better way, or you solve a problem
+that wasn't documented: UPDATE THE AGENT FILES IMMEDIATELY.
+- Add the error and solution to troubleshooting.org
+- Add new patterns to adding-packages.org or module-templates.org
+- Fix incorrect commands in guix-repl.org
+- This ensures the next session (or next agent) won't repeat the same mistakes
+
 ** Required Confirmation Response
 
 After reading ALL files above, respond with EXACTLY this bullet list,
