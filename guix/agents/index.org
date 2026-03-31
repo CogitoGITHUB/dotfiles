@@ -1,43 +1,55 @@
-* LiterativeOS - Guix Agents Index
+* LiterativeOS — Index & Critical Rules
 
-This directory contains documentation for your Guix configuration.
+** !! CRITICAL RULES — READ BEFORE TOUCHING ANYTHING !!
 
-** Guides
+*** Rule 1: Module path = file path
+Load path root: /home/aoeu/.config/guix/Operating-System
+Formula: (core-system user-space root shell nushell)
+      -> Operating-System/core-system/user-space/root/shell/nushell.scm
+Replace spaces with /, append .scm, prepend load path root.
 
-- [[./getting-started.org][Getting Started]] - Essential CLI commands
-- [[./architecture.org][Architecture]] - How your system is organized
-- [[./adding-packages.org][Adding Packages & Services]] - Add software and services
-- [[./module-reference.org][Module Reference]] - Quick reference for all modules
-- [[./troubleshooting.org][Troubleshooting]] - Common problems and fixes
+*** Rule 2: Three-layer chain — never skip a layer
+1. Submodule — defines or re-exports one package
+2. Loader    — imports submodules, re-exports symbols, exports root-*-packages list
+3. root.scm  — appends loader root-*-packages into root-system-packages
+
+*** Rule 3: #:re-export vs #:export
+- Submodule: #:re-export to pass through a symbol from (gnu packages ...)
+- Loader: #:re-export for individual symbols AND #:export for the root-*-packages list
+- root.scm: #:use-module on each loader, never re-exports individual packages
+
+*** Rule 4: No external channels — ever
+Never add anything to channels.scm.
+If package not in Guix: search web for existing channel recipe, copy the
+define-public definition directly into your submodule. Self-contained always.
+
+*** Rule 5: REPL before reconfigure — always
+Never run sudo guix system reconfigure to test a module change.
+Validate in REPL first. See guix-repl.org.
+
+** Table of Contents
+
+| File                 | Purpose                      |
+|----------------------|------------------------------|
+| start.org            | Bootstrap — read this first  |
+| index.org            | Critical rules + TOC         |
+| architecture.org     | How the system is wired      |
+| adding-packages.org  | How to add packages/services |
+| module-templates.org | Raw copy-paste templates     |
+| module-reference.org | All loaders and submodules   |
+| troubleshooting.org  | Real errors and fixes        |
+| guix-repl.org        | REPL workflow — deep dive    |
+| containers.org       | Container system (WIP)       |
+| org-mode-guide.org   | Org mode syntax reference    |
 
 ** Quick Commands
 
-| Action                    | Command                              |
-|---------------------------|-------------------------------------|
-| Update Guix              | =guix pull=                        |
-| Apply config             | =sudo guix system reconfigure ...= |
-| Rollback                 | =guix system roll-back=            |
-| List generations         | =guix system list-generations=     |
-
-** System Overview
-
-| Component | Description |
-|-----------|-------------|
-| Kernel | Linux-libre + GRUB EFI |
-| Shell | Nushell |
-| Desktop | Hyprland + Waybar |
-| Terminal | Wezterm |
-| AI | OpenCode |
-| Editors | Emacs, Neovim |
-| Containers | Docker |
-
-** Formatters & LSP
-
-- nixfmt (Nix/Guix)
-- ruff (Python)
-- latexindent (LaTeX)
-- rust-analyzer (Rust)
-
-** Learning Org Mode
-
-See [[./org-mode-guide.org][Org Mode Guide]] for documentation syntax help.
+| Action           | Command                                                          |
+|------------------|------------------------------------------------------------------|
+| Apply config     | sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm |
+| Build only       | guix system build /home/aoeu/.config/guix/guixos.scm            |
+| Launch REPL      | guix repl -- -L /home/aoeu/.config/guix/Operating-System        |
+| Rollback         | sudo guix system roll-back                                       |
+| List generations | guix system list-generations                                     |
+| Search package   | guix search <name>                                               |
+| Get hash         | guix download <url>                                              |

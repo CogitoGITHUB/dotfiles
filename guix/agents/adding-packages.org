@@ -1,104 +1,87 @@
 * Adding Packages and Services
 
-** Getting the Correct Hash
+** Decision Tree — before writing any code
 
-Use =guix download= to get the hash - it returns the correct format automatically:
+Is the package already in Guix proper?
+  YES -> Template A (thin submodule, just #:re-export)
+         confirm: guix search <name>
+  NO  -> search web for existing Guix channel recipe
+           FOUND     -> copy define-public from channel source -> Template B
+           NOT FOUND -> write from scratch                     -> Template B
+                        get hash: guix download <url>
 
+** No external channels — ever
+Never add to channels.scm.
+Copy package definitions directly into your submodule. Self-contained always.
+
+** Step-by-step: adding a new package
+
+*** Step 1 — Pick category
+See module-reference.org for all categories.
+No fitting category -> create new dir + loader (Template C + Template D).
+
+*** Step 2 — Create submodule file
+File:   Operating-System/core-system/user-space/root/<category>/<name>.scm
+Module: (core-system user-space root <category> <name>)
+Use Template A or B from module-templates.org.
+
+*** Step 3 — Validate submodule in REPL
+#+BEGIN_SRC scheme
+(use-modules (core-system user-space root <category> <name>))
+<name>   ; must return package object, not an error
+#+END_SRC
+Do not proceed if this fails.
+
+*** Step 4 — Update the loader
+In loaders/<category>.scm:
+1. Add #:use-module (core-system user-space root <category> <name>)
+2. Add symbol to #:re-export (...)
+3. Add symbol to root-<category>-packages list
+Validate loader in REPL before continuing.
+
+*** Step 5 — Update root.scm (new loader only)
+1. Add #:use-module (core-system user-space root loaders <category>)
+2. Append root-<category>-packages to root-system-packages
+3. If services: append root-<category>-services to root-system-services
+
+*** Step 6 — Validate root in REPL
+#+BEGIN_SRC scheme
+(use-modules (core-system user-space root root))
+root-system-packages  ; must load clean
+#+END_SRC
+
+*** Step 7 — Reconfigure
 #+BEGIN_SRC sh
-guix download https://github.com/author/repo/releases/download/v1.0.0/package.tar.gz
+sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm
 #+END_SRC
 
-This returns a hash like =0nlcy211lrvj7vyl6zrd1v3hv3s264m0pd69xc7c3df6rc41ywsv= that you can use directly with =(base32 "...")=
-
-*** Common Errors
-- Don't use =sha256sum | base32= - it produces invalid base32
-- Don't use =guix hash= - it returns nix-store format
-- Use =guix download= for the correct hash format
-
-** Packages and Services Stay in the Same File
-
-In this setup, packages and services are defined together in each loader file. For example, =loaders/containers.scm= has both =root-containers-packages= and =root-containers-services=.
-
-** Where to Add
-
-| Category        | File to edit                  |
-|-----------------|------------------------------|
-| Core utils      | loaders/core.scm             |
-| Networking      | loaders/networking.scm       |
-| Containers      | loaders/containers.scm       |
-| Shell           | loaders/shell.scm            |
-| Editors         | loaders/editors.scm          |
-| Desktop         | loaders/desktop.scm          |
-| Terminal        | loaders/terminal.scm         |
-| Keyboard        | loaders/keyboard.scm         |
-| Programming     | loaders/programming-languages.scm |
-| AI              | loaders/ai.scm              |
-| Music           | loaders/music.scm           |
-| Custom Guix     | loaders/custom-guix.scm      |
-
-** Adding a New Submodule
-
-If you want to add a new tool, create a new submodule file in the category directory, then import it in the loader.
-
-Example: Adding =starship= to =shell/=
-
-1. Create =shell/starship.scm=:
-#+BEGIN_SRC scheme
-(define-module (core-system user-space root shell starship)
-  #:use-module (gnu packages rust)
-  #:export (starship))
-
-(define-public starship starship)
-#+END_SRC
-
-2. Update =loaders/shell.scm= to import it:
-#+BEGIN_SRC scheme
-(define-module (core-system user-space root loaders shell)
-  #:use-module (core-system user-space root shell nushell)
-  #:use-module (core-system user-space root shell starship)  ; <-- add
-  #:re-export (nushell starship)
-  #:export (root-shell-packages))
-
-(define root-shell-packages
-  (list nushell starship))  ; <-- add to list
-#+END_SRC
-
-** Adding a Package to Existing Loader
-
-Example: Adding a package to =loaders/core.scm=:
-#+BEGIN_SRC scheme
-(define-public root-core-packages
-  (list coreutils
-        findutils
-        grep
-        ;; ... existing packages ...
-        your-new-package))
-#+END_SRC
-
-** Adding a Service
-
-Example: Adding a service to =loaders/containers.scm=:
-#+BEGIN_SRC scheme
-(define-public root-containers-services
-  (list (service containerd-service-type)
-        (service docker-service-type)
-        (service your-new-service-type)))
-#+END_SRC
-
-** Finding Package Names
-
+** Getting the correct hash
 #+BEGIN_SRC sh
-guix search package-name
-guix package --show-package=package-name
+guix download https://example.com/package-1.0.tar.gz
+# use result as: (base32 "0abc...")
+#+END_SRC
+Never use sha256sum or guix hash — wrong format.
+
+** Adding a service
+#+BEGIN_SRC scheme
+;; In the loader:
+(define-public root-<category>-services
+  (list (service your-service-type)))
+
+;; In root.scm:
+(define-public root-system-services
+  (append ...
+          root-<category>-services
+          ...))
 #+END_SRC
 
-** Common Service Types
+** Common service imports
 
-| Service Type              | Module to import              |
-|---------------------------|------------------------------|
-| openssh-service-type      | (gnu services ssh)           |
-| dhcpcd-service-type      | (gnu services networking)   |
-| iwd-service-type         | (gnu services networking)   |
-| docker-service-type      | (gnu services docker)        |
-| containerd-service-type  | (gnu services docker)        |
-| config-tailscaled-service-type | (gnu services networking)|
+| Service Type               | Module                    |
+|----------------------------|---------------------------|
+| openssh-service-type       | (gnu services ssh)        |
+| dhcpcd-service-type        | (gnu services networking) |
+| iwd-service-type           | (gnu services networking) |
+| docker-service-type        | (gnu services docker)     |
+| containerd-service-type    | (gnu services docker)     |
+| oci-container-service-type | (gnu services docker)     |

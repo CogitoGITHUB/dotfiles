@@ -1,85 +1,41 @@
 * Org Mode Guide
 
-This guide covers the basics of Org mode for writing documentation.
-
 ** Headers
-
-Use =*= for headers. More =*= = means deeper level:
-
-#+BEGIN_SRC org
 * Top level
 ** Second level
 *** Third level
-#+END_SRC
 
-** Bold and Italic
+** Formatting
+*bold*   /italic/   =code=   ~verbatim~
 
-#+BEGIN_SRC org
-*bold*
-/italic/
-=code=
-#+END_SRC
-
-Renders as: *bold*, /italic/, =code=
-
-** Lists
-
-*** Unordered list
-#+BEGIN_SRC org
+** Unordered list
 - Item one
 - Item two
-  - Nested item
-#+END_SRC
+  - Nested
 
-*** Ordered list
-#+BEGIN_SRC org
-1. First item
-2. Second item
-#+END_SRC
+** Ordered list
+1. First
+2. Second
 
 ** Links
-
-Internal link to another file:
-#+BEGIN_SRC org
 [[./filename.org][Link text]]
-#+END_SRC
+[[*Header Name][Same-file link]]
 
-Link to a header in same file:
-#+BEGIN_SRC org
-[[*Header Name][Link text]]
-#+END_SRC
-
-** Code Blocks
-
-#+BEGIN_SRC org
-,#+BEGIN_SRC sh
-echo "Hello"
-,#+END_SRC
-#+END_SRC
-
-Shows as:
+** Code block
 #+BEGIN_SRC sh
-echo "Hello"
+echo "hello"
 #+END_SRC
 
-** Tables
-
-Simple table:
-#+BEGIN_SRC org
+** Table
 | Column 1 | Column 2 |
 |----------|----------|
 | Value 1  | Value 2  |
-#+END_SRC
 
 ** Checkboxes
+- [ ] Unchecked
+- [X] Checked
 
-#+BEGIN_SRC org
-- [ ] Unchecked task
-- [X] Checked task
-#+END_SRC
-
-** Source Code Comments
-
-=,#+BEGIN_SRC= and =,#+END_SRC= with comma prefix prevents execution when editing in Emacs.
-
-The comma is only needed when writing the org file itself.
+** Property drawer
+:PROPERTIES:
+:KEY: value
+:END:

@@ -1,0 +1,143 @@
+* Module Templates
+
+Zero prose. Copy, fill blanks, validate in REPL before touching anything else.
+<ANGLE_BRACKETS> = fill in.
+
+** Template A — Thin submodule (package exists in Guix)
+
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root <CATEGORY> <NAME>)
+  #:use-module (gnu packages <GNU-MODULE>)
+  #:re-export (<NAME>))
+#+END_SRC
+
+Find the correct (gnu packages ...) module:
+#+BEGIN_SRC sh
+guix search <name>
+# look at: location: gnu/packages/<module>.scm
+#+END_SRC
+Or in REPL: ,apropos <name>
+
+Real example:
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root shell nushell)
+  #:use-module (gnu packages nushell)
+  #:re-export (nushell))
+#+END_SRC
+
+** Template B — Custom package (not in Guix)
+
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root <CATEGORY> <NAME>)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix build-system <BUILD-SYSTEM>)
+  #:use-module (guix licenses)
+  #:use-module (gnu packages <DEPS>)
+  #:export (<NAME>))
+
+(define-public <NAME>
+  (package
+    (name "<name>")
+    (version "<version>")
+    (source (origin
+              (method url-fetch)
+              (uri "<url>")
+              (sha256 (base32 "<hash-from-guix-download>"))))
+    (build-system <BUILD-SYSTEM>-build-system)
+    (inputs (list <dep1> <dep2>))
+    (synopsis "<short description>")
+    (description "<longer description>")
+    (home-page "<url>")
+    (license license:<license>)))
+#+END_SRC
+
+** Template C — Loader file
+
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root loaders <CATEGORY>)
+  #:use-module (core-system user-space root <CATEGORY> <NAME1>)
+  #:use-module (core-system user-space root <CATEGORY> <NAME2>)
+  #:re-export (<NAME1> <NAME2>)
+  #:export (root-<CATEGORY>-packages))
+
+(define root-<CATEGORY>-packages
+  (list <NAME1> <NAME2>))
+#+END_SRC
+
+Loader with services:
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root loaders <CATEGORY>)
+  #:use-module (gnu services)
+  #:use-module (gnu services <SERVICE-MODULE>)
+  #:use-module (core-system user-space root <CATEGORY> <NAME1>)
+  #:re-export (<NAME1>)
+  #:export (root-<CATEGORY>-packages
+            root-<CATEGORY>-services))
+
+(define root-<CATEGORY>-packages
+  (list <NAME1>))
+
+(define-public root-<CATEGORY>-services
+  (list (service <service-type>)))
+#+END_SRC
+
+** Template D — root.scm additions (new loader only)
+
+#+BEGIN_SRC scheme
+;; 1. Add to #:use-module list:
+#:use-module (core-system user-space root loaders <CATEGORY>)
+
+;; 2. Append to root-system-packages:
+(define-public root-system-packages
+  (append ...
+          root-<CATEGORY>-packages
+          ...))
+
+;; 3. If services:
+(define-public root-system-services
+  (append ...
+          root-<CATEGORY>-services
+          ...))
+#+END_SRC
+
+** Template E — Container module (current flat pattern)
+
+#+BEGIN_SRC scheme
+(define-module (systems containers <NAME>)
+  #:use-module (gnu system)
+  #:use-module (gnu services)
+  #:use-module (gnu services docker)
+  #:use-module (systems containers core-container)
+  #:export (<NAME>-os <NAME>-service))
+
+(define-public <NAME>-os
+  (operating-system
+    (inherit container-os)
+    (host-name "guixos-<NAME>")
+    (packages (append (list <PKG>)
+                      (operating-system-packages container-os)))))
+
+(define-public <NAME>-service
+  (service oci-container-service-type
+           (list (oci-container-configuration
+                   (image (oci-image
+                            (repository "guixos-<NAME>")
+                            (tag "latest")
+                            (value <NAME>-os)))
+                   (network "host")
+                   (auto-start? #t)
+                   (respawn? #t)))))
+#+END_SRC
+
+** Template F — Container loader (WIP, not yet active)
+
+#+BEGIN_SRC scheme
+(define-module (systems containers loaders <CATEGORY>)
+  #:use-module (systems containers <CATEGORY> <NAME>)
+  #:re-export (<NAME>-os <NAME>-service)
+  #:export (container-<CATEGORY>-services))
+
+(define-public container-<CATEGORY>-services
+  (list <NAME>-service))
+#+END_SRC

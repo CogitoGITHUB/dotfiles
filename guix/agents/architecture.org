@@ -1,113 +1,107 @@
-* Architecture
+* LiterativeOS — Architecture
 
-** Overview
+** Load Path
+Set in guixos.scm:
+  (add-to-load-path "/home/aoeu/.config/guix/Operating-System")
+Every module path resolves relative to this root.
 
-Your Guix config is organized in two main layers:
+** Full Chain — guixos.scm to a single package
 
-- =kernel-space/= - Low-level system configuration
-- =user-space/root/= - User-facing packages and services
+guixos.scm
+  -> (core-system core-system)                    core-system/core-system.scm
+       -> (core-system user-space root root)       core-system/user-space/root/root.scm
+            -> (core-system user-space root loaders shell)
+                 -> (core-system user-space root shell nushell)  re-exports: nushell
+                 -> (core-system user-space root shell starship) re-exports: starship
+                 exports: root-shell-packages
+            -> (core-system user-space root loaders core)
+            -> (core-system user-space root loaders networking)
+            -> ... all other loaders
 
-** Directory Structure
+** guixos.scm
 
-#+BEGIN_SRC
-guix/
-├── guixos.scm              # Main entry point
-├── channels.scm            # Guix channel definition
-└── Operating-System/
-    └── core-system/
-        ├── core-system.scm # Aggregates kernel + user space
-        ├── kernel-space/   # Bootloader, kernel, filesystem, etc.
-        └── user-space/
-            └── root/
-                ├── root.scm          # Main aggregator
-                ├── loaders/          # Loader files
-                │   ├── core.scm
-                │   ├── networking.scm
-                │   ├── shell.scm
-                │   ├── editors.scm
-                │   ├── desktop.scm
-                │   ├── terminal.scm
-                │   ├── containers.scm
-                │   ├── keyboard.scm
-                │   ├── ai.scm
-                │   ├── programming-languages.scm
-                │   └── custom-guix.scm
-                ├── core/             # Submodule files
-                ├── networking/
-                ├── shell/
-                ├── editors/
-                ├── desktop/
-                ├── terminal/
-                ├── containers/
-                ├── keyboard/
-                ├── ai/
-                ├── programming-languages/
-                ├── custom-guix/
-                ├── formatters/        # Code formatters
-                ├── lsp/              # Language servers
-                └── users/
+#+BEGIN_SRC scheme
+(add-to-load-path "/home/aoeu/.config/guix/Operating-System")
+(use-modules (core-system core-system))
+os
 #+END_SRC
 
-** Kernel Space (=kernel-space/=)
+** core-system.scm
 
-Handles low-level system configuration:
+#+BEGIN_SRC scheme
+(define-module (core-system core-system)
+  #:use-module (core-system kernel-space kernel-space)
+  #:use-module (core-system user-space root root)
+  #:export (os))
 
-| Module          | Purpose                              |
-|-----------------|--------------------------------------|
-| linux.scm      | Linux-libre kernel + uinput module  |
-| bootloader.scm | GRUB EFI configuration               |
-| filesystem.scm | Mount points (EFI + ext4 root)       |
-| keyboard.scm   | Keyboard layout                      |
-| hostname.scm   | System hostname                      |
-| locale.scm     | System locale                        |
-| elogind.scm    | Login/session management            |
-| udev.scm       | Device management                    |
-| kmod.scm       | Kernel module handling               |
+(define-public os
+  (operating-system
+    (packages root-system-packages)
+    (services (append kernel-system-services root-system-services))))
+#+END_SRC
 
-** User Space (=user-space/root/=)
+** root.scm — how packages and services are assembled
 
-Each category has:
-- A loader file in =loaders/= directory
-- Submodule files in category directories
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root root)
+  #:use-module (core-system user-space root loaders shell)
+  #:use-module (core-system user-space root loaders core)
+  ;; ... all loaders
+  #:export (root-system-packages root-system-services))
 
-| Loader          | Category dir   | Exports                       |
-|-----------------|---------------|-------------------------------|
-| loaders/core.scm | core/       | root-core-packages            |
-| loaders/networking.scm | networking/ | root-networking-packages/services |
-| loaders/shell.scm | shell/     | root-shell-packages           |
-| loaders/editors.scm | editors/ | root-editors-packages        |
-| loaders/desktop.scm | desktop/ | root-desktop-packages        |
-| loaders/terminal.scm | terminal/ | root-terminal-packages      |
-| loaders/containers.scm | containers/ | root-containers-packages/services |
-| loaders/keyboard.scm | keyboard/ | root-keyboard-packages      |
-| loaders/ai.scm | ai/         | root-ai-packages             |
-| loaders/programming-languages.scm | programming-languages/ | root-programming-languages-packages |
-| loaders/custom-guix.scm | custom-guix/ | %custom-guix-channels/service |
-| loaders/formatters.scm | formatters/ | root-formatters-packages |
-| loaders/lsp.scm | lsp/ | root-lsp-packages |
+(define-public root-system-packages
+  (append root-shell-packages
+          root-core-packages))
 
-** Formatters Available
+(define-public root-system-services
+  (append
+    (list (service dhcpcd-service-type)
+          (service openssh-service-type))
+    root-networking-services
+    root-containers-services
+    root-music-services
+    %base-services))
+#+END_SRC
 
-| Package | Extensions | Purpose |
-|---------|------------|---------|
-| nixfmt | .nix, .scm | Nix/Guix formatting |
-| ruff | .py | Python formatting |
-| texlive-latexindent | .tex | LaTeX formatting |
-| node | .js, .ts, etc. | JavaScript/TypeScript (via npx prettier) |
+** Loader pattern — real example: loaders/shell.scm
 
-** LSP Servers
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root loaders shell)
+  #:use-module (core-system user-space root shell nushell)
+  #:use-module (core-system user-space root shell starship)
+  #:re-export (nushell starship)
+  #:export (root-shell-packages))
 
-| Package | Extensions | Purpose |
-|---------|------------|---------|
-| rust-analyzer | .rs | Rust language server |
+(define root-shell-packages
+  (list nushell starship))
+#+END_SRC
 
-** How It All Connects
+** Submodule pattern — real example: shell/nushell.scm
 
-1. =guixos.scm= imports =core-system=
-2. =core-system.scm= exports =os= which combines:
-   - kernel-space exports (kernel, bootloader, file-systems, etc.)
-   - root-system-packages (all user packages)
-   - root-system-services (dhcpcd, openssh, iwd, docker, etc.)
-3. =root.scm= imports each =loaders/*.scm=
-4. Each loader imports submodules from its category directory
-5. Each loader exports =root-*-packages= and sometimes =root-*-services=
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root shell nushell)
+  #:use-module (gnu packages nushell)
+  #:re-export (nushell))
+#+END_SRC
+
+** Kernel Space
+Files: core-system/kernel-space/
+
+| Module         | Purpose            |
+|----------------|--------------------|
+| linux.scm      | Linux-libre kernel |
+| bootloader.scm | GRUB EFI           |
+| filesystem.scm | Mount points       |
+| keyboard.scm   | Keyboard layout    |
+| hostname.scm   | Hostname           |
+| locale.scm     | Locale             |
+| elogind.scm    | Session management |
+| udev.scm       | Device management  |
+| kmod.scm       | Kernel modules     |
+
+** Container System
+Files: systems/containers/
+Module namespace: (systems containers ...)
+Same -L flag covers both system and container modules.
+Loader pattern coming — see containers.org.
+EOF

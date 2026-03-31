@@ -1,78 +1,83 @@
 * Troubleshooting
 
-** Reconfigure Fails
+** Golden rule: REPL first, never reconfigure to debug a module
+Every error below can be caught in REPL. See guix-repl.org.
 
-*** Syntax errors in .scm files
-Check the error message - it will show line number and issue.
+** Error: "<symbol>: unbound variable"
 
-#+BEGIN_SRC sh
-# Test syntax without applying
-guix system build /home/aoeu/.config/guix/guixos.scm
+Cause: symbol used but not exported/imported somewhere in the chain.
+Test each layer bottom-up in REPL:
+
+#+BEGIN_SRC scheme
+(use-modules (core-system user-space root <category> <name>))    ; submodule
+(use-modules (core-system user-space root loaders <category>))   ; loader
+(use-modules (core-system user-space root root))                  ; root
 #+END_SRC
 
-*** Package not found
-Make sure the package is in Guix:
+Fix checklist:
+- Submodule has #:re-export (<symbol>) or #:export (<symbol>)?
+- Loader has #:use-module for that submodule?
+- Loader has #:re-export (<symbol>)?
+- Loader has symbol in root-*-packages list?
+- root.scm has #:use-module for that loader?
 
-#+BEGIN_SRC sh
-guix search package-name
-guix package --show-package=package-name
+** Error: "<symbol>: unbound variable" where symbol is a gnu package (e.g. shadow)
+
+Cause: Missing #:use-module (gnu packages <module>) in submodule or loader.
+
+Find correct module in REPL:
+#+BEGIN_SRC scheme
+,apropos shadow
 #+END_SRC
 
-** System Won't Boot
-
-*** Boot into previous generation
-At GRUB menu, select previous generation (usually the second entry).
-
-*** Rollback from terminal
-If you can boot into a previous generation:
+Or from shell:
 #+BEGIN_SRC sh
+guix search shadow
+# check: location: gnu/packages/<module>.scm
+#+END_SRC
+
+Add the missing import to your submodule.
+
+** Error: "no code for module (core-system user-space root <category> <name>)"
+
+Cause: Wrong module path OR file missing.
+
+Check:
+1. File exists: ls Operating-System/core-system/user-space/root/<category>/<name>.scm
+2. define-module in file matches exactly: (core-system user-space root <category> <name>)
+3. REPL launched with correct flag: -L /home/aoeu/.config/guix/Operating-System
+
+** Error: "invalid-base32-character" or hash format errors
+
+Cause: Wrong hash tool used.
+
+#+BEGIN_SRC sh
+guix download <url>
+# copy result directly as: (base32 "0abc...")
+#+END_SRC
+Never use sha256sum or guix hash.
+
+** Error: "wrong type argument" in operating-system
+
+Cause: A root-*-packages list contains a non-package object, or service list contains a non-service.
+
+#+BEGIN_SRC scheme
+(use-modules (core-system user-space root loaders <category>))
+root-<category>-packages  ; inspect the actual value
+#+END_SRC
+
+** System won't boot
+
+#+BEGIN_SRC sh
+# At GRUB: select previous generation entry
 sudo guix system roll-back
 sudo guix system switch-generation N
 #+END_SRC
 
-** Services Not Starting
+** Service not starting
 
-*** Check service status
 #+BEGIN_SRC sh
-sudo herd status service-name
-sudo herd log service-name
+sudo herd status <service-name>
+sudo herd log <service-name>
+sudo herd start <service-name>
 #+END_SRC
-
-*** Manual service start
-#+BEGIN_SRC sh
-sudo herd start service-name
-#+END_SRC
-
-** Package Issues
-
-*** Remove a package
-#+BEGIN_SRC sh
-guix remove package-name
-sudo guix system reconfigure ...
-#+END_SRC
-
-*** List installed packages
-#+BEGIN_SRC sh
-guix package -p ~/.config/guix/current --list-installed
-#+END_SRC
-
-** Profile Problems
-
-*** Recreate profile symlink
-If =current= symlink is broken:
-#+BEGIN_SRC sh
-ls -la /var/guix/profiles/per-user/aoeu/
-# Pick the latest generation
-ln -sf /var/guix/profiles/per-user/aoeu/guix-system-N ~/.<location>/current
-#+END_SRC
-
-** Common Error Messages
-
-| Error | Fix |
-|-------|-----|
-| "no such package" | Check package name with =guix search= |
-| "service not found" | Import correct service module |
-| "module not found" | Check #:use-module path |
-| " unbound variable" | Export variable from module |
-| "invalid-base32-character" | Use =guix download= to get correct hash |
-| "missing '(' in vector" | Hash format is wrong - use base32 format from =guix download= |
