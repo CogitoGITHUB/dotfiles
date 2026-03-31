@@ -10,6 +10,7 @@
   #:use-module (gnu services networking)
   #:use-module (gnu services docker)
   #:use-module (gnu services audio)
+  #:use-module (gnu services virtualization)
   #:use-module (core-system user-space root users users)
   ;; #:use-module (core-system user-space root grafana-stack sops services sops)
   #:use-module (core-system user-space root loaders core)
@@ -50,7 +51,9 @@
           root-ai-packages
           root-formatters-packages
           root-lsp-packages
-          root-music-packages))
+           root-music-packages
+           root-virtualization-packages
+           root-scheduling-packages))
 
 (define-public root-system-services
   (append
@@ -61,7 +64,9 @@
      )
      root-networking-services
      root-containers-services
-     root-music-services
-     ;; root-ai-services
+      root-music-services
+      (list (service libvirt-service-type)
+            (service virtlog-service-type))
+      ;; root-ai-services
      ;; root-grafana-stack-services
     %base-services))
