@@ -55,6 +55,22 @@ root-system-packages  ; must load clean
 sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm
 #+END_SRC
 
+*** Step 8 — Test each package binary works
+After reconfigure, verify every new package actually runs — not just that the system reconfigures:
+#+BEGIN_SRC sh
+# Test each binary: --version, -v, -V, or just run it
+<package> --version 2>&1
+<package> -v 2>&1
+<package> -V 2>&1
+<package> 2>&1  # some packages exit with error but that's ok if binary runs
+#+END_SRC
+For services:
+#+BEGIN_SRC sh
+sudo herd status <service-name>  # should show running
+sudo grep -i <service-name> /var/log/messages | tail -5  # check for errors
+#+END_SRC
+If a binary is "command not found" or a service logs errors — FIX IT. Do not skip this step.
+
 ** Getting the correct hash
 #+BEGIN_SRC sh
 guix download https://example.com/package-1.0.tar.gz

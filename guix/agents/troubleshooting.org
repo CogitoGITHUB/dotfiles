@@ -115,3 +115,27 @@ use `tar xf - -C out/bin`, it extracts to `out/bin/bin/ollama`.
 
 Fix: Extract to `out/` instead of `out/bin/`. The archive's internal directory
 structure will resolve correctly: `bin/ollama` -> `out/bin/ollama`.
+
+** Post-reconfigure: always test package binaries
+
+A successful reconfigure does NOT mean packages work. Always test each new binary:
+
+#+BEGIN_SRC sh
+# After reconfigure, test every new package:
+<package> --version 2>&1 || <package> -v 2>&1 || <package> -V 2>&1 || <package> 2>&1
+#+END_SRC
+
+Common patterns:
+- `--version` works for most packages (rmpc, pipewire, pulseaudio, amixer)
+- `-v` or `-V` for some (cava uses `-v`)
+- Just running the binary — some exit with error but that's ok if it runs
+- For services: `sudo herd status <name>` and check `/var/log/messages`
+
+Example for audio packages:
+#+BEGIN_SRC sh
+rmpc --help 2>&1; cava -v 2>&1; pipewire --version 2>&1; \
+pulseaudio --version 2>&1; amixer --version 2>&1
+#+END_SRC
+
+If any binary returns "command not found" — the package wasn't built into the profile.
+Check: `guix build <package>` and `guix package -I <package>`.

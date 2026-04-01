@@ -23,7 +23,7 @@
   #:use-module (core-system user-space root loaders ai)
   #:use-module (core-system user-space root loaders formatters)
   #:use-module (core-system user-space root loaders lsp)
-  #:use-module (core-system user-space root loaders music)
+  #:use-module (core-system user-space root loaders audio)
   #:use-module (core-system user-space root loaders security)
   #:use-module (core-system user-space root loaders hardware)
   #:use-module (core-system user-space root loaders scheduling)
@@ -48,7 +48,7 @@
           root-ai-packages
           root-formatters-packages
           root-lsp-packages
-           root-music-packages
+           root-audio-packages
             root-compute-packages
             root-security-packages
             root-scheduling-packages
@@ -65,7 +65,7 @@
       )
      root-networking-services
      root-containers-services
-      root-music-services
+      root-audio-services
        (list (service libvirt-service-type)
              (service virtlog-service-type)
              (service mcron-service-type))

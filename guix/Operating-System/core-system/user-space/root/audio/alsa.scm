@@ -1,4 +1,4 @@
-(define-module (core-system user-space root music alsa)
+(define-module (core-system user-space root audio alsa)
   #:use-module (gnu services)
   #:use-module (gnu packages linux)
   #:use-module (gnu services sound)

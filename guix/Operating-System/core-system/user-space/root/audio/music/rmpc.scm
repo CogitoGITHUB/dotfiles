@@ -1,4 +1,4 @@
-(define-module (core-system user-space root music rmpc)
+(define-module (core-system user-space root audio music rmpc)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix gexp)

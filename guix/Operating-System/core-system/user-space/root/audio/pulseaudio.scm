@@ -1,4 +1,4 @@
-(define-module (core-system user-space root music pulseaudio)
+(define-module (core-system user-space root audio pulseaudio)
   #:use-module (gnu services)
   #:use-module (gnu services shepherd)
   #:use-module (gnu services sound)

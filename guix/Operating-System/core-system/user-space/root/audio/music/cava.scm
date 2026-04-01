@@ -1,4 +1,4 @@
-(define-module (core-system user-space root music cava)
+(define-module (core-system user-space root audio music cava)
   #:use-module (guix packages)
   #:use-module (gnu packages audio)
   #:export (cava))

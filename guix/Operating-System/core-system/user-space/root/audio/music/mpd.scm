@@ -1,4 +1,4 @@
-(define-module (core-system user-space root music mpd)
+(define-module (core-system user-space root audio music mpd)
   #:use-module (guix packages)
   #:use-module (gnu packages)
   #:use-module (gnu services)
