@@ -9,7 +9,7 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services databases)
   #:use-module (gnu packages databases)
-  #:use-module (core-system user-space root security sops services)
+  #:use-module (core-system user-space root encryption sops services)
   #:use-module (core-system user-space root users users)
   #:use-module (core-system user-space root loaders core)
   #:use-module (core-system user-space root loaders networking)
@@ -24,7 +24,7 @@
   #:use-module (core-system user-space root loaders formatters)
   #:use-module (core-system user-space root loaders lsp)
   #:use-module (core-system user-space root loaders audio)
-  #:use-module (core-system user-space root loaders security)
+  #:use-module (core-system user-space root loaders encryption)
   #:use-module (core-system user-space root loaders hardware)
   #:use-module (core-system user-space root loaders scheduling)
   #:use-module (core-system user-space root loaders compute)
@@ -50,7 +50,7 @@
           root-lsp-packages
            root-audio-packages
             root-compute-packages
-            root-security-packages
+            root-encryption-packages
             root-scheduling-packages
             root-ci-packages
             root-data-packages

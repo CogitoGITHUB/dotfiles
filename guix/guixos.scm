@@ -8,7 +8,7 @@
 ;; OLLAMA SERVICE NEEDS WORK/ACTIVATION !!
 
 (add-to-load-path "/home/aoeu/.config/guix/Operating-System")
-(add-to-load-path "/home/aoeu/.config/guix/Operating-System/core-system/user-space/root/security/sops/modules")
+(add-to-load-path "/home/aoeu/.config/guix/Operating-System/core-system/user-space/root/encryption/sops/modules")
 
 (use-modules (core-system core-system))
 ;;(use-modules (systems containers containers))

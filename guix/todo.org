@@ -1,6 +1,8 @@
 # LiterativeOS TODO
 
-* System
-** TODO Fill new category loaders with packages
-- add emacs-sops in emacs-packages/
-- security.scm - auth, secrets, sandbox, audit, network
+* Security
+** TODO auth
+** TODO secrets
+** TODO sandbox
+** TODO audit
+** TODO network
