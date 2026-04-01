@@ -1,8 +1,22 @@
-# LiterativeOS TODO
-
-* Security
-** TODO auth
-** TODO secrets
-** TODO sandbox
-** TODO audit
-** TODO network
+* Immediate — next CLI session:
+[ ] Create sandbox/ category — firejail, distrobox
+[ ] Create sandbox/ loader in loaders/
+[ ] Add sandbox to root.scm
+* Cleanup:
+[ ] Delete loaders/hardware.scm and remove from root.scm
+[ ] Delete loaders/security.scm and remove from root.scm
+[ ] Rename observability/ dir to monitoring/
+[ ] Rename loaders/observability.scm to loaders/monitoring.scm
+[ ] Update all internal references to observability → monitoring
+* Fonts:
+[ ] Create fonts/ category and loader
+[ ] Add TTY-appropriate fonts first
+[ ] Add to root.scm
+* Audio:
+[ ] Move bluetooth into audio/ category
+[ ] Create audio/bluetooth.scm
+* Agent files — badly out of date:
+[ ] Update module-reference.org — reflects old tree, missing 10+ categories
+[ ] Update module-templates.org — add npm fixed-output derivation pattern
+[ ] Update adding-packages.org — npm deps section
+[ ] Add containers.org properly
