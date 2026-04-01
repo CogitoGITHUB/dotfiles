@@ -1,8 +1,3 @@
-;;; GRAFANA PROMETEUS AND SOPS NEED FIXING - DO NOT DELETE OR UNCOMMENT UNTIL FIXED !!!
-;;; DO NOT DELETE OR UNCOMMENT until these are fixed:
-;;;   1. #:use-module (core-system user-space root grafana-stack sops services sops)
-;;;   2. #:use-module (core-system user-space root loaders grafana-stack)
-;;;   3. (service sops-secrets-service-type ...)
 (define-module (core-system user-space root root)
   #:use-module (gnu services)
   #:use-module (gnu services base)
@@ -11,8 +6,11 @@
   #:use-module (gnu services docker)
   #:use-module (gnu services audio)
   #:use-module (gnu services virtualization)
+  #:use-module (gnu services mcron)
+  #:use-module (gnu services databases)
+  #:use-module (gnu packages databases)
+  #:use-module (core-system user-space root security sops services)
   #:use-module (core-system user-space root users users)
-  ;; #:use-module (core-system user-space root grafana-stack sops services sops)
   #:use-module (core-system user-space root loaders core)
   #:use-module (core-system user-space root loaders networking)
   #:use-module (core-system user-space root loaders programming-languages)
@@ -26,15 +24,14 @@
   #:use-module (core-system user-space root loaders formatters)
   #:use-module (core-system user-space root loaders lsp)
   #:use-module (core-system user-space root loaders music)
-  #:use-module (core-system user-space root loaders custom-guix)
   #:use-module (core-system user-space root loaders security)
-  #:use-module (core-system user-space root loaders observability)
   #:use-module (core-system user-space root loaders hardware)
   #:use-module (core-system user-space root loaders scheduling)
-  #:use-module (core-system user-space root loaders virtualization)
+  #:use-module (core-system user-space root loaders compute)
   #:use-module (core-system user-space root loaders ci)
   #:use-module (core-system user-space root loaders data)
-  ;; #:use-module (core-system user-space root loaders grafana-stack)
+  #:use-module (core-system user-space root loaders guix)
+  #:use-module (core-system user-space root loaders observability)
   #:re-export (users groups sudoers-file setuid-programs)
   #:export (root-system-packages root-system-services))
 
@@ -52,21 +49,30 @@
           root-formatters-packages
           root-lsp-packages
            root-music-packages
-           root-virtualization-packages
-           root-scheduling-packages))
+            root-compute-packages
+            root-security-packages
+            root-scheduling-packages
+            root-ci-packages
+            root-data-packages
+            root-guix-packages))
 
 (define-public root-system-services
   (append
     (list
      (service dhcpcd-service-type)
      (service openssh-service-type)
-     ;; (service sops-secrets-service-type (sops-service-configuration)))
-     )
+      (service sops-secrets-service-type (sops-service-configuration))
+      )
      root-networking-services
      root-containers-services
       root-music-services
-      (list (service libvirt-service-type)
-            (service virtlog-service-type))
-      ;; root-ai-services
-     ;; root-grafana-stack-services
-    %base-services))
+       (list (service libvirt-service-type)
+             (service virtlog-service-type)
+             (service mcron-service-type))
+        ;; root-ai-services
+        (list (service postgresql-service-type
+                       (postgresql-configuration
+                        (postgresql postgresql))))
+       root-ci-services
+      root-observability-services
+     %base-services))

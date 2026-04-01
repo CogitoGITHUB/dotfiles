@@ -2,9 +2,5 @@
 
 * System
 ** TODO Fill new category loaders with packages
-   - security.scm - auth, secrets, sandbox, audit, network
-   - observability.scm - metrics, visualization, logging (grafana, prometheus)
-   - hardware.scm - GPU drivers, power management
-    - ci.scm - guix-ci configurations
-    - data.scm - data processing tools
-    - backup.scm - borg, restic, rsync, duplicity
+- add emacs-sops in emacs-packages/
+- security.scm - auth, secrets, sandbox, audit, network

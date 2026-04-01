@@ -49,18 +49,7 @@
       "description": "List Guix generations"
     }
   },
-  "provider": {
-    "ollama": {
-      "name": "Ollama",
-      "baseUrl": "http://localhost:11434/v1",
-      "models": {
-        "deepseek-r1": {
-          "name": "deepseek-r1",
-          "id": "deepseek-r1"
-        }
-      }
-    }
-  },
+
   "mcp": {
     "everything": {
       "type": "local",

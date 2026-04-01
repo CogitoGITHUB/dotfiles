@@ -9,6 +9,19 @@
 (define-public pulseaudio
   (@@ (gnu packages pulseaudio) pulseaudio))
 
+(define %pulseaudio-system.pa
+  (plain-file "system.pa"
+    "load-module module-device-restore
+load-module module-stream-restore
+load-module module-card-restore
+load-module module-udev-detect
+load-module module-native-protocol-unix auth-anonymous=1
+load-module module-default-device-restore
+load-module module-always-sink
+load-module module-suspend-on-idle
+load-module module-position-event-sounds
+"))
+
 (define-public pulseaudio-service
   (simple-service 'pulseaudio-system
                   shepherd-root-service-type
@@ -22,7 +35,9 @@
                                                           "/bin/pulseaudio")
                                            "--system"
                                            "--disallow-exit"
-                                           "--log-target=syslog")
+                                           "--log-target=syslog"
+                                           "--exit-idle-time=-1"
+                                           (string-append "--file=" #$%pulseaudio-system.pa))
                                      #:user "root")))
                            (stop #~(begin
                                      (use-modules (srfi srfi-1) (srfi srfi-26))

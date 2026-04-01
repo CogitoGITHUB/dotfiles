@@ -14,7 +14,6 @@
              (music-directory "/home/aoeu/Music")
              (playlist-directory "/home/aoeu/Music/playlists")
              (auto-update? #t)
-             (shepherd-requirement '(user-processes pulseaudio))
              (outputs
               (list (mpd-output
                       (name "my_fifo")
@@ -27,4 +26,6 @@
                       (name "pulse")
                       (type "pulse")
                       (mixer-type "software")
-                      (enabled? #t)))))))
+                      (enabled? #t)
+                      (extra-options
+                       `((server . "/var/run/pulse/native")))))))))
