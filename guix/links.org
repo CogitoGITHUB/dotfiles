@@ -1,1 +1,6 @@
 https://github.com/nodiscc/awesome-linuxaudio.git
+
+https://github.com/egeerardyn/awesome-LaTeX.git
+
+https://github.com/kevinho/clawfeed.git
+

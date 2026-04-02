@@ -16,4 +16,22 @@ https://github.com/Maxteabag/sqlit.git
 
 https://github.com/cesarferreira/rip.git
 
+https://github.com/aagentah/nw_wrld.git
+
+https://github.com/TomoeMami/org-repeat-by-cron.el.git
+
+https://github.com/Trevoke/fuzzy-clock.el.git
+
+https://github.com/rougier/notebook-mode
+
+https://github.com/jpablobr/emacs-monkeytype
+
+https://github.com/lovromazgon/grafana-tui.git
+
+https://github.com/raskrebs/sonar.git
+
+https://github.com/open-gitagent/gitagent.git
+
+https://github.com/onecli/onecli.git
+
 
