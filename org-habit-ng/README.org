@@ -1,0 +1,274 @@
+#+TITLE: org-habit-ng
+#+AUTHOR: Trevoke
+almost forgot to add the link to the original: 
+https://codeberg.org/Trevoke/org-habit-ng.git
+* What is org-habit-ng?
+
+org-habit-ng lets you schedule habits that org-mode's standard repeaters
+can't express:
+
+- "Review finances on the *2nd Saturday* of each month"
+- "Team sync on the *last Friday* of each month"
+- "Water plants every 3 days, *give or take a day*"
+
+If you've ever wished org-habit supported patterns like these, this is for you.
+
+* Your First RRULE Habit in 2 Minutes
+
+** 1. Install
+
+#+begin_src elisp
+(add-to-list 'load-path "/path/to/org-habit-ng")
+(require 'org-habit-ng)
+(org-habit-ng-mode 1)
+#+end_src
+
+Note: Unlike standard org-habit, org-habit-ng does not require a repeater
+(e.g., =.+1d=) in the SCHEDULED timestamp. The =RECURRENCE= property
+controls all scheduling.
+
+** 2. Create a habit heading
+
+#+begin_src org
+,* TODO Review finances
+SCHEDULED: <2024-01-13 Sat>
+:PROPERTIES:
+:STYLE: habit
+:END:
+#+end_src
+
+** 3. Run the wizard
+
+With point on the heading, run:
+
+: M-x org-habit-ng-set-recurrence
+
+Select: Monthly → Every 1 month → Nth weekday → Second → Saturday
+
+The wizard adds this property:
+
+#+begin_src org
+:RECURRENCE: FREQ=MONTHLY;BYDAY=2SA
+#+end_src
+
+** 4. Done!
+
+When you mark the habit DONE, org-habit-ng calculates the *actual*
+next 2nd Saturday and updates your SCHEDULED date. The consistency
+graph shows the real intervals (28-35 days), not a fixed 30.
+
+* Learning RRULE Patterns
+
+RRULE is the standard for calendar recurrence (RFC 5545). org-habit-ng
+uses a subset that covers most habit patterns.
+
+** Daily and Weekly Patterns
+
+The simplest patterns repeat on fixed intervals:
+
+| You want                     | RRULE                          |
+|------------------------------+--------------------------------|
+| Every day                    | =FREQ=DAILY=                   |
+| Every 3 days                 | =FREQ=DAILY;INTERVAL=3=        |
+| Every week                   | =FREQ=WEEKLY=                  |
+| Every 2 weeks                | =FREQ=WEEKLY;INTERVAL=2=       |
+| Mon, Wed, Fri                | =FREQ=WEEKLY;BYDAY=MO,WE,FR=   |
+| Weekends only                | =FREQ=WEEKLY;BYDAY=SA,SU=      |
+
+*Mental model:* =FREQ= sets the base unit (day, week, month, year).
+=INTERVAL= multiplies it. =BYDAY= filters to specific days.
+
+** Monthly Patterns
+
+Monthly is where org-habit-ng shines. Standard org repeaters can only
+say "in 1 month"—they can't express "the 2nd Saturday":
+
+| You want                     | RRULE                          |
+|------------------------------+--------------------------------|
+| 15th of each month           | =FREQ=MONTHLY;BYMONTHDAY=15=   |
+| Last day of month            | =FREQ=MONTHLY;BYMONTHDAY=-1=   |
+| 2nd Saturday                 | =FREQ=MONTHLY;BYDAY=2SA=       |
+| Last Friday                  | =FREQ=MONTHLY;BYDAY=-1FR=      |
+| First weekday                | =FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=1= |
+
+*Mental model:* =BYDAY= with a number prefix means "the Nth occurrence of
+that weekday in the month." Negative numbers count from the end.
+
+** Yearly Patterns
+
+For annual habits:
+
+| You want                     | RRULE                              |
+|------------------------------+------------------------------------|
+| Every January 1st            | =FREQ=YEARLY;BYMONTH=1;BYMONTHDAY=1= |
+| Last Sunday of December      | =FREQ=YEARLY;BYMONTH=12;BYDAY=-1SU= |
+| Tax day (April 15)           | =FREQ=YEARLY;BYMONTH=4;BYMONTHDAY=15= |
+
+* Real-World Flexibility
+
+Habits aren't always rigid. org-habit-ng has extensions for this.
+
+** Flexibility Windows
+
+Some habits don't need exact timing. "Water plants every 3 days" really
+means "every 3 days, give or take":
+
+#+begin_src org
+,* TODO Water plants
+SCHEDULED: <2024-01-15 Mon>
+:PROPERTIES:
+:STYLE: habit
+:RECURRENCE: FREQ=DAILY;INTERVAL=3;X-FLEXIBILITY=1
+:END:
+#+end_src
+
+=X-FLEXIBILITY=1= means completing 1 day early or late still shows as
+"on time" in the consistency graph. You won't see red until you're
+*past* the flexibility window.
+
+** Repeat From: Scheduled vs Completion
+
+By default, the next occurrence is calculated from when you *complete*
+the habit. This works for most habits—if you exercise today, the next
+workout is relative to today.
+
+But some habits should stay on schedule regardless of when you complete
+them. Medication on a fixed schedule, for example:
+
+#+begin_src org
+,* TODO Take medication
+SCHEDULED: <2024-01-15 Mon>
+:PROPERTIES:
+:STYLE: habit
+:RECURRENCE: FREQ=DAILY;X-REPEAT-FROM=scheduled
+:END:
+#+end_src
+
+| Value              | Meaning                                    |
+|------------------- +--------------------------------------------|
+| =completion=       | Next from when you mark DONE (default)     |
+| =scheduled=        | Next from the scheduled date               |
+| =scheduled-future= | Like scheduled, but never schedules in past|
+
+** Custom Warning Periods
+
+For habits with long intervals, you might want earlier warnings:
+
+#+begin_src org
+,* TODO Quarterly review
+SCHEDULED: <2024-01-15 Mon>
+:PROPERTIES:
+:STYLE: habit
+:RECURRENCE: FREQ=MONTHLY;INTERVAL=3;X-WARN=2w
+:END:
+#+end_src
+
+=X-WARN=2w= means you'll see the habit 2 weeks before it's due.
+
+** Termination: Limited Habits
+
+Some habits aren't forever. A 30-day challenge, or medication for a
+specific period:
+
+#+begin_src org
+,* TODO 30-day challenge
+SCHEDULED: <2024-01-01 Mon>
+:PROPERTIES:
+:STYLE: habit
+:RECURRENCE: FREQ=DAILY;COUNT=30
+:END:
+#+end_src
+
+| Parameter | Meaning                         |
+|-----------+---------------------------------|
+| =COUNT=N= | Stop after N occurrences        |
+| =UNTIL=YYYYMMDD= | Stop after this date     |
+
+* Using the Wizard
+
+You don't need to memorize RRULE syntax. The wizard builds it for you:
+
+: M-x org-habit-ng-set-recurrence
+
+The wizard walks through each option and shows a preview before saving.
+In graphical Emacs, it uses transient menus. In terminal, it uses
+completing-read prompts.
+
+If the heading already has a =RECURRENCE= property, you can modify or
+clear it.
+
+* Reference
+
+** Complete RRULE Components
+
+*** Frequencies
+
+| Frequency   | Meaning              |
+|-------------+----------------------|
+| =SECONDLY=  | Every N seconds      |
+| =MINUTELY=  | Every N minutes      |
+| =HOURLY=    | Every N hours        |
+| =DAILY=     | Every N days         |
+| =WEEKLY=    | Every N weeks        |
+| =MONTHLY=   | Every N months       |
+| =YEARLY=    | Every N years        |
+
+*** Parameters
+
+| Parameter    | Values                        | Meaning                         |
+|--------------+-------------------------------+---------------------------------|
+| =INTERVAL=   | Number (default 1)            | Repeat every N periods          |
+| =BYDAY=      | MO,TU,WE,TH,FR,SA,SU          | Specific weekdays               |
+| =BYDAY=      | 2SA, -1FR                     | Nth weekday (negative = from end) |
+| =BYMONTHDAY= | 1-31, -1 to -31               | Day of month (negative = from end) |
+| =BYMONTH=    | 1-12                          | Specific months                 |
+| =BYSETPOS=   | 1, -1, etc.                   | Position in set (first, last)   |
+| =COUNT=      | Number                        | Stop after N occurrences        |
+| =UNTIL=      | YYYYMMDD                      | Stop after date                 |
+
+*** org-habit-ng Extensions
+
+| Extension       | Values                           | Meaning                    |
+|-----------------+----------------------------------+----------------------------|
+| =X-REPEAT-FROM= | completion, scheduled, scheduled-future | Base for next occurrence |
+| =X-WARN=        | Nd, Nw, Nh (days, weeks, hours)  | Warning period             |
+| =X-FLEXIBILITY= | Number (days)                    | Grace period around due date |
+
+** Commands
+
+| Command                          | Description                        |
+|----------------------------------+------------------------------------|
+| =org-habit-ng-mode=            | Enable/disable the minor mode      |
+| =org-habit-ng-set-recurrence=  | Interactive wizard for RRULE       |
+
+** How It Works
+
+org-habit-ng advises three org-habit functions:
+
+1. *org-auto-repeat-maybe* — After marking DONE, computes the next
+   occurrence using the RRULE engine and updates SCHEDULED.
+
+2. *org-habit-parse-todo* — Returns accurate intervals so org-habit's
+   internal calculations work correctly.
+
+3. *org-habit-build-graph* — Builds an RRULE-aware consistency graph
+   showing exact due dates for complex patterns.
+
+** Development
+
+This project uses [[https://codeberg.org/Trevoke/elk][Elk]] for task running and [[https://codeberg.org/Trevoke/e-unit.el][e-unit]] for testing.
+
+#+begin_src bash
+# Run tests
+vendor/elk/elk test
+
+# Byte-compile
+vendor/elk/elk compile
+
+# Clean build artifacts
+vendor/elk/elk clean
+#+end_src
+
+* License
+
+GPL-3.0

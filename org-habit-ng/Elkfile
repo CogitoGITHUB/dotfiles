@@ -1,0 +1,29 @@
+;;; Elkfile --- Elk project configuration for org-habit-ng -*- lexical-binding: t; -*-
+
+(add-to-list 'load-path (expand-file-name "vendor/elk" default-directory))
+(add-to-list 'load-path (expand-file-name "vendor/e-unit.el" default-directory))
+
+(elk-project
+ :name "org-habit-ng"
+ :version "0.1.0"
+ :source-dirs '(".")
+ :test-dirs '("test/"))
+
+(elk-set 'test-framework 'e-unit)
+(elk-set 'clean-patterns '("*.elc" "*.eln"))
+
+;; Custom test action for e-unit
+(elk-set 'test-action
+         (lambda (&rest _args)
+           (require 'e-unit)
+           (e-unit-initialize)
+           ;; Load main file first
+           (load-file "org-habit-ng.el")
+           ;; Run all tests in test directory
+           (let ((results (e-unit-run-directory "test")))
+             (let ((failed (length (cl-remove-if-not (lambda (r) (eq (plist-get r :status) 'fail)) results)))
+                   (errors (length (cl-remove-if-not (lambda (r) (eq (plist-get r :status) 'error)) results))))
+               (when (> (+ failed errors) 0)
+                 (error "Tests failed: %d failures, %d errors" failed errors))))))
+
+;;; Elkfile ends here
