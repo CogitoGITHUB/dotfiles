@@ -1,0 +1,16 @@
+So here’s the best platforms for learning different hacking or infosec offensive/defensive skills:
+
+1. Hack the Box Academy for learning network pentesting, basic through above intermediate web exploitation, and other basic hacking skills and some advanced AD attack skills
+
+2. Chris Hadnagy’s online information elicitation course for learning social engineering (the part not about hacking)
+
+3. Pentesterlab to write your own web exploits in some scripting language such as python
+
+4. Maldev academy for learning to write malware and phishing pages and for learning evasion to bypass EDR/AV/IDS/IPS/firewall
+
+5. KASE scenarios or inteltechniques for OSINT
+
+6. PwnedLabs for cloud red/blue teaming
+
+7. SecurityBlueTeam for learning blue teaming such as digital forensics, etc.
+

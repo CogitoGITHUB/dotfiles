@@ -1,0 +1,72 @@
+Setting up Passbolt on Termux for a travel server involves several steps. Passbolt is a self-hosted password manager, and running it on a travel server using Termux can provide you with secure access to your passwords. Please note that running servers on mobile devices might have limitations and security considerations.
+
+Here is a simplified guide:
+
+### Requirements:
+- Android device with Termux installed.
+- Stable internet connection.
+- Basic knowledge of Linux commands.
+
+### Steps:
+
+1. **Install Termux and set up a basic environment:**
+   - Install Termux from the Google Play Store.
+   - Open Termux and run the following commands to update and upgrade Termux:
+     ```bash
+     pkg update
+     pkg upgrade
+     ```
+
+2. **Install required packages:**
+   - Install necessary packages such as `php`, `gnupg`, and `nginx` using:
+     ```bash
+     pkg install php gnupg nginx
+     ```
+
+3. **Install Composer:**
+   - Composer is a dependency manager for PHP. Install it with:
+     ```bash
+     pkg install composer
+     ```
+
+4. **Download and set up Passbolt:**
+   - Create a directory for Passbolt and navigate into it:
+     ```bash
+     mkdir passbolt && cd passbolt
+     ```
+
+   - Clone the Passbolt repository:
+     ```bash
+     git clone https://github.com/passbolt/passbolt_api.git
+     ```
+
+   - Navigate into the Passbolt API directory and install dependencies:
+     ```bash
+     cd passbolt_api
+     composer install
+     ```
+
+   - Follow the Passbolt documentation for detailed instructions on configuring your environment, setting up the database, and generating GPG keys.
+
+5. **Configure Nginx:**
+   - Set up Nginx to serve Passbolt. Create an Nginx configuration file, e.g., `passbolt.conf`, with appropriate settings.
+
+6. **Start Nginx and PHP:**
+   - Start Nginx and PHP-FPM:
+     ```bash
+     nginx
+     php-fpm
+     ```
+
+7. **Access Passbolt:**
+   - Open a web browser on your device and navigate to `localhost` or `127.0.0.1` with the specified port if configured.
+
+8. **Secure Your Setup:**
+   - Use a strong password for your Passbolt admin account.
+   - Consider using a VPN for additional security, especially when accessing your server remotely.
+
+### Important Considerations:
+- Running a server on a mobile device has limitations. Ensure your device stays powered, connected to the internet, and is secure.
+- Regularly update software packages and Passbolt to address security vulnerabilities.
+
+This guide provides a basic overview, and you should refer to the official documentation of Passbolt, PHP, and Nginx for more detailed and updated instructions. Additionally, consider the security implications of running a server on a mobile device and take appropriate precautions.

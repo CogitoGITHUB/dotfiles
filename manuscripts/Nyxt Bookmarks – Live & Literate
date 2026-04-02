@@ -1,0 +1,79 @@
+#+TITLE: Nyxt Bookmarks – Live & Literate
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+PROPERTY: header-args:lisp :tangle ./nyxt-bookmarks.lisp :results silent
+#+PROPERTY: header-args:emacs-lisp :results silent
+
+* Overview
+
+Bookmarks aren’t static — they are living code. We’ll create:
+- Bookmark definitions in Org
+- Commands to open them from Emacs
+- Nyxt-side tagging + loading
+- Org tangle → Lisp for persistence
+
+* Bookmark Format
+
+Here’s our basic Org block representing a bookmark.
+
+#+name: sample-bookmarks
+#+begin_src lisp
+(defparameter *bookmarks*
+  '((:title "Nyxt Home"
+     :url "https://nyxt.atlas.engineer"
+     :tags ("browser" "lisp"))
+    (:title "Guix Manual"
+     :url "https://guix.gnu.org/manual/"
+     :tags ("guix" "docs"))
+    (:title "SBCL Reference"
+     :url "http://www.sbcl.org/manual/"
+     :tags ("lisp" "docs"))))
+#+end_src
+
+* Function: Open Bookmark by Tag
+
+Query bookmarks by tag and open them in Nyxt.
+
+#+begin_src lisp
+(defun open-bookmarks-by-tag (tag)
+  (sb-bsd-sockets:with-client-socket (socket stream "localhost" 4006)
+    (dolist (bm *bookmarks*)
+      (when (member tag (getf bm :tags))
+        (format stream "(nyxt:buffer-load 'nyxt:current-buffer ~S)~%" (getf bm :url))))
+    (force-output stream)))
+#+end_src
+
+* Emacs Command: Pick Tag & Browse
+
+#+begin_src emacs-lisp
+(defun aeon/bookmarks-browse-by-tag ()
+  "Prompt for tag, send matching bookmarks to Nyxt."
+  (interactive)
+  (let ((tag (completing-read "Tag: " '("docs" "lisp" "guix" "browser"))))
+    (with-temp-file "/tmp/bookmarks.lisp"
+      (insert "(load \"./nyxt-bookmarks.lisp\")\n"
+              (format "(open-bookmarks-by-tag %S)\n" tag)))
+    (start-process "nyxt-bookmarks" nil "sbcl" "--noinform" "--load" "/tmp/bookmarks.lisp")))
+#+end_src
+
+Now you can `M-x aeon/bookmarks-browse-by-tag` and open a group of tagged pages in Nyxt.
+
+* Optional: Bookmark to Org Capture
+
+#+begin_src emacs-lisp
+(defun aeon/capture-nyxt-url (url title tags)
+  "Insert a bookmark into current Org buffer."
+  (insert (format "- [[%s][%s]] :%s:\n" url title (string-join tags ":"))))
+#+end_src
+
+* Future: Dynamic Bookmarks via LLM
+
+- Auto-tag based on content
+- Create summaries as headings
+- Schedule revisits with Org Agenda
+
+* Bookmarks as Hyperlinks of Aeon
+
+Bookmarks are the soul-stones of the web. In AeonCoreOS, they are indexed, tagged, and tangled — bound by Lisp and Org.
+
+* EOF

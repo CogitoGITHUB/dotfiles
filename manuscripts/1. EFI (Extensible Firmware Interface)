@@ -1,0 +1,64 @@
+#+TITLE: EFI (Extensible Firmware Interface)
+
+https://docs.kernel.org/admin-guide/efi-stub.html
+
+* Overview
+EFI, which stands for **Extensible Firmware Interface**, is a modern type of system firmware that serves as an intermediary between the computer's hardware and the operating system. It is the successor to the older BIOS (Basic Input/Output System) and provides more advanced features, such as support for larger storage devices, faster boot times, and security features like **Secure Boot**.
+
+* UEFI vs. BIOS
+**BIOS**:
+- Older system firmware standard.
+- Limited to 2TB disks (due to MBR partitioning).
+- Slower boot times.
+- Limited security features.
+
+**UEFI**:
+- Supports larger disks (over 2TB), thanks to **GPT** (GUID Partition Table).
+- Faster boot times due to better pre-boot environment.
+- More security features like **Secure Boot**.
+- Can boot directly from network devices.
+- Allows drivers and applications to run before the operating system is loaded.
+
+* Key Features of EFI
+- **Boot Management**: EFI provides a more flexible boot management system than BIOS, allowing multiple bootable entries.
+- **Partitioning Scheme**: EFI uses the **GPT** partitioning scheme, which supports disks larger than 2TB and offers more flexible partition management.
+- **Pre-OS Environment**: EFI allows the execution of applications before the operating system is loaded, such as utilities for diagnostics, disk management, etc.
+- **Security**: EFI supports **Secure Boot**, which ensures that only signed and trusted bootloaders and operating systems can be loaded, preventing malicious code from running during boot.
+
+* EFI Boot Process
+1. **Power-on**: The system is powered on and the EFI firmware takes control.
+2. **Pre-boot Environment**: EFI initializes the hardware and loads its environment.
+3. **Boot Manager**: EFI presents a list of bootable devices or operating systems.
+4. **OS Boot**: EFI loads the selected OS's bootloader (GRUB, for example), and the OS starts booting.
+
+* EFI System Partition (ESP)
+The EFI System Partition is a special partition on the disk that contains the necessary files for booting the system. It is typically formatted with the **FAT32** filesystem and contains the EFI executables for bootloaders and operating systems. This partition is crucial for UEFI booting.
+
+**ESP Partition Structure**:
+- `/EFI/BOOT/bootx64.efi` (Bootloader for 64-bit systems)
+- `/EFI/Microsoft/Boot/` (Microsoft-specific files)
+- `/EFI/ubuntu/` (For Linux-based systems like Ubuntu)
+
+* UEFI and Linux
+Linux systems can be configured to boot using UEFI, and many distributions support UEFI out of the box. The kernel itself can be made UEFI-bootable using an **EFI boot stub**, which allows the kernel to be directly loaded by the firmware without the need for a separate bootloader like GRUB.
+
+**EFI Boot Stub**:
+- An EFI boot stub is a small piece of code embedded into the kernel image. It allows the kernel to be directly booted by the UEFI firmware.
+- The kernel, when compiled with EFI support, can be loaded directly as an EFI application, bypassing the need for a bootloader.
+
+* Secure Boot
+Secure Boot is a feature of UEFI that prevents the execution of unsigned or untrusted code during the boot process. It ensures that only signed bootloaders and operating system kernels can be executed, providing additional security against rootkits and boot-time malware.
+
+**How Secure Boot Works**:
+1. The firmware checks the signatures of the bootloader and operating system kernel.
+2. If the signature matches a trusted key, the system proceeds to boot.
+3. If the signature is invalid or missing, the firmware halts the boot process and prevents the system from starting.
+
+* Advantages of EFI over BIOS
+- **Faster boot times**: UEFI has a faster and more efficient boot process than traditional BIOS.
+- **Larger disk support**: UEFI's GPT partitioning supports disks larger than 2TB, which BIOS cannot handle.
+- **Better security**: Secure Boot and other features provide enhanced security during the boot process.
+- **More flexibility**: UEFI supports a wide variety of devices and configurations, including network booting and multi-boot systems.
+
+* Conclusion
+EFI (UEFI) is a modern replacement for BIOS that provides improved features such as faster boot times, better security, and support for larger disk sizes. With its ability to manage boot processes and secure the system from malicious code, UEFI has become the standard on most modern computers. Understanding EFI is essential for anyone working with modern systems, especially for those configuring boot processes or working with security features like Secure Boot.

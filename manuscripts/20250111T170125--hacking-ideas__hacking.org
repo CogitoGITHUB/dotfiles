@@ -1,0 +1,18 @@
+#+title:      Hacking ideas
+#+date:       [2025-01-11 Sat 17:01]
+#+filetags:   :hacking:
+#+identifier: 20250111T170125
+
+
+* click farm
+https://youtube.com/shorts/sk97ud23zrQ?si=_9ntv-rYcqycDW3f
+* Sim box
+ https://youtube.com/watch?v=AZgkLvk1P-w&si=2O8YJK4uAI7n7s-1
+* USE ASUS ROG ALLY IN YOUR BACKPACK AND CONNECTIT TO SMARTPHONE !!!!
+use termux to connectit/controll it using tmux/emacs daemon ! 
+
+* YT videos 
+https://youtu.be/LInJHJNL9sY?si=4PIcQ766SxygbY0j ( first yt video about it ) 
+https://youtu.be/PZ0vGxTpasM?si=hmuDpmAJx8h6KkXc ( part 2 )
+https://youtu.be/8je73jCAm7g?si=1A9HheJH4hGu_5FK ( more tactics and webs )
+https://youtube.com/watch?v=cWgSgd-QcOY&si=bW4BaENpuEnixsij [ "11 Rules For Idiots Who Bought A Haunted House" | Creepypasta | Scary Story ]

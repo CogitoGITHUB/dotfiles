@@ -1,0 +1,82 @@
+#+TITLE: SLIME Integration with Nyxt
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+PROPERTY: header-args:emacs-lisp :results silent :exports both
+#+PROPERTY: header-args:sh :results output
+
+* Overview
+
+Integrate SLIME with Nyxt to control your browser using Common Lisp directly from Emacs. This setup enables interactive development, command dispatch, and automation via SLIME's REPL.
+
+* Nyxt Configuration
+
+Enable Nyxt to accept remote commands:
+
+#+begin_src lisp
+(define-configuration browser
+  ((remote-execution-p t)))
+#+end_src
+
+* Starting Nyxt with Swank
+
+Use the following command to start Nyxt with its Swank server:
+
+#+begin_src sh
+nyxt --eval "(nyxt:start-swank)"
+#+end_src
+
+This listens on ~localhost:4006~ for incoming SLIME connections.
+
+* Emacs SLIME Setup
+
+Use SLIME to connect to Nyxt's REPL:
+
+#+begin_src emacs-lisp
+(defun my/slime-connect (host port)
+  (defun always-true (&rest args) t)
+  (advice-add 'slime-check-version :override #'always-true)
+  (slime-connect host port)
+  (advice-remove 'slime-check-version #'always-true))
+#+end_src
+
+Call it interactively:
+
+#+begin_src emacs-lisp
+(my/slime-connect "localhost" 4006)
+#+end_src
+
+* Nyxt Command Injection from Emacs
+
+Use SLIME to send commands directly to Nyxt:
+
+#+begin_src emacs-lisp
+(defun nyxt-load-url (url)
+  "Load a URL in Nyxt from Emacs via SLIME."
+  (interactive "sURL to open in Nyxt: ")
+  (slime-eval `(nyxt:buffer-load ,url)))
+#+end_src
+
+* Full Integration Shortcut
+
+One-liner to start Nyxt and connect Emacs:
+
+#+begin_src emacs-lisp
+(defun start-nyxt-and-connect ()
+  "Start Nyxt with Swank and connect SLIME after 2s."
+  (interactive)
+  (start-process "nyxt" nil "nyxt" "--eval" "(nyxt:start-swank)")
+  (sleep-for 2)
+  (my/slime-connect "localhost" 4006))
+#+end_src
+
+* Security Warning
+
+Don't expose the Swank port to the public internet — it provides full eval access.
+
+* Future Enhancements
+
+- Use Org Babel blocks for controlling Nyxt through SLIME
+- Auto-connect when Emacs starts
+- SLIME/Nyxt command hydras for buffer control
+
+* EOF

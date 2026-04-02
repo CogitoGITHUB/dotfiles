@@ -1,0 +1,107 @@
+#+title: TERMINAL KEY BINDINGS
+#+author: Shapeshifter
+#+startup: overview
+#+property: header-args :tangle no
+
+* Overview
+This document contains the keybindings and module-bound commands for **AeonCoreOS**. These keybindings are designed specifically for terminal use (especially in a **TTY environment**). All keybindings reference functions or aliases defined in **modules**, which are organized into directories for easy management.
+
+The keybindings are configured in **`config.nu`**, and the modules are located in the **`modules/`** directory (with possible subdirectories for better organization).
+
+* Keybinding System
+
+** Philosophy
+- Keybindings are mapped to functions or aliases that are **exported from modules**.
+- Modules are stored in the **`modules/`** directory and can be organized into subdirectories for modularity.
+- The **`config.nu`** file loads these modules and defines keybindings to interact with them.
+- The system is optimized for use in **TTY environments**, where keyboard-centric control is key.
+
+* Keybindings
+
+** Git Commands
+| Keybinding | Command | Description           | Source Module  |
+|------------+---------+-----------------------+----------------|
+| C-g        | gs      | Git Status            | modules/git/git.nu         |
+| C-l        | gl      | Git Log (oneline)     | modules/git/git.nu         |
+
+** System Commands
+| Keybinding | Command | Description           | Source Module  |
+|------------+---------+-----------------------+----------------|
+| C-u        | update  | System Update         | modules/system/system.nu   |
+| C-r        | restart | Restart System Daemon | modules/system/system.nu   |
+
+** EDC/Tools
+| Keybinding | Command | Description       | Source Module  |
+|------------+---------+-------------------+----------------|
+| C-e        | edc     | Show EDC Tools    | modules/edc/edc.nu         |
+| C-h        | health  | Run Health Check  | modules/edc/edc.nu         |
+
+* Module Map
+
+** modules/git/git.nu
+#+begin_src nu
+export alias gs = git status
+export def gl [] {
+  git log --oneline
+}
+#+end_src
+
+** modules/system/system.nu
+#+begin_src nu
+export alias update = sudo guix pull; and sudo guix system reconfigure /etc/config.scm
+export def restart [] {
+  sudo herd restart essential-service
+}
+#+end_src
+
+** modules/edc/edc.nu
+#+begin_src nu
+export alias edc = open ~/docs/edc.org
+export def health [] {
+  echo "Running diagnostics..."
+  # Insert health scripts or scans here
+}
+#+end_src
+
+* Loading Modules in AeonCoreOS
+In **`config.nu`**:
+#+begin_src nu
+# Dynamically load all `.nu` files from the modules directory and its subdirectories
+ls modules/**.nu | each { use $it.path }
+
+# Or load specific modules manually
+use modules/git/git.nu
+use modules/system/system.nu
+use modules/edc/edc.nu
+#+end_src
+
+* Keybinding Configuration Example
+
+In **`config.nu`**, create keybindings for terminal navigation:
+
+```nu
+let-env config = {
+  keybindings: [
+    {
+      name: "git_status_alias"
+      modifier: "control"
+      keycode: "char_g"
+      mode: "emacs"
+      event: { send: "gs" }  # 'gs' is the alias for 'git status'
+    },
+    {
+      name: "git_log"
+      modifier: "control"
+      keycode: "char_l"
+      mode: "emacs"
+      event: { send: "gl" }  # 'gl' is the function for 'git log'
+    },
+    {
+      name: "system_update"
+      modifier: "control"
+      keycode: "char_u"
+      mode: "emacs"
+      event: { send: "update" }  # 'update' runs the system update
+    }
+  ]
+}

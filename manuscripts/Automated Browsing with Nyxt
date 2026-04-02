@@ -1,0 +1,90 @@
+#+TITLE: Automated Browsing with Nyxt
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+PROPERTY: header-args:lisp :tangle ./auto-browse.lisp :results silent :exports both
+#+PROPERTY: header-args:emacs-lisp :results silent
+
+* Overview
+
+This Org file defines Lisp-powered browsing tasks for Nyxt. Pages are opened, searched, scraped, and sometimes even summarized — all by running these blocks from Emacs.
+
+You can tangle this to a script, or run each block individually from within Org.
+
+* Configuration
+
+Make sure Nyxt is running with:
+
+#+begin_src shell
+nyxt --eval "(nyxt:start-swank)"
+#+end_src
+
+Also, set =remote-execution-p= to =t= in your config.
+
+* Open Multiple URLs
+
+#+name: open-multiple
+#+begin_src lisp
+(sb-bsd-sockets:with-client-socket (socket stream "localhost" 4006)
+  (dolist (url '("https://arxiv.org"
+                 "https://guix.gnu.org"
+                 "https://nyxt.atlas.engineer"))
+    (format stream "(nyxt:buffer-load 'nyxt:current-buffer ~S)~%" url)
+    (force-output stream)))
+#+end_src
+
+* Search for a Topic
+
+#+name: search-topic
+#+begin_src lisp
+(let ((query "black hole entropy information paradox"))
+  (sb-bsd-sockets:with-client-socket (socket stream "localhost" 4006)
+    (format stream "(nyxt:buffer-load 'nyxt:current-buffer (format nil \"https://duckduckgo.com/?q=~a\" ~S))~%" query)
+    (force-output stream)))
+#+end_src
+
+* Extract Text from Current Page (with JS/DOM hook)
+
+Assumes you’ve loaded a page and want to read its body text:
+
+#+name: extract-body
+#+begin_src lisp
+(sb-bsd-sockets:with-client-socket (socket stream "localhost" 4006)
+  (format stream "(nyxt:print (nyxt:buffer-document 'nyxt:current-buffer))~%")
+  (force-output stream))
+#+end_src
+
+* Generate Org Links from URLs
+
+#+name: orgify-links
+#+begin_src lisp
+(dolist (url '("https://example.com"
+               "https://emacs.ch"
+               "https://github.com/atlas-engineer/nyxt"))
+  (format t "[[~a]]~%" url))
+#+end_src
+
+* Emacs Command to Trigger Browsing Routine
+
+#+begin_src emacs-lisp
+(defun aeon/browse-topic (topic)
+  "Browse a search topic in Nyxt using SBCL over Swank."
+  (interactive "sTopic: ")
+  (let ((lisp (format "(let ((query %S))
+    (nyxt:buffer-load 'nyxt:current-buffer
+      (format nil \\\"https://duckduckgo.com/?q=~a\\\" query)))" topic)))
+    (with-temp-file "/tmp/auto-browse.lisp"
+      (insert "(sb-bsd-sockets:with-client-socket (socket stream \"localhost\" 4006)\n"
+              "  (format stream \"" lisp "\\n\")\n"
+              "  (force-output stream))"))
+    (start-process "nyxt-browse" nil "sbcl" "--noinform" "--load" "/tmp/auto-browse.lisp")))
+#+end_src
+
+Now you can call `M-x aeon/browse-topic` from Emacs and Nyxt will perform the search.
+
+* Future Ideas
+
+- Scheduled browsing using `org-clock` or `org-timer`
+- Extract and store headlines into Org capture
+- AI-assisted reading (e.g., LLM that reads page and creates summaries)
+
+* EOF

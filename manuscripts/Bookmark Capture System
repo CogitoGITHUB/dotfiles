@@ -1,0 +1,75 @@
+#+TITLE: Bookmark Capture System
+#+AUTHOR: AeonCoreOS Architect
+#+STARTUP: showeverything
+#+PROPERTY: header-args:emacs-lisp :tangle ./bookmark-capture.el :results silent
+
+* Overview
+
+This file defines a full Org Capture workflow for storing bookmarks directly into `~/org/bookmarks.org`.
+
+Each captured link includes:
+- Title
+- URL
+- Tags
+- Timestamp
+- Optional Notes
+
+It can be triggered manually, or remotely from Nyxt via Swank/Shell.
+
+* Org Capture Template
+
+#+begin_src emacs-lisp
+(setq org-capture-templates
+      '(("b" "Bookmark" entry
+         (file+headline "~/org/bookmarks.org" "Bookmarks")
+         "* [[%^{URL}][%^{Title}]] :%^{Tags}:\nCaptured on: %U\nNotes: %?"
+         :empty-lines 1)))
+#+end_src
+
+* Function: Clipboard-Based Capture
+
+This pulls a URL from the clipboard and launches the bookmark template:
+
+#+begin_src emacs-lisp
+(defun aeon/capture-bookmark-from-clipboard ()
+  "Launch bookmark capture with clipboard URL prefilled."
+  (interactive)
+  (let ((org-url (current-kill 0)))
+    (org-capture nil "b")
+    (run-at-time "0.5 sec" nil
+                 (lambda ()
+                   (save-excursion
+                     (search-backward "%^{URL}")
+                     (kill-line)
+                     (insert org-url))))))
+#+end_src
+
+* Optional: Integrate with Nyxt
+
+In Nyxt Lisp:
+
+#+begin_src lisp
+(define-command-global capture-in-emacs ()
+  (run-shell-command "emacsclient -e '(aeon/capture-bookmark-from-clipboard)'"))
+#+end_src
+
+You can bind this to a key or even a context menu item.
+
+* Sample Entry
+
+Captured bookmark looks like:
+
+#+begin_example
+* [[https://nyxt.atlas.engineer][Nyxt – The Hacker's Browser]] :lisp:browser:
+Captured on: [2025-05-09 Fri 13:37]
+Notes: The interface between Lisp and the Web.
+#+end_example
+
+* Future Additions
+
+- Title auto-fetch from metadata
+- Topic-based tag generation using GPT
+- Cross-link to Denote files or projects
+- Bookmark dashboard with agenda integration
+
+* EOF

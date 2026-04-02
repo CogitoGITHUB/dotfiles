@@ -1,0 +1,81 @@
+* Hacking Operations
+** Reconnaissance
+- [ ] Search target websites with `curl` or `wget`
+  - *Explanation*: When you're gathering information about a target, you'll often need to fetch pages or resources to analyze. Automating this task with `curl` or `wget` can help you quickly download content without needing to manually type out commands.
+  - Use `scrape-website` function for easy URL scraping
+    - *Explanation*: This function automates the process of downloading a website's content, which is useful for OSINT (Open-Source Intelligence) collection or vulnerability analysis. You can call this function to scrape multiple URLs automatically.
+- [ ] Use `helm-ag` to search across repositories for exploits
+  - *Explanation*: The `helm-ag` tool allows you to search across multiple repositories or directories quickly. This is ideal when you want to find certain keywords, such as exploit code or vulnerability signatures.
+  - Shortcut: `C-c s`
+    - *Explanation*: This binds a key to quickly initiate the search command, speeding up the process of looking through multiple files or codebases.
+- [ ] Use `nmap` for network scanning
+  - *Explanation*: Nmap is one of the most common tools for network scanning, allowing you to detect open ports and services running on a target. Automating this process through Emacs means you can easily initiate scans from within your working environment.
+  - Automated nmap scan: `run-nmap-scan`
+    - *Explanation*: This function allows you to initiate an Nmap scan directly from Emacs, making it more efficient to start a scan while keeping your focus on other tasks.
+
+** Exploit Development
+- [ ] Write exploit for target
+  - *Explanation*: When you find a vulnerability, you need to create an exploit for it. This step organizes your approach by guiding you to create an exploit template.
+  - Create exploit buffer: `create-buffer-for-exploit`
+    - *Explanation*: This function automatically generates a buffer in Emacs to start writing your exploit. This keeps things consistent and quick, without needing to manually create files or organize your environment.
+- [ ] Test exploit code
+  - *Explanation*: Once you have an exploit, you need to test it to verify it works and identify any potential issues. Emacs’ integration with Python and shell scripting can make it easy to run and tweak your exploit code.
+  - Run exploits via `python-mode`
+    - *Explanation*: Python-mode allows you to run Python code directly within Emacs. This is useful for testing and refining Python-based exploits or creating scripts that exploit vulnerabilities in target systems.
+  - Automated Python exploit template creation
+    - *Explanation*: This template function helps you start your exploit code quickly, so you don’t waste time on repetitive setup.
+
+** Reverse Engineering
+- [ ] Analyze binary with `gdb`
+  - *Explanation*: When reverse engineering a binary, GDB is often the go-to tool. Emacs can be used to automate launching GDB and setting breakpoints, making it easier to debug and analyze the binary without switching contexts.
+  - Start GDB session: `gdb-automated-debugging`
+    - *Explanation*: This command will open GDB inside Emacs, so you can begin your debugging process seamlessly from your Emacs environment.
+  - Automate breakpoints and stepping through code
+    - *Explanation*: You can script GDB commands to automate the process of stepping through code, setting breakpoints, and tracking variables, which is helpful when analyzing complex binaries.
+
+** Vulnerability Scanning
+- [ ] Run OWASP ZAP automated scans
+  - *Explanation*: OWASP ZAP is a security tool used for scanning web applications for vulnerabilities. Automating this process via Emacs makes it easy to scan web applications from within your environment.
+  - Command: `run-zap-scan`
+    - *Explanation*: This function triggers an automated scan of the provided target URL. It’s a great way to integrate ZAP into your workflow and automatically scan web applications for security issues.
+  - Target URL: `<Your target URL>`
+    - *Explanation*: This placeholder indicates where you would specify the target URL for scanning. The URL would be passed to ZAP for analysis.
+
+** Patching & Fixing Vulnerabilities
+- [ ] Patch vulnerability found during scan
+  - *Explanation*: After discovering vulnerabilities, you need to patch them. Automating the patching process allows you to quickly fix vulnerabilities found during scans.
+  - Automated patch with `patch-script`
+    - *Explanation*: This script automates search-and-replace operations in the current buffer, allowing you to quickly patch vulnerabilities in your code. This can be particularly useful if you need to replace insecure functions with safer alternatives.
+  - Example: Replace vulnerable code with a safer implementation
+    - *Explanation*: Use the automated patching system to quickly replace or modify specific code sections that are vulnerable. This could involve changing a hardcoded password or replacing an insecure library with a more secure one.
+
+** Reporting
+- [ ] Document findings and actions in `org-mode`
+  - *Explanation*: After completing your exploit or assessment, it’s essential to document everything for further analysis or reporting. This section automates that process using `org-mode`.
+  - Create report for each target
+    - *Explanation*: This function automatically generates a structured report for each target you assess, including all the vulnerabilities found and how you patched them.
+  - Example Report Generation: `create-hacking-report`
+    - *Explanation*: This function will create a new report for your hacking activity, including all relevant details, so you don’t need to manually create the structure each time.
+
+** Post-Exploit Actions
+- [ ] Take screenshots or logs of exploit successfulness
+  - *Explanation*: After a successful exploit, you should capture the outcome, such as screenshots or logs, to demonstrate proof of concept or analyze the result.
+- [ ] Collect evidence and prepare documentation for further analysis
+  - *Explanation*: This process allows you to collect all evidence of the exploit’s success, log details, and prepare comprehensive documentation to analyze the result or present it to others.
+
+* Quick Links to Functions
+** Utility Functions
+- Run Nmap Scan: `M-x run-nmap-scan`
+  - *Explanation*: Quickly initiate an Nmap scan to assess a target.
+- Scrape Website: `M-x scrape-website`
+  - *Explanation*: Automatically scrape content from a website using `curl` or `wget`.
+- Patch Script: `M-x patch-script`
+  - *Explanation*: Automate the process of patching code for vulnerabilities.
+- Create Exploit Buffer: `M-x create-buffer-for-exploit`
+  - *Explanation*: Open a new buffer and start writing an exploit.
+- Automated Debugging: `M-x gdb-automated-debugging`
+  - *Explanation*: Start GDB within Emacs for reverse engineering.
+- Run ZAP Scan: `M-x run-zap-scan`
+  - *Explanation*: Trigger an OWASP ZAP scan from Emacs.
+- Generate Hacking Report: `M-x create-hacking-report`
+  - *Explanation*: Generate a detailed hacking report in `org-mode`.

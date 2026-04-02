@@ -1,0 +1,87 @@
+#+title: POSSIBLE KEY BINDINGS
+#+author: Shapeshifter
+#+startup: overview
+#+property: header-args :tangle no
+
+* Overview
+This document outlines the **possible keybindings** for your **AeonCoreOS** system. These keybindings span multiple areas, from window management to text editors, and can be configured to enhance productivity across different environments. They are particularly tailored for a **keyboard-centric** workflow, ideal for **TTY**, **Hyprland**, **Emacs**, **Neovim**, and various other applications.
+
+* Keybinding Areas
+
+** 1. Window Manager (Hyprland)
+Keybindings for your window manager to enhance navigation and workspace management:
+- **Workspace Switching**: Bind keys to jump between workspaces.
+- **Window Resizing**: Bind keys to resize or tile windows dynamically.
+- **Floating Windows**: Toggle floating windows on/off.
+- **App Launchers**: Bind keys to launch specific apps with arguments.
+
+** 2. Terminal (TTY)
+Keybindings to boost your terminal productivity:
+- **File Navigation**: Bindings for quick file navigation in file managers like Ranger or NNN.
+- **Clipboard Management**: Bind keys to paste, cycle through clipboard history, or clear clipboard.
+- **System Monitoring**: Bindings to show system stats (CPU, memory, disk usage) through tools like `htop`.
+
+** 3. Text Editors (Emacs, Neovim, etc.)
+Keybindings tailored for your text editing environment:
+- **Emacs**: Bindings to switch between buffers, open files, or invoke commands.
+- **Neovim**: Keybindings for fast navigation, editing, and plugin control.
+
+** 4. Browsers (Nyxt or other terminal-based browsers)
+Quick navigation in your browser environment:
+- **Tab Management**: Bindings to switch between, open, and close browser tabs.
+- **Scrolling**: Bind keys to scroll through pages or jump to specific sections.
+- **Bookmarking**: Bindings to quickly add or access bookmarks.
+
+** 5. File Managers (Ranger, NNN, etc.)
+Speed up your file management tasks with keybindings:
+- **Copy/Cut/Paste**: Bindings to copy, cut, and paste files/folders.
+- **Search Files**: Bind keys for quick file searching.
+- **File Previews**: Bindings to preview files like images or documents.
+
+** 6. Music Players (MPD, Spotify, or other CLI players)
+Control your music playback with ease:
+- **Play/Pause**: Toggle music playback.
+- **Next/Previous Track**: Navigate between tracks.
+- **Volume Control**: Adjust or mute the volume.
+- **Shuffle/Repeat**: Toggle playback modes.
+
+** 7. Notifications (Waybar, Dunst)
+Interact with your notification system:
+- **Show/Hide Notifications**: Toggle visibility of notifications.
+- **Clear Notifications**: Clear all notifications with one keypress.
+- **Notification History**: View past notifications.
+
+** 8. Clipboard Manager (Clipman, Waybar, etc.)
+Manage your clipboard history via keybindings:
+- **Paste**: Quickly paste the most recent clipboard item.
+- **Clipboard History**: Navigate through clipboard items with keybindings.
+- **Clear Clipboard**: Clear all clipboard entries.
+
+** 9. System Monitoring (htop, i3status, etc.)
+Monitor system health and performance:
+- **View CPU Usage**: Show real-time CPU usage stats.
+- **View Memory Usage**: Quickly view memory consumption.
+- **Disk Usage**: View available disk space with one keybinding.
+
+** 10. Custom Commands (Aliases or Scripts)
+Create and manage custom scripts or aliases:
+- **Automation Scripts**: Trigger common scripts or commands (e.g., backup, cleanup).
+- **Terminal Sessions**: Open specific terminal profiles with a keybinding.
+- **Custom Workflows**: Set up common environments or run a series of commands.
+
+** 11. Virtual Machines or Containers (QEMU, Docker)
+Manage virtual environments with ease:
+- **Start/Stop VM**: Quickly start or stop virtual machines or containers.
+- **VM Console**: Open a console to the running VM.
+- **Switch Between VMs**: Jump between running VMs.
+
+** 12. Niche Apps (Gaming, Health, etc.)
+Bind keys for niche applications:
+- **Gaming**: Launch games or switch between running game instances.
+- **Health Apps**: Trigger health or fitness tracking applications.
+- **Custom Tools**: Bind keys for custom tools like survival apps or personal trackers.
+
+* Final Thoughts
+The keybindings listed above represent a highly customizable and efficient setup that you can tweak to suit your workflow. As **AeonCoreOS** evolves, additional keybinding configurations can be added for even more granular control across all your tools.
+
+The modular design of this setup ensures that you can easily scale and adapt the keybindings to your specific needs—whether you’re working in a **TTY**, **Hyprland**, or any other environment.

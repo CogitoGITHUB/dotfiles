@@ -1,0 +1,82 @@
+#+TITLE: Org Flashcards – Aeonic Recall System
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+DRILL_CARD_TYPE: twosided
+
+* How to Use
+
+- Use `org-drill` for spaced repetition learning.
+- Review with `M-x org-drill`.
+- Cards are reviewed based on performance (via SM-2 algorithm).
+
+* Setup (Emacs Lisp)
+
+Add this to your config if you haven’t:
+
+#+begin_src emacs-lisp
+(use-package org-drill
+  :after org
+  :straight t
+  :config
+  (setq org-drill-add-random-noise-to-intervals t
+        org-drill-scope 'directory))  ;; Or buffer if you're focusing on one file
+#+end_src
+
+* Flashcards
+
+** You can nest by subject: **
+
+** Lisp Basics
+*** What does `(car '(a b c))` return?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+a
+
+*** What does `(cdr '(a b c))` return?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+(b c)
+
+** Guix
+*** How do you build a Guix package from source?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+`guix build my-package.scm`
+
+*** How do you search for packages?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+`guix search <term>`
+
+** Emacs
+*** Shortcut to evaluate elisp expression?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+`M-:` or `eval-expression`
+
+** Nyxt
+*** What command connects Nyxt to Emacs via Swank?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+`(nyxt:start-swank)`
+
+*** How do you load a URL with SBCL via remote Nyxt?
+:PROPERTIES:
+:DRILL_CARD_TYPE: twosided
+:END:
+Use a socket stream to send `(nyxt:buffer-load 'nyxt:current-buffer "https://example.com")`
+
+* Future Additions
+
+- Auto-generate flashcards from notes
+- Group by topic using tags
+- Build custom card types for code vs concept vs visual
+- Sync with Denote and Org-Roam
+
+* EOF

@@ -1,0 +1,65 @@
+#+TITLE: Ghost Drone Protocol - AEONCOREOS Command
+#+AUTHOR: Architect of the Invisible
+#+DATE: <2025-05-04>
+#+OPTIONS: toc:nil num:nil
+
+* Mission Directive
+
+Design a globally-operable, undetectable, modular ghost drone network powered by *AeonCoreOS*. The system deploys **remote phones as terminal nodes**, controlled by AeonCoreOS through **SSH**, **SMS**, or **LoRa triggers**. Once missions are complete, physical devices can be destroyed, hidden, or wiped.
+
+The brain remains hidden—*AeonCoreOS* is the architect, the conductor, and the only intelligence that remembers the symphony.
+
+---
+
+* AeonCoreOS Philosophy
+
+- **You are invisible.** The phone is just a tool, a hand with no fingerprints.
+- **You command remotely.** All intelligence, processing, and decision-making lives in your AeonCoreOS node.
+- **You operate asynchronously.** Nodes can be dormant for months, activated by obscure triggers.
+- **You are replaceable.** Nodes die, the brain survives.
+
+---
+
+* System Architecture
+
+**Primary Actor:**
+- AeonCoreOS — the mastermind.
+
+**Supporting Cast:**
+- Burner phones (running minimal OS or Termux shell).
+- Drones (carrying phones or relays).
+- Mesh Nodes (phones in fixed locations—“ghost seeds”).
+- Echo Repeaters (temporary Bluetooth/Wi-Fi relays).
+- LoRa Modules (Meshtastic/DIY custom payload devices).
+
+---
+
+* Node Roles
+
+**1. Primary Relay Drone (PRD)**
+- Mission-critical operations (data injection/exfil, real-time ops).
+- High-bandwidth (Bluetooth/Wi-Fi).
+- Controlled over SSH from AeonCoreOS.
+
+**2. Echo Relays**
+- Minimal logic. Just forwards data in/out.
+- Self-wipes if tampered or idle too long.
+- Great for mesh hops or city-wide relays.
+
+**3. Ghost Seeds**
+- Hidden phones in secure urban/rural places.
+- Only wake up when:
+  - Receiving specific SMS (pre-shared encrypted keyword).
+  - Time-based cronjob (weekly check-in).
+  - GPS/geofence activation.
+- Perfect for OSINT-timed missions (use your recon to choose where and when to plant them).
+
+---
+
+* Activation Examples
+
+**Encrypted SMS Wakeup:**
+```bash
+on_sms_receive() {
+  [[ "$SMS" == "$(decrypt_key 'DRACO AWAKEN')" ]] && start_ssh && notify_aeoncore
+}

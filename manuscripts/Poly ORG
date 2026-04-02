@@ -1,0 +1,56 @@
+#+TITLE: Poly Org Demo
+#+AUTHOR: Shapeshifter
+#+OPTIONS: toc:nil
+
+Welcome to the world of poly-org! Below are a few source blocks using different languages.
+When opened with `poly-org-mode`, each block will be edited using its own major mode!
+
+* Python Block
+
+#+BEGIN_SRC python
+def greet(name):
+    print(f"Hello, {name}! Welcome to the Multiverse.")
+
+greet("Shapeshifter")
+#+END_SRC
+
+* Emacs Lisp Block
+
+#+BEGIN_SRC emacs-lisp
+(defun polymode-power ()
+  "Return a message celebrating polymode!"
+  (message "Polymode activated in Org Mode!"))
+
+(polymode-power)
+#+END_SRC
+
+* Shell Script Block
+
+#+BEGIN_SRC sh
+#!/bin/bash
+echo "Running in shell mode with Poly-Org!"
+date
+#+END_SRC
+
+* LaTeX Block
+
+#+BEGIN_SRC latex
+\documentclass{article}
+\begin{document}
+Hello from within a LaTeX block!
+\end{document}
+#+END_SRC
+
+* JavaScript Block
+
+#+BEGIN_SRC js
+function echo(message) {
+    console.log("Poly-Org says: " + message);
+}
+
+echo("This is JavaScript inside Org!");
+#+END_SRC
+
+* End
+
+That’s it! Tweak the blocks, run the code, and try switching major modes. Poly-org will adapt!

@@ -1,0 +1,6 @@
+
+
+
+https://www.npmjs.com/package/figlet
+
+text to ascii ! 

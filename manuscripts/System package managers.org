@@ -1,0 +1,9 @@
+
+System Package Managers
+These are used for managing software packages on operating systems:
+APT (Advanced Package Tool): Used by Debian-based distributions like Ubuntu.
+Yum/DNF: Used by Red Hat-based distributions like Fedora and CentOS.
+Pacman: Used by Arch Linux.
+Zypper: Used by openSUSE.
+Homebrew: Popular on macOS for managing Unix tools and applications.
+Chocolatey: Used on Windows for managing software installations.

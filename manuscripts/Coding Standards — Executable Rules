@@ -1,0 +1,51 @@
+#+TITLE: Lisp/Guile Coding Standards — Executable Rules
+#+AUTHOR: CyberWorldOS
+#+OPTIONS: toc:nil num:nil
+
+* Naming Convention Rules
+
+This file tests whether functions in a Guile file follow a strict module-prefixed kebab-case naming standard.
+
+All functions must:
+- Start with the module prefix (e.g., ~my-module-~)
+- Be written in kebab-case (no underscores, no camelCase)
+
+* Rule: Function Naming Must Start with Module Prefix
+- [ ] All top-level `define` function names must start with ~my-module-~
+
+#+name: linter-code
+#+begin_src scheme :results output :exports both
+(use-modules (ice-9 regex) (ice-9 rdelim) (srfi srfi-1))
+
+(define (check-naming file)
+  (let* ((lines (call-with-input-file file
+                  (lambda (port)
+                    (let loop ((acc '()))
+                      (if (port-eof? port)
+                          (reverse acc)
+                          (loop (cons (read-line port 'concat) acc)))))))
+         (bad-lines
+           (filter
+            (lambda (line)
+              (and (string-match "^\define\\s+(\\\w+[-\\w]*\\\s" line)
+                   (not (string-prefix? "my-module-" line))))
+            lines)))
+    (if (null? bad-lines)
+        (begin (display "[PASS] All functions are correctly named.\n") #t)
+        (begin
+          (display "[FAIL] Found function naming issues:\n")
+          (for-each (lambda (l) (format #t "~a\n" l)) bad-lines)
+          #f))))
+
+(check-naming "your-code.scm")
+#+end_src
+
+#+RESULTS: linter-code
+: [FAIL] Found function naming issues:
+: (define (do-stuff) ...)
+: (define (util-helper) ...)
+
+* Future Rules
+- [ ] Error messages must start with program name
+- [ ] All global variables must be declared with a comment
+- [ ] Functions should not exceed 40 lines

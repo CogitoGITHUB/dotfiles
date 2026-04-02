@@ -1,0 +1,68 @@
+* Keybinding Conceptual Framework (Dvorak-Oriented)
+
+** Premise
+Keybinding should emerge from **anatomical ergonomics** and **modal design**, not traditional layouts. This system is built with the Dvorak layout, emphasizing:
+- Home-row centrality
+- Finger-based mode delegation
+- Tap-Hold duality and multi-key chords
+- Cross-platform adaptability (Emacs, Neovim, Tmux, Hyprland)
+
+** Foundational Concepts
+
+*** 1. Finger-Centric Layering
+Each finger governs one or more *layers* or *operations* depending on its position, strength, and ease of access.
+
+*** 2. Tap-Hold Duality
+Each key can have a dual purpose:
+- **Tap**: a basic, immediate action
+- **Hold**: a modal shift or layer change
+
+*** 3. Chording (2 or more keys)
+Chords allow invoking higher-order commands through simultaneous presses.
+This enables:
+- Modal gateways
+- Contextual state changes
+- Macro invocations
+
+*** 4. Home Row as Core Ops
+The home row becomes the **modal base**:
+- One finger = one function group (e.g., movement, object, window, system)
+
+*** 5. Multi-System Interoperability
+All bindings must work seamlessly across:
+- **Emacs**: key-chord, hydras, evil, general.el
+- **Neovim**: Lua keymap layers, modal plugins
+- **Hyprland**: workspace/window layer logic
+- **Tmux**: pane, session, layout switching
+
+*** 6. Hands as Mode Triggers
+- Left hand = navigation, structural logic, selection
+- Right hand = execution, commands, transformation
+
+*** 7. Key Layer Philosophy
+| Layer        | Purpose                     |
+|--------------+-----------------------------|
+| Base         | Standard editing/motion     |
+| Nav          | Movement, jump, search      |
+| Object       | Text object manipulation    |
+| Command      | Macros, scripts, commands   |
+| System       | Window/Pane/Workspace Ops   |
+| Insert       | Temporary insert states     |
+
+** Placeholder for Examples (to be expanded later)
+
+*** Example 1: Tap-Hold Logic (QMK/Kanata)
+*** Example 2: 2-Finger Chords for Navigation
+*** Example 3: Modal Home Row in Emacs with `general.el`
+*** Example 4: Tmux Prefix Rebinding to Dvorak Logic
+*** Example 5: Hyprland Workspace Bindings with Chords
+
+** Notes
+- Design everything based on **movement economy**
+- Chords must be **natural** to finger flow, not arbitrary
+- Key concepts should be modular and portable
+
+* To Do
+- [ ] Create SVG diagrams of finger/layer relations
+- [ ] Create Org Babel templates for configs
+- [ ] Document edge cases (insert mode, command chaining)

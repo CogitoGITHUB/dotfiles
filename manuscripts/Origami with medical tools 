@@ -1,0 +1,99 @@
+#+TITLE: Origami with Medical Tools
+#+AUTHOR: Shapeshifter
+#+DATE: <2025-05-13>
+#+CATEGORY: Meditech
+#+FILETAGS: :origami:medicine:tools:innovation:cyberworld:
+
+* Introduction
+Origami and medicine might seem worlds apart, but both demand precision, spatial awareness, and creativity.
+This module explores the fusion of folding techniques with medical tools for practical, tactical, and training purposes.
+
+* Objectives
+- Explore the use of folding techniques in medical tool design.
+- Design training exercises using origami and surgical tools.
+- Develop deployable medical gear based on origami principles.
+- Map metaphorical applications into Guix/Emacs environments.
+
+* Toolset
+** Surgical Instruments
+- Forceps (for folding manipulation)
+- Hemostats (locking clamps as “origami clips”)
+- Scalpel (for precision shaping)
+- Sterile gloves
+- Foldable gauze or Tyvek sheets
+
+** Emacs Integration
+- org-mode (module documentation)
+- org-babel (procedural folding logic)
+- denote or file-naming system for categorizing designs
+- Optional: SVG diagrams embedded via babel
+
+* Design Patterns
+** Field Dressing Fold
+:PROPERTIES:
+:TYPE: Bandage / First Aid
+:END:
+- Material: Compressed gauze
+- Fold: Accordion fold with zip-release edge
+- Use Case: Deep lacerations in the field
+- Bonus: Can print wound-clotting instructions on layers
+
+** Syringe Case Origami
+:PROPERTIES:
+:TYPE: Gear Container
+:END:
+- Material: Biodegradable plastic or paper composite
+- Fold: Pyramid lockbox
+- Use Case: Portable, sterile single-dose packaging
+- Bonus: Origami folds reveal color-coded dosage info
+
+** Flat-to-3D Splint
+:PROPERTIES:
+:TYPE: Structural Tool
+:END:
+- Material: Rigid origami plastic sheet
+- Fold: Tesselated structure, triangle fold
+- Use Case: Joint immobilization in tactical medkits
+
+* Training Module: Origami Surgery
+** Objective
+Improve surgeon precision using origami manipulation tasks with surgical tools.
+
+** Practice
+- Use forceps to fold a 16-step paper crane
+- Record number of tool switches and grip errors
+- Level up to neuron-folding simulation (SVG overlay in Emacs!)
+
+* Guix / Emacs Integration
+** Conceptual Fold = Code Module
+Just as an origami model emerges from folds, Guix modules can be seen as folds that produce a working system.
+
+** Sample Code Snippet (base-system.scm fragment)
+#+BEGIN_SRC scheme
+(define-module (origami medical))
+(use-modules (gnu) (guix) ...)
+
+(package
+  (name "field-dressing-origami")
+  (version "0.1")
+  (source ...)
+  (build-system trivial-build-system)
+  (synopsis "Deployable origami-style field bandage")
+  (description "A foldable, sterile bandage system inspired by origami.")
+  ...)
+#+END_SRC
+
+* Future Ideas
+- AI-assisted origami unfolding: dynamic responses to injuries
+- Integration with survival gear (EDC kits)
+- AR headset for real-time folding instructions in surgery
+
+* Resources
+- [[https://en.wikipedia.org/wiki/Origami]] : General origami
+- [[https://pubmed.ncbi.nlm.nih.gov/]] : Medical research databases
+- [[https://guix.gnu.org/manual/en/html_node/]] : Guix manual
+
+* TODO Develop SVG folding diagrams using org-babel + ditaa
+* TODO Create a fold-based naming convention for gear
+* TODO Package into Guix modules with reproducible builds
+* TODO Test motor precision training with origami in Emacs

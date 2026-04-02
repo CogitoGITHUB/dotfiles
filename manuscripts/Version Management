@@ -1,0 +1,12 @@
+#+title:      Version management tools
+#+date:       [2024-12-26 Jo 03:11]
+#+filetags:   :versionmanagement:
+#+identifier: 20241226T031125
+
+
+* Version Management Tools
+These help manage multiple versions of programming languages:
+rbenv/rvm: For managing multiple versions of Ruby.
+pyenv: For managing multiple versions of Python.
+nvm: For managing multiple versions of Node.js.
+asdf: A universal version manager for multiple programming languages.

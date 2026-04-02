@@ -1,0 +1,79 @@
+#+TITLE: Remote Nyxt Control via SBCL
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+PROPERTY: header-args:lisp :tangle ./nyxt-remote.lisp :results silent :exports both
+
+* Introduction
+
+This Org file demonstrates how to use SBCL to remotely control the Nyxt browser using its Swank-based REPL server.
+
+Nyxt must be launched with the =--listen= flag and have =remote-execution-p= set to =t= in its configuration.
+
+* Nyxt Configuration
+
+Ensure Nyxt is configured to allow remote execution:
+
+#+begin_src lisp
+(define-configuration browser
+  ((remote-execution-p t)))
+#+end_src
+
+* Launch Nyxt with Listening Enabled
+
+#+begin_src sh
+nyxt --listen
+#+end_src
+
+This opens a REPL server on port ~4006~ by default.
+
+* SBCL Remote Command Script
+
+Here’s how to connect to Nyxt and send a command using raw SBCL.
+
+#+begin_src lisp
+(sb-bsd-sockets:with-client-socket (socket stream "localhost" 4006)
+  (format stream "(nyxt:buffer-load 'nyxt:current-buffer \"https://example.com\")~%")
+  (force-output stream))
+#+end_src
+
+This loads ~https://example.com~ in Nyxt's current buffer.
+
+* Shell Wrapper (Optional)
+
+You can call this from Emacs, a shell script, or even a Hydra:
+
+#+begin_src sh
+sbcl --noinform --load nyxt-remote.lisp
+#+end_src
+
+* Emacs Integration (Optional)
+
+Create an Emacs command to automate this:
+
+#+begin_src emacs-lisp
+(defun nyxt-load-url (url)
+  (interactive "sURL: ")
+  (let ((script (format "(sb-bsd-sockets:with-client-socket (socket stream \"localhost\" 4006)
+                           (format stream \\\"(nyxt:buffer-load 'nyxt:current-buffer \\\"%s\\\")~%%\\\"))"
+                        url)))
+    (with-temp-buffer
+      (insert script)
+      (write-region (point-min) (point-max) "/tmp/nyxt-remote.lisp"))
+    (start-process "nyxt-remote" nil "sbcl" "--noinform" "--load" "/tmp/nyxt-remote.lisp")))
+#+end_src
+
+Then just run `M-x nyxt-load-url` from Emacs!
+
+* Notes
+
+- You can extend this to send any Nyxt command.
+- Use the same socket to send chained expressions.
+- Consider using SLIME to connect to the Swank server for live development.
+
+* Future Enhancements
+
+- Emacs Org Babel blocks to send Nyxt commands
+- Use SLIME directly to inspect browser state
+- Org → Nyxt pipeline for browsing T.O.E documentation dynamically
+
+* End of File

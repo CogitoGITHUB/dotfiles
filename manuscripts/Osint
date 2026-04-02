@@ -1,0 +1,227 @@
+#+title:      Osint
+#+date:       [2024-12-26 Jo 04:15]
+#+filetags:   :osint:
+#+identifier: 20241226T041501
+
+
+* Osint
+
+** Open Source Intelligence (OSINT)
+
+Open Source Intelligence (OSINT) involves gathering publicly available data from various sources, including the internet, social media platforms, and traditional media outlets like TV, newspapers, and journals, to assess a case or situation.
+
+The acquired information can include text, images, videos, and profiles, which need to be processed, assessed, and stored according to the analyst's goals.
+
+As the CIA’s website states, “Information does not have to be secret to be valuable”.
+
+**** How Does OSINT Work?
+
+OSINT tools collect and aggregate information from a wide range of publicly available sources, providing a detailed overview of a particular user or company. These sources include:
+- Blogs
+- Forums
+- Social media sites
+- Traditional media (TV, radio, publications)
+- Research papers
+- Government records
+- Academic journals
+- and more
+
+In fraud detection and prevention, OSINT is used to gather information on customers or cases to determine identities, intentions, or events.
+
+**** Who Uses OSINT?
+
+OSINT is utilized by various professionals and organizations in fields such as:
+- Law enforcement
+- Risk and fraud management
+- Human resources
+- Cybersecurity
+- Military operations
+
+**** Why Is OSINT Important?
+
+OSINT is crucial for various purposes, including:
+- Identifying data breaches
+- Conducting customer due diligence (CDD)
+- Uncovering vulnerabilities
+- Supporting decision-making processes
+- Keeping up to date with news
+
+**** Advantages of OSINT
+- Adds an extra layer of security
+- Improves knowledge of users without impacting user journey
+- Cost-effective with many free tools available
+
+**** Disadvantages of OSINT
+- Filtering through noise can be challenging
+- Requires human input to verify information
+- Information needs to be validated to avoid analyzing false or useless data
+
+**** Are OSINT Investigations Legal?
+
+OSINT investigations involve collecting publicly available data without breaking laws or policies. However, handling and storing information must comply with regulations.
+
+**** What Are OSINT Techniques?*
+
+OSINT techniques involve acquiring information using various methods and tools. This includes using specialized search engines, leveraging search operators, and accessing use case-specific databases.
+
+**** What Does an OSINT Investigator Do?**
+
+An OSINT investigator gathers and analyzes information, extracts knowledge, and makes recommendations based on findings. The process involves collecting information, filtering, analyzing, and gaining insights.
+
+**** A Note on OpSec*
+
+Operational Security (OpSec) is essential to maintain anonymity and avoid alerting targets during investigations.
+
+**How Can OSINT Help with Fraud Detection and Prevention?**
+
+OSINT aids in manual reviews for fraud detection and staying updated on fraudster activities. It helps verify identities, assess risks, and detect anomalies in transactions.
+
+**OSINT Tools for Fraud Detection & Prevention**
+
+Several tools are available for OSINT investigations, including Maltego, Skopenow, Netwatch, and Effect Group.
+
+**** Conclusion
+
+OSINT is a valuable tool in fraud prevention, allowing analysts to gather intelligence and make informed decisions. Mastering OSINT requires a combination of mindset, skills, and contextual understanding.
+
+
+
+
+** The OSINT Cycle
+
+The OSINT cycle is a structured process consisting of five key steps:
+
+*** 1. Planning and Direction:
+   - Setting priorities and requirements for the mission.
+
+*** 2. Collection:
+   - Gathering OSINT from freely available online sources.
+
+*** 3. Processing and Exploitation:
+   - Compiling and simplifying collected data for further analysis.
+
+*** 4. Analysis and Production:
+   - Conducting in-depth analysis to interpret and anticipate events.
+
+*** 5. Dissemination and Integration:
+   - Delivering intelligence to stakeholders and receiving feedback.
+
+
+
+** Leveraging GitHub for Open-Source Intelligence (OSINT): Tools and Techniques
+
+GitHub is the world’s largest code repository, with millions of users and repositories covering a wide range of topics and industries. As such, it’s an excellent resource for conducting Open-Source Intelligence (OSINT) investigations. With the right tools and techniques, you can use GitHub to uncover sensitive information, identify potential vulnerabilities, and gain insights into organizations and individuals.
+
+*** GitHub OSINT Tools:
+
+1. GitHub Search: You can use the built-in GitHub search feature to find repositories, users, and code snippets based on keywords or phrases. You can also filter the search results by language, stars, forks, and more.
+
+2. Gitrob: Gitrob is an open-source tool that can help you find sensitive information on GitHub. It scans public repositories and identifies potential security vulnerabilities, such as passwords, API keys, and SSH keys.
+
+3. TruffleHog: TruffleHog is another tool that can help you search for secrets and sensitive information in GitHub repositories. It uses regular expressions to identify secrets, such as API keys and passwords, in the commit history.
+
+4. GitDorker: GitDorker is a tool that uses advanced Google search operators to find sensitive information on GitHub. It can search for files, usernames, passwords, and more.
+
+5. Shhgit: Shhgit is a tool that can help you detect sensitive information that has been accidentally leaked to GitHub. It monitors GitHub repositories in real-time and alerts you when it finds secrets or sensitive information.
+
+6. GistSearch: GistSearch is a tool that allows you to search for code snippets and text files in GitHub’s Gist platform. It can be useful for finding scripts, configurations, and other files that may contain sensitive information.
+
+7. GitHub Recon: GitHub Recon is a tool that automates the process of reconnoitering GitHub repositories. It can search for interesting files, extract metadata, and analyze the codebase to identify potential vulnerabilities.
+
+8. GitGraber: GitGraber is a tool that can help you find sensitive information in multiple GitHub repositories at once. It can search for passwords, API keys, and other secrets using regular expressions and other filters.
+
+9. GitLeaks: GitLeaks is a tool that can help you find sensitive information in GitHub repositories. It searches for common patterns, such as credit card numbers, passwords, and API keys, in the codebase and commit history.
+
+10. GitHub CLI: GitHub CLI is a command-line interface for GitHub that allows you to interact with repositories, issues, pull requests, and more. It can be useful for automating tasks and integrating GitHub into your workflow.
+
+*** Conclusion
+
+GitHub is a powerful tool for conducting OSINT investigations. With the right tools and techniques, you can use GitHub to uncover sensitive information, identify potential vulnerabilities, and gain insights into organizations and individuals. However, it’s important to be mindful of the legal and ethical considerations when conducting OSINT investigations and to use these tools responsibly.
+
+
+*** The Definition of OSINT
+
+While exploring the online world, you’re bound to encounter open source information: data that is publicly available to view, collect, and analyze. This type of data can be useful for online researchers or investigators, thanks to its highly accessible nature. You only need to search for a simple phrase on the web to find millions of detail-rich resources on your chosen subject.
+
+However, open source intelligence can become more difficult to acquire on certain websites and platforms. Though the open web is typically just that—wide open for internet users to access—modern websites and popular social media platforms now require users to create accounts in order to enter. In this new guarded online environment, analysts and researchers can no longer collect all OSINT passively. Instead, they must create accounts and clear barriers of entry to gain access to some information. With this variation in barriers to data, online users have to adjust their information-collection methods in web spaces that are more secured. This represents the key difference between obtaining **passive** and **active** OSINT.
+
+*** Passive vs. Active OSINT
+
+Passive and active OSINT each require a different level of effort and precision from the online user.
+
+*** Passive OSINT: Collecting with a wide and invisible net
+
+If you consider the word “passive,” which can mean “unassuming,” you could visualize a collector of passive OSINT as someone who quietly absorbs information on the web. Analysts obtain passive open source intelligence in a simplified manner; picture a fisherman who releases a net underwater, allowing hundreds of fish to swim inside. Information collected passively might include the headlining articles on a global online news source, or the popular posts of a public social media user. While in search of passive OSINT, users may also want to avoid drawing attention to their activities. These users would rather remain invisible to their research subjects to avoid retribution. They could also skew data results by revealing their intentions.
+
+*** Active OSINT: Collecting with a trained fishing pole
+
+On the opposite side of the OSINT spectrum, active open source intelligence implies a dynamic approach to locating public data. With active open source intelligence, researchers need basic credentials, such as emails and usernames, to first gain access to sites that hold valuable data. The information you might collect as an “active OSINT analyst” could be less obvious to the typical online user. Though you’re still acquiring public information, these details may have been obscured or archived. This makes the information slightly more difficult to find.
+
+You might also not worry about revealing your presence to subjects of inquiry when performing active OSINT. For example, you could choose to download a PDF file linked on a research subject’s blog. Or, you might ask to become friends with someone on their Facebook page to view their status updates. If we’re sticking with the fishing analogy, active OSINT discards a net in favor of a pole for a more targeted collection method.
+
+*** Why Understanding Different OSINT Types Matters
+
+Intelligence gathering on public online spaces varies in difficulty. Web researchers need to acquire different skillsets and technologies if they want to collect a full breadth of information. Understanding different types of open source intelligence and collection methods can help you decide where to invest your time and resources when [building your OSINT toolkit](https://ntrepidcorp.com/case-studies/osint-training-activate-your-open-source-research-capabilities/).
+
+
+** Basics of OSINT Essay
+
+*** A list of fundamental steps to follow
+
+***** Introduction*
+
+In an Open-Source Intelligence Investigation (OSINT) there will be several steps to follow and may vary depending on business needs, field, and required deliverables. The book *Open-Source Intelligence Techniques* by Michael Bazzell describes an effective framework for developing a workflow of an OSINT investigation.
+
+Although investigation scope, timeframe, and deliverables may change, having a standard framework to follow is important, similar to constructing incident response plans. The investigations have an operating procedure that then helps to gather the most information possible in a systematic manner.
+
+***** OSINT Investigation Steps**
+
+1. **Scope, Deliverables, Planning Phase and Tools**
+
+During this phase of an investigation, the scope or what is on- and off-limits should be defined. For example, if investigating an internet protocol address, the investigator may not care about social media usage attached to the address. Whether to include that information depends on the deliverable, referred to as an “OSINT Report.” Additionally, a vital part of this phase would depend on the scope, ensuring that all tools and computers used are up to date. It is also important to follow a clear chain of custody, especially if working with compute forensics.
+
+   - **Collection**
+
+In this phase of the investigation, evidence should be collected and compiled in an easy-to-use database. This stage is less about verifying accuracy of the data, more so collecting it to be analyzed later. As per the scope, collection of data could include the following: network logs, social media logs, telephone, email, photos, and videos. Automating this step and using software like Spiderfoot or Maltego (linked to a centralized database) would be a plus here, as it will make it easier to craft the deliverable.
+
+   - **Processing (analyzing the data)**
+
+After the collection phase, the data must be processed and analyzed for accuracy, relevance, and help in creating a complete picture. Data that is not relevant should be discarded, and data that is relevant should be catalogued and inspected.
+
+   - **Deliverable Phase**
+
+At this phase, the OSINT investigation should be nearly concluded. Depending on the deliverable required, this may be a time-consuming process. The deliverable may contain several technical details and require a simplified format for presentation purposes.
+
+   - **Post OSINT investigation**
+
+This phase may be optional depending on the organization. Once the investigation is concluded, the team should reflect on the process and evaluate the overall performance. What tools were used? Were they effective? What did the team spend the most time on? Can any processes be automated? All are valid avenues of discussion, so the next OSINT investigation can be more effective.
+
+**Anatomy of an OSINT Report**
+
+As per Bazzell (2021), documentation and reports are the “bread and butter” of OSINT investigations. His examples of an OSINT report are thorough, although written from a law enforcement perspective. His template lends itself to a concise and comprehensive report. It can be likened to a “resume” of a given investigation, sharing all the critical details and items collected. I need to stress that this template may be unsuitable given different investigations, but it is a good starting point. The below table provides an overview and summary of Bazzell’s recommendation:
+
+**OSINT Report Table (Bazzell, 2021)**
+
+| Filing information | Photo of the subject, organization doing investigation, date completed |
+|--------------------|--------------------------------------------------------------------------|
+| Summary of findings | An executive style summary detailing the finding of the investigation.      |
+| Subject ID          | Personal information of the subject, such as but not limited to: Name, Address, Phone, Date of Birth, Associates, employer information |
+| Alternate Identities and Associations | Email addresses, usernames, social media (Facebook, Twitter), Domain information, forums frequented |
+| Photo/Videos        | A short description of any videos/photos in the report, as well as their source. |
+| Attachments         | Other supplementary information contained in the report. This includes but is not limited to criminal records, photographs, videos, credit reports, threat assessments |
+
+**Online Investigation Policy**
+
+The deliverable for an online investigation report may vary widely between organizations. In general, an online investigation report should be a “digital resume” of the subject. Usernames, aliases, social media sites frequented should be included. Additionally, any associates the subject talks to may also be included (and could spawn its own investigation).
+
+**Ethics in Open-Source Intelligence Gathering**
+
+Before I begin, I need to state I have some strong ethical views on personal information and feel that the ethics on OSINT could be a book. Individuals deserve to know how their personal information is shared and used by companies, especially if law enforcement is using it in an investigation. Once data is “on the web” publicly, it can virtually always be found again. Most of the time the data is something innocent, like pet picture; other times, it could be more damaging or personal, like an expunged arrest record or deferred conviction otherwise not allowed for public viewing. Ethics are subjective, so this is more of a philosophical debate. In an ideal world, OSINT investigations would use discretion and judgement calls on how data was obtained, and organizational polices would also be in place to ensure sourced material is not maliciously used or obtained through illegal means. In practice, this is not always the case.
+
+Most readings on OSINT investigations do not delve into ethics, instead focusing on finding any information relevant to the subject. In some cases, this even includes leaked information (such as a compromised website that had a database of personal information, which is then sold to an illegitimate organization, then cataloged and sold to legitimate agencies). In the above example, I find it highly unethical to do this, but it is often done, by groups such as law enforcement, debt collectors, and background check agencies. This is referred to as parallel construction or evidence laundering.
+
+As per Reuters, the Drug Enforcement Agency (DEA) has been using parallel construction/evidence laundering in their investigations on subjects, using illegally obtained evidence via the National Security Agencies (NSA) wiretap program. This “illegal” evidence was used to then gain legal evidence, was never disclosed to defendants, which under the law would have most likely meant entire cases thrown out. Depending on the nature of the crimes, some law enforcement agencies and civilians would not see a problem in this practice, since a criminal
+
+
+** foot notes
+

@@ -1,0 +1,767 @@
+
+
+
+A curated list of awesome READMEs ::::: https://github.com/matiassingers/awesome-readme ✓✓✓✓✓✓✓✓✓✓
+
+
+
+ACTIVISM LIST OF TOOLS : https://github.com/drewrwilson/toolsforactivism ✓✓✓
+
+
+LaTeX  AWESOME-LIST ::::: https://github.com/egeerardyn/awesome-LaTeX ✓✓✓✓✓✓
+
+
+A curated list of tools for incident response ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+https://github.com/meirwah/awesome-incident-response ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+A curated list of cybersecurity tools and resources.✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+https://github.com/bst04/cybersources?tab=readme-ov-file#--learning ✓✓✓✓✓✓✓
+
+
+Because Education should be free. Contributions welcome!
+https://github.com/brootware/awesome-cyber-security-university ✓✓✓✓✓✓✓✓
+
+
+A curated list of awesome malware analysis tools and resources ✓✓✓✓✓✓
+https://github.com/rshipp/awesome-malware-analysis ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+An awesome list of honeypot resources ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓!!!!!!!!!!!!
+https://github.com/paralax/awesome-honeypots !!!!!!✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+
+A curated list of awesome Hacking tutorials, tools and resources ✓✓✓✓✓✓
+https://github.com/carpedm20/awesome-hacking ✓✓✓✓✓✓✓✓ 
+
+
+A collection of various awesome lists for hackers, pentesters and security researchers
+https://github.com/Hack-with-Github/Awesome-Hacking ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+
+
+Tools and Techniques for Red Team / Penetration Testing ✓✓✓✓✓✓✓✓✓✓
+https://github.com/A-poc/RedTeam-Tools?tab=readme-ov-file#hiding-the-local-admin-account ✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+
+Tools and Techniques for Blue Team / Incident Response ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+https://github.com/A-poc/BlueTeam-Tools ✓✓✓✓
+
+
+This repository contains cutting-edge open-source security tools (OST) for a red teamer and threat hunter ✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+https://github.com/infosecn1nja/Red-Teaming-Toolkit ✓✓✓✓✓✓✓✓✓✓✓
+
+
+A curated list of awesome command-line frameworks, toolkits, guides and gizmos. ✓✓✓✓✓✓✓
+https://github.com/alebcay/awesome-shell
+
+
+
+Misconfig Mapper is a fast tool to help you uncover security misconfigurations on popular third-party services used by your company and/or bug bounty targets!
+✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+https://github.com/intigriti/misconfig-mapper ✓✓✓✓✓✓✓✓
+
+
+
+
+Pretty fancy and modern terminal file manager ✓✓✓✓✓✓✓✓✓✓
+https://github.com/yorukot/superfile ✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+
+✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓✓
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The modern API client that lives in your terminal.!!!!!!!!!
+https://github.com/darrenburns/posting
+
+
+
+A curated list of cybersecurity tools and resources!!!!!!!!!!!
+https://github.com/bst04/cybersources !!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!¡!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+Terminal and Web console for Kubernetes !!!!!!!!!!!!!!
+https://github.com/astefanutti/kubebox!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!¡!!!¡!!¡!!!!!!!!!!
+
+
+An interactive CLI tool that adds a .gitignore to your projects.
+https://github.com/TejasQ/add-gitignore
+!!!!!!!!!!
+
+Share your terminal as a web application !!!!!!!!!!!
+https://github.com/yudai/gotty !!!!
+
+
+
+
+
+
+
+
+Terminal session recorder !!!!!!
+https://github.com/asciinema/asciinema !!!!
+
+!!!!!! chezmoi : dotfiles across mustiple machines !!!! perfect for guix !!
+https://www.chezmoi.io/ !!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!¡
+
+Gum for shell scripts tui ????
+https://github.com/charmbracelet/gum ????
+
+Thefuck ??????
+https://github.com/nvbn/thefuck
+
+Beautiful images of your code — from right inside your terminal!!!!!!!
+https://github.com/mixn/carbon-now-cli !!!!!
+
+
+
+
+
+Make custom fastfetch :
+https://github.com/fastfetch-cli/fastfetch/wiki/Configuration !!!
+
+Make custom startpage :
+https://github.com/jnmcfly/awesome-startpage!!!
+
+Check caddy ( server )!!
+https://github.com/caddyserver
+
+Kvm to check out!!
+https://wiki.blicube.com/blikvm/en/
+
+
+
+
+
+
+https://youtube.com/shorts/wy5cHl9J2oU?si=PQOiha9Ql87cZs5S
+
+
+https://youtube.com/shorts/CqvVSYxelio?si=uBxi9n2pVuSbD5FT
+
+
+
+https://youtube.com/shorts/kFgQBPtPfgc?si=bBQ1yohP5hAxZdsg
+
+
+ask on social ( from sock puppet) : 
+
+1.man/women who live alone, what do you do to make you feel safe ?
+
+1- WHO ANSWERED JUST TOLD YOU THEIR GENDER AND THAT THEY LIVE ALONE ... 
+
+
+
+pay cash for the phone/laptop .. / give fake info who you are and where you go / pay ppl there to call you on a burner ( made for this purpose) if someone is asking about you !! ( test them .. send a fake cop.. give them money after they call you .. keep them happy ) 
+
+
+
+
+
+https://truepic.com/glossary-the-abcs-of-content-authenticity/
+
+https://www.cia.gov/the-world-factbook/countries/romania/summaries/
+
+permanentli remove finger nails
+
+toothpick trowing
+
+osint and youtube everything
+
+Search the different types of intelligence…!!!
+
+Focus on the process not the outcome .. keep the out come in mind but always focus on the proces and be sure you do what's right to
+
+Anchoring bias .. never get stuck with the first info you get .. make sure it's good info 
+
+ Availability heuristic bias .. make sure you know all the information before getting stuck .. facts and statistics.. NOT TV ( THEY GET MONEY FROM YOUR MISINFORMATION ) 
+
+Bandwagon effect ( never just go with the group .. always think for yourself ) 
+
+Choise supportive bias ( your choices need real info cold hard info )
+
+Confirmation bias ( never try to amplifiy the wrong answer.. make sure of the reality of the subject ) 
+
+Ostrich bias .. never ignore the negative .. inform yourself about it and only after knowing the full picture, start making sense of it all ( problems don't go away by themselves.. grow up and do what you have to do .. don't be an ingnorant cunt )
+
+Outcome bias ( never think something it's positive becose it had a good outcome .. never base yourself on false positives)
+
+Overconfidence will be the downfall when learning or growing.. don't base on luck .. base on clear info 
+
+Placebo bias will always have a word .. shut it down 
+
+Survival ship bias .. find more info .. on all
+
+Selective perception .. 
+
+Blind spot bias 
+
+Explain everithing as simpli as posible VERBALLY
+
+Try to have a mix of visual/text/voice and felling when explaining everything / put yourself in the audiences shoes 
+
+Always share the fundamentals and grow from there ( be transparent and clear about the wins/pros/cons and fails ... ) 
+
+Back up your ideas with real case study’s and official research
+
+Try to communicate your ideas easy simple and precisely on point 
+
+It's not what you say it's how you say it 
+
+Always say exactly the plan to the end goal .. make the goal as clear as possible 
+
+Make things easy to be refered to .. find and/or search 
+
+Search why we have a memory and why isn't working with the current time of the world
+
+Always take a step back and analize the situation/subject from a drone view 
+
+Dont fall for the paradox of choice... Learnt he options and then examine them .. after make a clear choise ( pros and cons ) 
+
+Don't confuse feelings with facts ( examine the info and make sure they don't get influence by anything) 
+
+Try not to fall for confirmation bias 
+
+There is something called decision fatigue ( morning is the best time for it ?) 
+
+## THE CORNELL METHOD IS THE BEST TO USE EVERYTHING IM TALKING ABOUT
+
+METALEARNING MAP>DESIGN PRACTICE DRILLS>OVERLEARN
+
+# MEMORIZING .. ACQUIRING>CONSOLIDATING>RECALL
+
+### USE DIFFRENT FONT TO HIGHLITE ANYTHIGN YOU NEED
+
+## 30% READ > 70 RECITE % THEN RECALL ( DONT FORCE IT .. KEEP THINGS EASY AND STURDY .. MAKE IT NATURAL )
+
+### HARD STUFF FIRST
+
+READ ONES MAKE NOTES .. REREAD A WEEK LATER .. MAKE NOTES AGAIN … SEE THE DIFFRENCE 
+
+THE WISE ALWAY DOUBT THEMSELFS 
+
+READING IS TO THE MIND WHAT EXERCISE IS TO THE BODY / DEVOTE ONE TO 2 HOURS A DAY 
+
+IM THE JACK OF ALL TRADES A MASTER OF NONE BUT STILL ALWAY BATER THEN ONE 
+
+MIND MAPING IS THE WAY TO GO
+
+DEFINE YOUR TOP PRIORITY .. ALWAYS TRY TO MAKE A STRAIGHT PATH .. AND ALWAYS DEIFINE THE REASONS BEHIND IT !!!!
+
+USE COLORS,  KEYWORDS, AND LOGOS/IMAGES/NUMBERS
+
+time is to be made not wined
+
+LEARN TO UNDERTSTANDS THE DIFFRENCE BETWEN RELAITY AND EXPECTATION
+
+LEARN TO READ AND CREATE A SCIFIC TIME INSIDE YOUR EVERYDAY 
+
+WRITING IS THE WAY TO AMPLIFIE YOUR WORDS .. TO SHOW YOUR MIND .. TO LET OTHERS LEARN FROME YOU 
+
+LEARN TO PLAY GAMES .. ESPECIALLY TACTICL AND LOGICAL GAMES 
+
+LEARN TO HAVE PACIENCE 
+
+DO NOT TRY TO FIND SHORTCUTS … TRY TO UNDERSTAND WHAT YOURE DOING NOT JUST SPEED TRUE IT 
+
+FIRST TRY TO SEE BIRDS EYE VIEW .. THEN START WITH THE FUNDAMENTALS
+
+FOCUS ON THE TASK ON HAND .. NEVER MULTITASK .. FOCUS .. IF YOU NEED TO THINK ABOUT SOMETHING, DEDICATE SPECIFIC TIME FOR PLANING 
+
+REPEAT WHAT YOUR DOING TILL IT FEELS NATURAL AND FIND WAYS TO IMPROVE 
+
+SEEK TO STAY IN A MODERATE PRESURE TO ATIVLY INGAE .. BE ENTERTAINED BUT NOT TILL YOU GET TIRED SOON .. NEITHER BE BORED AND LOSE INTRESEST
+
+A  TRULY GREAT THINK ALWAYS WANTS TO SOLVE THE PROBLEM .. THEY DONT WANNA BE RIGHT .. THEY WANNA MAKE THINGS RIGHT / WHOLE MOST PPL STAY INCLOSED IN BORING SITUATIONS OR REPEAT THE SAME MISTAKES .. A TRUE THINKER TRIES TO FIND A WAY TO EVOLVE .. TO GROW ..  PROSPER .. 
+
+ALWAY FIND A WAY TO SMATER NOT HARDER .. FIND PPL OR DESIGN MACHINES .. IMPLEMENT ML AND AI IF NEEDED
+
+TO HAVE A GOAL YOU MUST DESIGN  A PLAN .. SMALL AND PRACTICAL STEPS … BREAK THE PUZZLE INTO MULTIPLE PIECES AND WORK YOUR WAY UP FROME THE BEGINING
+
+MAKE SURE YOU HAVE REALISCTIC ACIEVABLE STEP .. NO OPINIONS .. ONLY MATH 
+
+HAVE  A  CALENDER .. HAVE A BULLET JOURNAL .. MAKE A ROAD
+
+REMEMBER IT TAKES TIME TO RECLAIM YOUR FOCUS SO ELIMINATE DISTTRACTION AND ONLY THINK HOW TO GET THINK DONE’
+
+DO NOT HAVE MORE THEN YOU NEED .. ONLY THINGS THAT WILL AMPLIFIE YOUR WORK .. IF YOU ONLY NEED YOU LAPTOP .. CLOSE THE LIGHTS
+
+REMEMBER TO TAKE BREAKS AND BE ON FULL ENERGY IF POSIBLE .. 
+
+BREAKS NEED HIDRATION .. MAIBY A SMOKE .. ALWAY SOME STRECHING  ALONGSIDE SOME MUSCLES MOVEMENT 
+
+BREAKS ARE PRETY MUCH LIKE A RESTART .. YOU START FRESH AND BE ABLE TO WORK MORE LIKE THIS 
+
+SOMETIMES AND A 5 MINUTE BREAK MAKE A BIG DIFFRENCE
+
+TAKE THE BREAK HOWEVER YOU NEED .. BUT REMEBER TO TAKE IT .. IMPROVES FOCUS AND ALOWS YOU WORK EVEN BETTER 
+
+AND IF YOU STUDY … YOU ALOW YOU BRAIN TO ABSORB BETTER THE SUBJECTS YOU LEARN
+
+EVEN COMPUTER CANT MULTITASK .. THEY FOUCS FOR MILISECONDS ON RANDOM STASK AND IT SEEMS LIKE THEY DO MULTITASK . BUT THEY DONT .. AND WE AS HUMAS CANT BE EVEN CLOSE TO THAT .. SO LET MULTITASKING ASIDE AND LEARN TO FOCUS ON A SPECIFIC THING THEN DO 2 OR 3 AND HAVE MUCH WORSE REZULTS OR BE WONDER MORE TIRED AT THE ENDING 
+
+MULTITASKING WILL MAKE YOU MISS THE MOST OBVIOUS THINGS 
+
+REMEMBER TO REALIZE THE REALITY OF THE SUBJECT BEFORE YOU START DREAMING ABOUT IT ( POSIBILITIES / LIMITATIONS )
+
+IF YOU CANT EXPLAIN THE SUBJECT TO A CHILD YOU DONT UNDERSTAND THE SUBJECT ONLY THEN START FOCUSING ON THE DITAILS
+
+THE MORE YOU HAVE TO LERAN TO MASTER EVERITHING THE MORE CONTROL YOU HAVE ONECE YOU MASTER IT AND THEN YON CAN ACOMPLISH EVEN MORE THEN YOU CAN IMAGINE AT THE BEGINING
+
+WHEN YOU UNDERSTAND THE BASICS EVERITHING ELSE ITS JUST A PLUS INSIDE YOUR BAG .. LIKE AN ACTUAL BAG .. LETS SAY MED KIT .. ONE THING WILL NOT REALY DO MUCH BUT ONCE YOU HAVE A BAG AND YOU ADD SOMETHING WILL BE JUST ANOTHER PLUS THE MASTER HAS IN HIS BAG .. AND YOU WILL UNDERSTAND IT EXTREMELY EASY AT THAT POINT .. THE BEGINING ALWAY SUCKS 
+
+WHEN YOU START LERNING SOMETHING MAKE SURE ITS USEFULL AND IT WILL BE IN THE LONG RUN .. ( NOT TALKING ABOUT HOBIES WITCH THEMSELFS CAN BE )
+
+ALWAYS GO FOR THE SKILL SETS INSTEAD OF THE JOBS THEMSELFS .. THINK WHAT CAN OYU LEARN TO APLY INSIDE THOSE SUBJECTS 
+
+EMOTIONAL INTELIGANGE ITS THE MOST POWERFULL THING YOU CAN EVOLVE ABOUT YOURSELF 
+
+TIME MANAGEMENT SKILLS AT AT THE CORE OF  YOUR PLANING 
+
+LEARN TO DO MENTAL MATH .. IT WILL MAKE THINGS SO MUCH ESYER
+
+WORK YOUR MEMORIAZATION SKILLS TO BE ABLE TO PICK THING UP .. TO LEARN AND TO REQOUNTER WHAT YOU LEARNED
+
+KOMUNICATION SKILLS ARE AT HTE BASISCS OF ANY SOCIAL ACTIVITIY
+
+WHEN TAKING A BREAK .. MEDITATE AND AMPLIFIE YOUR FOCUS BEFORE USING IT 
+
+USE KEY WORD TO START LEARNING EVERITHING 
+
+ SOME PPL JUST REQUIRE A LIL MORE TIME .. TAKE YOUR TIME .. SPEEN IT DEFINED BY YOU .. JUST STICK WITH ACTIVLY GROWING
+
+REMEMBER PPL HAVE DIFFRENT VIEWS OF THE WORLD AROUND US 
+
+PRINCIPLES NEVER CHANGE ONLY TACTICS DO 
+
+SEPARATE YOURSELF FROME YOUR PAST OR YOUR DOWNS .. BECOME WHAT YOU WANT .. NO EXCUZE OR ANYTHING ELSE THE A PATH AND A START
+
+WE NEED TO DISTINGUISH DISTURBING TOUTH FROME THOSE THAT WE SHOULD HAVE 
+
+STOP FOCUSING ON THE FINISH LINE .. DECIDE THE FINISH LINE ONES YOU KNOW THE BIG PICTURE AND THEN ONLY FOCUS ON THE PLAN TO GET THERE … GET IT DONE NO MATTER WHAT
+
+ALWAYS SPACE YOUR LEARNING AND THEN TEST YOUR PREVIOUS LEASONS
+
+IF YOU DO NOT SPACE YOUR REPETITIONS AND RECALLS OVER TIME YOU WILL LOSE YOUR INFO 
+
+ACTIVE RECALL IS THE SECOND BEST THING TO DO IF YOU WANNA BE ABLE TO REMEMBER WHAT YOU HAVE LEARNED 
+
+REREADING IS PRETY MUCH A WASTE OF TIME .. RECALLING IS THE WAY TO GO 
+
+THE MORE YOU CATEGORIZE THE EASIER IS FOR OUR BRAINS TO UNDERSTAND AND STICK WITH THE ONFO
+
+PERFECTIONISM IS A WASTE OF TIME .. MAKE THINGS AS BEST AS YOU CAN AND THEN JUST EVOLVE AND PERSONALIZE … MAKE SURE YOU DONT GO TO FAR FOR NOTHING 
+
+TAKE TIME AND REFLECT ON WHAT YOU LEARN .. DONT JUST PUT STUFF ASIDE AFTER “ YOUR DONE “
+
+YOUR BRAIN NEEDS SLEEP AND TIME TO ABSORB ANY TIPE OF INFO 
+
+STARTING SOMETIMES IS THE BIGGEST PROBLEM
+
+USE COLOR TO HIGHLIGHT ANYTHING DEPENDING ON THE IMPORTANCE
+
+TRY TO RECORD YOUR LESONS IF YOU DONT ACTUALY HAVE AN AUDIO VARIANT .. READ AT THE SAME TIME .. AND THEN TRY TO EXPLAIN IT TO YOURSELF .. MAKE PREZENTATIONS FOR YOURSELF OR TO HIGHLIGHT YOUR WORK
+
+ALWAYS SEARCH FOR MORE OUTSIDE THE ORIGINAL SOURCE IF THEY DONT HAVE ALOT .. OUTSOURCE THEM .. OUTGROW THEM .. OUTWORK THEM .. FIND THE LITTLE DETAILS THAT MOST PPL ARENT AWARE
+
+FIND PPL WITH THE SAME INTREST AND START TEACHING AND DEBATING EACHOTHER 
+
+CREATE FLASHCARDS FOR ANYTHING 
+
+ALWAYS CREATE CONECTIONS SO THE BRANS HAVE SOMETHING TO WORK WITH AND NOT JUST STORE STUFF RANDOM
+
+TRY TO LEARN EARLY ON THE MORNING .. SLEEP EARLY AND WAKE UP EARLY .. THEN YOUR BRAIN HAZ ENERGY TO WORK 
+
+HAVE RANDOM RECALING FLASHCARDS TRUE THE DAY 
+
+MULTITASKING WILL ONLY MAKE YOU LOSE FOCUS AND REFOCUSING TAKES TIME 
+
+FOCUSING WILL HELP YOU REACH THE STATE OF FLOW
+
+EVEN IF YOU FEAR THE POSIBLE FAILURE .. IF YOU FAIL .. JUST LEARN MORE .. PRACTICE MORE .. SEE HOW TO PLAY IT SMARTER AND THEN TRY AGAIN .. A MASTER FAILS MORE TIMES THEN A BAGINER TRIES ..
+
+ALWAYS USE THE FUNDIMENTALS AND REASON UP FROME THERE ( DOES IT HAVE TO BE THAT WAY ? MAYBE THERE IS ANOTHER SMATER WAY / ALWAYS TRY TO FIND SMATER WAYS TO PLAY YOUR GAMES )
+
+FOCUS ON THE DELIVERY( .. THATS ALWAYS THE END POINT .. MAYBE PERSONAL MAYBE BUSSINES .. THATS ANOTHER FACTOR .. )
+
+LEARNING GROUPS WILL GET YOU ANSWERS FAST AND SOMETHIMES SHOW YOU DETAILS YOU MIGHT NIT FIND ON THE INTERNET .. AND PPL THAT CAN LEASEN TO YOU .. EVEN TELL YOU THE HIGHS AND LOWS .. 
+
+recalling flashcards are the best studying metod (used in chain can and up making entire subjects )
+
+understand the basics before working anything into more depth …
+
+SPLIT EVERITHING INTO WELL THOUTH PARTS ( BEGINING/MIDDLE/ENDING/MASTERY )
+
+CREATE A CHECK LIST AND NEVER BREAK IT UNTIL ITS DONE ( MAKE ONE FOR EVERY DAY .. GET USED TO THE IDEA OF HAVING A CHECK LIST AND FOLOWING IT NO MATTER WHAT )
+
+CONFIRMATION BIOS ( SEARCH MORE FOR THIS)
+
+IF YOU WANNA LEARN ANYTHING LEARN TO EXPLAIN IT .. FROME A SIMPLE POV INTO A MASTER POV 
+
+PRE READ ( SEE THE BIRDS EYE VIEW / SEE THE TABLE OF CONTEXT )
+
+DONT OVER HIGHLIGHT .. ONLY ACTUALLY IMPORTANT STUFF 
+
+TAKE NOTES AFTER YOU READ .. READ UNDERSTAND .. REREAD AND ONLY THEN HIGHLIGHT 
+
+TRY TO FIND MULTIPLE POVS ON WHAT YOUR LEARNING 
+
+MIXT THE READING TO SOME KIND OF PRACTICE … THATS REALLY SUBJECTIVE 
+
+TAKE THE BREAK YOU NEED TO HAVE TIME TO INTAKE IT … BREAKS ACTUALLY MATHER
+
+FIND  PASSION ANOUT THE SUBJECT YOUR LEARNING
+
+REREADING ITS A POWERFULL POINT BUT YOU HAVE TO REMEMBER TO USE FLAGS AND REMEMBER ITS A DIFFRENT POV NOW 
+
+SPEED READING .. 
+
+TRAIN YOUR EYES .. INCRESE SPEED .. NO PICS .. NO LONG PUASES INSIDE THE TEXT
+
+TRAIN YOUR BRAIN .. GET USE TO TAKING NOTES AT THE SAME TIME 
+
+TRAIN YOUR FOCUS .. THE MORE YOU PRACTISE .. THE MORE YOU CAN GO 
+
+UE BULLET POINTS TO GET THE ROOTS ]
+
+USE LEARNING STYLES TO KEEP THINGS FRESH
+
+TRY TO FIND SOME WAYS TO PRACTICE STUFF .. DEPENDS ON THE SUBJECT 
+
+FIND PPL WITH THAT SPECIFIC SUBJECT AND START TEACHING EATCHOTHER AND GAMEFY THE PROCES
+
+LEARN TO USE THE SUBJECT IN MULTIPLE FIELDS AND FIND THE DETAILS FROME THERE TO USE INSIDE
+
+TRY TO FIND KEY POINTS TO GET DONE AND GET DOPAMINE FROME THOSE 
+
+DEEP DIVE INTO PARTICUAL THINGS TO HELP YOU USE IT MORE NATURAL AFTER INSIDE THE ORIGINAL TOPINC’
+
+CREATE FALSE DEADLINES TO KEPP YOU ON FIRE 
+
+DESING THE ENVIROMENT AROUND YOU TO HELP YOU GO FOR MORE
+
+FLOW STATE ( MORE INFO )
+
+THE MORE YOU TRAIN AND PRACTICE THE MORE NATURAL THINGS START TO FEEL
+
+LEARN TO BETTER FORMULATE QUESTIONS 
+
+LEARN TO TEST YOUR INFORMATION
+
+LEARN HOW TO APPLY YOUR INFORMATION
+
+LEARN TO CONSIDER THE COMPLICATIONS
+
+FLASHCARDS…
+
+MIND MAP .. THE GRID > GROUPING>INTERCONECT>DIRCECTIONALIY>FLOW>DETAILS
+
+ALWAYS HAVE A PLAN .. EVEN IF EVERYTHING GOES TO HELL .. WE FOLLOW THE PLAN 
+
+UNDERSTAND THAT EVERYTHING REQIRES TIME .. BUT WHEN YOU LEARN .. RECAL AND TAKE TIME 
+
+DONT FOCUS ON METODOLOGY FIRST .. ALWAY PRINCIPLES FIRST 
+
+TRY TO VISUALIZE EVERITHING 
+
+PUT EVERYTHING INSIDE CONTEXT 
+
+TRY TO FIND A GOOD VIDEO TUTORIAL .. INSIDE THEM YOU MIGHT FIND SMALL BUT IMPORTANT STEPS AND IT WILL SHOW OR DO STUFF WHILE YOU CAN SIT AND UNDERSTAND OR JUST REFRESH YOUR INFO
+
+WITHOUT REPETION NOTING WILL STAY WITH US .. IF YOU REMEMBER EVERITHING WELL GO CRAZY WITH SMALL THINGS .. BUT LIKE THIS WE MAKE SURE WE ACTUALLY WANT TO LEARN WHAT WE TRY TO 
+
+USE THE REASON TO FOCUS IN ORDER TO PUT DISTRACTIONS ASIDE
+
+FOCUS TO USE THE INFORMATION YOU LEARN TO DEEP ROOT INSIDE YOUR BRAIN 
+
+NEVER USE MOTIVATION BY NOTHING ELSE BUT THE REASON YOU STARTED AND YOU HAVE SOMETHING TO FINNISH 
+
+RREMEMBER THE SPACINGING PRACTICE OF RECALLING ( SPACE REPETITION )
+
+SMALL BREAKS AND NICE MEDITAIONS 
+
+TRY TO GO OUTSIDE IF POSSILE OR TO DIFFRENT PLACES AND TRY TO FOCUS BU ON A REFRESHING WAY
+
+REFLECT AND ASK MORE QUESTIONS ABOUT THE SUBJECT AFTER YOU DID FINISH IT 
+
+ALWAY WORK ON TIME MANAGMENT AND MAKE IT FLEXIBLE 
+
+DECONSTRUCT THE SKILLS TO SEE WHAT YOU ACTUALLY HAVE TO GET DONE
+
+effective prctice is a deliberate way and focused on impruving whats to be improved 
+
+BREAK EVERYTHING INTO SMALL PIECES LIKE THE FLASH CARD METOD 
+
+DO 10 THEN INCREASE WITH TIME .. TAKE BREAKS BETWEEN 
+
+TYPING YOUR NOTES WILL GIVE YOU MORE SPEAD BUT MAKE SURE YOU RETHINK WHAT YOU TYPE .. DONT BE LIKE A ROBOT 
+
+TRY TO USE BULLET POINT AND ALWAYS HAVE SOME DETAILS FOR THEM .. ALWAYS MAKE CONECTIONS BETWEEN THEM 
+
+WHEN READING ALWAYS USE SOME KING OF HIGHLITHER AND THEN COME BACK OVER ALL TO NOTE THE BEST POINTS YOUVE SEEN EARLIER .. THEN AGAIN AND AFTER WATCH THE DIFFRENCE BETWEN THOSE .. MAYBE ASK WHY IS THERE A DIFFRENCE 
+
+SPEED READING REQUIRES TIME AND PRACTICE 
+
+SPEED READING IS LIKE TOUCH TYPING … **PRACTICE**
+
+USE SIMBOLS TO HAVE FLAGS TO FIND LATER 
+
+ALWAYS HAVE A TASK MANAGER ( CHECK LIST  / BULLET LIST METOD AND DROP DWN FOR DETAILS ) 
+
+HAVE A CALENDAR !!!! USE IT TO KEEP THINGS ON TIME .. UNLESS SOMETHING IMPORTANT COMES ALONG ( HAVE BACKPUPS )
+
+TRY TO MAKE A PLAN AHEAD .. NIGHT BEFORE
+
+COLOR CODE EVENTS ( ASIGN SPECIAL COLOR FOR THE CATEGORIES YOU NEED )
+
+BUILD A HABIT INTO MAKING THINGS CLEAR AND CRNOLOGICAL THEN MAKE SURE YOU STICK WITH THE PLAN
+
+MAKE A WEKLIY PLAN ON GIGGER TASKS .. AND AT NIGHT ADD DETAILS INTO IT THE DAY BEFORE DEPENDING ON YOUR NEEDS 
+
+ALWAY LOOK FOR DEAD TIME AND TRY TO USE IT .. THE MORE YOU GET DONE THE BETTER IT WILL BE FOR YOU PRETTY SOON 
+
+ATENTION FATIGUE ( MORE INFO )
+
+TRY TO MAKE ANY ENVIROMENT AS FOCUSED AS POSIBLE ON THE TASK AT HAND .. NO OUTSIDE INFO OR DISTRACTIONS 
+
+ATTENTION IS LIKE A MUSCLE .. THE MORE YOU TRIAN IT THE MORE YOU GAIN IT 
+
+BY FAIL TO PREPARE YOU ARE PREPAIRING TO FAIL
+
+MEORY IS CONTEXT BASED .. PRACTICE FOR ANYTHING INSIDE A SIMILAR ENVIROMENT TO WHAT YOUR PREPERING YOURSELF FOR 
+
+ALWAYS USE TIMES TO SIMULATE REAL SITUATIONS BASE TO REALITY NOT EXPECTATIONS 
+
+QIUZ EVERITHING POSIBLE .. LEARN WHERE YOU HAVE HOLES AND PATCH THEM
+
+TRY TO FIND EXPLINATIONS FOR EVERITHING .. GET A RUBBER DUCKY ( OR AROUND THOSE LINES ) AND STARRT EXPLAINING IT STUFF 
+
+BREAKS .. TAKE BREACKS !!!! TAKE A F BREK BITCH !!!!
+
+IF YOU FEAR A TEST .. WRITE WHY ARE YOU AFRAID OF .. AND THEN COLD THINK IT WITH UPS AND DOWNS…  
+
+WHEN STARTING A NEW SUBJECT ALWAYS START WITH A BIRDS EYE VIEW THEN START WORKING THE DETAILS ONE BY ONE 
+
+GET THE BIG PICTURE .. MAKE SURE YOU FIND  A MIND MAP TIPE OF VIEW > START WORKING ON EACH INDIVIDUAL POINT AND THEN POLISH EVERYTHING .. SPELLING SHOLD BE LIVE NOT SOMEHING YOU REVIEW AFTER .. ( IF YOUR NOT LEARNING THE LAANGUAGE AT THE SAME TIME ) 
+
+FIST DRUFT IS USSUALY BAD .. SO DONT THINK TO MUCH ABOUT ABOUT .. JUST START AND POLISH THINGS AS YOU WORK THEM 
+
+TRY TO THINK ABOUT THE NARATIVE FLOW WHEN WORKING WITH ANYTHING BRAINS LIKE PATERNS 
+
+WHAT CAN BE REMOVED OR SIMPLIFIED ?
+
+MAKE SURE EVERITHING SOUNDS JUDT RIGHT AND SEE HOW CAN YOU ELEVATE IT 
+
+The process of memory-formation down to 3 stages : first it's encoded into your brain., Then stored for future use and then eventually retrieved. 
+
+Technically memory is learning that has persisted over time .. recall / recognition / relearning 
+
+Building habits need precise calculation ,, everything and every change make a big difference at the end 
+
+You need pacience ..
+
+Don't focus in the goal .. focus on the plan to get there 
+
+Goals are the direction .. the plan in the road 
+
+The titles you assume .. are the things you act on 
+
+The more you repeat something the more automatic and natural will become 
+
+Write everything you do and then analize your habits ( see what's positive and what's negative .. then turn everything into a positive .. change what's needed ) the more clear you think the more clear you become ..
+
+Keep a calendar and a check list .. so you force yourself to do it .. keep everything on time and never be vague about it .. find pros and cons .. always get details 
+
+Make your will power more powerful then the exterior
+
+Don't out things out if sith even if there bad .. make them unattractive 
+
+For the good things make them even more attractive 
+
+The craving is what makes us act even more then the act itself 
+
+Always out the need before the want .. learn to differentiate
+
+Try to learn to act on your own .. then involve yourself into the specific groups 
+
+Associate hard habits with the positive outcome and like this you'll learn to love them .. just becose they get you there 
+
+Make things easy at first .. small steps .. practical and safe growth 
+
+The less energy it takes at first the easier will be to act 
+
+Procrastination is for a childish mind ... Acting is for a conscious mind .. evolve your conciseness
+
+The more pleasure you get the more you want to do it .. find small wins or make them ( those little wins will go a long way on the long run .. even if not evolved .. they themselves will become natural and easy to realize)
+
+Life will always get in the way of anything.. do anything needed to not break the chain .. one or 2 days will break the habit.. stay on track ) 
+
+Bad habits will become undesirable if they have clear downs and bad points ... Know the why for the how and when 
+
+Don't let toxic and intrusive thoughts rule you .. learn to understand them and control your reaction to them 
+
+Most ppl act on fear and desire .. learn to control them .. the more control you have ( on you .. outside factors and reactions to everything ) the more you can accomplish ...... Perception is everything.. make sure you think cold 
+
+Find macro reward for your hard work to keep dopamine going 
+
+Learn to do your own homework... Do the hard part first the enjoy the reward even more ... Learn to think for yourself .. that's how you descover and grow yourself .. 
+
+Always search for information and not advice .. find answers yourself and paths for yourself 
+
+We try stuff put to see what's for us and what not … don't bother thinking yiu out of something just because you don't feel like it right now … take a pause see if you miss it / feel like you want to go back to learning it 
+
+Always be ready and actively search for the raw and clear information .. not bias/opinions/or anything that's modified
+
+The more you let others do the work them less you can be able to understand the task at hand and even yourself 
+
+The more pain you can stand the more you can focus 
+
+Multitasking is dangerous.. cognitive workload ... 
+
+The best think you can do .. is to teach someone to write .. the more you can think/speak/write .. the better you become .. learn to explain .. learn to unlease your thoughts into word's 
+
+Formulate your arguments and your thinking process
+
+Consciousness it's a wierd abstract 
+
+Normal memory's are different from the traumatic memory's 
+
+We can't multi task … ur focus just switches back and forth .. Wich is completely counter productive … focusing takes around 15 min to get to the flow state …
+
+Always have a clear cut subject/goal to study
+
+Consistency will keep you growing 
+
+Always focus on the quality of your work 
+
+Always learn new skills 
+
+Meta awareness ( find more info )
+
+AMBIGRAM WRITing ( FIND USES : PLAYNG CARDS / TATTOOS / GAMES )
+
+As we mention before on this chanel ( whitch you should defenetly subscribe to )
+
+Tell ppl whats going on and make sure they act acordingly .. try to exchange/extract info ... 
+
+operating systems by william stallings /book
+
+cold water helps with ingrown hair
+
+stay away from controversi and do not adress it
+
+tell the audience to take advantage of a video course and its pluses [ speed repeat ]
+
+dont simulate situations .. live them and have actual experience then evaluate and improve
+
+find ways to hide your tools frome posible creeps watching .. keep hat down but still watch around
+
+have safety in mind and be ready even if you dont see the need
+
+alway verify the info your given .. never trust others words but yours
+
+Meta framework
+
+when ppl think yiur done go nuts till they pass out laughing ( improviz stand up no limits )
+
+put your name on the screen all time for memes and viral vids to get new subs
+
+automated creation tools
+
+write letters like journals for ppl close to you .. if you due they can read those .. carefull wording ... carefull
+
+os sistem use color hacking colours for the task at hend .. sistem wide combimed with containers and profiles
+
+have extremly focused channels nothing random
+
+Dangerous definition 
+
+Use notifications like android inside your vids for various reasons 
+
+Make ppl think you'll come back and keep them waiting 
+
+Combine old with new vids ( updates ) to show the growth building in the old ones 
+
+types of inteligance ???????
+
+blackmagic atem mini ( real time editing gadget for youtubes workflow )
+
+Bullets.pocket.shoot.change,mag.holster,gun.reload.used.mag( "gamer style ) close up picture with dolly focus 
+
+Use deepfacke influencers clips to boost view for what you need
+
+Multiple kernels and bootloader's at the same time ?
+
+Keep you money in separated places and be careful with the police "I'm sorry .. how do I pay the fine”
+
+If ppl approach you .. stay aware of your surroundings.. they might be the distraction for something else 
+
+The worst your past is the worst will ppl think and act about you ( a rape victim with public  sexual past will be treated like a hore )
+
+Use broken glass to hear strangers 
+
+When you start a video make it a longer version with multiple locations and keep track of what you make to be sure it's continuous road 
+
+Give ppl free scripts for vids ( make the video for them .. they just need to voice over it ) free publicity and a free video for them !!
+
+Yt chanell : how to make the ultimate TEAM !!!
+
+Shure uniplex cardioid lavalier microphone 
+
+Alway have way to outsmart reactions and plan for the worst .. then act like it will happen but play natural 
+
+Use "episode" or "chapter" instead of "part 1/2/3/etc" 
+
+Careful about the observer bios
+
+Katsu FAO1 folding axe
+
+Create I troductori cards for your vids and guests 
+
+Create terminal notifications for when a process is done 
+
+How to automatically use "time"(command) everytime you use the terminal
+
+Check your bookmark on your browsers
+
+Ffmpeg : audio/video Linux CLI tool
+
+Hidden powers / more tools / precautions and chess mindset 
+
+3 dogs ( human remains, survivors, drugs )
+
+****SliderONE Light by edelkrone****
+
+mc 4 light travel kit

@@ -1,0 +1,10 @@
+
+Programming Language Package Managers
+These manage libraries and dependencies for specific programming languages:
+NPM (Node Package Manager): For JavaScript and Node.js.
+pip: For Python.
+RubyGems: For Ruby.
+Cargo: For Rust.
+Composer: For PHP.
+CPAN: For Perl.
+Maven/Gradle: For Java.

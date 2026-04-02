@@ -1,0 +1,81 @@
+Title: Nyxt Headless Scripting & Automation with Org-mode
+
+** Introduction
+Nyxt is a keyboard-driven, programmable web browser designed for hackers, researchers, and those who live in text. In headless mode, Nyxt becomes your automated web agent -- controlled entirely via Common Lisp, it can scrape, click, navigate, and report, all without ever opening a graphical window.
+
+Use this Org file as your evolving reference and command center for building hacking automation, research rituals, and daily info-gathering workflows with Nyxt.
+
+** Requirements
+
+Emacs with org-mode
+
+Nyxt installed and available in $PATH
+
+Optional: Emacs server for tight integration (M-x server-start)
+
+** Workflow Use-Cases
+*** Daily Ritual: Info Sync
+Automate opening and scraping headlines, project pages, GitHub notifications, and more.
+
+#+BEGIN_SRC lisp :tangle nyxt/scripts/daily-news.lisp
+(define-configuration browser ((restore-session-on-startup-p nil)))
+
+(hooks:on (after-startup-hook browser) (browser)
+(hooks:once-on (buffer-loaded-hook (current-buffer)) (buffer)
+(sleep 1)
+(nyxt:update-document-model)
+(let ((headlines (clss:select "h1, h2, h3" (document-model buffer))))
+(loop for el across headlines
+do (echo (plump:text el))))
+(nyxt:quit)))
+#+END_SRC
+
+Command:
+
+nyxt --headless --config nyxt/scripts/daily-news.lisp --url https://news.ycombinator.com
+
+*** GitHub Star Automation
+Log in, open your watched repos, and auto-star new ones.
+
+*** Web Recon Scanner
+Auto-load URLs from a target list and scrape titles, metadata, and exposed JS libraries.
+
+*** Hacker Terminal
+Using --remote, bind Nyxt REPL commands to Emacs keybindings or shell scripts:
+
+#+BEGIN_SRC bash
+nyxt --remote --eval '(buffer-load "https://target.com/login")'
+#+END_SRC
+
+*** Watchlists and Alerts
+Use a headless Nyxt script that checks a set of URLs and writes differences to a file.
+
+** Headless Script Template
+#+BEGIN_SRC lisp :tangle nyxt/scripts/base-template.lisp
+#!/bin/sh
+#|
+exec nyxt --headless --no-auto-config --profile nosave --config "$0"
+|#
+
+(define-configuration browser ((restore-session-on-startup-p nil)))
+(hooks:on (after-startup-hook browser) (browser)
+(hooks:once-on (buffer-loaded-hook (current-buffer)) (buffer)
+(sleep 0.5)
+(nyxt:update-document-model)
+;; Do your thing here
+(echo "Page loaded: ~a" (title buffer))
+(nyxt:quit)))
+#+END_SRC
+
+** TODO Ideas
+
+
+
+** Notes
+You can bind these Nyxt workflows directly into Emacs via org-babel, shell blocks, or custom elisp commands.
+
+Start with one ritual. Automate. Then scale.
+
+** Tags
+:nyxt:automation:hacking:org-mode:headless:
+

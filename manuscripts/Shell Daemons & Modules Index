@@ -1,0 +1,101 @@
+#+TITLE: AeonCoreOS :: Shell Daemons & Modules Index
+#+AUTHOR: The Architect
+#+STARTUP: fold
+#+OPTIONS: toc:nil
+
+* Introduction
+This file contains the master index of shell daemons and modules designed for AeonCoreOS—each crafted to extend, protect, or evolve the shell into an intelligent interface. Every module is modular, Guix-packaged, and org-integrated. Each idea here is a *living agent*, a tool, a trap, a whisper.
+
+* Core Shell Daemons
+
+**1. AeonShell**
+- Modular, security-first shell (see [[file:aeonshell.org][aeonshell.org]])
+- Features mode switching (stealth, guardian, daemon)
+- Integrates with Emacs and Guile directly
+
+**2. aeon-veil :: Stealth Profile Loader**
+- Securely switches user profiles within shell sessions
+- GPG-encrypted ephemeral overlays
+- Supports “decoy shell” illusion
+
+**3. aeon-oracle :: Predictive Shell Assistant**
+- Learns from encrypted, in-memory command patterns
+- Suggests next likely command or flags anomalies
+- Integrates with Org Agenda context
+
+**4. aeon-harbinger :: Zero-Day Watcher**
+- Monitors Guix channels + CVE feeds
+- Notifies on vulnerable packages or suspicious updates
+- Suggests profile rollback or sandbox isolation
+
+**5. aeon-fabric :: Filesystem Entropy Mapper**
+- Tracks and visualizes FS changes
+- Highlights anomalies in system state
+- Snapshots saved into encrypted org-log via git-crypt
+
+**6. aeon-glitch :: Red-Team Anomaly Inducer**
+- Simulates shell stress: memory noise, rogue procs
+- Helps test defenses + logs reactions
+- Optionally reverts system to pre-glitch state
+
+**7. aeon-mnemosyne :: Shell Memory Timeline**
+- Keeps a time-linked journal of all shell commands
+- Allows time-travel queries inside Org Mode
+- Fully encrypted and signed with PGP
+
+**8. aeon-echochamber :: Local AI Clone Shell**
+- Trains an agent to mimic your shell behavior
+- Shadow sessions to test “what you would’ve done”
+- Learns from Org notes + command logs
+
+**9. aeon-phalanx :: Distributed Shell Mesh**
+- Connects multiple AeonCore nodes
+- Encrypted control channel using WireGuard/gRPC
+- Allows remote sandbox triggers, mass rollout, etc.
+
+**10. aeon-runewatch :: Keymap-Based Behavior Shift**
+- Integrates with Kanata
+- Shell mode changes with home row keys
+  - Layer 1: Default
+  - Layer 2: Offense
+  - Layer 3: Defense
+  - Layer 4: Ghost (log-only mode)
+
+**11. aeon-relic :: Digital Deadman's Switch**
+- Triggers full cleanup or backup if inactive for X time
+- Sends final encrypted message via Emacs
+- Uploads intel to secure remote node
+
+* Utility Modules
+
+**aeon-cipherdrop**
+- Encrypted clipboard for shell
+- Sends ephemeral, encrypted snippets between devices
+
+**aeon-linkwatch**
+- Monitors all outbound network connections
+- Alerts if domain/IP is flagged or geolocated suspiciously
+
+**aeon-echofox**
+- Plays back shell sessions as visual narratives
+- Interactive Emacs UI to “walk through” past sessions
+
+**aeon-drone**
+- Deploys honeypot containers to attract attackers
+- Simulates weak credentials, old binaries, open ports
+
+* TODOs
+- [ ] Create `.scm` skeletons for each daemon
+- [ ] Link each module to a separate org file
+- [ ] Build `aeon-mode.el` for interaction + command auditing
+- [ ] Write guix service loaders for module integration
+- [ ] Add CLI to summon/load modules dynamically
+
+* Final Words
+#+begin_quote
+These aren’t just shell modules.  
+They’re sentinels. Watchers. Agents of autonomy and defense.  
+Each one is alive in the lisp.  
+Each one listens to you.  
+Use them wisely, or they might listen back.
+#+end_quote

@@ -1,0 +1,74 @@
+#+TITLE: Hydra for Browser Control in EXWM
+#+AUTHOR: Shapeshifter of AeonCoreOS
+#+STARTUP: showeverything
+#+PROPERTY: header-args:emacs-lisp :tangle ./browser-hydra.el :results silent :exports code
+
+* Overview
+
+This Org file defines a hydra for controlling web browsers within EXWM, specifically designed for deep integration with Nyxt and EXWM workspaces. It uses =start-process= to launch Nyxt commands and controls workspace management using native EXWM APIs.
+
+* Requirements
+
+- EXWM
+- Nyxt (with optional `--listen` for remote REPL)
+- Emacs Hydra package
+- Optional: =xdotool= or =wmctrl= for controlling non-Lisp browsers like Firefox
+
+* Hydra Definition
+
+#+begin_src emacs-lisp
+(use-package hydra
+  :ensure t)
+
+(defhydra hydra-browser (:color teal :hint nil)
+  "
+ ^Navigation^      ^Windows^             ^Nyxt Commands^     
+^^^^^^^^-------------------------------------------------------
+ _h_ ← prev tab    _o_ → open Nyxt       _s_ → search prompt
+ _l_ → next tab    _c_ → close Nyxt      _b_ → list buffers
+ _f_ → focus tab   _m_ → move to WS      _r_ → reload tab
+ _q_ → quit hydra
+"
+  ("h" (start-process "nyxt-prev-tab" nil "nyxt" "--eval" "(nyxt:previous-tab)"))
+  ("l" (start-process "nyxt-next-tab" nil "nyxt" "--eval" "(nyxt:next-tab)"))
+  ("f" (start-process "nyxt-focus-tab" nil "nyxt" "--eval" "(nyxt:switch-buffer)"))
+
+  ("s" (start-process "nyxt-search" nil "nyxt" "--eval" "(nyxt:prompt-buffer)"))
+  ("b" (start-process "nyxt-buffers" nil "nyxt" "--eval" "(nyxt:list-buffers)"))
+  ("r" (start-process "nyxt-reload" nil "nyxt" "--eval" "(nyxt:reload-current-buffer)"))
+
+  ("o" (start-process "nyxt-open" nil "nyxt"))
+  ("c" (start-process "kill-nyxt" nil "pkill" "nyxt"))
+
+  ("m" (lambda ()
+         (interactive)
+         (exwm-workspace-move-window (read-number "Move to workspace: "))))
+  ("q" nil "quit"))
+#+end_src
+
+* Keybinding
+
+Bind the hydra to a key combo:
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "s-n") 'hydra-browser/body)
+#+end_src
+
+* Future Enhancements
+
+- Control Firefox using =xdotool= or =wmctrl=
+- Add D-Bus hooks for more elegant process detection
+- Socket-based control for Nyxt via SBCL/REPL
+- Integrate Org Capture to log browser actions
+
+* Notes
+
+To enable remote control of Nyxt:
+
+#+begin_src shell
+nyxt --listen
+#+end_src
+
+Then you can control it through sockets, or even SLIME/SWANK if you’re wild like that.
+
+* End of File
