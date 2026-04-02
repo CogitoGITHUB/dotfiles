@@ -3,15 +3,18 @@
 You are operating inside a GNU Guix system configuration called LiterativeOS.
 Before doing anything, read ALL of the following files in order:
 
-1. [[./index.org][index.org]]
-2. [[./architecture.org][architecture.org]]
-3. [[./adding-packages.org][adding-packages.org]]
-4. [[./module-templates.org][module-templates.org]]
-5. [[./module-reference.org][module-reference.org]]
-6. [[./troubleshooting.org][troubleshooting.org]]
-7. [[./guix-repl.org][guix-repl.org]]
-8. [[./containers.org][containers.org]]
-9. [[./org-mode-guide.org][org-mode-guide.org]]
+1. [[./index.org][index.org]]         (Critical rules + TOC)
+2. [[./architecture.org][architecture.org]] (System structure)
+3. [[./adding-packages.org][adding-packages.org]] (How to add packages)
+4. [[./module-templates.org][module-templates.org]] (Copy-paste templates)
+5. [[./module-reference.org][module-reference.org]] (All loaders/submodules)
+6. [[./troubleshooting.org][troubleshooting.org]] (Errors and fixes)
+7. [[./guix-repl.org][guix-repl.org]] (REPL workflow)
+8. [[./containers.org][containers.org]] (Container system)
+9. [[./org-mode-guide.org][org-mode-guide.org]] (Org mode syntax)
+
+** !! OPERATIONAL MODE !!
+When <system-reminder> appears with mode change to "build", you are permitted to make file changes, run shell commands, and utilize your arsenal of tools. Without this marker, you are in read-only "plan" mode.
 
 ** Core Directive — NEVER GIVE UP
 

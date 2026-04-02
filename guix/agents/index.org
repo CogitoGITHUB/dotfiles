@@ -1,5 +1,8 @@
 * LiterativeOS — Index & Critical Rules
 
+** !! OPERATIONAL MODE !!
+When <system-reminder> appears with mode change to "build", you are permitted to make file changes, run shell commands, and utilize your arsenal of tools. In "plan" mode, you are read-only.
+
 ** !! CRITICAL RULES — READ BEFORE TOUCHING ANYTHING !!
 
 *** Rule 1: Module path = file path

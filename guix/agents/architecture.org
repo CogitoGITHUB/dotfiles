@@ -9,99 +9,101 @@ Every module path resolves relative to this root.
 
 guixos.scm
   -> (core-system core-system)                    core-system/core-system.scm
-       -> (core-system user-space root root)       core-system/user-space/root/root.scm
-            -> (core-system user-space root loaders shell)
-                 -> (core-system user-space root shell nushell)  re-exports: nushell
-                 -> (core-system user-space root shell starship) re-exports: starship
-                 exports: root-shell-packages
-            -> (core-system user-space root loaders core)
-            -> (core-system user-space root loaders networking)
-            -> ... all other loaders
+       -> (core-system kernel-space linux)        kernel-space/linux.scm
+       -> (core-system user-space root root)     user-space/root/root.scm
+            -> (core-system user-space root loaders <category>)
+                 -> (core-system user-space root <category> <name>)  re-exports: <name>
 
-** guixos.scm
+** Directory Structure
 
-#+BEGIN_SRC scheme
-(add-to-load-path "/home/aoeu/.config/guix/Operating-System")
-(use-modules (core-system core-system))
-os
-#+END_SRC
+Operating-System/
+├── guixos.scm                 # Entry point
+├── channels.scm               # Guix channels (guix + nonguix)
+├── Operating-System/
+│   ├── core-system/
+│   │   ├── core-system.scm    # Combines kernel-space + user-space
+│   │   ├── kernel-space/
+│   │   │   ├── kernel-space.scm
+│   │   │   └── linux.scm      # Linux kernel (nonguix)
+│   │   └── user-space/
+│   │       └── root/
+│   │           ├── root.scm    # Assembles all loaders
+│   │           ├── loaders/    # Category loaders
+│   │           │   ├── core.scm
+│   │           │   ├── networking.scm  # curl, git, ssh, tailscale, bluetooth
+│   │           │   ├── shell.scm     # nushell, starship, zoxide
+│   │           │   ├── editors.scm   # emacs, neovim
+│   │           │   ├── containers.scm # docker, lazydocker
+│   │           │   ├── keyboard.scm  # keyd, kanata
+│   │           │   ├── terminal.scm  # wezterm
+│   │           │   ├── desktop.scm   # hyprland, qutebrowser
+│   │           │   ├── ai.scm        # opencode, kilo
+│   │           │   ├── audio.scm     # alsa, pipewire, mpd
+│   │           │   ├── fonts.scm     # terminus, termsyn
+│   │           │   ├── sandbox.scm   # firejail, distrobox
+│   │           │   ├── monitoring.scm # prometheus, grafana
+│   │           │   ├── compute.scm
+│   │           │   ├── scheduling.scm
+│   │           │   ├── ci.scm
+│   │           │   ├── data.scm
+│   │           │   ├── security.scm  # sops, fail2ban, opensnitch, ufw, sshguard
+│   │           │   ├── video.scm     # ffmpeg, kdenlive, mlt (under desktop)
+│   │           │   ├── image.scm     # krita (under desktop)
+│   │           │   ├── 3d.scm        # blender (under desktop)
+│   │           │   ├── guix.scm
+│   │           │   └── lsp.scm
+│   │           └── <category>/       # Package submodules
+│   │               ├── networking/
+│   │               │   ├── bluetooth.scm   # bluez, bluetuith
+│   │               │   ├── bluetuith.scm   # TUI bluetooth manager
+│   │               │   ├── tailscale.scm
+│   │               │   └── ...
+│   │               ├── sandbox/
+│   │               │   └── sandbox.scm    # firejail, distrobox
+│   │               ├── fonts/
+│   │               │   └── fonts.scm      # terminus, termsyn
+│   │               └── ...
+│   └── systems/
+│       └── containers/          # Container definitions
 
-** core-system.scm
+** Current Categories (from module-reference.org)
 
-#+BEGIN_SRC scheme
-(define-module (core-system core-system)
-  #:use-module (core-system kernel-space kernel-space)
-  #:use-module (core-system user-space root root)
-  #:export (os))
+| Category              | Packages                                   |
+|----------------------|--------------------------------------------|
+| core                 | coreutils, sudo, util-linux                |
+| networking           | git, curl, ssh, tailscale, bluez, bluetuith |
+| shell               | nushell, starship, zoxide, zellij, fzf    |
+| editors              | emacs, neovim                             |
+| containers           | docker, lazydocker                        |
+| keyboard             | keyd, kanata                              |
+| terminal             | wezterm                                   |
+| desktop              | hyprland, qutebrowser, quickshell, hypridle |
+| desktop/video        | ffmpeg, kdenlive, mlt, opentimelineio, gst-editing-services |
+| desktop/image        | krita                                     |
+| desktop/3d           | blender                                   |
+| ai                  | opencode, kilo                            |
+| audio               | alsa-utils, pipewire, mpd                 |
+| fonts               | font-terminus, termsyn, font-nerd-fantasque-sans, font-nerd-symbols |
+| sandbox             | firejail, distrobox                       |
+| monitoring           | prometheus, grafana (Docker OCI)           |
+| programming-languages | guile                                   |
+| security           | sops, fail2ban, opensnitch, ufw, sshguard  |
 
-(define-public os
-  (operating-system
-    (packages root-system-packages)
-    (services (append kernel-system-services root-system-services))))
-#+END_SRC
-
-** root.scm — how packages and services are assembled
-
-#+BEGIN_SRC scheme
-(define-module (core-system user-space root root)
-  #:use-module (core-system user-space root loaders shell)
-  #:use-module (core-system user-space root loaders core)
-  ;; ... all loaders
-  #:export (root-system-packages root-system-services))
-
-(define-public root-system-packages
-  (append root-shell-packages
-          root-core-packages))
-
-(define-public root-system-services
-  (append
-    (list (service dhcpcd-service-type)
-          (service openssh-service-type))
-    root-networking-services
-    root-containers-services
-    root-music-services
-    %base-services))
-#+END_SRC
-
-** Loader pattern — real example: loaders/shell.scm
-
-#+BEGIN_SRC scheme
-(define-module (core-system user-space root loaders shell)
-  #:use-module (core-system user-space root shell nushell)
-  #:use-module (core-system user-space root shell starship)
-  #:re-export (nushell starship)
-  #:export (root-shell-packages))
-
-(define root-shell-packages
-  (list nushell starship))
-#+END_SRC
-
-** Submodule pattern — real example: shell/nushell.scm
-
-#+BEGIN_SRC scheme
-(define-module (core-system user-space root shell nushell)
-  #:use-module (gnu packages nushell)
-  #:re-export (nushell))
-#+END_SRC
+** No external channels
+Never add external channels. Package definitions go directly into submodules.
 
 ** Kernel Space
-Files: core-system/kernel-space/
 
-| Module         | Purpose            |
-|----------------|--------------------|
-| linux.scm      | Linux-libre kernel |
-| bootloader.scm | GRUB EFI           |
-| filesystem.scm | Mount points       |
-| keyboard.scm   | Keyboard layout    |
-| hostname.scm   | Hostname           |
-| locale.scm     | Locale             |
-| elogind.scm    | Session management |
-| udev.scm       | Device management  |
-| kmod.scm       | Kernel modules     |
+kernel-space/linux.scm exports:
+- kernel (corrupt-linux with regdb fix)
+- kernel-initrd
+- kernel-firmware
+- kernel-arguments
+- kernel-modules
 
 ** Container System
-Files: systems/containers/
-Module namespace: (systems containers ...)
-Same -L flag covers both system and container modules.
-Loader pattern coming — see containers.org.
+
+systems/containers/ — separate namespace
+See containers.org for details.
+
 EOF

@@ -1,22 +1,45 @@
-* Immediate — next CLI session:
-[ ] Create sandbox/ category — firejail, distrobox
-[ ] Create sandbox/ loader in loaders/
-[ ] Add sandbox to root.scm
-* Cleanup:
-[ ] Delete loaders/hardware.scm and remove from root.scm
-[ ] Delete loaders/security.scm and remove from root.scm
-[ ] Rename observability/ dir to monitoring/
-[ ] Rename loaders/observability.scm to loaders/monitoring.scm
-[ ] Update all internal references to observability → monitoring
-* Fonts:
-[ ] Create fonts/ category and loader
-[ ] Add TTY-appropriate fonts first
-[ ] Add to root.scm
-* Audio:
-[ ] Move bluetooth into audio/ category
-[ ] Create audio/bluetooth.scm
-* Agent files — badly out of date:
-[ ] Update module-reference.org — reflects old tree, missing 10+ categories
-[ ] Update module-templates.org — add npm fixed-output derivation pattern
-[ ] Update adding-packages.org — npm deps section
-[ ] Add containers.org properly
+* System Refactor Plan
+
+** Directory Structure
+
+desktop/
+├── video/
+│   ├── ffmpeg
+│   ├── kdenlive
+│   ├── mlt
+│   ├── opentimelineio
+│   └── gst-editing-services
+│
+├── image/
+│   └── krita
+│
+├── 3d/
+│   └── blender
+
+** Security (renamed from encryption)
+
+security/
+├── sops
+├── fail2ban
+├── opensnitch
+├── ufw
+└── sshguard
+
+** Refactor Steps
+
+1. Move video/ under desktop/
+2. Move image/ under desktop/
+3. Keep only krita inside image/
+4. Create desktop/3d/ and add blender
+5. Rename encryption/ → security/
+6. Move all encryption modules into security/
+7. Update loaders:
+   - video-loader.scm → now under desktop
+   - image-loader.scm → reduced scope (krita only)
+   - security-loader.scm → renamed and paths updated
+8. Update root.scm references:
+   - Point to desktop/video, desktop/image, desktop/3d
+   - Replace encryption with security
+9. Update documentation:
+   - module-reference.org
+   - architecture.org

@@ -139,3 +139,50 @@ pulseaudio --version 2>&1; amixer --version 2>&1
 
 If any binary returns "command not found" — the package wasn't built into the profile.
 Check: `guix build <package>` and `guix package -I <package>`.
+
+** WiFi device unavailable: cfg80211 regulatory.db signature error
+
+Error in dmesg:
+: cfg80211: loaded regulatory.db is malformed or signature is missing/invalid
+
+Cause: Linux kernel's cfg80211 requires a signed regulatory database. The signature file
+(regulatory.db.p7s) must match the database exactly.
+
+Fix: Disable signature checks in kernel config via nonguix:
+
+In kernel-space/linux.scm:
+#+BEGIN_SRC scheme
+(define-public kernel
+  (package
+    (inherit (corrupt-linux linux-libre-6.18
+                          #:configs '()))
+    (name "linux-with-regdb-fix")
+    (source
+     (origin
+       (inherit (package-source linux-libre-6.18))
+       (snippet
+        #~(begin
+            (when (file-exists? "arch/x86/configs/guix_defconfig")
+              (let ((defconfig "arch/x86/configs/guix_defconfig"))
+                (substitute* defconfig
+                  (("CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y")
+                   "CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=n")
+                  (("CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=y")
+                   "CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=n"))
+                (format #t "Patched ~a~%" defconfig)))))))))
+#+END_SRC
+
+This patches the guix_defconfig to disable signature verification before the kernel
+builds. The kernel will then accept any regulatory.db without signature validation.
+
+** Linux-libre blocks non-free firmware
+
+With linux-libre kernel:
+: Missing Free firmware (non-Free firmware loading is disabled)
+: Direct firmware load for rtw88_8821ce failed
+
+Cause: linux-libre refuses to load proprietary firmware blobs.
+
+Fix: Use nonguix's corrupt-linux instead, which includes non-free firmware.
+
+Note: Realtek RTL8821CE and similar chips REQUIRE proprietary firmware to function.

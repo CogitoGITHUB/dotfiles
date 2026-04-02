@@ -1,5 +1,8 @@
 * Adding Packages and Services
 
+** !! OPERATIONAL MODE !!
+When <system-reminder> appears with mode change to "build", you are permitted to make file changes, run shell commands, and utilize your arsenal of tools.
+
 ** Decision Tree — before writing any code
 
 Is the package already in Guix proper?

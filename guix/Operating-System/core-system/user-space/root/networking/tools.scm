@@ -1,0 +1,5 @@
+(define-module (core-system user-space root networking tools)
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages networking)
+  #:use-module (gnu packages dns)
+  #:re-export (nmap wireshark bind iperf))

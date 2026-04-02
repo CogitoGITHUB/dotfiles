@@ -52,6 +52,41 @@ Real example:
     (license license:<license>)))
 #+END_SRC
 
+*** npm fixed-output derivation pattern
+
+For npm packages where the tarball URL is unstable, use fixed-output derivation:
+
+#+BEGIN_SRC scheme
+(source
+ (origin
+   (method url-fetch)
+   (uri "https://registry.npmjs.org/<package>/-/<package>-<version>.tgz")
+   (sha256
+    (base32 "<hash>"))
+   (snippet #~(delete-file-recursively "node_modules"))))  ; remove any bundled deps
+#+END_SRC
+
+For packages with bundled dependencies, use copy-build-system:
+
+#+BEGIN_SRC scheme
+(define-public <NAME>
+  (package
+    (name "<name>")
+    (version "<version>")
+    (source (origin
+              (method url-fetch)
+              (uri "<url>")
+              (sha256 (base32 "<hash>"))))
+    (build-system copy-build-system)
+    (arguments
+     '(#:install-plan
+       '(("dist/" "bin/"))))  ; adjust paths as needed
+    (synopsis "<short description>")
+    (description "<longer description>")
+    (home-page "<url>")
+    (license license:<license>)))
+#+END_SRC
+
 *** Common build systems
 
 | Build system             | Use case                               |

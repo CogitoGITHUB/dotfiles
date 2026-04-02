@@ -23,7 +23,9 @@ default_channel = "files"
 # Options: bash, zsh, fish, powershell, cmd, nu
 # If not specified, the shell is detected from the environment ($SHELL on Unix).
 # Channel-specific shell settings override this global setting.
-# shell = "bash"
+
+shell = "nu"
+
 # History settings
 # ---------------
 # Maximum number of entries to keep in the global history (default: 100)
@@ -48,7 +50,7 @@ global_history = false
 # └─────────────────────────┘
 ui_scale = 100
 # What orientation should tv be (landscape or portrait)
-orientation = "landscape"
+orientation = "portrait"
 # The theme to use for the UI
 # A list of builtin themes can be found in the `themes` directory of the television
 # repository. You may also create your own theme by creating a new file in a `themes`
@@ -59,7 +61,7 @@ theme = "default"
 # Each feature can have its own configuration section
 [ui.input_bar]
 # Where to place the input bar in the UI (top or bottom)
-position = "top"
+position = "bottom"
 # The input prompt string (defaults to ">" if not specified)
 prompt = ">"
 # header = "{}"

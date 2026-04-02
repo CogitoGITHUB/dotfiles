@@ -9,6 +9,16 @@ let keybindings = [
       cmd: "nu -c '~/.config/nushell/aeon-modules/scripts/say.nu'"
     }
   }
+    {
+    name: rmpc
+    modifier: control
+    keycode: char_p
+    mode: emacs
+    event: {
+      send: executehostcommand
+      cmd: "rmpc"
+    }
+  }
 {
     name: zoxide_fzf
     modifier: control

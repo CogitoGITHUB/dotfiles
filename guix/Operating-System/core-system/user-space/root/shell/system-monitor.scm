@@ -1,0 +1,5 @@
+(define-module (core-system user-space root shell system-monitor)
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages ncdu)
+  #:use-module (gnu packages monitoring)
+  #:re-export (btop htop ncdu glances))
