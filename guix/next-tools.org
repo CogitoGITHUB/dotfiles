@@ -1,3 +1,9 @@
+pass ( the password manager with : https://github.com/qukhan/pass-fzf and : https://github.com/iquiw/auth-password-store
+
+nyxt ( web browser ) 
+
+obs ? 
+
 https://github.com/eval-exec/neomacs.git
 
 https://github.com/xdagiz/xytz.git
@@ -39,4 +45,8 @@ https://github.com/onecli/onecli.git
 https://www.kelora.dev/latest/
 
 https://github.com/mmcdole/kino.git
+
+https://n8n.io/
+
+https://wayscriber.com/
 
