@@ -14,7 +14,7 @@
   #:use-module (core-system user-space root shell archive)
   #:use-module (core-system user-space root shell fetch neofetch)
   #:use-module (core-system user-space root shell fetch fastfetch)
-  #:re-export (nushell fzf starship bash zoxide zellij carapace atuin superfile
+  #:re-export (nushell television fzf starship bash zoxide zellij carapace atuin superfile
                btop htop ncdu glances
                upower tlp acpi
                zip unzip 7zip unrar-free zstd xz

@@ -10,24 +10,7 @@
   #:use-module (srfi srfi-1)
   #:export (kernel kernel-arguments kernel-modules kernel-initrd kernel-firmware))
 
-(define-public kernel
-  (package
-    (inherit (corrupt-linux linux-libre-6.18
-                            #:configs '()))
-    (name "linux-with-regdb-fix")
-    (source
-     (origin
-       (inherit (package-source linux-libre-6.18))
-       (snippet
-        #~(begin
-            (when (file-exists? "arch/x86/configs/guix_defconfig")
-              (let ((defconfig "arch/x86/configs/guix_defconfig"))
-                (substitute* defconfig
-                  (("CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=y")
-                   "CONFIG_CFG80211_REQUIRE_SIGNED_REGDB=n")
-                  (("CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=y")
-                   "CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS=n"))
-                (format #t "Patched ~a~%" defconfig)))))))))
+(define-public kernel linux-libre)
 
 (define-public kernel-initrd microcode-initrd)
 

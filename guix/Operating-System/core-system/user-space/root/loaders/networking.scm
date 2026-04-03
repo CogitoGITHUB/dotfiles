@@ -16,11 +16,11 @@
   #:use-module (gnu services networking)
   #:use-module (gnu services base)
   #:re-export (yt-dlp gazelle-tui bluez bluetuith config-tailscaled-service-type
-               nmap wireshark bind iperf)
+               nmap wireshark bind-dns iperf)
   #:export (root-networking-packages root-networking-services))
 
 (define-public root-networking-packages
-  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez blueman bluetuith nmap wireshark bind iperf))
+  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez blueman bluetuith nmap wireshark bind-dns iperf))
 
 (define-public root-networking-services
   (list (service network-manager-service-type

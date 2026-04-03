@@ -8,7 +8,6 @@
 #:use-module (core-system kernel-space elogind)
 #:use-module (core-system kernel-space udev)
 #:use-module (core-system kernel-space kmod)
-#:use-module (nongnu packages linux)
 #:re-export (kernel kernel-arguments kernel-modules kernel-initrd kernel-firmware
   keyboard-layout system-bootloader-configuration file-systems host-name
   system-locale system-timezone elogind-service udev-rules udev-service-type
