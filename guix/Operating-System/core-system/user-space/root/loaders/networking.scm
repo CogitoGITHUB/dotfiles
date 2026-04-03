@@ -4,6 +4,8 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages nss)
   #:use-module (gnu packages networking)
+  #:use-module ((gnu packages admin) #:select (wpa-supplicant))
+  #:use-module ((gnu packages networking) #:select (iwd))
   #:use-module (core-system user-space root networking version-control github-cli)
   #:use-module (core-system user-space root networking version-control lazygit)
   #:use-module (core-system user-space root networking yt-dlp)
@@ -15,16 +17,26 @@
   #:use-module (gnu services)
   #:use-module (gnu services networking)
   #:use-module (gnu services base)
+  #:use-module (guix gexp)
   #:re-export (yt-dlp gazelle-tui bluez bluetuith config-tailscaled-service-type
-               nmap wireshark bind-dns iperf)
+               nmap wireshark bind-dns iperf iproute wpa-supplicant iwd)
   #:export (root-networking-packages root-networking-services))
 
 (define-public root-networking-packages
-  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez blueman bluetuith nmap wireshark bind-dns iperf))
+  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez blueman bluetuith nmap wireshark bind-dns iperf iproute wpa-supplicant iwd))
 
 (define-public root-networking-services
   (list (service network-manager-service-type
                  (network-manager-configuration
-                  (iwd? #f)
-                  (shepherd-requirement '())))
+                  (shepherd-requirement '(iwd))))
+        (service iwd-service-type
+                 (iwd-configuration
+                  (config
+                   (iwd-settings
+                    (general
+                     (iwd-general-settings
+                      (enable-network-configuration? #t)))
+                    (network
+                     (iwd-network-settings
+                      (name-resolving-service 'none)))))))
         (service config-tailscaled-service-type)))
