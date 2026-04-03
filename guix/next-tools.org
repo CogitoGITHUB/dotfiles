@@ -1,3 +1,5 @@
+https://github.com/eval-exec/neomacs.git
+
 https://github.com/xdagiz/xytz.git
 
 https://github.com/linuxmobile/hibiki.git
@@ -34,4 +36,7 @@ https://github.com/open-gitagent/gitagent.git
 
 https://github.com/onecli/onecli.git
 
+https://www.kelora.dev/latest/
+
+https://github.com/mmcdole/kino.git
 
