@@ -17,6 +17,7 @@
   #:use-module (gnu services)
   #:use-module (gnu services networking)
   #:use-module (gnu services base)
+  #:use-module (gnu services desktop)
   #:use-module (guix gexp)
   #:re-export (yt-dlp gazelle-tui bluez bluetuith config-tailscaled-service-type
                nmap wireshark bind-dns iperf iproute wpa-supplicant iwd)
@@ -39,4 +40,7 @@
                     (network
                      (iwd-network-settings
                       (name-resolving-service 'none)))))))
+        (service bluetooth-service-type
+                 (bluetooth-configuration
+                  (auto-enable? #t)))
         (service config-tailscaled-service-type)))

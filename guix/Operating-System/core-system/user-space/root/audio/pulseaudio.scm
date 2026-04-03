@@ -20,6 +20,9 @@ load-module module-default-device-restore
 load-module module-always-sink
 load-module module-suspend-on-idle
 load-module module-position-event-sounds
+load-module module-bluetooth-discover
+load-module module-bluetooth-policy
+load-module module-bluez5-discover
 "))
 
 (define-public pulseaudio-service
