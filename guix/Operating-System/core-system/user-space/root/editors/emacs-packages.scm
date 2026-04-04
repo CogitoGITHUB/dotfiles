@@ -7,8 +7,10 @@
   #:use-module (core-system user-space root editors emacs-packages fuzzy-clock)
   #:use-module (core-system user-space root editors emacs-packages notebook-mode)
   #:use-module (core-system user-space root editors emacs-packages emacs-monkeytype)
-  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype)
+  #:use-module (core-system user-space root editors emacs-packages quick-peek)
+  #:use-module (core-system user-space root editors emacs-packages scrollable-quick-peek)
+  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek)
   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype))
+  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek))

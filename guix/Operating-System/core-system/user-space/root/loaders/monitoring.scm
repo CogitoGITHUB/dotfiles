@@ -8,6 +8,7 @@
   #:use-module (core-system user-space root monitoring services grafana)
   #:use-module (core-system user-space root monitoring services prometheus)
   #:use-module (core-system user-space root monitoring grafana-tui)
+  #:use-module (core-system user-space root monitoring kelora)
   #:re-export (oci-grafana-service-type
                oci-grafana-configuration
                oci-grafana-configuration?
@@ -93,12 +94,13 @@
                oci-blackbox-exporter-configuration-network
                oci-blackbox-exporter-configuration-port
                 oci-blackbox-exporter-service-type
-                grafana-tui)
+                grafana-tui
+                kelora)
   #:export (root-monitoring-services
             root-monitoring-packages))
 
 (define-public root-monitoring-packages
-  (list grafana-tui))
+  (list grafana-tui kelora))
 
 (define-public root-monitoring-services
   (list

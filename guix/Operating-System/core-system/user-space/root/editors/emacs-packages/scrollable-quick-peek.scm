@@ -3,6 +3,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system emacs)
+  #:use-module (core-system user-space root editors emacs-packages quick-peek)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (emacs-scrollable-quick-peek))
 
@@ -14,11 +15,11 @@
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/jpablobr/scrollable-quick-peek")
-                    (commit "5b17c306e8a0f3e0e7c8d6b8c1c6e8f4a2b3d4e5")))
+                    (commit "3e3492145a61831661d6e97fdcb47b5b66c73287")))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0000000000000000000000000000000000000000000000000000"))))
+                "0gca860rhvcdjgm6k5pm6spznhg4787dqyjzfixvnffd5l93lcvc"))))
     (build-system emacs-build-system)
     (propagated-inputs (list emacs-quick-peek))
     (synopsis "Display scrollable overlays")

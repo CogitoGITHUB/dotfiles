@@ -140,6 +140,46 @@ pulseaudio --version 2>&1; amixer --version 2>&1
 If any binary returns "command not found" — the package wasn't built into the profile.
 Check: `guix build <package>` and `guix package -I <package>`.
 
+** Emacs package fails to byte-compile with "Cannot open load file"
+
+Cause: The package has `(require 'some-dep)` at the top level but the dependency
+isn't available during the build phase.
+
+Fix: Add the dependency as BOTH `inputs` AND `propagated-inputs`:
+#+BEGIN_SRC scheme
+(inputs (list emacs-<dep>))
+(propagated-inputs (list emacs-<dep>))
+#+END_SRC
+
+`inputs` makes it available at compile time. `propagated-inputs` makes it
+available at runtime. You need BOTH for top-level requires.
+
+** Hash mismatch on git-fetch packages
+
+Cause: `guix hash --recursive /path/to/checkout` includes `.git/` directory,
+but Guix's `git-fetch` excludes it. The hashes will never match.
+
+Fix: Use the actual hash from the failed build log:
+#+BEGIN_SRC sh
+zcat /var/log/guix/drvs/<XX>/<hash>.drv.gz | grep "actual hash"
+#+END_SRC
+
+The actual hash always starts with `0` or `1` (base32).
+
+** Python package sanity-check fails due to version mismatch
+
+Cause: The package requires a newer version of a dependency than Guix provides.
+The pyproject-build-system's sanity-check phase validates version constraints.
+
+Fix: Delete the sanity-check phase:
+#+BEGIN_SRC scheme
+(arguments
+ '(#:tests? #f
+   #:phases
+   (modify-phases %standard-phases
+     (delete 'sanity-check))))
+#+END_SRC
+
 ** WiFi device unavailable: cfg80211 regulatory.db signature error
 
 Error in dmesg:

@@ -74,6 +74,9 @@ sudo grep -i <service-name> /var/log/messages | tail -5  # check for errors
 #+END_SRC
 If a binary is "command not found" or a service logs errors — FIX IT. Do not skip this step.
 
+*** Step 9 — Update next-tools.org
+Remove the tool from next-tools.org after successful install and testing.
+
 ** Getting the correct hash
 #+BEGIN_SRC sh
 guix download https://example.com/package-1.0.tar.gz
@@ -165,3 +168,79 @@ in sandbox), or (b) bundle node_modules separately (approach 1 above).
 | docker-service-type        | (gnu services docker)     |
 | containerd-service-type    | (gnu services docker)     |
 | oci-container-service-type | (gnu services docker)     |
+
+** Lessons Learned from Real Package Additions
+
+*** Python packages (pyproject-build-system)
+
+When packaging Python tools from PyPI:
+1. Use `guix import pypi <package-name>` to get a starting expression
+2. Check ALL propagated-inputs exist in Guix — if any are missing, package them first
+3. If the package has a version constraint that Guix's version doesn't meet (e.g., `keyring>=24.0.0` but Guix has `23.9.3`), add `#:tests? #f` AND delete the `sanity-check` phase:
+#+BEGIN_SRC scheme
+(arguments
+ '(#:tests? #f
+   #:phases
+   (modify-phases %standard-phases
+     (delete 'sanity-check))))
+#+END_SRC
+
+*** Pre-built Go/Rust binaries
+
+Many Go and Rust projects provide pre-built Linux binaries in GitHub releases. Use `copy-build-system` instead of trying to build from source:
+1. Check releases page for `linux-amd64` or `x86_64-unknown-linux-musl` binaries
+2. Get hash with `guix download <url>`
+3. Use `copy-build-system` with `#:install-plan '(("<binary>" "bin/"))`
+4. If the binary is dynamically linked (check with `file`), use the patchelf pattern from module-templates.org
+
+*** Emacs packages with dependencies
+
+- Check the .el file for `(require 'something)` at the top level
+- Each dependency that isn't in Guix must be packaged first
+- Dependencies must be BOTH `inputs` (for compile-time) AND `propagated-inputs` (for runtime)
+- Use specific git commits, not branch names like "master" — branch names produce different hashes
+- Hash from local `guix hash` will differ from Guix's expected hash because `.git/` is excluded — use the actual hash from the build log
+
+*** Finding which Guix module exports a package
+
+When you get "unbound variable" for a gnu package:
+#+BEGIN_SRC sh
+guix package --show=<package-name> | grep "^location:"
+#+END_SRC
+This gives the exact file and line, e.g., `location: gnu/packages/python-xyz.scm:12345`
+Then add `#:use-module (gnu packages python-xyz)` to your submodule.
+
+** Shell Preference — Nushell First
+
+ALWAYS use nushell (`nu`) over bash for file operations, data processing, and system inspection.
+Use bash ONLY for guix commands (guix search, guix download, guix repl, sudo guix system reconfigure).
+
+Nushell advantages:
+- `ls` returns a table with size, type, modified — pipeable
+- `open file.json` natively parses JSON, YAML, TOML, CSV
+- `| where`, `| select`, `| group-by`, `| sort-by` for data manipulation
+- Structured output means no awk/sed/cut needed
+
+** Use Kelora for Log Analysis
+
+Kelora is installed and available for log processing. Use it instead of chaining grep/awk/jq:
+
+#+BEGIN_SRC nushell
+# Kelora parses, nushell analyzes
+kelora -f logfmt /var/log/messages --filter 'e.level == "ERROR"' -F json | from json | where level == "ERROR" | group-by service | length
+
+# Pattern discovery with kelora, sorting with nushell
+kelora -j logs.jsonl --drain -k message | from json | sort-by count -r | first 10
+#+END_SRC
+
+Kelora excels at:
+- Replacing `grep | awk | jq | custom-script.py` chains
+- Parsing custom log formats without regex
+- Stateful logic (counting, tracking sessions, windowed metrics)
+- Pattern discovery with the Drain algorithm
+- Extracting JSON from unstructured text
+
+Nushell excels at:
+- Sorting, grouping, selecting columns from kelora's JSON output
+- Native parsing of JSON, YAML, TOML, CSV
+- Tables, charts, and structured data manipulation

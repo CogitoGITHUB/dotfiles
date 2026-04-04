@@ -2,14 +2,6 @@ https://github.com/eval-exec/neomacs.git (hard - complex Rust/Emacs fork, takes 
 
 https://github.com/linuxmobile/hibiki.git (hard - Rust/GTK4 Wayland keystroke visualizer, takes time)
 
-https://github.com/jpablobr/emacs-monkeytype
-
-https://github.com/open-gitagent/gitagent.git
-
-https://github.com/onecli/onecli.git
-
-https://www.kelora.dev/latest/
-
 https://github.com/mmcdole/kino.git
 
 https://n8n.io/

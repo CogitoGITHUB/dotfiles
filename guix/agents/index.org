@@ -56,3 +56,34 @@ Validate in REPL first. See guix-repl.org.
 | List generations | guix system list-generations                                     |
 | Search package   | guix search <name>                                               |
 | Get hash         | guix download <url>                                              |
+
+** Shell Preference — Nushell First
+
+The default shell is nushell (`nu`). ALWAYS prefer nushell over bash for:
+- File operations: `ls`, `open`, `save`, `mv`, `cp`, `rm` (structured output)
+- Data processing: `| where`, `| select`, `| group-by`, `| sort-by`
+- JSON/YAML/CSV handling: `open file.json | ...` (native parsing)
+- System inspection: `ps`, `sys`, `net` (structured tables)
+
+Use bash ONLY when:
+- Running guix commands (guix search, guix download, guix repl, sudo guix system reconfigure)
+- The command is inherently a bash one-liner
+- Nushell doesn't have an equivalent
+
+** Kelora + Nushell — Log Analysis Superpower
+
+Kelora (`kelora`) is installed for log processing. Combine with nushell for maximum power:
+
+#+BEGIN_SRC nushell
+# Use kelora to parse logs, then nushell to analyze
+kelora -j /var/log/messages.jsonl --filter 'e.level == "ERROR"' -F json | from json | where level == "ERROR" | group-by service | length
+
+# Extract patterns, then nushell for sorting/display
+kelora -j logs.jsonl --drain -k message | from json | sort-by count -r | first 10
+
+# Kelora for parsing, nushell for visualization
+kelora -f logfmt /var/log/messages --filter 'e.status >= 500' -F json | from json | select ts method path status | sort-by status -r
+#+END_SRC
+
+Kelora handles: log parsing, filtering, pattern discovery, format conversion
+Nushell handles: sorting, grouping, selecting columns, tables, charts
