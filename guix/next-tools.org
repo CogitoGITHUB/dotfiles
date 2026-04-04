@@ -1,6 +1,4 @@
-https://github.com/eval-exec/neomacs.git
-
-https://github.com/xdagiz/xytz.git
+https://github.com/eval-exec/neomacs.git (hard - complex Rust/Emacs fork, takes time)
 
 https://github.com/linuxmobile/hibiki.git
 
