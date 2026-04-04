@@ -2,12 +2,15 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system trivial)
+  #:use-module (guix gexp)
+  #:use-module (gnu services)
+  #:use-module (gnu services shepherd)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages elf)
   #:use-module (gnu packages base)
   #:use-module (gnu packages gcc)
   #:use-module ((guix licenses) #:prefix license:)
-  #:export (kanata))
+  #:export (kanata kanata-service))
 
 (define-public kanata
   (package
@@ -44,3 +47,16 @@
     (synopsis "Keyboard remapper")
     (description "Kanata is a keyboard remapper for Linux.")
     (license license:lgpl3)))
+
+(define-public kanata-service
+  (simple-service 'kanata
+                  shepherd-root-service-type
+                  (list (shepherd-service
+                          (provision '(kanata))
+                          (requirement '(user-processes))
+                          (start #~(make-forkexec-constructor
+                                     (list #$(file-append kanata "/bin/kanata")
+                                           "--cfg" "/home/aoeu/.config/kanata/kanata.kbd")
+                                     #:log-file "/var/log/kanata.log"))
+                          (stop #~(make-kill-destructor))
+                          (respawn? #t)))))

@@ -93,4 +93,5 @@
                     (postgresql postgresql))))
     root-ci-services
     root-monitoring-services
+    root-keyboard-services
     %base-services))
