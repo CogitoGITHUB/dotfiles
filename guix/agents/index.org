@@ -51,11 +51,13 @@ Validate in REPL first. See guix-repl.org.
 |------------------|------------------------------------------------------------------|
 | Apply config     | sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm |
 | Build only       | guix system build /home/aoeu/.config/guix/guixos.scm            |
-| Launch REPL      | guix repl -- -L /home/aoeu/.config/guix/Operating-System        |
+| Launch REPL      | guix repl --load-path=/home/aoeu/.config/guix/Operating-System  |
 | Rollback         | sudo guix system roll-back                                       |
 | List generations | guix system list-generations                                     |
 | Search package   | guix search <name>                                               |
 | Get hash         | guix download <url>                                              |
+
+Note: The older REPL syntax `guix repl -- -L /path` no longer works. Use `--load-path=` instead.
 
 ** Shell Preference — Nushell First
 

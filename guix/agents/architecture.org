@@ -7,87 +7,290 @@ Every module path resolves relative to this root.
 
 ** Full Chain — guixos.scm to a single package
 
-guixos.scm
+/home/aoeu/.config/guix/guixos.scm
   -> (core-system core-system)                    core-system/core-system.scm
-       -> (core-system kernel-space linux)        kernel-space/linux.scm
+       -> (core-system kernel-space kernel-space) kernel-space/kernel-space.scm
+            -> (core-system kernel-space linux)   kernel-space/linux.scm
        -> (core-system user-space root root)     user-space/root/root.scm
             -> (core-system user-space root loaders <category>)
                  -> (core-system user-space root <category> <name>)  re-exports: <name>
 
 ** Directory Structure
 
-Operating-System/
-├── guixos.scm                 # Entry point
-├── channels.scm               # Guix channels (guix + nonguix)
+/home/aoeu/.config/guix/
+├── guixos.scm                     # Entry point (at repo root, NOT under Operating-System/)
+├── channels.scm                   # Guix channels (guix + nonguix)
 ├── Operating-System/
 │   ├── core-system/
-│   │   ├── core-system.scm    # Combines kernel-space + user-space
+│   │   ├── core-system.scm        # Combines kernel-space + user-space
 │   │   ├── kernel-space/
-│   │   │   ├── kernel-space.scm
-│   │   │   └── linux.scm      # Linux kernel (nonguix)
+│   │   │   ├── kernel-space.scm   # Aggregates kernel modules
+│   │   │   ├── linux.scm          # Linux kernel (nonguix)
+│   │   │   ├── bootloader.scm     # GRUB EFI
+│   │   │   ├── filesystem.scm     # File system definitions
+│   │   │   ├── hostname.scm       # Hostname: "LiterativeOS"
+│   │   │   ├── keyboard.scm       # US Dvorak layout
+│   │   │   ├── locale.scm         # en_US.utf8, Europe/Bucharest
+│   │   │   ├── elogind.scm        # Power/lid actions
+│   │   │   ├── udev.scm           # uinput rules
+│   │   │   └── kmod.scm           # Empty (kmod from gnu packages linux)
 │   │   └── user-space/
 │   │       └── root/
-│   │           ├── root.scm    # Assembles all loaders
-│   │           ├── loaders/    # Category loaders
+│   │           ├── root.scm       # Assembles all loaders
+│   │           ├── users/
+│   │           │   ├── users.scm  # users, groups, sudoers-file, setuid-programs
+│   │           │   └── aoeu.scm   # aoeu user-account
+│   │           ├── loaders/       # Category loaders (27 files)
 │   │           │   ├── core.scm
-│   │           │   ├── networking.scm  # curl, git, ssh, tailscale, bluetooth
-│   │           │   ├── shell.scm     # nushell, starship, zoxide
-│   │           │   ├── editors.scm   # emacs, neovim
-│   │           │   ├── containers.scm # docker, lazydocker
-│   │           │   ├── keyboard.scm  # keyd, kanata
-│   │           │   ├── terminal.scm  # wezterm
-│   │           │   ├── desktop.scm   # hyprland, qutebrowser
-│   │           │   ├── ai.scm        # opencode, kilo
-│   │           │   ├── audio.scm     # alsa, pipewire, mpd
-│   │           │   ├── fonts.scm     # terminus, termsyn
-│   │           │   ├── sandbox.scm   # firejail, distrobox
-│   │           │   ├── monitoring.scm # prometheus, grafana
-│   │           │   ├── compute.scm
+│   │           │   ├── networking.scm
+│   │           │   ├── shell.scm
+│   │           │   ├── editors.scm
+│   │           │   ├── desktop.scm
+│   │           │   ├── terminal.scm
+│   │           │   ├── containers.scm
+│   │           │   ├── keyboard.scm
+│   │           │   ├── ai.scm
+│   │           │   ├── audio.scm
+│   │           │   ├── fonts.scm
+│   │           │   ├── sandbox.scm
+│   │           │   ├── monitoring.scm
+│   │           │   ├── programming-languages.scm
+│   │           │   ├── security.scm
+│   │           │   ├── video.scm
+│   │           │   ├── image.scm
+│   │           │   ├── 3d.scm
+│   │           │   ├── guix.scm
+│   │           │   ├── lsp.scm
+│   │           │   ├── formatters.scm
 │   │           │   ├── scheduling.scm
+│   │           │   ├── compute.scm
 │   │           │   ├── ci.scm
 │   │           │   ├── data.scm
-│   │           │   ├── security.scm  # sops, fail2ban, opensnitch, ufw, sshguard
-│   │           │   ├── video.scm     # ffmpeg, kdenlive, mlt (under desktop)
-│   │           │   ├── image.scm     # krita (under desktop)
-│   │           │   ├── 3d.scm        # blender (under desktop)
+│   │           │   ├── wayland.scm
+│   │           │   ├── password-manager.scm
+│   │           │   └── games.scm
+│   │           ├── ai/
+│   │           │   ├── opencode.scm
+│   │           │   ├── kilo.scm
+│   │           │   ├── ollama.scm
+│   │           │   ├── openclaw.scm
+│   │           │   ├── openclaw-node-modules.scm
+│   │           │   ├── n8n.scm            # commented out in loader
+│   │           │   └── sources/
+│   │           │       └── openclaw-2026.3.28.tar.gz
+│   │           ├── audio/
+│   │           │   ├── alsa.scm
+│   │           │   ├── pipewire.scm
+│   │           │   └── music/
+│   │           │       ├── mpd.scm
+│   │           │       ├── rmpc.scm
+│   │           │       └── cava.scm
+│   │           ├── ci/
+│   │           │   └── cuirass.scm
+│   │           ├── compute/
+│   │           │   ├── orchestration/
+│   │           │   │   ├── ganeti.scm
+│   │           │   │   └── ganeti-instance-guix.scm
+│   │           │   └── virtualization/
+│   │           │       ├── qemu.scm
+│   │           │       ├── libvirt.scm
+│   │           │       ├── virt-manager.scm
+│   │           │       ├── virt-viewer.scm
+│   │           │       └── spice.scm
+│   │           ├── containers/
+│   │           │   ├── docker.scm
+│   │           │   └── lazydocker.scm
+│   │           ├── core/
+│   │           │   ├── coreutils.scm
+│   │           │   ├── findutils.scm
+│   │           │   ├── grep.scm
+│   │           │   ├── inetutils.scm
+│   │           │   ├── kmod.scm
+│   │           │   ├── sudo.scm
+│   │           │   └── util-linux.scm
+│   │           ├── data/
+│   │           │   ├── postgresql.scm
+│   │           │   └── sqlit.scm
+│   │           ├── desktop/
+│   │           │   ├── hyprland.scm
+│   │           │   ├── hypridle.scm
+│   │           │   ├── qutebrowser.scm
+│   │           │   ├── quickshell.scm
+│   │           │   ├── mako.scm
+│   │           │   ├── wallpaper/
+│   │           │   │   ├── mpvpaper.scm
+│   │           │   │   └── swww.scm
+│   │           │   ├── wayland/
+│   │           │   │   ├── wl-clipboard.scm
+│   │           │   │   ├── cliphist.scm
+│   │           │   │   ├── grim.scm
+│   │           │   │   ├── grimblast.scm
+│   │           │   │   ├── slurp.scm
+│   │           │   │   ├── swappy.scm
+│   │           │   │   ├── swaylock.scm
+│   │           │   │   └── wlogout.scm
+│   │           │   ├── video/
+│   │           │   │   ├── ffmpeg.scm
+│   │           │   │   ├── kdenlive.scm
+│   │           │   │   ├── mlt.scm
+│   │           │   │   ├── opentimelineio.scm
+│   │           │   │   ├── gst-editing-services.scm
+│   │           │   │   ├── mpv.scm
+│   │           │   │   ├── obs.scm
+│   │           │   │   ├── xytz.scm
+│   │           │   │   └── kino.scm
+│   │           │   └── image/
+│   │           │       └── krita.scm
+│   │           ├── 3d/
+│   │           │   └── blender.scm
+│   │           ├── editors/
+│   │           │   ├── emacs.scm
+│   │           │   ├── neovim.scm
+│   │           │   └── emacs-packages/
+│   │           │       ├── emacs-packages.scm  # aggregator
+│   │           │       ├── emacs-monkeytype.scm
+│   │           │       ├── emacs-org-repeat-by-cron.scm
+│   │           │       ├── emacs-sops.scm
+│   │           │       ├── emacs-tmr.scm
+│   │           │       ├── fuzzy-clock.scm
+│   │           │       ├── geiser.scm
+│   │           │       ├── notebook-mode.scm
+│   │           │       ├── quick-peek.scm
+│   │           │       └── scrollable-quick-peek.scm
+│   │           ├── fonts/
+│   │           │   └── nerd-fonts.scm
+│   │           ├── formatters/
+│   │           │   ├── latexindent.scm
+│   │           │   ├── nixfmt.scm
+│   │           │   ├── prettier.scm
+│   │           │   └── ruff.scm
+│   │           ├── games/
+│   │           │   └── retroarch.scm
+│   │           ├── guix/
 │   │           │   ├── guix.scm
-│   │           │   └── lsp.scm
-│   │           └── <category>/       # Package submodules
-│   │               ├── networking/
-│   │               │   ├── bluetooth.scm   # bluez, bluetuith
-│   │               │   ├── bluetuith.scm   # TUI bluetooth manager
-│   │               │   ├── tailscale.scm
-│   │               │   └── ...
-│   │               ├── sandbox/
-│   │               │   └── sandbox.scm    # firejail, distrobox
-│   │               ├── fonts/
-│   │               │   └── fonts.scm      # terminus, termsyn
-│   │               └── ...
+│   │           │   ├── guix-modules.scm
+│   │           │   ├── guix-xsearch.scm
+│   │           │   ├── gwl.scm
+│   │           │   ├── bffe.scm
+│   │           │   ├── guix-build-coordinator.scm
+│   │           │   ├── hpcguix-web.scm
+│   │           │   └── guix-data-service.scm
+│   │           ├── keyboard/
+│   │           │   ├── keyd.scm
+│   │           │   └── kanata.scm
+│   │           ├── lsp/
+│   │           │   └── rust-analyzer.scm
+│   │           ├── monitoring/
+│   │           │   ├── grafana-tui.scm
+│   │           │   ├── kelora.scm
+│   │           │   ├── self.scm
+│   │           │   ├── build/
+│   │           │   │   ├── oci-containers.scm
+│   │           │   │   └── utils.scm
+│   │           │   └── services/
+│   │           │       ├── configuration.scm
+│   │           │       ├── grafana.scm
+│   │           │       └── prometheus.scm
+│   │           ├── networking/
+│   │           │   ├── curl.scm
+│   │           │   ├── openssh.scm
+│   │           │   ├── nss-certs.scm
+│   │           │   ├── tailscale.scm
+│   │           │   ├── yt-dlp.scm
+│   │           │   ├── bluetooth.scm
+│   │           │   ├── bluetuith.scm
+│   │           │   ├── network-manager.scm
+│   │           │   ├── gazelle-tui.scm
+│   │           │   ├── tools.scm
+│   │           │   └── version-control/
+│   │           │       ├── version-control.scm  # aggregator
+│   │           │       ├── git.scm
+│   │           │       ├── github-cli.scm
+│   │           │       └── lazygit.scm
+│   │           ├── password-manager/
+│   │           │   ├── password-store.scm
+│   │           │   ├── pass-extensions.scm
+│   │           │   └── passff-host.scm
+│   │           ├── programming-languages/
+│   │           │   ├── lisp.scm         # aggregator
+│   │           │   └── lisp/
+│   │           │       └── guile.scm
+│   │           ├── sandbox/
+│   │           │   └── sandbox.scm
+│   │           ├── scheduling/
+│   │           │   └── mcron.scm
+│   │           ├── security/
+│   │           │   ├── age.scm
+│   │           │   ├── gnupg.scm
+│   │           │   ├── fail2ban.scm
+│   │           │   ├── opensnitch.scm
+│   │           │   ├── sshguard.scm
+│   │           │   ├── password-store.scm
+│   │           │   └── sops/
+│   │           │       ├── packages.scm
+│   │           │       ├── services.scm
+│   │           │       └── ... (full sops-guix implementation)
+│   │           ├── shell/
+│   │           │   ├── nushell.scm
+│   │           │   ├── bash.scm
+│   │           │   ├── starship.scm
+│   │           │   ├── zoxide.scm
+│   │           │   ├── zellij.scm
+│   │           │   ├── fzf.scm
+│   │           │   ├── carapace.scm
+│   │           │   ├── atuin.scm
+│   │           │   ├── television.scm
+│   │           │   ├── superfile.scm
+│   │           │   ├── rip.scm
+│   │           │   ├── system-monitor.scm
+│   │           │   ├── power.scm
+│   │           │   ├── archive.scm
+│   │           │   └── fetch/
+│   │           │       ├── neofetch.scm
+│   │           │       └── fastfetch.scm
+│   │           └── terminal/
+│   │               └── wezterm.scm
 │   └── systems/
-│       └── containers/          # Container definitions
+│       └── containers/
+│           ├── containers.scm
+│           ├── core-container.scm
+│           ├── devsecops.scm
+│           └── devsecops/
+│               └── packages.scm
 
-** Current Categories (from module-reference.org)
+** Current Categories (accurate as of 2026-04-04)
 
-| Category              | Packages                                   |
-|----------------------|--------------------------------------------|
-| core                 | coreutils, sudo, util-linux                |
-| networking           | git, curl, ssh, tailscale, bluez, bluetuith |
-| shell               | nushell, starship, zoxide, zellij, fzf    |
-| editors              | emacs, neovim                             |
-| containers           | docker, lazydocker                        |
-| keyboard             | keyd, kanata                              |
-| terminal             | wezterm                                   |
-| desktop              | hyprland, qutebrowser, quickshell, hypridle |
-| desktop/video        | ffmpeg, kdenlive, mlt, opentimelineio, gst-editing-services |
-| desktop/image        | krita                                     |
-| desktop/3d           | blender                                   |
-| ai                  | opencode, kilo                            |
-| audio               | alsa-utils, pipewire, mpd                 |
-| fonts               | font-terminus, termsyn, font-nerd-fantasque-sans, font-nerd-symbols |
-| sandbox             | firejail, distrobox                       |
-| monitoring           | prometheus, grafana (Docker OCI)           |
-| programming-languages | guile                                   |
-| security           | sops, fail2ban, opensnitch, ufw, sshguard  |
+| Category              | Loader exports                                    |
+|----------------------|---------------------------------------------------|
+| core                 | root-core-packages                                 |
+| networking           | root-networking-packages, root-networking-services |
+| shell               | root-shell-packages, root-shell-*-packages         |
+| editors              | root-editors-packages                              |
+| desktop              | root-desktop-packages                              |
+| desktop/wallpaper    | (loaded via desktop loader)                        |
+| desktop/wayland      | root-desktop-wayland-packages                      |
+| desktop/video        | root-desktop-video-packages                        |
+| desktop/image        | root-desktop-image-packages                        |
+| desktop/3d           | root-desktop-3d-packages                           |
+| terminal             | root-terminal-packages                             |
+| containers           | root-containers-packages, root-containers-services |
+| keyboard             | root-keyboard-packages, root-keyboard-services     |
+| ai                  | root-ai-packages                                  |
+| audio               | root-audio-packages, root-audio-services           |
+| fonts               | font-packages                                     |
+| sandbox             | sandbox-packages                                  |
+| monitoring           | root-monitoring-packages, root-monitoring-services |
+| programming-languages | root-programming-languages-packages              |
+| security           | root-security-packages, root-security-services     |
+| formatters           | root-formatters-packages                          |
+| lsp                 | root-lsp-packages                                 |
+| scheduling           | root-scheduling-packages                          |
+| compute             | root-compute-packages                             |
+| ci                  | root-ci-packages, root-ci-services                |
+| data                | root-data-packages                                |
+| guix                | root-guix-packages, root-guix-services           |
+| password-manager     | root-password-manager-packages                    |
+| games               | root-games-packages                               |
 
 ** No external channels
 Never add external channels. Package definitions go directly into submodules.
@@ -95,15 +298,25 @@ Never add external channels. Package definitions go directly into submodules.
 ** Kernel Space
 
 kernel-space/linux.scm exports:
-- kernel (corrupt-linux with regdb fix)
-- kernel-initrd
-- kernel-firmware
-- kernel-arguments
-- kernel-modules
+- linux (from nonguix)
+
+kernel-space/kernel-space.scm aggregates:
+- bootloader, filesystem, hostname, keyboard, locale, elogind, udev, kmod
 
 ** Container System
 
-systems/containers/ — separate namespace
-See containers.org for details.
+systems/containers/ — separate namespace (systems containers ...)
+See containers.scm (agent file) for details.
+Uses flat pattern, not loader pattern yet.
+
+** Notes
+
+- guixos.scm is at /home/aoeu/.config/guix/guixos.scm (repo root), NOT under Operating-System/
+- Kernel uses standard nonguix `linux`, NOT corrupt-linux
+- audio/music/ subdirectory contains mpd, rmpc, cava (not flat under audio/)
+- security/password-store.scm and password-manager/password-store.scm both exist (duplicate)
+- kernel-space/kmod.scm and core/kmod.scm both exist (duplicate)
+- n8n is defined in ai/ but commented out in ai loader
+- ollama service is commented out in ollama.scm
 
 EOF

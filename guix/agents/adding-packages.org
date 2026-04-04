@@ -20,8 +20,13 @@ Copy package definitions directly into your submodule. Self-contained always.
 ** Step-by-step: adding a new package
 
 *** Step 1 — Pick category
-See module-reference.org for all categories.
+See module-reference.org for all 28 categories.
 No fitting category -> create new dir + loader (Template C + Template D).
+
+Current categories: core, networking, shell, editors, desktop, desktop/wallpaper,
+desktop/wayland, desktop/video, desktop/image, desktop/3d, terminal, containers,
+keyboard, ai, audio, fonts, sandbox, monitoring, programming-languages, security,
+formatters, lsp, scheduling, compute, ci, data, guix, password-manager, games.
 
 *** Step 2 — Create submodule file
 File:   Operating-System/core-system/user-space/root/<category>/<name>.scm

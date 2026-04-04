@@ -10,14 +10,14 @@
 (define-public atuin
   (package
     (name "atuin")
-    (version "18.3.0")
+    (version "18.13.6")
     (source
       (origin
         (method url-fetch)
         (uri (string-append
               "https://github.com/atuinsh/atuin/releases/download/v" version
               "/atuin-x86_64-unknown-linux-musl.tar.gz"))
-        (sha256 (base32 "0nlcy211lrvj7vyl6zrd1v3hv3s264m0pd69xc7c3df6rc41ywsv"))))
+        (sha256 (base32 "0gigapvzk2pbiw76dkrdslll96isjgq36camhs034vc1mnnjww8r"))))
     (build-system trivial-build-system)
     (inputs (list tar gzip))
     (arguments

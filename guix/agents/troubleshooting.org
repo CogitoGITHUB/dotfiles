@@ -282,3 +282,75 @@ Cause: linux-libre refuses to load proprietary firmware blobs.
 Fix: Use nonguix's corrupt-linux instead, which includes non-free firmware.
 
 Note: Realtek RTL8821CE and similar chips REQUIRE proprietary firmware to function.
+
+** Python TUI package with trivial-build-system (PYTHONPATH pattern)
+
+When packaging a Python TUI app that doesn't use standard build systems:
+
+Cause: The app imports Python modules but isn't a proper Python package with setup.py/pyproject.toml.
+
+Fix: Use trivial-build-system, extract source, create wrapper script with PYTHONPATH:
+#+BEGIN_SRC scheme
+(build-system trivial-build-system)
+(inputs (list python python-textual python-rich ...))
+(arguments
+ '(#:builder
+   (begin
+     (use-modules (guix build utils))
+     (let* ((out (assoc-ref %outputs "out"))
+            (bin (string-append out "/bin"))
+            (share (string-append out "/share/<name>"))
+            (pylib (string-append
+                     share ":"
+                     textual "/lib/python3.11/site-packages:"
+                     rich "/lib/python3.11/site-packages:")))
+       (mkdir-p bin)
+       (copy-recursively "tmp" share)
+       (with-output-to-file (string-append bin "/<name>")
+         (lambda ()
+           (format #t "#!/bin/sh~%export PYTHONPATH=\"~a\"~%exec ~a/bin/python3 ... \"$@\"~%"
+                   pylib python)))
+       (chmod (string-append bin "/<name>") #o755)))))
+#+END_SRC
+See gazelle-tui.scm for a working example.
+
+** Simple-service pattern for system-level services
+
+When you need to run a service as root outside the normal service-type system:
+
+#+BEGIN_SRC scheme
+(define-public my-service
+  (simple-service 'my-service-name
+                  shepherd-root-service-type
+                  (list (shepherd-service
+                          (provision '(my-service))
+                          (requirement '(user-processes))
+                          (start #~(make-forkexec-constructor
+                                     (list #$(file-append my-package "/bin/my-bin"))
+                                     #:user "root"
+                                     #:log-file "/var/log/my-service.log")))
+                          (stop #~(make-kill-destructor))
+                          (respawn? #t)))))
+#+END_SRC
+See audio/pipewire.scm and audio/alsa.scm for working examples.
+
+** Alias pattern — wrapping an existing Guix package
+
+When you want to export a package under a different name:
+#+BEGIN_SRC scheme
+(define-public bind-dns isc-bind)
+#+END_SRC
+This is useful when the Guix package name differs from what you want to call it.
+See networking/tools.scm for an example.
+
+** Loader imports directly from (gnu packages ...) instead of submodule
+
+Some loaders (networking, core) import packages directly from (gnu packages ...)
+rather than through submodule files. This is valid when:
+- The package already exists in Guix
+- No custom configuration or service is needed
+- You want to keep things simple
+
+Files like networking/curl.scm, networking/openssh.scm, networking/nss-certs.scm
+exist but are NOT used by the loader — the loader imports directly from gnu packages.
+This is intentional and not an error. Don't "fix" this unless asked.
