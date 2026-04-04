@@ -227,6 +227,76 @@ zcat /var/log/guix/drvs/<XX>/<hash>.drv.gz | grep "actual hash"
 
 Use the "actual hash" from the build log. It always starts with `0` or `1`.
 
+*** Go packages with binary in subdirectory (cmd/<name> pattern)
+
+Many Go projects have `go.mod` at the root but the main binary is in `cmd/<name>/`.
+The `go-build-system` expects `#:import-path` to point to the module root (where
+`go.mod` lives), but you must override the build phase to install the correct
+subdirectory:
+
+#+BEGIN_SRC scheme
+(define-module (core-system user-space root <category> <name>)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system go)
+  #:use-module (guix gexp)
+  #:use-module (gnu packages golang)
+  #:use-module (gnu packages golang-xyz)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:export (<name>))
+
+(define-public <name>
+  (package
+    (name "go-github-com-<user>-<repo>")
+    (version "<version>")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/<user>/<repo>")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32 "<hash>"))
+              (modules '((guix build utils)))
+              (snippet
+               #~(begin
+                   (substitute* "go.mod"
+                     (("go 1.25.5") "go 1.24"))))))  ; patch Go version if needed
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:import-path "github.com/<user>/<repo>"   ; module root, NOT cmd/
+      #:install-source? #f
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'build
+            (lambda* (#:key import-path #:allow-other-keys)
+              (invoke "go" "install" "-ldflags=-s -w" "-trimpath"
+                      (string-append import-path "/cmd/<binary>")))))))
+    (propagated-inputs (list go-github-com-<dep1>
+                             go-github-com-<dep2>))
+    (synopsis "<short description>")
+    (description "<longer description>")
+    (home-page "https://github.com/<user>/<repo>")
+    (license license:expat)))
+#+END_SRC
+
+CRITICAL: `#:import-path` must be the module root (where go.mod is), NOT the
+cmd/ subdirectory. The custom build phase installs the specific binary.
+
+To find Go dependency module paths:
+#+BEGIN_SRC sh
+guix import go github.com/<user>/<repo>
+# Look at propagated-inputs in the output
+#+END_SRC
+
+To verify Go deps exist in Guix:
+#+BEGIN_SRC scheme
+(use-modules (gnu packages golang-xyz) (gnu packages golang-build))
+;; Check each dep in both modules
+#+END_SRC
+
 ** Template C — Loader file
 
 #+BEGIN_SRC scheme

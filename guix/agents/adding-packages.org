@@ -201,6 +201,41 @@ Many Go and Rust projects provide pre-built Linux binaries in GitHub releases. U
 - Use specific git commits, not branch names like "master" — branch names produce different hashes
 - Hash from local `guix hash` will differ from Guix's expected hash because `.git/` is excluded — use the actual hash from the build log
 
+*** Go packages — cmd/<name> binary pattern
+
+Most Go projects have `go.mod` at the root but the main binary lives in `cmd/<name>/`.
+The `go-build-system` requires `#:import-path` to point to the module ROOT (where
+go.mod is), NOT the cmd/ subdirectory. You MUST override the build phase:
+
+#+BEGIN_SRC scheme
+(arguments
+ (list
+  #:import-path "github.com/user/repo"   ; module root, NOT cmd/
+  #:install-source? #f
+  #:phases
+  #~(modify-phases %standard-phases
+      (replace 'build
+        (lambda* (#:key import-path #:allow-other-keys)
+          (invoke "go" "install" "-ldflags=-s -w" "-trimpath"
+                  (string-append import-path "/cmd/binary")))))))
+#+END_SRC
+
+If `go.mod` specifies a Go version newer than Guix has (e.g., `go 1.25.5` when
+Guix only has `go-1.24`), patch it in a source snippet:
+
+#+BEGIN_SRC scheme
+(source (origin
+  ...
+  (modules '((guix build utils)))
+  (snippet #~(begin
+               (substitute* "go.mod"
+                 (("go 1.25.5") "go 1.24"))))))
+#+END_SRC
+
+To find all Go dependencies: `guix import go github.com/user/repo`
+To verify they exist in Guix: check both `(gnu packages golang)` and `(gnu packages golang-xyz)`
+Go deps use long names like `go-github-com-charmbracelet-bubbletea`
+
 *** Finding which Guix module exports a package
 
 When you get "unbound variable" for a gnu package:

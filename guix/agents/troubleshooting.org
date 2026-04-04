@@ -180,6 +180,34 @@ Fix: Delete the sanity-check phase:
      (delete 'sanity-check))))
 #+END_SRC
 
+** Go package build fails — "go.mod needs updating" or "go install requires a version"
+
+Cause 1: The `go.mod` specifies a Go version newer than Guix provides.
+Fix: Patch go.mod in a source snippet:
+#+BEGIN_SRC scheme
+(modules '((guix build utils)))
+(snippet #~(begin
+             (substitute* "go.mod"
+               (("go 1.25.5") "go 1.24"))))
+#+END_SRC
+
+Cause 2: `#:import-path` points to `cmd/<name>/` instead of the module root.
+The go.mod is at the root — `#:import-path` must match.
+Fix: Use root import path, override build phase to install cmd/:
+#+BEGIN_SRC scheme
+#:import-path "github.com/user/repo"   ; NOT github.com/user/repo/cmd/name
+#:phases #~(modify-phases %standard-phases
+    (replace 'build
+      (lambda* (#:key import-path #:allow-other-keys)
+        (invoke "go" "install" "-ldflags=-s -w" "-trimpath"
+                (string-append import-path "/cmd/name")))))
+#+END_SRC
+
+Cause 3: Go dependency version mismatch between go.mod and what's in Guix.
+Fix: Check versions with `guix package --show=go-github-com-<name>` and compare
+to go.mod. If versions don't match, you may need to package the correct version.
+
+
 ** WiFi device unavailable: cfg80211 regulatory.db signature error
 
 Error in dmesg:
