@@ -2,8 +2,10 @@
 
 (define-module (core-system user-space root loaders data)
   #:use-module (core-system user-space root data postgresql)
-  #:re-export (postgresql)
+  #:use-module (core-system user-space root data sqlit)
+  #:re-export (postgresql
+              python-sqlit-tui)
   #:export (root-data-packages))
 
 (define-public root-data-packages
-  (list postgresql))
+  (list postgresql python-sqlit-tui))
