@@ -1,3 +1,4 @@
+;; grafana tui and n8n dont work need work !!
 ;; OBSERVABILITY SERVICES (grafana, prometheus, blackbox-exporter):
 ;;   Added from gocix channel (fishinthecalculator/gocix), adapted to use oci-service-type.
 ;;   Services: docker-grafana (port 3000), docker-prometheus (ports 9000/9090), docker-blackbox-exporter (port 9115).

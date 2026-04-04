@@ -3,8 +3,9 @@
   #:use-module (core-system user-space root ai opencode)
   #:use-module (core-system user-space root ai kilo)
   #:use-module (core-system user-space root ai ollama)
-  #:re-export (openclaw opencode kilo ollama)
+  ;; #:use-module (core-system user-space root ai n8n)
+  #:re-export (openclaw opencode kilo ollama) ;; n8n
   #:export (root-ai-packages))
 
 (define-public root-ai-packages
-  (list openclaw opencode kilo ollama))
+  (list openclaw opencode kilo ollama)) ;; n8n

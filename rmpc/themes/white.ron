@@ -3,16 +3,22 @@
 #![enable(unwrap_variant_newtypes)]
 
 (
-    background_color: "#FFFFFF",
+    default_album_art_path: None,
+    format_tag_separator: " | ",
+    browser_column_widths: [20, 38, 42],
+    background_color: None,
     text_color: "#8B0000",
+    header_background_color: None,
+    modal_background_color: None,
+    modal_backdrop: false,
     preview_label_style: (fg: "#8B0000"),
     preview_metadata_group_style: (fg: "#8B0000", modifiers: "Bold"),
     level_styles: (
-        info: (fg: "#8B0000", bg: "#FFFFFF"),
-        warn: (fg: "#8B0000", bg: "#FFFFFF"),
-        error: (fg: "#8B0000", bg: "#FFFFFF"),
-        debug: (fg: "#8B0000", bg: "#FFFFFF"),
-        trace: (fg: "#8B0000", bg: "#FFFFFF"),
+        info: (fg: "#8B0000"),
+        warn: (fg: "#8B0000"),
+        error: (fg: "#8B0000"),
+        debug: (fg: "#8B0000"),
+        trace: (fg: "#8B0000"),
     ),
     cava: (
         bar_width: 2,
@@ -38,19 +44,20 @@
         symbols: ["", "█", "", "█", ""],
         track_style: (fg: "#8B0000"),
         elapsed_style: (fg: "#8B0000"),
-        thumb_style: (fg: "#8B0000", bg: "#FFFFFF"),
+        thumb_style: (fg: "#8B0000"),
     ),
     scrollbar: (
         symbols: ["│", "█", "▲", "▼"],
         thumb_style: (fg: "#8B0000"),
     ),
     tab_bar: (
-        active_style: (fg: "#FFFFFF", bg: "#8B0000", modifiers: "Bold"),
+        active_style: (fg: "#8B0000", bg: "#8B0000", modifiers: "Bold"),
         inactive_style: (fg: "#8B0000"),
     ),
     highlighted_item_style: (fg: "#8B0000", modifiers: "Bold"),
-    current_item_style: (fg: "#FFFFFF", bg: "#8B0000", modifiers: "Bold"),
+    current_item_style: (fg: "#8B0000", bg: "#8B0000", modifiers: "Bold"),
     borders_style: (fg: "#8B0000"),
     highlight_border_style: (fg: "#8B0000"),
+    header_style: (fg: "#8B0000"),
     header: (rows: []),
 )

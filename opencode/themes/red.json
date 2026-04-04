@@ -42,16 +42,16 @@
       "light": "darkRed"
     },
     "background": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "backgroundPanel": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "backgroundElement": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "border": {
       "dark": "darkRed",
@@ -82,24 +82,24 @@
       "light": "darkRed"
     },
     "diffHighlightAdded": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "diffHighlightRemoved": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "diffAddedBg": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "diffRemovedBg": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "diffContextBg": {
-      "dark": "#FFFFFF",
-      "light": "#FFFFFF"
+      "dark": "transparent",
+      "light": "transparent"
     },
     "diffLineNumber": {
       "dark": "darkRed",

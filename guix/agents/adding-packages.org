@@ -185,13 +185,26 @@ When packaging Python tools from PyPI:
      (delete 'sanity-check))))
 #+END_SRC
 
-*** Pre-built Go/Rust binaries
+*** npm FOD pattern (large packages with many dependencies)
 
-Many Go and Rust projects provide pre-built Linux binaries in GitHub releases. Use `copy-build-system` instead of trying to build from source:
-1. Check releases page for `linux-amd64` or `x86_64-unknown-linux-musl` binaries
-2. Get hash with `guix download <url>`
-3. Use `copy-build-system` with `#:install-plan '(("<binary>" "bin/"))`
-4. If the binary is dynamically linked (check with `file`), use the patchelf pattern from module-templates.org
+For npm packages with hundreds/thousands of dependencies (e.g., n8n has 2443
+packages), the npm tarball from the registry contains only the package's own
+files (bin/, dist/, templates/) — NO node_modules. Use a two-phase FOD pattern:
+
+Phase 1: Create an FOD package that runs `npm install --ignore-scripts` to
+produce a fixed, reproducible node_modules tree. The FOD's hash is the same
+as the npm tarball hash since the source is identical.
+
+Phase 2: Main package unpacks the same tarball and symlinks the FOD's
+node_modules into it, then creates a wrapper script.
+
+CRITICAL:
+- `--ignore-scripts` is REQUIRED — prevents arbitrary code execution during
+  npm install, which is needed for Guix reproducibility
+- Set HOME and npm_config_cache/tmp to output dir to avoid /homeless-shelter errors
+- Use `tar --use-compress-program gzip` — tar can't find gzip otherwise
+- Wrapper must point to `bin/<name>` entry point, NOT dist/index.js
+- See module-templates.org "npm FOD pattern" for full template
 
 *** Emacs packages with dependencies
 

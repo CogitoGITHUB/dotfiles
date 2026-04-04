@@ -207,6 +207,34 @@ Cause 3: Go dependency version mismatch between go.mod and what's in Guix.
 Fix: Check versions with `guix package --show=go-github-com-<name>` and compare
 to go.mod. If versions don't match, you may need to package the correct version.
 
+** npm FOD build fails — "EACCES: permission denied, mkdir '/homeless-shelter'"
+
+Cause: npm tries to write to $HOME/.npm which doesn't exist in the build sandbox.
+Fix: Set HOME and npm config vars to the output directory:
+#+BEGIN_SRC scheme
+(setenv "HOME" out)
+(setenv "npm_config_cache" tmp)
+(setenv "npm_config_tmp" tmp)
+#+END_SRC
+
+** npm FOD build fails — "tar: gzip: Cannot exec"
+
+Cause: tar needs gzip for .tgz files but gzip isn't in PATH.
+Fix: Use `--use-compress-program` with the full gzip path:
+#+BEGIN_SRC scheme
+(invoke tar "--use-compress-program" gzip "-xf" src "-C" work)
+#+END_SRC
+And add both tar and gzip to inputs.
+
+** n8n (or similar) runs but --version shows nothing
+
+Cause: The wrapper script points to `dist/index.js` instead of `bin/<name>`.
+The bin script has version checks, config loading, and module imports.
+Fix: Point wrapper to the bin entry point:
+#+BEGIN_SRC scheme
+(format p "#!/bin/sh\nexec ~a ~a/bin/<name> \"$@\"\n" node lib)
+#+END_SRC
+
 
 ** WiFi device unavailable: cfg80211 regulatory.db signature error
 

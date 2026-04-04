@@ -4,7 +4,7 @@ local config = wezterm.config_builder()
  -- ===== Terminal colors - White theme with dark red accents =====
   local colors = {
     foreground = '#8B0000',  -- Dark red text
-    background = '#ffffff',   -- White background
+    background = 'rgba(255, 255, 255, 0.0)',   -- Transparent background
     cursor_bg = '#8B0000',
     cursor_fg = '#ffffff',
     selection_fg = '#ffffff',
@@ -28,6 +28,7 @@ config.scrollback_lines = 20000
 config.enable_tab_bar = true
 config.use_fancy_tab_bar = false
 config.window_decorations = "NONE"
+config.window_background_opacity = 1
 
 -- ===== Modal plugin =====
 local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
@@ -36,8 +37,8 @@ modal.set_default_keys(config)
 
 -- ===== Window frame / tab-bar background =====
 config.window_frame = {
-  active_titlebar_bg = '#ffffff',
-  inactive_titlebar_bg = '#ffffff',
+  active_titlebar_bg = 'rgba(255, 255, 255, 0.0)',
+  inactive_titlebar_bg = 'rgba(255, 255, 255, 0.0)',
   border_left_width = 0,
   border_right_width = 0,
   border_bottom_height = 0,
@@ -51,7 +52,7 @@ tabline.setup({
     tabs_enabled = true,
     theme = {
       foreground = '#8B0000',
-      background = '#ffffff',
+      background = 'rgba(255, 255, 255, 0.0)',
       cursor_bg = '#8B0000',
       cursor_fg = '#ffffff',
       ansi = {
@@ -66,23 +67,23 @@ tabline.setup({
     theme_overrides = {
       normal_mode = {
         a = { fg = '#ffffff', bg = '#8B0000' },
-        b = { fg = '#8B0000', bg = '#ffffff' },
-        c = { fg = '#A52A2A', bg = '#ffffff' },
+        b = { fg = '#8B0000', bg = 'rgba(255, 255, 255, 0.0)' },
+        c = { fg = '#A52A2A', bg = 'rgba(255, 255, 255, 0.0)' },
       },
       copy_mode = {
         a = { fg = '#ffffff', bg = '#8B0000' },
-        b = { fg = '#8B0000', bg = '#ffffff' },
-        c = { fg = '#A52A2A', bg = '#ffffff' },
+        b = { fg = '#8B0000', bg = 'rgba(255, 255, 255, 0.0)' },
+        c = { fg = '#A52A2A', bg = 'rgba(255, 255, 255, 0.0)' },
       },
       search_mode = {
         a = { fg = '#ffffff', bg = '#8B0000' },
-        b = { fg = '#8B0000', bg = '#ffffff' },
-        c = { fg = '#A52A2A', bg = '#ffffff' },
+        b = { fg = '#8B0000', bg = 'rgba(255, 255, 255, 0.0)' },
+        c = { fg = '#A52A2A', bg = 'rgba(255, 255, 255, 0.0)' },
       },
       tab = {
         active = { fg = '#ffffff', bg = '#8B0000' },
-        inactive = { fg = '#8B0000', bg = '#ffffff' },
-        inactive_hover = { fg = '#8B0000', bg = '#eeeeee' },
+        inactive = { fg = '#8B0000', bg = 'rgba(255, 255, 255, 0.0)' },
+        inactive_hover = { fg = '#8B0000', bg = 'rgba(255, 255, 255, 0.0)' },
       },
     },
     section_separators = '',
@@ -103,6 +104,35 @@ tabline.setup({
 
 -- Apply recommended options to WezTerm config
 tabline.apply_to_config(config)
+
+-- Override tab bar colors for transparency AFTER tabline applies its settings
+config.colors.tab_bar = {
+  background = 'rgba(0,0,0,0)',
+  active_tab = {
+    bg_color = '#8B0000',
+    fg_color = '#8B0000',
+  },
+  inactive_tab = {
+    bg_color = 'rgba(0,0,0,0)',
+    fg_color = '#8B0000',
+  },
+  inactive_tab_hover = {
+    bg_color = 'rgba(0,0,0,0)',
+    fg_color = '#A52A2A',
+  },
+  new_tab = {
+    bg_color = 'rgba(0,0,0,0)',
+    fg_color = '#8B0000',
+  },
+  new_tab_hover = {
+    bg_color = 'rgba(0,0,0,0)',
+    fg_color = '#A52A2A',
+  },
+}
+
+-- Force transparency after tabline applies its settings
+config.window_frame.active_titlebar_bg = 'rgba(0,0,0,0)'
+config.window_frame.inactive_titlebar_bg = 'rgba(0,0,0,0)'
 
 -- Force these settings after tabline
 config.use_fancy_tab_bar = false

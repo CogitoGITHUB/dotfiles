@@ -4,8 +4,12 @@
   #:use-module (core-system user-space root desktop qutebrowser)
   #:use-module (core-system user-space root desktop quickshell)
   #:use-module (core-system user-space root desktop mako)
-  #:re-export (hyprland hypridle qutebrowser quickshell mako)
+  #:use-module (core-system user-space root desktop wallpaper mpvpaper)
+  #:use-module (core-system user-space root desktop wallpaper swww)
+  #:use-module (gnu packages imagemagick)
+  #:use-module (gnu packages web)
+  #:re-export (hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq)
   #:export (root-desktop-packages))
 
 (define-public root-desktop-packages
-  (list hyprland hypridle qutebrowser quickshell mako))
+  (list hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq))
