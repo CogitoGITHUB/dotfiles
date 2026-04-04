@@ -1,24 +1,24 @@
 # Gazelle Theme Configuration
-# Uncomment and modify these values to customize your theme
+# White-Red Theme (matching opencode red theme)
 # Colors should be in hex format (#RRGGBB) or 0xRRGGBB
 [colors.primary]
-#foreground = "#D8DEE9"
-#background = "#2E3440"
+foreground = "#8B0000"
+background = "#FFFFFF"
 [colors.normal]
-#black = "#3B4252"
-#red = "#BF616A"
-#green = "#A3BE8C"
-#yellow = "#EBCB8B"
-#blue = "#5E81AC"
-#magenta = "#B48EAD"
-#cyan = "#88C0D0"
-#white = "#E5E9F0"
+black = "#3B4252"
+red = "#8B0000"
+green = "#8B0000"
+yellow = "#8B0000"
+blue = "#8B0000"
+magenta = "#8B0000"
+cyan = "#8B0000"
+white = "#E5E9F0"
 [colors.bright]
-#black = "#4C566A"
-#red = "#D08770"
-#green = "#8FBCBB"
-#yellow = "#EBCB8B"
-#blue = "#81A1C1"
-#magenta = "#B48EAD"
-#cyan = "#8FBCBB"
-#white = "#ECEFF4"
+black = "#4C566A"
+red = "#8B0000"
+green = "#8B0000"
+yellow = "#8B0000"
+blue = "#8B0000"
+magenta = "#8B0000"
+cyan = "#8B0000"
+white = "#ECEFF4"

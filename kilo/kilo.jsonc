@@ -5,7 +5,8 @@
       "/tmp/*": "allow",
       "/run/current-system/profile/share/guile/site/*": "allow",
       "/gnu/store/vx7apxahrlvafizyac47r3xmp3lik3b1-udev-rules.d/*": "allow",
-      "/gnu/store/xy92f7afi7gr8g54f5iqxfxgy99yazqh-kilo-7.1.8/bin/*": "allow"
+      "/gnu/store/xy92f7afi7gr8g54f5iqxfxgy99yazqh-kilo-7.1.8/bin/*": "allow",
+      "/home/aoeu/*": "allow"
     },
     "bash": "allow"
   }

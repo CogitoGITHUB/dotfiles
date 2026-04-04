@@ -20,5 +20,7 @@ $env.PATH = [
     ...$path_without_setuid
 ]
 
-$env.FZF_DEFAULT_OPTS = "--color=bg:#FFFFFF,bg+:#E8E8E8,fg:#8B0000,fg+:#8B0000,hl:#CC0000,hl+:#FF0000,header:#8B0000,spinner:#8B0000,info:#999999,pointer:#8B0000,marker:#8B0000,prompt:#8B0000,border:#CCCCCC,separator:#CCCCCC,scrollbar:#CCCCCC --border=rounded --padding=1 --margin=1 --info=inline --bind=ctrl-a:select-all --bind=ctrl-j:down --bind=ctrl-k:up"
 source ~/.config/nushell/zoxide.nu
+
+$env.FZF_DEFAULT_OPTS = "--color=fg:#8B0000,fg+:#8B0000,hl:#CC0000,hl+:#FF0000,header:#8B0000,spinner:#8B0000,info:#999999,pointer:#8B0000,marker:#8B0000,prompt:#8B0000,border:#8B0000,separator:#8B0000,scrollbar:#8B0000 --border=rounded --padding=1 --margin=1 --info=inline --bind=ctrl-a:select-all --bind=ctrl-j:down --bind=ctrl-k:up"
+
