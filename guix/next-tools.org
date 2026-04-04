@@ -4,8 +4,6 @@ https://github.com/linuxmobile/hibiki.git (hard - Rust/GTK4 Wayland keystroke vi
 
 https://github.com/jpablobr/emacs-monkeytype
 
-https://github.com/raskrebs/sonar.git
-
 https://github.com/open-gitagent/gitagent.git
 
 https://github.com/onecli/onecli.git

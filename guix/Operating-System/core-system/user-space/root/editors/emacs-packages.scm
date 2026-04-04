@@ -6,8 +6,9 @@
   #:use-module (core-system user-space root editors emacs-packages emacs-org-repeat-by-cron)
   #:use-module (core-system user-space root editors emacs-packages fuzzy-clock)
   #:use-module (core-system user-space root editors emacs-packages notebook-mode)
-  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode)
+  #:use-module (core-system user-space root editors emacs-packages emacs-monkeytype)
+  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype)
   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode))
+  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype))
