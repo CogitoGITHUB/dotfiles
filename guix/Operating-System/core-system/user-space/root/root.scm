@@ -72,6 +72,7 @@
           root-ci-packages
           root-data-packages
           root-guix-packages
+          root-monitoring-packages
           sandbox-packages
           font-packages))
 

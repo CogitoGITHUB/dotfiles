@@ -1,9 +1,3 @@
-pass ( the password manager with : https://github.com/qukhan/pass-fzf and : https://github.com/iquiw/auth-password-store
-
-nyxt ( web browser ) 
-
-obs ? 
-
 https://github.com/eval-exec/neomacs.git
 
 https://github.com/xdagiz/xytz.git
@@ -13,8 +7,6 @@ https://github.com/linuxmobile/hibiki.git
 https://github.com/originalankur/maptoposter.git
 
 https://github.com/DangJin/pdf2video.git
-
-https://github.com/protesilaos/tmr.git
 
 https://github.com/letieu/dictation-input.git
 
@@ -33,8 +25,6 @@ https://github.com/Trevoke/fuzzy-clock.el.git
 https://github.com/rougier/notebook-mode
 
 https://github.com/jpablobr/emacs-monkeytype
-
-https://github.com/lovromazgon/grafana-tui.git
 
 https://github.com/raskrebs/sonar.git
 

@@ -8,6 +8,7 @@
   #:use-module (core-system user-space root security fail2ban)
   #:use-module (core-system user-space root security opensnitch)
   #:use-module (core-system user-space root security sshguard)
+  #:use-module (core-system user-space root security password-store)
   #:re-export (sops
                sops-secrets-service-type
                sops-service-configuration
@@ -15,13 +16,14 @@
                gnupg
                fail2ban
                opensnitch-daemon
-               opensnitch-ui
-               sshguard)
+                opensnitch-ui
+                sshguard
+                password-store)
   #:export (root-security-packages
             root-security-services))
 
 (define-public root-security-packages
-  (list sops age gnupg fail2ban opensnitch-daemon opensnitch-ui sshguard))
+  (list sops age gnupg fail2ban opensnitch-daemon opensnitch-ui sshguard password-store))
 
 (define-public root-security-services
   '())

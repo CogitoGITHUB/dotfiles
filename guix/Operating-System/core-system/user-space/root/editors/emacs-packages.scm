@@ -2,8 +2,9 @@
   #:use-module (gnu packages emacs-xyz)
   #:use-module (core-system user-space root editors emacs-packages geiser)
   #:use-module (core-system user-space root editors emacs-packages emacs-sops)
-  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass)
+  #:use-module (core-system user-space root editors emacs-packages emacs-tmr)
+  #:re-export (emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr)
   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass))
+  (list emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr))
