@@ -1,28 +1,27 @@
 (define-module (core-system user-space root audio music mpd)
-  #:use-module (guix packages)
-  #:use-module (gnu packages)
   #:use-module (gnu services)
   #:use-module (gnu services audio)
-  #:use-module (gnu system accounts)
-  #:use-module (core-system user-space root users users)
-  #:export (mpd-service))
+  #:use-module (gnu packages mpd)
+  #:export (mpd mpd-service))
 
-(define mpd-service
+(define-public mpd (@ (gnu packages mpd) mpd))
+
+(define-public mpd-service
   (service mpd-service-type
            (mpd-configuration
-             (user (car users))
+             (user "aoeu")
              (music-directory "/home/aoeu/Music")
              (playlist-directory "/home/aoeu/Music/playlists")
-             (auto-update? #t)
-              (outputs
-               (list (mpd-output
-                       (name "my_fifo")
-                       (type "fifo")
-                       (enabled? #t)
-                       (extra-options
-                        `((path . "/tmp/mpd.fifo")
-                          (format . "44100:16:2"))))
-                     (mpd-output
-                       (name "pipewire")
-                       (type "pipewire")
-                       (enabled? #t)))))))
+             (environment-variables
+               (list "XDG_RUNTIME_DIR=/run/user/1000"
+                     "PIPEWIRE_RUNTIME_DIR=/run/user/1000"))
+             (outputs (list
+                        (mpd-output
+                          (name "PipeWire")
+                          (type "pipewire"))
+                        (mpd-output
+                          (name "cava-fifo")
+                          (type "fifo")
+                          (extra-options
+                            '((path . "/tmp/mpd.fifo")
+                              (format . "44100:16:2")))))))))

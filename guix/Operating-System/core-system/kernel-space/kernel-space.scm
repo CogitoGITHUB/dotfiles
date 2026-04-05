@@ -17,4 +17,4 @@
 (define kernel-system-services
   (list elogind-service uinput-group-service kernel-modules))
 
-(define kernel-system-packages (list linux-firmware))
+(define kernel-system-packages kernel-firmware)
