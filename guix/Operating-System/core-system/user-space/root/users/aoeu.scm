@@ -26,7 +26,8 @@
         (user-group (name "kvm") (system? #t))
         (user-group (name "sgx") (system? #t))
         (user-group (name "pulse") (system? #t))
-        (user-group (name "pulse-access") (system? #t))))
+        (user-group (name "pulse-access") (system? #t))
+        (user-group (name "bluetooth") (system? #t))))
 
 (define-public users
   (list (user-account
@@ -34,7 +35,7 @@
          (comment "Aoeu")
          (group "users")
          (home-directory "/home/aoeu")
-         (supplementary-groups '("wheel" "netdev" "audio" "video" "uinput" "keyd" "docker" "pulse-access"))
+         (supplementary-groups '("wheel" "netdev" "audio" "video" "uinput" "keyd" "docker" "pulse-access" "bluetooth"))
          (shell (file-append nushell "/bin/nu")))
         (user-account
          (name "pulse")
@@ -45,7 +46,9 @@
          (shell "/run/current-system/profile/bin/nologin"))))
 
 (define-public sudoers-file
-  (plain-file "sudoers" "root ALL=(ALL) ALL\n%wheel ALL=(ALL) NOPASSWD: ALL\n"))
+  (plain-file "sudoers" "root ALL=(ALL) ALL
+%wheel ALL=(ALL) NOPASSWD: ALL
+"))
 
 (define-public setuid-programs
   (list (setuid-program
