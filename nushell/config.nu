@@ -7,7 +7,7 @@ source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
 source "~/.config/nushell/core-modules/completion.nu"
 source ~/.zoxide.nu
 source ~/.local/share/nushell/vendor/autoload/atuin.nu
-
+source ($nu.data-dir | path join "carapace-init.nu")
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")

@@ -1,5 +1,5 @@
 # /home/aoeu/.config/nushell/env.nu
-
+carapace _carapace nushell | save -f ($nu.data-dir | path join "carapace-init.nu")
 $env.EDITOR = "nvim"
 
 # --- Guix Configuration ---
