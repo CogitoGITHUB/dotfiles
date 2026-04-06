@@ -1,3 +1,0 @@
-
-Send notyfications frem shell to smartphone
-https://ntfy.sh/
