@@ -8,10 +8,12 @@
   #:use-module (core-system user-space root desktop wallpaper swww)
   #:use-module (core-system user-space root desktop hibiki)
   #:use-module (core-system user-space root desktop wayscriber)
+  #:use-module (core-system user-space root desktop pyprland)
+  #:use-module (core-system user-space root desktop hyprsunset)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages web)
-  #:re-export (hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber)
+  #:re-export (hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber python-pyprland hyprsunset)
   #:export (root-desktop-packages))
 
 (define-public root-desktop-packages
-  (list hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber))
+  (list hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber python-pyprland hyprsunset))
