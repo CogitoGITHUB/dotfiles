@@ -1,0 +1,76 @@
+* Baruch Spinoza
+** Ethics
+*** Introduction
+Written in a geometrical style like Euclid, Spinoza demonstrates that God, Nature, and the universe are identical and operate through strict necessity.
+*** Reason
+It reveals a deterministic cosmos where free will and personal meaning are illusions, exposing the cold logic of existence.
+
+* Bertrand Russell
+** Principia Mathematica
+*** Introduction
+Co-authored with Whitehead, it attempts to derive all mathematics from formal logic using rigorous proofs and symbolic reasoning.
+*** Reason
+Exposes the fragile foundations of certainty, showing that even mathematics can only partially justify itself, challenging intuitive beliefs.
+
+* Rudolf Carnap
+** The Logical Structure of the World
+*** Introduction
+Carnap reconstructs all knowledge using logical formalism, reducing philosophical questions to a precise system of definitions and relations.
+*** Reason
+Eliminates metaphysics by proving that anything outside logical reconstruction is meaningless, stripping comfort from speculation.
+
+* W.V.O. Quine
+** Epistemology Naturalized
+*** Introduction
+Quine proposes that philosophy should be continuous with empirical science, turning knowledge acquisition into a branch of cognitive and natural science.
+*** Reason
+Shows that traditional certainty is unattainable; epistemology is bound by biology and observation rather than intuition or reason.
+
+* Kurt Gödel
+** Incompleteness Theorems
+*** Introduction
+Gödel proves that in any sufficiently complex formal system, there are true statements that cannot be proven within the system.
+*** Reason
+Mathematically demonstrates limits of certainty and knowledge, revealing that foundational systems are inherently incomplete or inconsistent.
+
+* Gregory Chaitin
+** Meta Math!
+*** Introduction
+Introduces algorithmic information theory, showing that some mathematical truths are irreducible and true for no reason.
+*** Reason
+Highlights the unpredictability and randomness inherent in formal systems, exposing an irreducible core of mathematical darkness.
+
+* E.T. Jaynes
+** Probability Theory: The Logic of Science
+*** Introduction
+Frames probability as an extension of logic and a method to quantify rational belief under uncertainty.
+*** Reason
+Replaces absolute truth with numerical inference, showing that knowledge is provisional and contingent, challenging traditional philosophical certainty.
+
+* Ray Brassier
+** Nihil Unbound
+*** Introduction
+Combines neuroscience, cosmology, and philosophy to argue that consciousness does not reveal intrinsic meaning and that extinction is inevitable.
+*** Reason
+Directly applies scientific knowledge to philosophical nihilism, demonstrating that the universe is indifferent to human concerns.
+
+* Nick Land
+** Fanged Noumena
+*** Introduction
+Collection of essays using cybernetics, thermodynamics, and nonlinear systems to analyze acceleration, entropy, and societal collapse.
+*** Reason
+Shows humanism as an ephemeral glitch in larger systemic processes, blending philosophy with mathematical and scientific modeling of reality.
+
+* Roger Penrose
+** The Emperor’s New Mind
+*** Introduction
+Explores the physics of consciousness, arguing that the human mind may operate beyond computational limits and conventional AI.
+*** Reason
+Exposes the limitations of computation and the strange, formal structure of reality, challenging assumptions about mind, meaning, and predictability.
+
+* Max Tegmark
+** Our Mathematical Universe
+*** Introduction
+Argues that reality is fundamentally mathematical, and that everything we experience is a structure within an abstract mathematical object.
+*** Reason
+Removes anthropocentric comfort, reducing existence to formal structures, where meaning is an emergent artifact rather than intrinsic.
