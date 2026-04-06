@@ -7,10 +7,11 @@
   #:use-module (core-system user-space root desktop wallpaper mpvpaper)
   #:use-module (core-system user-space root desktop wallpaper swww)
   #:use-module (core-system user-space root desktop hibiki)
+  #:use-module (core-system user-space root desktop wayscriber)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages web)
-  #:re-export (hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki)
+  #:re-export (hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber)
   #:export (root-desktop-packages))
 
 (define-public root-desktop-packages
-  (list hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki))
+  (list hyprland hypridle qutebrowser quickshell mako mpvpaper swww imagemagick jq hibiki wayscriber))
