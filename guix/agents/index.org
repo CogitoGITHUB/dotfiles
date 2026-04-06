@@ -28,22 +28,30 @@ define-public definition directly into your submodule. Self-contained always.
 
 *** Rule 5: REPL before reconfigure — always
 Never run sudo guix system reconfigure to test a module change.
-Validate in REPL first. See guix-repl.org.
+Validate in REPL first. See [[./guix-repl.org][guix-repl.org]].
 
 ** Table of Contents
 
-| File                 | Purpose                      |
-|----------------------|------------------------------|
-| start.org            | Bootstrap — read this first  |
-| index.org            | Critical rules + TOC         |
-| architecture.org     | How the system is wired      |
-| adding-packages.org  | How to add packages/services |
-| module-templates.org | Raw copy-paste templates     |
-| module-reference.org | All loaders and submodules   |
-| troubleshooting.org  | Real errors and fixes        |
-| guix-repl.org        | REPL workflow — deep dive    |
-| containers.org       | Container system (WIP)       |
-| org-mode-guide.org   | Org mode syntax reference    |
+| File                          | Purpose                      |
+|-------------------------------|------------------------------|
+| start.org                     | Bootstrap — read this first  |
+| index.org                     | Critical rules + TOC         |
+| architecture/overview.org     | Load path, full chain, tree  |
+| architecture/categories.org   | Categories & kernel space    |
+| architecture/notes.org        | Notes & gotchas              |
+| adding-packages/workflow.org  | Decision tree, steps 1-9     |
+| adding-packages/patterns.org  | npm, Python, Go, Kelora      |
+| templates/basic.org           | Template A (re-export), B    |
+| templates/specialized.org     | Pre-built, Emacs, Go, patchelf |
+| templates/npm-fod.org         | npm FOD pattern              |
+| templates/infrastructure.org  | Loaders, root.scm, services  |
+| reference/loaders.org         | All loaders table            |
+| reference/submodules.org      | All submodules tables        |
+| troubleshooting/errors.org    | Unbound variable, hash errors |
+| troubleshooting/fixes.org     | Build fixes & patterns       |
+| guix-repl.org                 | REPL workflow — deep dive    |
+| containers.scm                | Container system (WIP)       |
+| org-mode-guide.org            | Org mode syntax reference    |
 
 ** Quick Commands
 

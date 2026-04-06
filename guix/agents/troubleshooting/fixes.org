@@ -1,86 +1,4 @@
-* Troubleshooting
-
-** Golden rule: REPL first, never reconfigure to debug a module
-Every error below can be caught in REPL. See guix-repl.org.
-
-** Error: "<symbol>: unbound variable"
-
-Cause: symbol used but not exported/imported somewhere in the chain.
-Test each layer bottom-up in REPL:
-
-#+BEGIN_SRC scheme
-(use-modules (core-system user-space root <category> <name>))    ; submodule
-(use-modules (core-system user-space root loaders <category>))   ; loader
-(use-modules (core-system user-space root root))                  ; root
-#+END_SRC
-
-Fix checklist:
-- Submodule has #:re-export (<symbol>) or #:export (<symbol>)?
-- Loader has #:use-module for that submodule?
-- Loader has #:re-export (<symbol>)?
-- Loader has symbol in root-*-packages list?
-- root.scm has #:use-module for that loader?
-
-** Error: "<symbol>: unbound variable" where symbol is a gnu package (e.g. shadow)
-
-Cause: Missing #:use-module (gnu packages <module>) in submodule or loader.
-
-Find correct module in REPL:
-#+BEGIN_SRC scheme
-,apropos shadow
-#+END_SRC
-
-Or from shell:
-#+BEGIN_SRC sh
-guix search shadow
-# check: location: gnu/packages/<module>.scm
-#+END_SRC
-
-Add the missing import to your submodule.
-
-** Error: "no code for module (core-system user-space root <category> <name>)"
-
-Cause: Wrong module path OR file missing.
-
-Check:
-1. File exists: ls Operating-System/core-system/user-space/root/<category>/<name>.scm
-2. define-module in file matches exactly: (core-system user-space root <category> <name>)
-3. REPL launched with correct flag: -L /home/aoeu/.config/guix/Operating-System
-
-** Error: "invalid-base32-character" or hash format errors
-
-Cause: Wrong hash tool used.
-
-#+BEGIN_SRC sh
-guix download <url>
-# copy result directly as: (base32 "0abc...")
-#+END_SRC
-Never use sha256sum or guix hash.
-
-** Error: "wrong type argument" in operating-system
-
-Cause: A root-*-packages list contains a non-package object, or service list contains a non-service.
-
-#+BEGIN_SRC scheme
-(use-modules (core-system user-space root loaders <category>))
-root-<category>-packages  ; inspect the actual value
-#+END_SRC
-
-** System won't boot
-
-#+BEGIN_SRC sh
-# At GRUB: select previous generation entry
-sudo guix system roll-back
-sudo guix system switch-generation N
-#+END_SRC
-
-** Service not starting
-
-#+BEGIN_SRC sh
-sudo herd status <service-name>
-sudo herd log <service-name>
-sudo herd start <service-name>
-#+END_SRC
+* Troubleshooting — Build Fixes & Patterns
 
 ** Error: "error while loading shared libraries: libstdc++.so.6" (prebuilt binary)
 
@@ -115,30 +33,6 @@ use `tar xf - -C out/bin`, it extracts to `out/bin/bin/ollama`.
 
 Fix: Extract to `out/` instead of `out/bin/`. The archive's internal directory
 structure will resolve correctly: `bin/ollama` -> `out/bin/ollama`.
-
-** Post-reconfigure: always test package binaries
-
-A successful reconfigure does NOT mean packages work. Always test each new binary:
-
-#+BEGIN_SRC sh
-# After reconfigure, test every new package:
-<package> --version 2>&1 || <package> -v 2>&1 || <package> -V 2>&1 || <package> 2>&1
-#+END_SRC
-
-Common patterns:
-- `--version` works for most packages (rmpc, pipewire, pulseaudio, amixer)
-- `-v` or `-V` for some (cava uses `-v`)
-- Just running the binary — some exit with error but that's ok if it runs
-- For services: `sudo herd status <name>` and check `/var/log/messages`
-
-Example for audio packages:
-#+BEGIN_SRC sh
-rmpc --help 2>&1; cava -v 2>&1; pipewire --version 2>&1; \
-pulseaudio --version 2>&1; amixer --version 2>&1
-#+END_SRC
-
-If any binary returns "command not found" — the package wasn't built into the profile.
-Check: `guix build <package>` and `guix package -I <package>`.
 
 ** Emacs package fails to byte-compile with "Cannot open load file"
 
@@ -234,7 +128,6 @@ Fix: Point wrapper to the bin entry point:
 #+BEGIN_SRC scheme
 (format p "#!/bin/sh\nexec ~a ~a/bin/<name> \"$@\"\n" node lib)
 #+END_SRC
-
 
 ** WiFi device unavailable: cfg80211 regulatory.db signature error
 
@@ -354,3 +247,40 @@ rather than through submodule files. This is valid when:
 Files like networking/curl.scm, networking/openssh.scm, networking/nss-certs.scm
 exist but are NOT used by the loader — the loader imports directly from gnu packages.
 This is intentional and not an error. Don't "fix" this unless asked.
+
+See also: [[./errors.org][Errors & Diagnostics]]
+
+** PipeWire Bluetooth Not Working
+Symptom: br-connection-profile-unavailable
+
+Fix 1 - seat-monitoring (TTY/SSH sessions):
+#+begin_src bash
+mkdir -p ~/.config/wireplumber/wireplumber.conf.d
+#+end_src
+#+begin_src conf
+# ~/.config/wireplumber/wireplumber.conf.d/disable-logind.conf
+wireplumber.profiles = {
+  main = {
+    monitor.bluez.seat-monitoring = disabled
+  }
+}
+#+end_src
+Then: herd restart wireplumber
+
+Fix 2 - Missing env vars in shepherd services:
+PipeWire/WirePlumber started by home shepherd need explicit env:
+- DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+- DBUS_SYSTEM_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+- XDG_RUNTIME_DIR=/run/user/1000
+- SPA_PLUGIN_PATH=<pipewire-store>/lib/spa-0.2
+- PIPEWIRE_MODULE_DIR=<pipewire-store>/lib/pipewire-0.3
+
+Use make-forkexec-constructor with #:environment-variables in shepherd service.
+
+** Wrong Module: guix-home-service-type
+guix-home-service-type is in (gnu services guix) NOT (gnu home services)
+
+** Home env-vars don't reach shepherd
+home-environment-variables-service-type only sets shell session vars.
+Shepherd services inherit none of them.
+Must pass env vars directly in make-forkexec-constructor.

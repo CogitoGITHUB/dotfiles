@@ -1,4 +1,4 @@
-* LiterativeOS — Architecture
+* LiterativeOS — Architecture: Overview
 
 ** Load Path
 Set in guixos.scm:
@@ -40,7 +40,7 @@ Every module path resolves relative to this root.
 │   │           ├── users/
 │   │           │   ├── users.scm  # users, groups, sudoers-file, setuid-programs
 │   │           │   └── aoeu.scm   # aoeu user-account
-│   │           ├── loaders/       # Category loaders (27 files)
+│   │           ├── loaders/       # Category loaders (28 files)
 │   │           │   ├── core.scm
 │   │           │   ├── networking.scm
 │   │           │   ├── shell.scm
@@ -71,7 +71,6 @@ Every module path resolves relative to this root.
 │   │           │   └── games.scm
 │   │           ├── ai/
 │   │           │   ├── opencode.scm
-│   │           │   ├── kilo.scm
 │   │           │   ├── ollama.scm
 │   │           │   ├── openclaw.scm
 │   │           │   ├── openclaw-node-modules.scm
@@ -81,6 +80,8 @@ Every module path resolves relative to this root.
 │   │           ├── audio/
 │   │           │   ├── alsa.scm
 │   │           │   ├── pipewire.scm
+│   │           │   ├── wiremix.scm
+│   │           │   ├── start-audio.sh
 │   │           │   └── music/
 │   │           │       ├── mpd.scm
 │   │           │       ├── rmpc.scm
@@ -110,7 +111,8 @@ Every module path resolves relative to this root.
 │   │           │   └── util-linux.scm
 │   │           ├── data/
 │   │           │   ├── postgresql.scm
-│   │           │   └── sqlit.scm
+│   │           │   ├── sqlit.scm
+│   │           │   └── textual-fastdatatable.scm
 │   │           ├── desktop/
 │   │           │   ├── hyprland.scm
 │   │           │   ├── hypridle.scm
@@ -258,65 +260,4 @@ Every module path resolves relative to this root.
 │           └── devsecops/
 │               └── packages.scm
 
-** Current Categories (accurate as of 2026-04-04)
-
-| Category              | Loader exports                                    |
-|----------------------|---------------------------------------------------|
-| core                 | root-core-packages                                 |
-| networking           | root-networking-packages, root-networking-services |
-| shell               | root-shell-packages, root-shell-*-packages         |
-| editors              | root-editors-packages                              |
-| desktop              | root-desktop-packages                              |
-| desktop/wallpaper    | (loaded via desktop loader)                        |
-| desktop/wayland      | root-desktop-wayland-packages                      |
-| desktop/video        | root-desktop-video-packages                        |
-| desktop/image        | root-desktop-image-packages                        |
-| desktop/3d           | root-desktop-3d-packages                           |
-| terminal             | root-terminal-packages                             |
-| containers           | root-containers-packages, root-containers-services |
-| keyboard             | root-keyboard-packages, root-keyboard-services     |
-| ai                  | root-ai-packages                                  |
-| audio               | root-audio-packages, root-audio-services           |
-| fonts               | font-packages                                     |
-| sandbox             | sandbox-packages                                  |
-| monitoring           | root-monitoring-packages, root-monitoring-services |
-| programming-languages | root-programming-languages-packages              |
-| security           | root-security-packages, root-security-services     |
-| formatters           | root-formatters-packages                          |
-| lsp                 | root-lsp-packages                                 |
-| scheduling           | root-scheduling-packages                          |
-| compute             | root-compute-packages                             |
-| ci                  | root-ci-packages, root-ci-services                |
-| data                | root-data-packages                                |
-| guix                | root-guix-packages, root-guix-services           |
-| password-manager     | root-password-manager-packages                    |
-| games               | root-games-packages                               |
-
-** No external channels
-Never add external channels. Package definitions go directly into submodules.
-
-** Kernel Space
-
-kernel-space/linux.scm exports:
-- linux (from nonguix)
-
-kernel-space/kernel-space.scm aggregates:
-- bootloader, filesystem, hostname, keyboard, locale, elogind, udev, kmod
-
-** Container System
-
-systems/containers/ — separate namespace (systems containers ...)
-See containers.scm (agent file) for details.
-Uses flat pattern, not loader pattern yet.
-
-** Notes
-
-- guixos.scm is at /home/aoeu/.config/guix/guixos.scm (repo root), NOT under Operating-System/
-- Kernel uses standard nonguix `linux`, NOT corrupt-linux
-- audio/music/ subdirectory contains mpd, rmpc, cava (not flat under audio/)
-- security/password-store.scm and password-manager/password-store.scm both exist (duplicate)
-- kernel-space/kmod.scm and core/kmod.scm both exist (duplicate)
-- n8n is defined in ai/ but commented out in ai loader
-- ollama service is commented out in ollama.scm
-
-EOF
+See also: [[./categories.org][Categories & Kernel Space]], [[./notes.org][Notes & Gotchas]]
