@@ -1,0 +1,3 @@
+add emacs daemon to system !! 
+
+https://github.com/liixini/skwd-wall.git
