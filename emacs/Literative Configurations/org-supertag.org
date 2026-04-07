@@ -5,16 +5,22 @@
 
 Hierarchical tagging system for Org-mode with powerful query and filtering capabilities.
 
-** Init
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
 
-#+BEGIN_SRC elisp :init
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path 
              (expand-file-name "lisp/org-supertag" user-emacs-directory))
 #+END_SRC
 
-** Config
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
 
-#+BEGIN_SRC elisp :config
+#+BEGIN_SRC emacs-lisp
 (setq org-supertag-sync-directories '("~/.config/emacs"
                                       "~/org"
                                       "~/.config"))
