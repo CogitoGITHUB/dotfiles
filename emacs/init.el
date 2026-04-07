@@ -40,6 +40,7 @@
 
 ;; Ensure server is started when daemon mode is requested
 (when (daemonp)
+  (require 'server)
   (unless (server-running-p)
     (server-start)))
 
