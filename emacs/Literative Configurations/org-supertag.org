@@ -1,0 +1,19 @@
+* Org-Supertag
+:PROPERTIES:
+:DISABLED: t
+:END:
+
+Hierarchical tagging system for Org-mode with powerful query and filtering.
+
+WARNING: org-supertag requires many dependencies (gptel, posframe, and many internal modules).
+It's complex to integrate automatically. To use:
+
+#+BEGIN_SRC elisp
+M-x eval-expression
+(progn
+  (add-to-list 'load-path "~/.config/emacs/lisp/org-supertag")
+  (require 'org-supertag)
+  (org-supertag-mode 1))
+#+END_SRC
+
+Source: https://github.com/yibie/org-supertag.git

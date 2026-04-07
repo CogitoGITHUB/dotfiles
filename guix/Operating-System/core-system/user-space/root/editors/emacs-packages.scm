@@ -20,4 +20,4 @@
   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el))
+  (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-ht))
