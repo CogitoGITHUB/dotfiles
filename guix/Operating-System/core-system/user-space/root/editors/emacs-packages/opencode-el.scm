@@ -24,11 +24,7 @@
            emacs-markdown-mode
            emacs-plz
            emacs-plz-media-type
-           emacs-plz-event-source))
-    (arguments
-     (list
-       #:include (list "^opencode.*\\.el$" "^README\\..*")
-       #:exclude (list ".*-test\\.el$" "^AGENTS\\.md$")))
+            emacs-plz-event-source))
     (home-page "https://codeberg.org/sczi/opencode.el")
     (synopsis "Emacs interface to OpenCode")
     (description

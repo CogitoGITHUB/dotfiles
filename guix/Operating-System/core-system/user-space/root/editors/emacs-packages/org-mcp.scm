@@ -21,10 +21,6 @@
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-mcp-server-lib))
-    (arguments
-     (list
-       #:include (list "^org-mcp\\.el$")
-       #:exclude (list "^.*test\\.el$")))
     (home-page "https://github.com/laurynas-biveinis/org-mcp")
     (synopsis "MCP server for Org-mode")
     (description

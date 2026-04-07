@@ -18,10 +18,6 @@
         (sha256
          (base32 "08dmcjqghgiys061rfyssr3bqc54a1rbbibpbqxhfcfas81azhha"))))
     (build-system emacs-build-system)
-    (arguments
-     (list
-       #:include (list "^mcp-server-lib.*\\.el$" "^emacs-mcp-stdio.*\\.el$")
-       #:exclude (list ".*-test\\.el$")))
     (home-page "https://github.com/laurynas-biveinis/mcp-server-lib.el")
     (synopsis "Emacs library for implementing MCP servers")
     (description
