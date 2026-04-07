@@ -1,12 +1,7 @@
-opencode -s ses_29dbdc1d7ffe5RRCCx3oaxoIX1
-
-add emacs daemon to system !! 
 
 https://github.com/liixini/skwd-wall.git
 
 https://github.com/paralax/awesome-honeypots
-
-https://github.com/yibie/org-supertag
 
 https://github.com/11happy/cpx
 

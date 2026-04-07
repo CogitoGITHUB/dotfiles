@@ -31,6 +31,8 @@
 ;; Load the system
 (add-to-list 'load-path
              (expand-file-name "lisp/" user-emacs-directory))
+(add-to-list 'load-path
+             (expand-file-name "lisp/dashboard/" user-emacs-directory))
 (condition-case err
     (progn
       (require 'literate-config-system)
