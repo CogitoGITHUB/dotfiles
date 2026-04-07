@@ -1,0 +1,3890 @@
+what if i integrate emocs pack'ges in the structure i already have ? the plan is to use emacs for it all .. so this makes more sence anyway ...
+
+.
+├── 20250102T182859--gnu-scheme__scheme.org
+├── 20250102T183510--guile-sdl__guile.org
+├── 20250102T184114--guile-dbi__guile.org
+├── 20250102T184244--guile-opengl__guile.org
+├── 20250102T184758--guile-ncurses__guile.org
+├── 20250102T184854--ncurses-manual__ncurses.org
+├── 20250102T185045--guile-onc-rpc__guile.org
+├── 20250102T185409--gnu-zile__emacs.org
+├── 20250209T061048--home-row-mods__keyboard.org
+├── agents
+│   ├── adding-packages
+│   │   ├── patterns.org
+│   │   └── workflow.org
+│   ├── architecture
+│   │   ├── categories.org
+│   │   ├── notes.org
+│   │   └── overview.org
+│   ├── containers.scm
+│   ├── getting-started.org
+│   ├── guix-repl.org
+│   ├── index.org
+│   ├── org-mode-guide.org
+│   ├── reference
+│   │   ├── loaders.org
+│   │   └── submodules.org
+│   ├── start.org
+│   ├── templates
+│   │   ├── basic.org
+│   │   ├── infrastructure.org
+│   │   ├── npm-fod.org
+│   │   └── specialized.org
+│   └── troubleshooting
+│       ├── errors.org
+│       └── fixes.org
+├── current -> /var/guix/profiles/per-user/aoeu/current-guix
+├── Guile Manual
+├── Guix Manual
+├── guixos.scm
+├── LiterativeOS
+│   ├── guix-dev.org
+│   └── LiterativeOS.org
+├── Operating-System
+│   ├── core-system
+│   │   ├── core-system.scm
+│   │   ├── kernel-space
+│   │   │   ├── bootloader.scm
+│   │   │   ├── elogind.scm
+│   │   │   ├── filesystem.scm
+│   │   │   ├── hostname.scm
+│   │   │   ├── kernel-space.scm
+│   │   │   ├── keyboard.scm
+│   │   │   ├── kmod.scm
+│   │   │   ├── linux.scm
+│   │   │   ├── locale.scm
+│   │   │   └── udev.scm
+│   │   └── user-space
+│   │       ├── home
+│   │       │   ├── audio
+│   │       │   │   └── pipewire.scm
+│   │       │   ├── home.scm
+│   │       │   └── loaders
+│   │       │       └── audio.scm
+│   │       └── root
+│   │           ├── ai
+│   │           │   ├── n8n.scm
+│   │           │   ├── ollama.scm
+│   │           │   ├── openclaw-node-modules.scm
+│   │           │   ├── openclaw.scm
+│   │           │   └── opencode.scm
+│   │           ├── audio
+│   │           │   ├── alsa.scm
+│   │           │   ├── music
+│   │           │   │   ├── cava.scm
+│   │           │   │   ├── mpd.scm
+│   │           │   │   └── rmpc.scm
+│   │           │   ├── pipewire.scm
+│   │           │   ├── start-audio.sh
+│   │           │   └── wiremix.scm
+│   │           ├── ci
+│   │           │   └── cuirass.scm
+│   │           ├── compute
+│   │           │   ├── orchestration
+│   │           │   │   ├── ganeti-instance-guix.scm
+│   │           │   │   └── ganeti.scm
+│   │           │   └── virtualization
+│   │           │       ├── libvirt.scm
+│   │           │       ├── qemu.scm
+│   │           │       ├── spice.scm
+│   │           │       ├── virt-manager.scm
+│   │           │       └── virt-viewer.scm
+│   │           ├── containers
+│   │           │   ├── docker.scm
+│   │           │   └── lazydocker.scm
+│   │           ├── core
+│   │           │   ├── coreutils.scm
+│   │           │   ├── findutils.scm
+│   │           │   ├── grep.scm
+│   │           │   ├── inetutils.scm
+│   │           │   ├── kmod.scm
+│   │           │   ├── sudo.scm
+│   │           │   └── util-linux.scm
+│   │           ├── data
+│   │           │   ├── postgresql.scm
+│   │           │   ├── sqlit.scm
+│   │           │   └── textual-fastdatatable.scm
+│   │           ├── desktop
+│   │           │   ├── 3d
+│   │           │   │   └── blender.scm
+│   │           │   ├── greetd.scm
+│   │           │   ├── hibiki.scm
+│   │           │   ├── hypridle.scm
+│   │           │   ├── hyprland.scm
+│   │           │   ├── hyprsunset.scm
+│   │           │   ├── image
+│   │           │   │   └── krita.scm
+│   │           │   ├── mako.scm
+│   │           │   ├── pyprland.scm
+│   │           │   ├── quickshell.scm
+│   │           │   ├── qutebrowser.scm
+│   │           │   ├── video
+│   │           │   │   ├── ffmpeg.scm
+│   │           │   │   ├── gst-editing-services.scm
+│   │           │   │   ├── kdenlive.scm
+│   │           │   │   ├── kino.scm
+│   │           │   │   ├── mlt.scm
+│   │           │   │   ├── mpv.scm
+│   │           │   │   ├── obs.scm
+│   │           │   │   ├── opentimelineio.scm
+│   │           │   │   └── xytz.scm
+│   │           │   ├── wallpaper
+│   │           │   │   ├── mpvpaper.scm
+│   │           │   │   └── swww.scm
+│   │           │   ├── wayland
+│   │           │   │   ├── cliphist.scm
+│   │           │   │   ├── grimblast.scm
+│   │           │   │   ├── grim.scm
+│   │           │   │   ├── slurp.scm
+│   │           │   │   ├── swappy.scm
+│   │           │   │   ├── swaylock.scm
+│   │           │   │   ├── wl-clipboard.scm
+│   │           │   │   └── wlogout.scm
+│   │           │   └── wayscriber.scm
+│   │           ├── editors
+│   │           │   ├── emacs-packages
+│   │           │   │   ├── emacs-monkeytype.scm
+│   │           │   │   ├── emacs-org-repeat-by-cron.scm
+│   │           │   │   ├── emacs-sops.scm
+│   │           │   │   ├── emacs-tmr.scm
+│   │           │   │   ├── fuzzy-clock.scm
+│   │           │   │   ├── geiser.scm
+│   │           │   │   ├── notebook-mode.scm
+│   │           │   │   ├── quick-peek.scm
+│   │           │   │   └── scrollable-quick-peek.scm
+│   │           │   ├── emacs-packages.scm
+│   │           │   ├── emacs.scm
+│   │           │   └── neovim.scm
+│   │           ├── fonts
+│   │           │   └── nerd-fonts.scm
+│   │           ├── formatters
+│   │           │   ├── latexindent.scm
+│   │           │   ├── nixfmt.scm
+│   │           │   ├── prettier.scm
+│   │           │   └── ruff.scm
+│   │           ├── games
+│   │           │   └── retroarch.scm
+│   │           ├── guix
+│   │           │   ├── bffe.scm
+│   │           │   ├── guix-build-coordinator.scm
+│   │           │   ├── guix-data-service.scm
+│   │           │   ├── guix-modules.scm
+│   │           │   ├── guix.scm
+│   │           │   ├── guix-xsearch.scm
+│   │           │   ├── gwl.scm
+│   │           │   └── hpcguix-web.scm
+│   │           ├── keyboard
+│   │           │   ├── kanata.scm
+│   │           │   └── keyd.scm
+│   │           ├── loaders
+│   │           │   ├── 3d.scm
+│   │           │   ├── ai.scm
+│   │           │   ├── audio.scm
+│   │           │   ├── ci.scm
+│   │           │   ├── compute.scm
+│   │           │   ├── containers.scm
+│   │           │   ├── core.scm
+│   │           │   ├── data.scm
+│   │           │   ├── desktop.scm
+│   │           │   ├── editors.scm
+│   │           │   ├── fonts.scm
+│   │           │   ├── formatters.scm
+│   │           │   ├── games.scm
+│   │           │   ├── guix.scm
+│   │           │   ├── image.scm
+│   │           │   ├── keyboard.scm
+│   │           │   ├── lsp.scm
+│   │           │   ├── monitoring.scm
+│   │           │   ├── networking.scm
+│   │           │   ├── password-manager.scm
+│   │           │   ├── programming-languages.scm
+│   │           │   ├── sandbox.scm
+│   │           │   ├── scheduling.scm
+│   │           │   ├── security.scm
+│   │           │   ├── shell.scm
+│   │           │   ├── terminal.scm
+│   │           │   ├── video.scm
+│   │           │   └── wayland.scm
+│   │           ├── lsp
+│   │           │   └── rust-analyzer.scm
+│   │           ├── monitoring
+│   │           │   ├── build
+│   │           │   │   ├── oci-containers.scm
+│   │           │   │   └── utils.scm
+│   │           │   ├── grafana-tui.scm
+│   │           │   ├── kelora.scm
+│   │           │   ├── self.scm
+│   │           │   └── services
+│   │           │       ├── configuration.scm
+│   │           │       ├── grafana.scm
+│   │           │       └── prometheus.scm
+│   │           ├── networking
+│   │           │   ├── bluetooth.scm
+│   │           │   ├── bluetuith.scm
+│   │           │   ├── curl.scm
+│   │           │   ├── gazelle-tui.scm
+│   │           │   ├── network-manager.scm
+│   │           │   ├── nss-certs.scm
+│   │           │   ├── openssh.scm
+│   │           │   ├── tailscale.scm
+│   │           │   ├── tools.scm
+│   │           │   ├── version-control
+│   │           │   │   ├── github-cli.scm
+│   │           │   │   ├── git.scm
+│   │           │   │   └── lazygit.scm
+│   │           │   ├── version-control.scm
+│   │           │   └── yt-dlp.scm
+│   │           ├── password-manager
+│   │           │   ├── pass-extensions.scm
+│   │           │   ├── passff-host.scm
+│   │           │   └── password-store.scm
+│   │           ├── programming-languages
+│   │           │   ├── lisp
+│   │           │   │   └── guile.scm
+│   │           │   └── lisp.scm
+│   │           ├── root.scm
+│   │           ├── sandbox
+│   │           │   └── sandbox.scm
+│   │           ├── scheduling
+│   │           │   └── mcron.scm
+│   │           ├── security
+│   │           │   ├── age.scm
+│   │           │   ├── fail2ban.scm
+│   │           │   ├── gnupg.scm
+│   │           │   ├── opensnitch.scm
+│   │           │   ├── password-store.scm
+│   │           │   ├── sops
+│   │           │   │   ├── blueprint.scm
+│   │           │   │   ├── doc
+│   │           │   │   │   └── TUTORIAL.md
+│   │           │   │   ├── etc
+│   │           │   │   │   ├── manifests
+│   │           │   │   │   │   └── system-tests.scm
+│   │           │   │   │   ├── news.scm
+│   │           │   │   │   └── snippets
+│   │           │   │   │       └── yas
+│   │           │   │   │           ├── log-edit-mode
+│   │           │   │   │           │   ├── guix-vc-commit-message-add-package
+│   │           │   │   │           │   ├── guix-vc-commit-message-remove-package
+│   │           │   │   │           │   ├── guix-vc-commit-message-rename-package
+│   │           │   │   │           │   ├── guix-vc-commit-message-update-package
+│   │           │   │   │           │   └── guix-vc-commit-message-use-https-home-page
+│   │           │   │   │           ├── scheme-mode
+│   │           │   │   │           │   ├── guix-bzr-reference
+│   │           │   │   │           │   ├── guix-cvs-reference
+│   │           │   │   │           │   ├── guix-git-reference
+│   │           │   │   │           │   ├── guix-hg-reference
+│   │           │   │   │           │   ├── guix-origin
+│   │           │   │   │           │   ├── guix-package
+│   │           │   │   │           │   └── guix-svn-reference
+│   │           │   │   │           └── text-mode
+│   │           │   │   │               ├── guix-commit-message-add-cl-package
+│   │           │   │   │               ├── guix-commit-message-add-package
+│   │           │   │   │               ├── guix-commit-message-remove-package
+│   │           │   │   │               ├── guix-commit-message-rename-package
+│   │           │   │   │               ├── guix-commit-message-update-package
+│   │           │   │   │               └── guix-commit-message-use-https-home-page
+│   │           │   │   ├── LICENSE
+│   │           │   │   ├── manifest.scm
+│   │           │   │   ├── modules
+│   │           │   │   │   └── sops
+│   │           │   │   │       ├── activation.scm
+│   │           │   │   │       ├── build
+│   │           │   │   │       │   ├── activation.scm
+│   │           │   │   │       │   ├── age.scm
+│   │           │   │   │       │   ├── gnupg.scm
+│   │           │   │   │       │   └── utils.scm
+│   │           │   │   │       ├── derive.scm
+│   │           │   │   │       ├── home
+│   │           │   │   │       │   └── services
+│   │           │   │   │       │       └── sops.scm
+│   │           │   │   │       ├── packages
+│   │           │   │   │       │   └── sops.scm
+│   │           │   │   │       ├── secrets.scm
+│   │           │   │   │       ├── self.scm
+│   │           │   │   │       ├── services
+│   │           │   │   │       │   ├── configuration.scm
+│   │           │   │   │       │   └── sops.scm
+│   │           │   │   │       ├── state.scm
+│   │           │   │   │       ├── tests
+│   │           │   │   │       │   ├── data
+│   │           │   │   │       │   │   ├── age-keys.txt
+│   │           │   │   │       │   │   ├── komputilo_pub.gpg
+│   │           │   │   │       │   │   └── secrets
+│   │           │   │   │       │   │       └── komputilo.yaml
+│   │           │   │   │       │   └── sops.scm
+│   │           │   │   │       ├── tests.scm
+│   │           │   │   │       ├── utils.scm
+│   │           │   │   │       └── validation.scm
+│   │           │   │   ├── packages.scm
+│   │           │   │   ├── README.md
+│   │           │   │   ├── scripts
+│   │           │   │   │   └── apply_pr.sh
+│   │           │   │   ├── services.scm
+│   │           │   │   └── tests
+│   │           │   │       └── test-sops.scm
+│   │           │   └── sshguard.scm
+│   │           ├── services
+│   │           │   └── greetd.scm
+│   │           ├── shell
+│   │           │   ├── archive.scm
+│   │           │   ├── atuin.scm
+│   │           │   ├── bash.scm
+│   │           │   ├── carapace.scm
+│   │           │   ├── fetch
+│   │           │   │   ├── fastfetch.scm
+│   │           │   │   └── neofetch.scm
+│   │           │   ├── fzf.scm
+│   │           │   ├── nushell.scm
+│   │           │   ├── power.scm
+│   │           │   ├── rip.scm
+│   │           │   ├── starship.scm
+│   │           │   ├── superfile.scm
+│   │           │   ├── system-monitor.scm
+│   │           │   ├── television.scm
+│   │           │   ├── zellij.scm
+│   │           │   └── zoxide.scm
+│   │           ├── terminal
+│   │           │   └── wezterm.scm
+│   │           └── users
+│   │               ├── aoeu.scm
+│   │               └── users.scm
+│   └── systems
+│       └── containers
+│           ├── containers.scm
+│           ├── core-container.scm
+│           ├── devsecops
+│           │   └── packages.scm
+│           └── devsecops.scm
+├── README.org
+├── sources
+│   ├── guix
+│   │   ├── bootstrap
+│   │   ├── build-aux
+│   │   │   ├── build-self.scm
+│   │   │   ├── check-channel-news.scm
+│   │   │   ├── check-final-inputs-self-contained.scm
+│   │   │   ├── compile-all.scm
+│   │   │   ├── compile-as-derivation.scm
+│   │   │   ├── convert-xref.scm
+│   │   │   ├── cuirass
+│   │   │   │   └── evaluate.scm
+│   │   │   ├── extract-syscall-ranges.sh
+│   │   │   ├── generate-authors.scm
+│   │   │   ├── gitlog-to-changelog
+│   │   │   ├── git-version-gen
+│   │   │   ├── keep-only-translated.scm
+│   │   │   ├── mdate-from-git.scm
+│   │   │   ├── pre-inst-env.in
+│   │   │   ├── test-driver.scm
+│   │   │   ├── test-env.in
+│   │   │   ├── update-guix-package.scm
+│   │   │   ├── update-NEWS.scm
+│   │   │   └── xgettext.scm
+│   │   ├── config-daemon.ac
+│   │   ├── configure.ac
+│   │   ├── doc
+│   │   │   ├── build.scm
+│   │   │   ├── contributing.texi
+│   │   │   ├── environment-gdb.scm
+│   │   │   ├── fdl-1.3.texi
+│   │   │   ├── guix-cookbook.texi
+│   │   │   ├── guix.texi
+│   │   │   ├── he-config-bare-bones.scm
+│   │   │   ├── htmlxref.cnf
+│   │   │   ├── images
+│   │   │   │   ├── bootstrap-graph.dot
+│   │   │   │   ├── bootstrap-packages.dot
+│   │   │   │   ├── coreutils-bag-graph.dot
+│   │   │   │   ├── coreutils-graph.dot
+│   │   │   │   ├── coreutils-size-map.png
+│   │   │   │   ├── gcc-core-mesboot0-graph.dot
+│   │   │   │   ├── installer-network.png
+│   │   │   │   ├── installer-partitions.png
+│   │   │   │   ├── installer-resume.png
+│   │   │   │   ├── service-graph.dot
+│   │   │   │   └── shepherd-graph.dot
+│   │   │   ├── local.mk
+│   │   │   ├── package-hello.json
+│   │   │   └── package-hello.scm
+│   │   ├── etc
+│   │   │   ├── apparmor.d
+│   │   │   │   ├── guix
+│   │   │   │   ├── guix-daemon
+│   │   │   │   └── tunables
+│   │   │   │       └── guix.in
+│   │   │   ├── committer.scm.in
+│   │   │   ├── completion
+│   │   │   │   ├── bash
+│   │   │   │   │   ├── guix
+│   │   │   │   │   └── guix-daemon
+│   │   │   │   ├── fish
+│   │   │   │   │   └── guix.fish
+│   │   │   │   └── zsh
+│   │   │   │       └── _guix
+│   │   │   ├── copyright.el
+│   │   │   ├── git
+│   │   │   │   ├── commit-msg
+│   │   │   │   ├── gitconfig
+│   │   │   │   ├── post-merge
+│   │   │   │   └── pre-push
+│   │   │   ├── gnu-store.mount.in
+│   │   │   ├── guix-daemon.cil.in
+│   │   │   ├── guix-daemon.conf.in
+│   │   │   ├── guix-daemon.service.in
+│   │   │   ├── guix-gc.service.in
+│   │   │   ├── guix-gc.timer.in
+│   │   │   ├── guix-install.sh
+│   │   │   ├── guix-publish.conf.in
+│   │   │   ├── guix-publish.service.in
+│   │   │   ├── historical-authorizations
+│   │   │   ├── init.d
+│   │   │   │   └── guix-daemon.in
+│   │   │   ├── manifests
+│   │   │   │   ├── cross-compile.scm
+│   │   │   │   ├── disarchive.scm
+│   │   │   │   ├── hurd.scm
+│   │   │   │   ├── kernels.scm
+│   │   │   │   ├── release-desktop.scm
+│   │   │   │   ├── release-minimal.scm
+│   │   │   │   ├── release-user-packages.scm
+│   │   │   │   ├── source.scm
+│   │   │   │   ├── system-tests.scm
+│   │   │   │   ├── time-travel.scm
+│   │   │   │   ├── ungraft.scm
+│   │   │   │   └── upgrade.scm
+│   │   │   ├── news.scm
+│   │   │   ├── openrc
+│   │   │   │   └── guix-daemon.in
+│   │   │   ├── snippets
+│   │   │   │   ├── tempel
+│   │   │   │   │   ├── scheme-mode.eld
+│   │   │   │   │   └── text-mode.eld
+│   │   │   │   └── yas
+│   │   │   │       ├── log-edit-mode
+│   │   │   │       │   ├── guix-vc-commit-message-add-package
+│   │   │   │       │   ├── guix-vc-commit-message-remove-package
+│   │   │   │       │   ├── guix-vc-commit-message-rename-package
+│   │   │   │       │   ├── guix-vc-commit-message-update-package
+│   │   │   │       │   └── guix-vc-commit-message-use-https-home-page
+│   │   │   │       ├── scheme-mode
+│   │   │   │       │   ├── guix-bzr-reference
+│   │   │   │       │   ├── guix-cvs-reference
+│   │   │   │       │   ├── guix-git-reference
+│   │   │   │       │   ├── guix-hg-reference
+│   │   │   │       │   ├── guix-news-entry
+│   │   │   │       │   ├── guix-origin
+│   │   │   │       │   ├── guix-package
+│   │   │   │       │   └── guix-svn-reference
+│   │   │   │       └── text-mode
+│   │   │   │           ├── guix-commit-message-add-cl-package
+│   │   │   │           ├── guix-commit-message-add-package
+│   │   │   │           ├── guix-commit-message-remove-package
+│   │   │   │           ├── guix-commit-message-rename-package
+│   │   │   │           ├── guix-commit-message-update-package
+│   │   │   │           └── guix-commit-message-use-https-home-page
+│   │   │   ├── substitutes
+│   │   │   │   ├── berlin.guix.gnu.org.pub
+│   │   │   │   ├── bordeaux.guix.gnu.org.pub
+│   │   │   │   ├── ci.guix.gnu.org.pub -> berlin.guix.gnu.org.pub
+│   │   │   │   └── ci.guix.info.pub -> berlin.guix.gnu.org.pub
+│   │   │   ├── teams
+│   │   │   │   ├── beam
+│   │   │   │   │   ├── elixir-manifest.scm
+│   │   │   │   │   └── erlang-manifest.scm
+│   │   │   │   ├── emacs
+│   │   │   │   │   ├── emacs-manifest.scm
+│   │   │   │   │   └── tree-sitter-manifest.scm
+│   │   │   │   ├── games
+│   │   │   │   │   └── luanti-manifest.scm
+│   │   │   │   ├── gnome
+│   │   │   │   │   ├── gnome-core-refresh
+│   │   │   │   │   ├── gnome-extension-manifest.scm
+│   │   │   │   │   └── gnome-manifest.scm
+│   │   │   │   ├── go
+│   │   │   │   │   └── go-manifest.scm
+│   │   │   │   ├── hare
+│   │   │   │   │   └── hare-manifest.scm
+│   │   │   │   ├── lisp
+│   │   │   │   │   └── lisp-manifest.scm
+│   │   │   │   ├── mate
+│   │   │   │   │   └── mate-manifest.scm
+│   │   │   │   ├── perl
+│   │   │   │   │   └── perl-manifest.scm
+│   │   │   │   ├── python
+│   │   │   │   │   └── python-manifest.scm
+│   │   │   │   ├── qt
+│   │   │   │   │   ├── common.scm
+│   │   │   │   │   ├── qt5-manifest.scm
+│   │   │   │   │   └── qt-manifest.scm
+│   │   │   │   ├── r
+│   │   │   │   │   └── r-manifest.scm
+│   │   │   │   ├── release
+│   │   │   │   │   ├── artifacts-manifest.scm
+│   │   │   │   │   ├── artifacts.scm
+│   │   │   │   │   └── os-manifest-generator.scm
+│   │   │   │   ├── rust
+│   │   │   │   │   ├── audit-rust-crates
+│   │   │   │   │   ├── cleanup-crates.sh
+│   │   │   │   │   ├── rust-crates.tmpl
+│   │   │   │   │   ├── rust-manifest.scm
+│   │   │   │   │   ├── rusty-packages.scm
+│   │   │   │   │   └── unpack-new-crates.sh
+│   │   │   │   ├── tex
+│   │   │   │   │   └── tex-manifest.scm
+│   │   │   │   └── zig
+│   │   │   │       └── zig-manifest.scm
+│   │   │   └── teams.scm
+│   │   ├── gnu
+│   │   │   ├── artwork.scm
+│   │   │   ├── bootloader
+│   │   │   │   ├── extlinux.scm
+│   │   │   │   ├── grub.scm
+│   │   │   │   └── u-boot.scm
+│   │   │   ├── bootloader.scm
+│   │   │   ├── build
+│   │   │   │   ├── accounts.scm
+│   │   │   │   ├── activation.scm
+│   │   │   │   ├── bootloader.scm
+│   │   │   │   ├── chromium-extension.scm
+│   │   │   │   ├── cross-toolchain.scm
+│   │   │   │   ├── dbus-service.scm
+│   │   │   │   ├── file-systems.scm
+│   │   │   │   ├── hurd-boot.scm
+│   │   │   │   ├── icecat-extension.scm
+│   │   │   │   ├── image.scm
+│   │   │   │   ├── install.scm
+│   │   │   │   ├── jami-service.scm
+│   │   │   │   ├── linux-boot.scm
+│   │   │   │   ├── linux-container.scm
+│   │   │   │   ├── linux-initrd.scm
+│   │   │   │   ├── linux-modules.scm
+│   │   │   │   ├── locale.scm
+│   │   │   │   ├── marionette.scm
+│   │   │   │   ├── oci-containers.scm
+│   │   │   │   ├── secret-service.scm
+│   │   │   │   ├── shepherd.scm
+│   │   │   │   └── svg.scm
+│   │   │   ├── ci.scm
+│   │   │   ├── compression.scm
+│   │   │   ├── home
+│   │   │   │   ├── services
+│   │   │   │   │   ├── admin.scm
+│   │   │   │   │   ├── backup.scm
+│   │   │   │   │   ├── containers.scm
+│   │   │   │   │   ├── desktop.scm
+│   │   │   │   │   ├── dict.scm
+│   │   │   │   │   ├── dotfiles.scm
+│   │   │   │   │   ├── fontutils.scm
+│   │   │   │   │   ├── git-annex-assistant.scm
+│   │   │   │   │   ├── gnome.scm
+│   │   │   │   │   ├── gnupg.scm
+│   │   │   │   │   ├── guix.scm
+│   │   │   │   │   ├── mail.scm
+│   │   │   │   │   ├── mcron.scm
+│   │   │   │   │   ├── media.scm
+│   │   │   │   │   ├── messaging.scm
+│   │   │   │   │   ├── mpv.scm
+│   │   │   │   │   ├── music.scm
+│   │   │   │   │   ├── niri.scm
+│   │   │   │   │   ├── pm.scm
+│   │   │   │   │   ├── secrets.scm
+│   │   │   │   │   ├── shells.scm
+│   │   │   │   │   ├── shepherd.scm
+│   │   │   │   │   ├── sound.scm
+│   │   │   │   │   ├── ssh.scm
+│   │   │   │   │   ├── sway.scm
+│   │   │   │   │   ├── symlink-manager.scm
+│   │   │   │   │   ├── syncthing.scm
+│   │   │   │   │   ├── upnp.scm
+│   │   │   │   │   ├── utils.scm
+│   │   │   │   │   └── xdg.scm
+│   │   │   │   └── services.scm
+│   │   │   ├── home.scm
+│   │   │   ├── image.scm
+│   │   │   ├── installer
+│   │   │   │   ├── aux-files
+│   │   │   │   │   └── logo.txt
+│   │   │   │   ├── connman.scm
+│   │   │   │   ├── dump.scm
+│   │   │   │   ├── final.scm
+│   │   │   │   ├── hardware.scm
+│   │   │   │   ├── hostname.scm
+│   │   │   │   ├── kernel.scm
+│   │   │   │   ├── keymap.scm
+│   │   │   │   ├── locale.scm
+│   │   │   │   ├── newt
+│   │   │   │   │   ├── ethernet.scm
+│   │   │   │   │   ├── final.scm
+│   │   │   │   │   ├── hostname.scm
+│   │   │   │   │   ├── kernel.scm
+│   │   │   │   │   ├── keymap.scm
+│   │   │   │   │   ├── locale.scm
+│   │   │   │   │   ├── menu.scm
+│   │   │   │   │   ├── network.scm
+│   │   │   │   │   ├── page.scm
+│   │   │   │   │   ├── parameters.scm
+│   │   │   │   │   ├── partition.scm
+│   │   │   │   │   ├── services.scm
+│   │   │   │   │   ├── substitutes.scm
+│   │   │   │   │   ├── timezone.scm
+│   │   │   │   │   ├── user.scm
+│   │   │   │   │   ├── utils.scm
+│   │   │   │   │   ├── welcome.scm
+│   │   │   │   │   └── wifi.scm
+│   │   │   │   ├── newt.scm
+│   │   │   │   ├── parted.scm
+│   │   │   │   ├── proxy.scm
+│   │   │   │   ├── record.scm
+│   │   │   │   ├── services.scm
+│   │   │   │   ├── steps.scm
+│   │   │   │   ├── substitutes.scm
+│   │   │   │   ├── tests.scm
+│   │   │   │   ├── timezone.scm
+│   │   │   │   ├── user.scm
+│   │   │   │   └── utils.scm
+│   │   │   ├── installer.scm
+│   │   │   ├── local.mk
+│   │   │   ├── machine
+│   │   │   │   ├── digital-ocean.scm
+│   │   │   │   ├── hetzner
+│   │   │   │   │   └── http.scm
+│   │   │   │   ├── hetzner.scm
+│   │   │   │   └── ssh.scm
+│   │   │   ├── machine.scm
+│   │   │   ├── packages
+│   │   │   │   ├── abiword.scm
+│   │   │   │   ├── accessibility.scm
+│   │   │   │   ├── acct.scm
+│   │   │   │   ├── acl.scm
+│   │   │   │   ├── ada.scm
+│   │   │   │   ├── admin.scm
+│   │   │   │   ├── adns.scm
+│   │   │   │   ├── agda.scm
+│   │   │   │   ├── aidc.scm
+│   │   │   │   ├── algebra.scm
+│   │   │   │   ├── android.scm
+│   │   │   │   ├── animation.scm
+│   │   │   │   ├── anthy.scm
+│   │   │   │   ├── antivirus.scm
+│   │   │   │   ├── apl.scm
+│   │   │   │   ├── apparmor.scm
+│   │   │   │   ├── appimage.scm
+│   │   │   │   ├── apr.scm
+│   │   │   │   ├── arcan.scm
+│   │   │   │   ├── array-languages.scm
+│   │   │   │   ├── aspell.scm
+│   │   │   │   ├── assembly.scm
+│   │   │   │   ├── astronomy.scm
+│   │   │   │   ├── attr.scm
+│   │   │   │   ├── audio.scm
+│   │   │   │   ├── augeas.scm
+│   │   │   │   ├── authentication.scm
+│   │   │   │   ├── autogen.scm
+│   │   │   │   ├── autotools.scm
+│   │   │   │   ├── aux-files
+│   │   │   │   │   ├── chromium
+│   │   │   │   │   │   └── master-preferences.json
+│   │   │   │   │   ├── emacs
+│   │   │   │   │   │   ├── comp-integrity.el
+│   │   │   │   │   │   └── guix-emacs.el
+│   │   │   │   │   ├── findclass.php
+│   │   │   │   │   ├── guile-launcher.c
+│   │   │   │   │   ├── guix-nvim.vim
+│   │   │   │   │   ├── guix.vim
+│   │   │   │   │   ├── linux-libre
+│   │   │   │   │   │   ├── 5.10-arm64.conf
+│   │   │   │   │   │   ├── 5.10-arm.conf
+│   │   │   │   │   │   ├── 5.10-i686.conf
+│   │   │   │   │   │   ├── 5.10-x86_64.conf
+│   │   │   │   │   │   ├── 5.15-arm64.conf
+│   │   │   │   │   │   ├── 5.15-arm.conf
+│   │   │   │   │   │   ├── 5.15-i686.conf
+│   │   │   │   │   │   ├── 5.15-x86_64.conf
+│   │   │   │   │   │   ├── 6.12-arm64.conf
+│   │   │   │   │   │   ├── 6.12-arm.conf
+│   │   │   │   │   │   ├── 6.12-i686.conf
+│   │   │   │   │   │   ├── 6.12-riscv.conf
+│   │   │   │   │   │   ├── 6.12-x86_64.conf
+│   │   │   │   │   │   ├── 6.18-arm64.conf
+│   │   │   │   │   │   ├── 6.18-i686.conf
+│   │   │   │   │   │   ├── 6.18-x86_64.conf
+│   │   │   │   │   │   ├── 6.19-arm64.conf
+│   │   │   │   │   │   ├── 6.19-i686.conf
+│   │   │   │   │   │   ├── 6.19-x86_64.conf
+│   │   │   │   │   │   ├── 6.1-arm64.conf
+│   │   │   │   │   │   ├── 6.1-arm.conf
+│   │   │   │   │   │   ├── 6.1-i686.conf
+│   │   │   │   │   │   ├── 6.1-x86_64.conf
+│   │   │   │   │   │   ├── 6.6-arm64.conf
+│   │   │   │   │   │   ├── 6.6-arm.conf
+│   │   │   │   │   │   ├── 6.6-i686.conf
+│   │   │   │   │   │   └── 6.6-x86_64.conf
+│   │   │   │   │   ├── ovmf
+│   │   │   │   │   │   └── 51-edk2-ovmf-2m-raw-x64-nosb.json
+│   │   │   │   │   ├── pack-audit.c
+│   │   │   │   │   ├── python
+│   │   │   │   │   │   ├── sanity-check.py
+│   │   │   │   │   │   └── sitecustomize.py
+│   │   │   │   │   ├── renpy
+│   │   │   │   │   │   └── renpy.in
+│   │   │   │   │   ├── run-in-namespace.c
+│   │   │   │   │   └── xml
+│   │   │   │   │       ├── docbook-xml
+│   │   │   │   │       │   └── catalog-4.1.2.xml
+│   │   │   │   │       └── patch-catalog-xml.xsl
+│   │   │   │   ├── avahi.scm
+│   │   │   │   ├── avr.scm
+│   │   │   │   ├── avr-xyz.scm
+│   │   │   │   ├── axoloti.scm
+│   │   │   │   ├── backup.scm
+│   │   │   │   ├── base.scm
+│   │   │   │   ├── bash.scm
+│   │   │   │   ├── batik.scm
+│   │   │   │   ├── bdw-gc.scm
+│   │   │   │   ├── benchmark.scm
+│   │   │   │   ├── bioconductor.scm
+│   │   │   │   ├── bioinformatics.scm
+│   │   │   │   ├── bison.scm
+│   │   │   │   ├── bittorrent.scm
+│   │   │   │   ├── books.scm
+│   │   │   │   ├── boost.scm
+│   │   │   │   ├── bootloaders.scm
+│   │   │   │   ├── bootstrap.scm
+│   │   │   │   ├── bqn.scm
+│   │   │   │   ├── browser-extensions.scm
+│   │   │   │   ├── build-tools.scm
+│   │   │   │   ├── busybox.scm
+│   │   │   │   ├── calcurse.scm
+│   │   │   │   ├── calendar.scm
+│   │   │   │   ├── ccache.scm
+│   │   │   │   ├── cdrom.scm
+│   │   │   │   ├── certs.scm
+│   │   │   │   ├── check.scm
+│   │   │   │   ├── chemistry.scm
+│   │   │   │   ├── chez.scm
+│   │   │   │   ├── chicken.scm
+│   │   │   │   ├── chromium.scm
+│   │   │   │   ├── cinnamon.scm
+│   │   │   │   ├── ci.scm
+│   │   │   │   ├── clifm.scm
+│   │   │   │   ├── clojure.scm
+│   │   │   │   ├── cluster.scm
+│   │   │   │   ├── cmake.scm
+│   │   │   │   ├── cobol.scm
+│   │   │   │   ├── code.scm
+│   │   │   │   ├── codex.scm
+│   │   │   │   ├── commencement.scm
+│   │   │   │   ├── compression.scm
+│   │   │   │   ├── compton.scm
+│   │   │   │   ├── computer-architecture.scm
+│   │   │   │   ├── configuration-management.scm
+│   │   │   │   ├── connman.scm
+│   │   │   │   ├── containers.scm
+│   │   │   │   ├── convmv.scm
+│   │   │   │   ├── coq.scm
+│   │   │   │   ├── cpio.scm
+│   │   │   │   ├── cppi.scm
+│   │   │   │   ├── cpp.scm
+│   │   │   │   ├── cran.scm
+│   │   │   │   ├── cross-base.scm
+│   │   │   │   ├── cross-toolchain.scm
+│   │   │   │   ├── crypto.scm
+│   │   │   │   ├── cryptsetup.scm
+│   │   │   │   ├── c.scm
+│   │   │   │   ├── cups.scm
+│   │   │   │   ├── curl.scm
+│   │   │   │   ├── cvassistant.scm
+│   │   │   │   ├── cybersecurity.scm
+│   │   │   │   ├── cyrus-sasl.scm
+│   │   │   │   ├── darwin.scm
+│   │   │   │   ├── databases.scm
+│   │   │   │   ├── data-language.scm
+│   │   │   │   ├── datamash.scm
+│   │   │   │   ├── datastructures.scm
+│   │   │   │   ├── dav.scm
+│   │   │   │   ├── dbm.scm
+│   │   │   │   ├── dc.scm
+│   │   │   │   ├── debian.scm
+│   │   │   │   ├── debug.scm
+│   │   │   │   ├── decker.scm
+│   │   │   │   ├── dejagnu.scm
+│   │   │   │   ├── dezyne.scm
+│   │   │   │   ├── dhall.scm
+│   │   │   │   ├── diagram.scm
+│   │   │   │   ├── dictionaries.scm
+│   │   │   │   ├── diffoscope.scm
+│   │   │   │   ├── digest.scm
+│   │   │   │   ├── disk.scm
+│   │   │   │   ├── display-managers.scm
+│   │   │   │   ├── distributed.scm
+│   │   │   │   ├── django.scm
+│   │   │   │   ├── djvu.scm
+│   │   │   │   ├── dlang.scm
+│   │   │   │   ├── dns.scm
+│   │   │   │   ├── docbook.scm
+│   │   │   │   ├── docker.scm
+│   │   │   │   ├── documentation.scm
+│   │   │   │   ├── dotnet.scm
+│   │   │   │   ├── dpdk.scm
+│   │   │   │   ├── duckdb.scm
+│   │   │   │   ├── dvtm.scm
+│   │   │   │   ├── easyrpg.scm
+│   │   │   │   ├── ebook.scm
+│   │   │   │   ├── education.scm
+│   │   │   │   ├── efi.scm
+│   │   │   │   ├── electronics.scm
+│   │   │   │   ├── elf.scm
+│   │   │   │   ├── elixir-databases.scm
+│   │   │   │   ├── elixir-i18n.scm
+│   │   │   │   ├── elixir-markup.scm
+│   │   │   │   ├── elixir.scm
+│   │   │   │   ├── elixir-web.scm
+│   │   │   │   ├── elixir-xyz.scm
+│   │   │   │   ├── elm.scm
+│   │   │   │   ├── emacs-build.scm
+│   │   │   │   ├── emacs.scm
+│   │   │   │   ├── emacs-xyz.scm
+│   │   │   │   ├── embedded.scm
+│   │   │   │   ├── emulators.scm
+│   │   │   │   ├── enchant.scm
+│   │   │   │   ├── engineering.scm
+│   │   │   │   ├── enlightenment.scm
+│   │   │   │   ├── entr.scm
+│   │   │   │   ├── erlang.scm
+│   │   │   │   ├── erlang-xyz.scm
+│   │   │   │   ├── esolangs.scm
+│   │   │   │   ├── fabric-management.scm
+│   │   │   │   ├── fcitx5.scm
+│   │   │   │   ├── fediverse.scm
+│   │   │   │   ├── figlet.scm
+│   │   │   │   ├── file.scm
+│   │   │   │   ├── file-systems.scm
+│   │   │   │   ├── finance.scm
+│   │   │   │   ├── firmware.scm
+│   │   │   │   ├── flashing-tools.scm
+│   │   │   │   ├── flex.scm
+│   │   │   │   ├── fltk.scm
+│   │   │   │   ├── fluidplug.scm
+│   │   │   │   ├── fonts.scm
+│   │   │   │   ├── fontutils.scm
+│   │   │   │   ├── forth.scm
+│   │   │   │   ├── fortran-check.scm
+│   │   │   │   ├── fortran-xyz.scm
+│   │   │   │   ├── freedesktop.scm
+│   │   │   │   ├── freeipmi.scm
+│   │   │   │   ├── fribidi.scm
+│   │   │   │   ├── ftp.scm
+│   │   │   │   ├── fusion.scm
+│   │   │   │   ├── gambas.scm
+│   │   │   │   ├── game-development.scm
+│   │   │   │   ├── games.scm
+│   │   │   │   ├── gawk.scm
+│   │   │   │   ├── gcc.scm
+│   │   │   │   ├── gdb.scm
+│   │   │   │   ├── gd.scm
+│   │   │   │   ├── genealogy.scm
+│   │   │   │   ├── geo.scm
+│   │   │   │   ├── gettext.scm
+│   │   │   │   ├── ghostscript.scm
+│   │   │   │   ├── gimp.scm
+│   │   │   │   ├── gkrellm.scm
+│   │   │   │   ├── glib.scm
+│   │   │   │   ├── gl.scm
+│   │   │   │   ├── gnome-circle.scm
+│   │   │   │   ├── gnome.scm
+│   │   │   │   ├── gnome-xyz.scm
+│   │   │   │   ├── gnucash.scm
+│   │   │   │   ├── gnu-doc.scm
+│   │   │   │   ├── gnunet.scm
+│   │   │   │   ├── gnupg.scm
+│   │   │   │   ├── gnu-pw-mgr.scm
+│   │   │   │   ├── gnustep.scm
+│   │   │   │   ├── gnuzilla.scm
+│   │   │   │   ├── gobby.scm
+│   │   │   │   ├── golang-apps.scm
+│   │   │   │   ├── golang-build.scm
+│   │   │   │   ├── golang-check.scm
+│   │   │   │   ├── golang-compression.scm
+│   │   │   │   ├── golang-crypto.scm
+│   │   │   │   ├── golang-maths.scm
+│   │   │   │   ├── golang.scm
+│   │   │   │   ├── golang-vcs.scm
+│   │   │   │   ├── golang-web.scm
+│   │   │   │   ├── golang-xyz.scm
+│   │   │   │   ├── gperf.scm
+│   │   │   │   ├── gpodder.scm
+│   │   │   │   ├── gps.scm
+│   │   │   │   ├── graphics.scm
+│   │   │   │   ├── graph.scm
+│   │   │   │   ├── graphviz.scm
+│   │   │   │   ├── groff.scm
+│   │   │   │   ├── groovy.scm
+│   │   │   │   ├── gsasl.scm
+│   │   │   │   ├── gstreamer.scm
+│   │   │   │   ├── gtk.scm
+│   │   │   │   ├── guile.scm
+│   │   │   │   ├── guile-wm.scm
+│   │   │   │   ├── guile-xyz.scm
+│   │   │   │   ├── gv.scm
+│   │   │   │   ├── gxmessage.scm
+│   │   │   │   ├── hardware.scm
+│   │   │   │   ├── hare-apps.scm
+│   │   │   │   ├── hare.scm
+│   │   │   │   ├── hare-xyz.scm
+│   │   │   │   ├── haskell-apps.scm
+│   │   │   │   ├── haskell-check.scm
+│   │   │   │   ├── haskell-crypto.scm
+│   │   │   │   ├── haskell.scm
+│   │   │   │   ├── haskell-web.scm
+│   │   │   │   ├── haskell-xyz.scm
+│   │   │   │   ├── haxe.scm
+│   │   │   │   ├── hdl.scm
+│   │   │   │   ├── heads.scm
+│   │   │   │   ├── hexedit.scm
+│   │   │   │   ├── high-availability.scm
+│   │   │   │   ├── hugs.scm
+│   │   │   │   ├── hunspell.scm
+│   │   │   │   ├── hurd.scm
+│   │   │   │   ├── i2p.scm
+│   │   │   │   ├── ibus.scm
+│   │   │   │   ├── icu4c.scm
+│   │   │   │   ├── idutils.scm
+│   │   │   │   ├── imagemagick.scm
+│   │   │   │   ├── image-processing.scm
+│   │   │   │   ├── image.scm
+│   │   │   │   ├── image-viewers.scm
+│   │   │   │   ├── inferno.scm
+│   │   │   │   ├── inklingreader.scm
+│   │   │   │   ├── inkscape.scm
+│   │   │   │   ├── installers.scm
+│   │   │   │   ├── instrumentation.scm
+│   │   │   │   ├── ipfs.scm
+│   │   │   │   ├── irc.scm
+│   │   │   │   ├── iso-codes.scm
+│   │   │   │   ├── jami.scm
+│   │   │   │   ├── java-bootstrap.scm
+│   │   │   │   ├── java-compression.scm
+│   │   │   │   ├── java-graphics.scm
+│   │   │   │   ├── java-maths.scm
+│   │   │   │   ├── java-rdf.scm
+│   │   │   │   ├── java.scm
+│   │   │   │   ├── javascript.scm
+│   │   │   │   ├── java-xml.scm
+│   │   │   │   ├── jemalloc.scm
+│   │   │   │   ├── jose.scm
+│   │   │   │   ├── julia-jll.scm
+│   │   │   │   ├── julia.scm
+│   │   │   │   ├── julia-xyz.scm
+│   │   │   │   ├── jupyter.scm
+│   │   │   │   ├── kawa.scm
+│   │   │   │   ├── kde-education.scm
+│   │   │   │   ├── kde-frameworks.scm
+│   │   │   │   ├── kde-games.scm
+│   │   │   │   ├── kde-graphics.scm
+│   │   │   │   ├── kde-internet.scm
+│   │   │   │   ├── kde-multimedia.scm
+│   │   │   │   ├── kde-office.scm
+│   │   │   │   ├── kde-pim.scm
+│   │   │   │   ├── kde-plasma.scm
+│   │   │   │   ├── kde-sdk.scm
+│   │   │   │   ├── kde-systemtools.scm
+│   │   │   │   ├── kde-utils.scm
+│   │   │   │   ├── kerberos.scm
+│   │   │   │   ├── kodi.scm
+│   │   │   │   ├── language.scm
+│   │   │   │   ├── lc0.scm
+│   │   │   │   ├── ld-wrapper.in
+│   │   │   │   ├── lean.scm
+│   │   │   │   ├── lego.scm
+│   │   │   │   ├── less.scm
+│   │   │   │   ├── lesstif.scm
+│   │   │   │   ├── libbsd.scm
+│   │   │   │   ├── libcanberra.scm
+│   │   │   │   ├── libdaemon.scm
+│   │   │   │   ├── libedit.scm
+│   │   │   │   ├── libevent.scm
+│   │   │   │   ├── libffcall.scm
+│   │   │   │   ├── libffi.scm
+│   │   │   │   ├── libftdi.scm
+│   │   │   │   ├── libidn.scm
+│   │   │   │   ├── libphidget.scm
+│   │   │   │   ├── libreoffice.scm
+│   │   │   │   ├── librewolf.scm
+│   │   │   │   ├── libsigsegv.scm
+│   │   │   │   ├── libunistring.scm
+│   │   │   │   ├── libunwind.scm
+│   │   │   │   ├── libusb.scm
+│   │   │   │   ├── license.scm
+│   │   │   │   ├── lighting.scm
+│   │   │   │   ├── linphone.scm
+│   │   │   │   ├── linux.scm
+│   │   │   │   ├── lirc.scm
+│   │   │   │   ├── lisp-check.scm
+│   │   │   │   ├── lisp.scm
+│   │   │   │   ├── lisp-xyz.scm
+│   │   │   │   ├── llvm-meta.scm
+│   │   │   │   ├── llvm.scm
+│   │   │   │   ├── logging.scm
+│   │   │   │   ├── logo.scm
+│   │   │   │   ├── lout.scm
+│   │   │   │   ├── lsof.scm
+│   │   │   │   ├── luanti.scm
+│   │   │   │   ├── lua.scm
+│   │   │   │   ├── lxde.scm
+│   │   │   │   ├── lxqt.scm
+│   │   │   │   ├── m4.scm
+│   │   │   │   ├── machine-learning.scm
+│   │   │   │   ├── magic-wormhole.scm
+│   │   │   │   ├── mail.scm
+│   │   │   │   ├── make-bootstrap.scm
+│   │   │   │   ├── man.scm
+│   │   │   │   ├── markup.scm
+│   │   │   │   ├── marst.scm
+│   │   │   │   ├── mate.scm
+│   │   │   │   ├── maths.scm
+│   │   │   │   ├── matrix.scm
+│   │   │   │   ├── maven-parent-pom.scm
+│   │   │   │   ├── maven.scm
+│   │   │   │   ├── mcrypt.scm
+│   │   │   │   ├── mc.scm
+│   │   │   │   ├── medical.scm
+│   │   │   │   ├── messaging.scm
+│   │   │   │   ├── mes.scm
+│   │   │   │   ├── minetest.scm
+│   │   │   │   ├── mingw.scm
+│   │   │   │   ├── mold.scm
+│   │   │   │   ├── monitoring.scm
+│   │   │   │   ├── moreutils.scm
+│   │   │   │   ├── motti.scm
+│   │   │   │   ├── mp3.scm
+│   │   │   │   ├── mpd.scm
+│   │   │   │   ├── mpi.scm
+│   │   │   │   ├── mruby-xyz.scm
+│   │   │   │   ├── mtools.scm
+│   │   │   │   ├── multiprecision.scm
+│   │   │   │   ├── music.scm
+│   │   │   │   ├── musl.scm
+│   │   │   │   ├── myrddin.scm
+│   │   │   │   ├── ncdu.scm
+│   │   │   │   ├── ncurses.scm
+│   │   │   │   ├── netpbm.scm
+│   │   │   │   ├── nettle.scm
+│   │   │   │   ├── networking.scm
+│   │   │   │   ├── nfs.scm
+│   │   │   │   ├── nickle.scm
+│   │   │   │   ├── nicotine.scm
+│   │   │   │   ├── nim.scm
+│   │   │   │   ├── ninja.scm
+│   │   │   │   ├── node.scm
+│   │   │   │   ├── node-xyz.scm
+│   │   │   │   ├── notcurses.scm
+│   │   │   │   ├── noweb.scm
+│   │   │   │   ├── nss.scm
+│   │   │   │   ├── ntp.scm
+│   │   │   │   ├── nushell.scm
+│   │   │   │   ├── nutrition.scm
+│   │   │   │   ├── nvi.scm
+│   │   │   │   ├── nx.scm
+│   │   │   │   ├── ocaml.scm
+│   │   │   │   ├── ocr.scm
+│   │   │   │   ├── onc-rpc.scm
+│   │   │   │   ├── oneapi.scm
+│   │   │   │   ├── opencl.scm
+│   │   │   │   ├── opencog.scm
+│   │   │   │   ├── openkinect.scm
+│   │   │   │   ├── openldap.scm
+│   │   │   │   ├── openpgp.scm
+│   │   │   │   ├── openstack.scm
+│   │   │   │   ├── orange.scm
+│   │   │   │   ├── orpheus.scm
+│   │   │   │   ├── ots.scm
+│   │   │   │   ├── oyacc.scm
+│   │   │   │   ├── package-management.scm
+│   │   │   │   ├── pantheon.scm
+│   │   │   │   ├── parallel.scm
+│   │   │   │   ├── pascal.scm
+│   │   │   │   ├── password-utils.scm
+│   │   │   │   ├── patches
+│   │   │   │   │   ├── 389-ds-base-legacy-version.patch
+│   │   │   │   │   ├── 8mq-enable-imx_hab_handler.patch
+│   │   │   │   │   ├── 8mq-move-stack-to-ocram_s.patch
+│   │   │   │   │   ├── abcl-fix-build-xml.patch
+│   │   │   │   │   ├── abiword-explictly-cast-bools.patch
+│   │   │   │   │   ├── ableton-link-system-libraries-debian.patch
+│   │   │   │   │   ├── abseil-cpp-20220623.1-no-kepsilon-i686.patch
+│   │   │   │   │   ├── abseil-cpp-fix-strerror_test.patch
+│   │   │   │   │   ├── accountsservice-extensions.patch
+│   │   │   │   │   ├── adb-add-libraries.patch
+│   │   │   │   │   ├── adb-libssl_11-compatibility.patch
+│   │   │   │   │   ├── agda-categories-remove-incompatible-flags.patch
+│   │   │   │   │   ├── agda-categories-use-find.patch
+│   │   │   │   │   ├── agda-categories-use-newer-stdlib.patch
+│   │   │   │   │   ├── agda-libdirs-env-variable.patch
+│   │   │   │   │   ├── agda-stdlib-use-runhaskell.patch
+│   │   │   │   │   ├── agda-use-sphinx-5.patch
+│   │   │   │   │   ├── agg-2.5-gcc8.patch
+│   │   │   │   │   ├── agg-am_c_prototype.patch
+│   │   │   │   │   ├── akonadi-not-relocatable.patch
+│   │   │   │   │   ├── akonadi-paths.patch
+│   │   │   │   │   ├── akonadi-timestamps.patch
+│   │   │   │   │   ├── alure-dumb-2.patch
+│   │   │   │   │   ├── amd-smi-python.patch
+│   │   │   │   │   ├── antiword-CVE-2014-8123.patch
+│   │   │   │   │   ├── antlr3-3_1-fix-java8-compilation.patch
+│   │   │   │   │   ├── antlr3-3_3-fix-java8-compilation.patch
+│   │   │   │   │   ├── apr-fix-atomics.patch
+│   │   │   │   │   ├── apr-skip-getservbyname-test.patch
+│   │   │   │   │   ├── aria2-unbundle-wslay.patch
+│   │   │   │   │   ├── aria-maestosa-scons-python3.patch
+│   │   │   │   │   ├── ark-skip-xar-test.patch
+│   │   │   │   │   ├── asli-use-system-libs.patch
+│   │   │   │   │   ├── aspell-default-dict-dir.patch
+│   │   │   │   │   ├── ath9k-htc-firmware-binutils.patch
+│   │   │   │   │   ├── ath9k-htc-firmware-gcc-compat.patch
+│   │   │   │   │   ├── ath9k-htc-firmware-gcc.patch
+│   │   │   │   │   ├── atlas-gfortran-compat.patch
+│   │   │   │   │   ├── audacity-ffmpeg-fallback.patch
+│   │   │   │   │   ├── audiofile-check-number-of-coefficients.patch
+│   │   │   │   │   ├── audiofile-CVE-2015-7747.patch
+│   │   │   │   │   ├── audiofile-CVE-2018-13440.patch
+│   │   │   │   │   ├── audiofile-CVE-2018-17095.patch
+│   │   │   │   │   ├── audiofile-CVE-2022-24599.patch
+│   │   │   │   │   ├── audiofile-division-by-zero.patch
+│   │   │   │   │   ├── audiofile-Fail-on-error-in-parseFormat.patch
+│   │   │   │   │   ├── audiofile-fix-datatypes-in-tests.patch
+│   │   │   │   │   ├── audiofile-Fix-index-overflow-in-IMA.cpp.patch
+│   │   │   │   │   ├── audiofile-fix-sign-conversion.patch
+│   │   │   │   │   ├── audiofile-function-signature.patch
+│   │   │   │   │   ├── audiofile-hurd.patch
+│   │   │   │   │   ├── audiofile-multiply-overflow.patch
+│   │   │   │   │   ├── audiofile-overflow-in-MSADPCM.patch
+│   │   │   │   │   ├── automake-skip-amhello-tests.patch
+│   │   │   │   │   ├── avahi-localstatedir.patch
+│   │   │   │   │   ├── avalon-toolkit-rdkit-fixes.patch
+│   │   │   │   │   ├── avidemux-install-to-lib.patch
+│   │   │   │   │   ├── awesome-4.3-fno-common.patch
+│   │   │   │   │   ├── awesome-reproducible-png.patch
+│   │   │   │   │   ├── azr3.patch
+│   │   │   │   │   ├── azr3-remove-lash.patch
+│   │   │   │   │   ├── barony-fix-textures.patch
+│   │   │   │   │   ├── bash-completion-directories.patch
+│   │   │   │   │   ├── bash-linux-pgrp-pipe.patch
+│   │   │   │   │   ├── basis-universal-unbundle-libs.patch
+│   │   │   │   │   ├── bastet-change-source-of-unordered_set.patch
+│   │   │   │   │   ├── bdb-4-5-configure.patch
+│   │   │   │   │   ├── bdb-5.3-atomics-on-gcc-9.patch
+│   │   │   │   │   ├── beancount-disable-googleapis-fonts.patch
+│   │   │   │   │   ├── beignet-correct-file-names.patch
+│   │   │   │   │   ├── biboumi-cmake-ignore-git.patch
+│   │   │   │   │   ├── bidiv-update-fribidi.patch
+│   │   │   │   │   ├── binutils-2.41-fix-cross.patch
+│   │   │   │   │   ├── binutils-boot-2.20.1a.patch
+│   │   │   │   │   ├── binutils-cross-windres.patch
+│   │   │   │   │   ├── binutils-loongson-workaround.patch
+│   │   │   │   │   ├── binutils-mingw-w64-deterministic.patch
+│   │   │   │   │   ├── bloomberg-bde-tools-fix-install-path.patch
+│   │   │   │   │   ├── bmake-run-check-separately.patch
+│   │   │   │   │   ├── boolector-find-googletest.patch
+│   │   │   │   │   ├── boost-fix-duplicate-definitions-bug.patch
+│   │   │   │   │   ├── brasero-fix-gcc-14-build-failure.patch
+│   │   │   │   │   ├── brightnessctl-elogind-support.patch
+│   │   │   │   │   ├── bristol-c99.patch
+│   │   │   │   │   ├── bsd-games-2.17-64bit.patch
+│   │   │   │   │   ├── bsd-games-add-configure-config.patch
+│   │   │   │   │   ├── bsd-games-add-wrapper.patch
+│   │   │   │   │   ├── bsd-games-bad-ntohl-cast.patch
+│   │   │   │   │   ├── bsd-games-dont-install-empty-files.patch
+│   │   │   │   │   ├── bsd-games-gamescreen.h.patch
+│   │   │   │   │   ├── bsd-games-getline.patch
+│   │   │   │   │   ├── bsd-games-null-check.patch
+│   │   │   │   │   ├── bsd-games-number.c-and-test.patch
+│   │   │   │   │   ├── bsd-games-prevent-name-collisions.patch
+│   │   │   │   │   ├── bsd-games-stdio.h.patch
+│   │   │   │   │   ├── btanks-scons-python.patch
+│   │   │   │   │   ├── btanks-sl08-python.patch
+│   │   │   │   │   ├── bubblewrap-fix-locale-in-tests.patch
+│   │   │   │   │   ├── busybox-add-missing-sha-NI-guard.patch
+│   │   │   │   │   ├── busybox-no-cbq.patch
+│   │   │   │   │   ├── byobu-writable-status.patch
+│   │   │   │   │   ├── cadical-add-shared-library.patch
+│   │   │   │   │   ├── calibre-no-updates-dialog.patch
+│   │   │   │   │   ├── calibre-remove-test-import-modules.patch
+│   │   │   │   │   ├── calibre-remove-test-sqlite.patch
+│   │   │   │   │   ├── calibre-remove-test-unrar.patch
+│   │   │   │   │   ├── calligra-qt-6.9.patch
+│   │   │   │   │   ├── calls-disable-sip-test.patch
+│   │   │   │   │   ├── camlboot-dynamically-allocate-stack-signal.patch
+│   │   │   │   │   ├── capstone-fix-python-constants.patch
+│   │   │   │   │   ├── cartridges-fix-non-parallel-build.patch
+│   │   │   │   │   ├── catdoc-CVE-2017-11110.patch
+│   │   │   │   │   ├── cdparanoia-fpic.patch
+│   │   │   │   │   ├── cdrkit-libre-cross-compile.patch
+│   │   │   │   │   ├── cdrtools-3.01-mkisofs-isoinfo.patch
+│   │   │   │   │   ├── ceph-fix-cmake.patch
+│   │   │   │   │   ├── cf-tool-add-languages.patch
+│   │   │   │   │   ├── chez-irregex-import-cond-expand.patch
+│   │   │   │   │   ├── chez-scheme-bin-sh.patch
+│   │   │   │   │   ├── chmlib-inttypes.patch
+│   │   │   │   │   ├── circos-remove-findbin.patch
+│   │   │   │   │   ├── clamav-config-llvm-libs.patch
+│   │   │   │   │   ├── clamav-system-tomsfastmath.patch
+│   │   │   │   │   ├── cl-ana-pr-49.patch
+│   │   │   │   │   ├── clang-11.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-12.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-13.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-13-remove-crypt-interceptors.patch
+│   │   │   │   │   ├── clang-14.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-14-remove-crypt-interceptors.patch
+│   │   │   │   │   ├── clang-15.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-16.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-16-remove-crypt-interceptors.patch
+│   │   │   │   │   ├── clang-17.0-fix-build-with-gcc-14-on-arm.patch
+│   │   │   │   │   ├── clang-17.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-17.0-link-dsymutil-latomic.patch
+│   │   │   │   │   ├── clang-18.0-libc-search-path.patch
+│   │   │   │   │   ├── clang-rocm-default-new-dtags.patch
+│   │   │   │   │   ├── clang-runtime-12-remove-crypt-interceptors.patch
+│   │   │   │   │   ├── clang-runtime-13-glibc-2.36-compat.patch
+│   │   │   │   │   ├── clang-runtime-14-glibc-2.36-compat.patch
+│   │   │   │   │   ├── clang-runtime-3.9-libsanitizer-mode-field.patch
+│   │   │   │   │   ├── clang-runtime-esan-build-fixes.patch
+│   │   │   │   │   ├── cl-asdf-config-directories.patch
+│   │   │   │   │   ├── clasp-hide-event-ids.patch
+│   │   │   │   │   ├── classpath-aarch64-support.patch
+│   │   │   │   │   ├── classpath-miscompilation.patch
+│   │   │   │   │   ├── clitest-grep-compat.patch
+│   │   │   │   │   ├── clog-fix-shared-build.patch
+│   │   │   │   │   ├── clucene-contribs-lib.patch
+│   │   │   │   │   ├── clucene-gcc-14.patch
+│   │   │   │   │   ├── clucene-pkgconfig.patch
+│   │   │   │   │   ├── coda-use-system-libs.patch
+│   │   │   │   │   ├── codex-0.98.0-remove-patch-sections.patch
+│   │   │   │   │   ├── codex-acp-0.9.2-remove-patch-sections.patch
+│   │   │   │   │   ├── codex-acp-0.9.2-replace-result-flatten.patch
+│   │   │   │   │   ├── cogl-fix-double-free.patch
+│   │   │   │   │   ├── collada-dom-boost.patch
+│   │   │   │   │   ├── collectd-5.11.0-noinstallvar.patch
+│   │   │   │   │   ├── collectd-5.11.0-python-3.11.patch
+│   │   │   │   │   ├── combinatorial-blas-awpm.patch
+│   │   │   │   │   ├── combinatorial-blas-io-fix.patch
+│   │   │   │   │   ├── composable-kernel-conditional-kernels.patch
+│   │   │   │   │   ├── compsize-fix-btrfs-progs-compatibility.patch
+│   │   │   │   │   ├── conda-fix-cross-platform-export-tests.patch
+│   │   │   │   │   ├── conda-fix-plugin-settings-test.patch
+│   │   │   │   │   ├── containerd-create-pid-file.patch
+│   │   │   │   │   ├── containerd-fix-includes.patch
+│   │   │   │   │   ├── cool-retro-term-wctype.patch
+│   │   │   │   │   ├── coq-autosubst-1.8-remove-deprecated-files.patch
+│   │   │   │   │   ├── corectrl-locate-polkit-with-pkg-config.patch
+│   │   │   │   │   ├── corefx-mono-5.4.0-patches.patch
+│   │   │   │   │   ├── corefx-mono-pre-5.8.0-patches.patch
+│   │   │   │   │   ├── coreutils-gnulib-tests.patch
+│   │   │   │   │   ├── corrosion-honor-CARGO_BUILD_TARGET.patch
+│   │   │   │   │   ├── cppcheck-fix-basedir-test.patch
+│   │   │   │   │   ├── cppdap-add-CPPDAP_USE_EXTERNAL_GTEST_PACKAGE.patch
+│   │   │   │   │   ├── cproc-extra-linkflags.patch
+│   │   │   │   │   ├── cpulimit-with-glib-2.32.patch
+│   │   │   │   │   ├── crawl-upgrade-saves.patch
+│   │   │   │   │   ├── crc32c-unbundle-googletest.patch
+│   │   │   │   │   ├── crda-optional-gcrypt.patch
+│   │   │   │   │   ├── cryfs-boost-1.88-fix.patch
+│   │   │   │   │   ├── cryfs-boost-1.89-fix.patch
+│   │   │   │   │   ├── csvkit-set-locale-for-tests.patch
+│   │   │   │   │   ├── ctranslate2-local-build.patch
+│   │   │   │   │   ├── ctune-cmake-disable-git-clone.patch
+│   │   │   │   │   ├── cube-nocheck.patch
+│   │   │   │   │   ├── cups-relax-root-ownership-check.patch
+│   │   │   │   │   ├── cura-engine-gcc-14.patch
+│   │   │   │   │   ├── curl-CVE-2024-8096.patch
+│   │   │   │   │   ├── curlftpfs-fix-error-closing-file.patch
+│   │   │   │   │   ├── curlftpfs-fix-file-names.patch
+│   │   │   │   │   ├── curlftpfs-fix-memory-leak.patch
+│   │   │   │   │   ├── curlftpfs-fix-no_verify_hostname.patch
+│   │   │   │   │   ├── curl-use-ssl-cert-env.patch
+│   │   │   │   │   ├── cursynth-wave-rand.patch
+│   │   │   │   │   ├── cvs-CVE-2017-12836.patch
+│   │   │   │   │   ├── cyrus-sasl-fix-time-h.patch
+│   │   │   │   │   ├── daemontools-gcc14.patch
+│   │   │   │   │   ├── dante-non-darwin.patch
+│   │   │   │   │   ├── date-ignore-zonenow.patch
+│   │   │   │   │   ├── date-output-pkg-config-files.patch
+│   │   │   │   │   ├── dbacl-icheck-multiple-definitions.patch
+│   │   │   │   │   ├── dbacl-include-locale.h.patch
+│   │   │   │   │   ├── dblatex-inkscape-1.0.patch
+│   │   │   │   │   ├── dbus-helper-search-path.patch
+│   │   │   │   │   ├── ddd-build.patch
+│   │   │   │   │   ├── debops-setup-py-avoid-git.patch
+│   │   │   │   │   ├── dee-vapi.patch
+│   │   │   │   │   ├── d-feet-drop-unused-meson-argument.patch
+│   │   │   │   │   ├── dfu-programmer-fix-libusb.patch
+│   │   │   │   │   ├── dhclient-script-resolvconf-support.patch
+│   │   │   │   │   ├── dicedb-remove-init-from-config-subpkg.patch
+│   │   │   │   │   ├── directfb-davinci-glibc-228-compat.patch
+│   │   │   │   │   ├── django-compressor-build-with-beautifulsoup-4.14+.patch
+│   │   │   │   │   ├── dkimproxy-add-ipv6-support.patch
+│   │   │   │   │   ├── docbook2x-entity-lt.patch
+│   │   │   │   │   ├── docbook2x-filename-handling.patch
+│   │   │   │   │   ├── docbook2x-fix-synopsis.patch
+│   │   │   │   │   ├── docbook2x-manpage-typo.patch
+│   │   │   │   │   ├── docbook2x-preprocessor-declaration.patch
+│   │   │   │   │   ├── docbook2x-static-datadir-evaluation.patch
+│   │   │   │   │   ├── docbook-utils-documentation-edits.patch
+│   │   │   │   │   ├── docbook-utils-escape-characters.patch
+│   │   │   │   │   ├── docbook-utils-remove-jade-sp.patch
+│   │   │   │   │   ├── docbook-utils-respect-refentry-for-name.patch
+│   │   │   │   │   ├── docbook-utils-source-date-epoch.patch
+│   │   │   │   │   ├── docbook-utils-use-date-element.patch
+│   │   │   │   │   ├── doc++-gcc-14.patch
+│   │   │   │   │   ├── doc++-include-directives.patch
+│   │   │   │   │   ├── doc++-segfault-fix.patch
+│   │   │   │   │   ├── dolphin-emu-unbundle-tinygltf.patch
+│   │   │   │   │   ├── dolphin-emu-unbundle-watcher.patch
+│   │   │   │   │   ├── dovecot-opensslv3.patch
+│   │   │   │   │   ├── dovecot-trees-support-dovecot-2.3.patch
+│   │   │   │   │   ├── dstat-fix-crash-when-specifying-delay.patch
+│   │   │   │   │   ├── dstat-skip-devices-without-io.patch
+│   │   │   │   │   ├── dtc-fix-test.patch
+│   │   │   │   │   ├── duc-fix-test-sh.patch
+│   │   │   │   │   ├── dune-common-skip-failing-tests.patch
+│   │   │   │   │   ├── durden-shadow-arcan.patch
+│   │   │   │   │   ├── dvdbackup-with-libdvdread-6.1.0+.patch
+│   │   │   │   │   ├── dvd+rw-tools-add-include.patch
+│   │   │   │   │   ├── dwarves-threading-reproducibility.patch
+│   │   │   │   │   ├── e9patch-zydis-4.1-compat.patch
+│   │   │   │   │   ├── efitools-riscv64-support.patch
+│   │   │   │   │   ├── efivar-fix-fprint-format.patch
+│   │   │   │   │   ├── eigen-fix-strict-aliasing-bug.patch
+│   │   │   │   │   ├── einstein-build.patch
+│   │   │   │   │   ├── elastix-1404.patch
+│   │   │   │   │   ├── elfutils-tests-ptrace.patch
+│   │   │   │   │   ├── elixir-httpoison-tag-network-dependent-test-cases.patch
+│   │   │   │   │   ├── elixir-path-length.patch
+│   │   │   │   │   ├── elm-ghc9.2.patch
+│   │   │   │   │   ├── elm-offline-package-registry.patch
+│   │   │   │   │   ├── elm-reactor-static-files.patch
+│   │   │   │   │   ├── emacs-buttercup-1.38-native-comp-spy-on-trampoline-scope.patch
+│   │   │   │   │   ├── emacs-deferred-fix-number-of-arguments.patch
+│   │   │   │   │   ├── emacs-disable-jit-compilation.patch
+│   │   │   │   │   ├── emacs-doc-toc-shell-commands.patch
+│   │   │   │   │   ├── emacs-elisp-autofmt-fix-region-send.patch
+│   │   │   │   │   ├── emacs-exec-path.patch
+│   │   │   │   │   ├── emacs-fix-scheme-indent-function.patch
+│   │   │   │   │   ├── emacs-gnus-alias-reference-signature.patch
+│   │   │   │   │   ├── emacs-helpful-fix-signature.patch
+│   │   │   │   │   ├── emacs-helpful-fix-tests.patch
+│   │   │   │   │   ├── emacs-highlight-stages-add-gexp.patch
+│   │   │   │   │   ├── emacs-json-reformat-fix-tests.patch
+│   │   │   │   │   ├── emacs-kv-fix-tests.patch
+│   │   │   │   │   ├── emacs-lispy-fix-thread-last-test.patch
+│   │   │   │   │   ├── emacs-native-comp-driver-options.patch
+│   │   │   │   │   ├── emacs-native-comp-fix-filenames.patch
+│   │   │   │   │   ├── emacs-native-comp-pin-packages.patch
+│   │   │   │   │   ├── emacs-next-disable-jit-compilation.patch
+│   │   │   │   │   ├── emacs-next-exec-path.patch
+│   │   │   │   │   ├── emacs-next-native-comp-fix-filenames.patch
+│   │   │   │   │   ├── emacs-pasp-mode-quote-file-names.patch
+│   │   │   │   │   ├── emacs-polymode-fix-lexical-variable-error.patch
+│   │   │   │   │   ├── emacs-telega-test-env.patch
+│   │   │   │   │   ├── emacs-wordnut-require-adaptive-wrap.patch
+│   │   │   │   │   ├── emacs-zoom-image-test-fix.patch
+│   │   │   │   │   ├── enblend-enfuse-reproducible.patch
+│   │   │   │   │   ├── enjarify-setup-py.patch
+│   │   │   │   │   ├── enlightenment-fix-setuid-path.patch
+│   │   │   │   │   ├── ergodox-firmware-fix-json-target.patch
+│   │   │   │   │   ├── ergodox-firmware-fix-numpad.patch
+│   │   │   │   │   ├── ericw-tools-add-check-for-sse2-in-light.cc.patch
+│   │   │   │   │   ├── ericw-tools-gcc-11-pass-const-to-offsetof.patch
+│   │   │   │   │   ├── erlang-binpp-disable-failing-tests.patch
+│   │   │   │   │   ├── erlang-man-path.patch
+│   │   │   │   │   ├── erlang-mochiweb-disable-known-to-fail-tests.patch
+│   │   │   │   │   ├── esmini-use-pkgconfig.patch
+│   │   │   │   │   ├── esmtp-add-lesmtp.patch
+│   │   │   │   │   ├── esound-c99.patch
+│   │   │   │   │   ├── exaile-gstreamer-1.28.patch
+│   │   │   │   │   ├── exercism-disable-self-update.patch
+│   │   │   │   │   ├── extundelete-e2fsprogs-1.44.patch
+│   │   │   │   │   ├── fail2ban-fix-sshd-filter.patch
+│   │   │   │   │   ├── fail2ban-paths-guix-conf.patch
+│   │   │   │   │   ├── faiss-tests-CMakeLists-find-googletest.patch
+│   │   │   │   │   ├── falcosecurity-libs-bpf-probes-fix.patch
+│   │   │   │   │   ├── falcosecurity-libs-shared-build.patch
+│   │   │   │   │   ├── farstream-gupnp.patch
+│   │   │   │   │   ├── farstream-make.patch
+│   │   │   │   │   ├── fastcap-mulGlobal.patch
+│   │   │   │   │   ├── fastcap-mulSetup.patch
+│   │   │   │   │   ├── fasthenry-spAllocate.patch
+│   │   │   │   │   ├── fasthenry-spBuild.patch
+│   │   │   │   │   ├── fasthenry-spFactor.patch
+│   │   │   │   │   ├── fasthenry-spSolve.patch
+│   │   │   │   │   ├── fasthenry-spUtils.patch
+│   │   │   │   │   ├── fbgemm-use-system-libraries.patch
+│   │   │   │   │   ├── fbreader-curl-7.62.patch
+│   │   │   │   │   ├── fbreader-fix-icon.patch
+│   │   │   │   │   ├── fenics-dolfin-algorithm.patch
+│   │   │   │   │   ├── fenics-dolfin-boost.patch
+│   │   │   │   │   ├── fenics-dolfin-config-slepc.patch
+│   │   │   │   │   ├── fenics-dolfin-demo-init.patch
+│   │   │   │   │   ├── fenics-dolfin-hdf5-version-check.patch
+│   │   │   │   │   ├── fenics-dolfin-integer-types.patch
+│   │   │   │   │   ├── ffmpeg-4-binutils-2.41.patch
+│   │   │   │   │   ├── ffmpeg-add-av_stream_get_first_dts-for-chromium.patch
+│   │   │   │   │   ├── ffmpeg-jami-change-RTCP-ratio.patch
+│   │   │   │   │   ├── ffmpeg-jami-libopusdec-enable-FEC.patch
+│   │   │   │   │   ├── ffmpeg-jami-libopusenc-enable-FEC.patch
+│   │   │   │   │   ├── ffmpeg-jami-libopusenc-reload-packet-loss-at-encode.patch
+│   │   │   │   │   ├── ffmpeg-jami-pipewiregrab-source-filter.patch
+│   │   │   │   │   ├── ffmpeg-jami-remove-mjpeg-log.patch
+│   │   │   │   │   ├── ffmpeg-jami-rtp_ext_abs_send_time.patch
+│   │   │   │   │   ├── ffmpeg-jami-screen-sharing-x11-fix.patch
+│   │   │   │   │   ├── ffmpeg-svt-av1-v3.patch
+│   │   │   │   │   ├── fgallery-also-look-for-7z.patch
+│   │   │   │   │   ├── fifengine-boost-compat.patch
+│   │   │   │   │   ├── fifengine-python-3.9-compat.patch
+│   │   │   │   │   ├── fifengine-swig-compat.patch
+│   │   │   │   │   ├── fifo-map-fix-flags-for-gcc.patch
+│   │   │   │   │   ├── fifo-map-remove-catch.hpp.patch
+│   │   │   │   │   ├── findutils-localstatedir.patch
+│   │   │   │   │   ├── firebird-riscv64-support-pt1.patch
+│   │   │   │   │   ├── firebird-riscv64-support-pt2.patch
+│   │   │   │   │   ├── flann-cmake-3.11.patch
+│   │   │   │   │   ├── flatpak-fix-fonts-icons.patch
+│   │   │   │   │   ├── flatpak-fix-icon-validation.patch
+│   │   │   │   │   ├── flatpak-unset-gdk-pixbuf-for-sandbox.patch
+│   │   │   │   │   ├── fluxbox-1.3.7-gcc.patch
+│   │   │   │   │   ├── fluxbox-1.3.7-no-dynamic-cursor.patch
+│   │   │   │   │   ├── fmt-9-overspecified-tests.patch
+│   │   │   │   │   ├── fontconfig-cache-ignore-mtime.patch
+│   │   │   │   │   ├── fontforge-hurd.patch
+│   │   │   │   │   ├── font-gnu-freefont-python3-compat.patch
+│   │   │   │   │   ├── foobillard++-pkg-config.patch
+│   │   │   │   │   ├── foomatic-filters-CVE-2015-8327.patch
+│   │   │   │   │   ├── foomatic-filters-CVE-2015-8560.patch
+│   │   │   │   │   ├── foxi-fix-build.patch
+│   │   │   │   │   ├── fp16-implicit-double.patch
+│   │   │   │   │   ├── fp16-system-libraries.patch
+│   │   │   │   │   ├── fpc-glibc-2.34-compat.patch
+│   │   │   │   │   ├── fpc-reproducibility.patch
+│   │   │   │   │   ├── freedict-tools-fix-determinism.patch
+│   │   │   │   │   ├── freedink-engine-fix-const-char.patch
+│   │   │   │   │   ├── freedink-engine-fix-sdl-hints.patch
+│   │   │   │   │   ├── freeimage-CVE-2020-21428.patch
+│   │   │   │   │   ├── freeimage-CVE-2020-22524.patch
+│   │   │   │   │   ├── freeimage-libraw-0.21-compat.patch
+│   │   │   │   │   ├── freeimage-libtiff-compat.patch
+│   │   │   │   │   ├── freeimage-unbundle.patch
+│   │   │   │   │   ├── freesolid-automake.patch
+│   │   │   │   │   ├── freesolid-autotools.patch
+│   │   │   │   │   ├── freesolid-configure.patch
+│   │   │   │   │   ├── freesolid-pkgconfig.patch
+│   │   │   │   │   ├── fritzing-0.9.6-fix-types.patch
+│   │   │   │   │   ├── ftgl-ftcontour-type.patch
+│   │   │   │   │   ├── fulcrum-1.9.1-unbundled-libraries.patch
+│   │   │   │   │   ├── fuse-glibc-2.34.patch
+│   │   │   │   │   ├── fuse-overlapping-headers.patch
+│   │   │   │   │   ├── fxdiv-system-libraries.patch
+│   │   │   │   │   ├── gajim-honour-GAJIM_PLUGIN_PATH.patch
+│   │   │   │   │   ├── ganeti-disable-version-symlinks.patch
+│   │   │   │   │   ├── ganeti-haskell-pythondir.patch
+│   │   │   │   │   ├── ganeti-lens-compat.patch
+│   │   │   │   │   ├── ganeti-openssh-test-fix.patch
+│   │   │   │   │   ├── ganeti-procps-compat.patch
+│   │   │   │   │   ├── ganeti-pyyaml-compat.patch
+│   │   │   │   │   ├── ganeti-relax-dependencies.patch
+│   │   │   │   │   ├── ganeti-reorder-arbitrary-definitions.patch
+│   │   │   │   │   ├── ganeti-shepherd-master-failover.patch
+│   │   │   │   │   ├── ganeti-shepherd-support.patch
+│   │   │   │   │   ├── ganeti-sphinx-import.patch
+│   │   │   │   │   ├── ganeti-template-haskell-2.17.patch
+│   │   │   │   │   ├── ganeti-template-haskell-2.18.patch
+│   │   │   │   │   ├── gawk-shell.patch
+│   │   │   │   │   ├── gcc-10-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-10-libsanitizer-no-crypt.patch
+│   │   │   │   │   ├── gcc-11-libstdc++-hurd-libpthread.patch
+│   │   │   │   │   ├── gcc-11-libstdc++-powerpc.patch
+│   │   │   │   │   ├── gcc-12-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-12-libsanitizer-no-crypt.patch
+│   │   │   │   │   ├── gcc-12-strmov-store-file-names.patch
+│   │   │   │   │   ├── gcc-13.2.0-libstdc++-docbook-xsl-uri.patch
+│   │   │   │   │   ├── gcc-13.2.0-libstdc++-info-install-fix.patch
+│   │   │   │   │   ├── gcc-13-cross-system-header-dir.patch
+│   │   │   │   │   ├── gcc-13-libsanitizer-no-crypt.patch
+│   │   │   │   │   ├── gcc-4.8-libsanitizer-fix.patch
+│   │   │   │   │   ├── gcc-4.9.3-mingw-gthr-default.patch
+│   │   │   │   │   ├── gcc-4.9-inline.patch
+│   │   │   │   │   ├── gcc-4.9-libsanitizer-fix.patch
+│   │   │   │   │   ├── gcc-4.9-libsanitizer-mode-size.patch
+│   │   │   │   │   ├── gcc-4.9-libsanitizer-ustat.patch
+│   │   │   │   │   ├── gcc-4-compile-with-gcc-5.patch
+│   │   │   │   │   ├── gcc-5.0-libvtv-runpath.patch
+│   │   │   │   │   ├── gcc-5.5.0-libstdc++-xmlcatalog.patch
+│   │   │   │   │   ├── gcc-5-fix-powerpc64le-build.patch
+│   │   │   │   │   ├── gcc-5-hurd.patch
+│   │   │   │   │   ├── gcc-5-source-date-epoch-1.patch
+│   │   │   │   │   ├── gcc-5-source-date-epoch-2.patch
+│   │   │   │   │   ├── gcc-6-arm-none-eabi-multilib.patch
+│   │   │   │   │   ├── gcc-6-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-6-fix-buffer-size.patch
+│   │   │   │   │   ├── gcc-6-fix-isl-includes.patch
+│   │   │   │   │   ├── gcc-6-libsanitizer-mode-size.patch
+│   │   │   │   │   ├── gcc-6-source-date-epoch-1.patch
+│   │   │   │   │   ├── gcc-6-source-date-epoch-2.patch
+│   │   │   │   │   ├── gcc-7-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-7-cross-mingw.patch
+│   │   │   │   │   ├── gcc-7-cross-toolexeclibdir.patch
+│   │   │   │   │   ├── gcc-7-libsanitizer-fsconfig-command.patch
+│   │   │   │   │   ├── gcc-7-libsanitizer-mode-size.patch
+│   │   │   │   │   ├── gcc-8-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-8-sort-libtool-find-output.patch
+│   │   │   │   │   ├── gcc-8-strmov-store-file-names.patch
+│   │   │   │   │   ├── gcc-9-asan-fix-limits-include.patch
+│   │   │   │   │   ├── gcc-9-strmov-store-file-names.patch
+│   │   │   │   │   ├── gcc-arm-bug-71399.patch
+│   │   │   │   │   ├── gcc-arm-link-spec-fix.patch
+│   │   │   │   │   ├── gcc-asan-missing-include.patch
+│   │   │   │   │   ├── gcc-boot-2.95.3.patch
+│   │   │   │   │   ├── gcc-boot-4.6.4.patch
+│   │   │   │   │   ├── gcc-cross-environment-variables.patch
+│   │   │   │   │   ├── gcc-cross-gxx-include-dir.patch
+│   │   │   │   │   ├── gcc-fix-texi2pod.patch
+│   │   │   │   │   ├── gcc-hurd-split-stack.patch
+│   │   │   │   │   ├── gcc-libsanitizer-ustat.patch
+│   │   │   │   │   ├── gcc-libstdc++-newer-gcc.patch
+│   │   │   │   │   ├── gcc-libvtv-runpath.patch
+│   │   │   │   │   ├── gcc-strmov-store-file-names.patch
+│   │   │   │   │   ├── gcolor3-update-libportal-usage.patch
+│   │   │   │   │   ├── gdb-16-hurd64.patch
+│   │   │   │   │   ├── gdb-hurd64.patch
+│   │   │   │   │   ├── gdbm-lockwait-test.patch
+│   │   │   │   │   ├── gd-brect-bounds.patch
+│   │   │   │   │   ├── gd-fix-tests-on-i686.patch
+│   │   │   │   │   ├── gdk-pixbuf-honor-GUIX_GDK_PIXBUF_MODULE_FILES.patch
+│   │   │   │   │   ├── gdm-default-session.patch
+│   │   │   │   │   ├── gdm-pass-gdk-pixbuf-loader-env.patch
+│   │   │   │   │   ├── gdm-remove-hardcoded-xwayland-path.patch
+│   │   │   │   │   ├── gdm-wayland-session-wrapper-from-env.patch
+│   │   │   │   │   ├── gemmi-fix-pegtl-usage.patch
+│   │   │   │   │   ├── gemmi-fix-sajson-types.patch
+│   │   │   │   │   ├── gemrb-remove-ifdef-and-externalize-path-setting-to-cmake.patch
+│   │   │   │   │   ├── geoclue-config.patch
+│   │   │   │   │   ├── gettext-libunicode-update.patch
+│   │   │   │   │   ├── ghc-8.0-fall-back-to-madv_dontneed.patch
+│   │   │   │   │   ├── ghc-9.2-cabal-support-package-path.patch
+│   │   │   │   │   ├── ghc-9.2-grep-warnings.patch
+│   │   │   │   │   ├── ghc-9-StgCRunAsm-only-when-needed.patch
+│   │   │   │   │   ├── ghc-aeson-encodeDouble.patch
+│   │   │   │   │   ├── ghc-basement-fix-32-bit.patch
+│   │   │   │   │   ├── ghc-basement-fix-32bit.patch
+│   │   │   │   │   ├── ghc-bytestring-handle-ghc9.patch
+│   │   │   │   │   ├── ghc-clock-realfrag.patch
+│   │   │   │   │   ├── ghc-language-haskell-extract-ghc-8.10.patch
+│   │   │   │   │   ├── ghc-memory-fix-32bit.patch
+│   │   │   │   │   ├── ghc-persistent-fix-32bit.patch
+│   │   │   │   │   ├── ghc-testsuite-dlopen-pie.patch
+│   │   │   │   │   ├── ghc-testsuite-grep-compat.patch
+│   │   │   │   │   ├── ghc-testsuite-recomp015-execstack.patch
+│   │   │   │   │   ├── ghc-unique-support-newer-hashable.patch
+│   │   │   │   │   ├── ghostscript-CVE-2023-36664-fixup.patch
+│   │   │   │   │   ├── ghostscript-CVE-2023-36664.patch
+│   │   │   │   │   ├── ghostscript-leptonica-hurd.patch
+│   │   │   │   │   ├── ghostscript-no-header-creationdate.patch
+│   │   │   │   │   ├── ghostscript-no-header-id.patch
+│   │   │   │   │   ├── ghostscript-no-header-uuid.patch
+│   │   │   │   │   ├── gimp-fix-metadata-editor.patch
+│   │   │   │   │   ├── gimp-fix-tiff-load.patch
+│   │   │   │   │   ├── git-clar-path-max.patch
+│   │   │   │   │   ├── git-filter-repo-generate-doc.patch
+│   │   │   │   │   ├── gklib-suitesparse.patch
+│   │   │   │   │   ├── glib-appinfo-watch.patch
+│   │   │   │   │   ├── glibc-2.33-riscv64-miscompilation.patch
+│   │   │   │   │   ├── glibc-2.35-CVE-2023-4911.patch
+│   │   │   │   │   ├── glibc-2.37-hurd-clock_t_centiseconds.patch
+│   │   │   │   │   ├── glibc-2.37-versioned-locpath.patch
+│   │   │   │   │   ├── glibc-2.38-ldd-x86_64.patch
+│   │   │   │   │   ├── glibc-2.39-git-updates.patch
+│   │   │   │   │   ├── glibc-2.40-dl-cache.patch
+│   │   │   │   │   ├── glibc-2.41-bootstrap-system.patch
+│   │   │   │   │   ├── glibc-2.41-hurd-local-clock_gettime_MONOTONIC.patch
+│   │   │   │   │   ├── glibc-2.41-ldd-x86_64.patch
+│   │   │   │   │   ├── glibc-allow-kernel-2.6.32.patch
+│   │   │   │   │   ├── glibc-boot-2.16.0.patch
+│   │   │   │   │   ├── glibc-boot-2.2.5.patch
+│   │   │   │   │   ├── glibc-bootstrap-system-2.16.0.patch
+│   │   │   │   │   ├── glibc-bootstrap-system-2.2.5.patch
+│   │   │   │   │   ├── glibc-bootstrap-system.patch
+│   │   │   │   │   ├── glibc-cross-objcopy.patch
+│   │   │   │   │   ├── glibc-cross-objdump.patch
+│   │   │   │   │   ├── glibc-dl-cache.patch
+│   │   │   │   │   ├── glibc-guix-locpath.patch
+│   │   │   │   │   ├── glibc-hidden-visibility-ldconfig.patch
+│   │   │   │   │   ├── glibc-hurd-2.41-pthread-once.patch
+│   │   │   │   │   ├── glibc-hurd-2.41-pthread-sigmask.patch
+│   │   │   │   │   ├── glibc-hurd-2.41-symlink.patch
+│   │   │   │   │   ├── glibc-hurd64-gcc-14.2-tls-bug.patch
+│   │   │   │   │   ├── glibc-hurd64-intr-msg-clobber.patch
+│   │   │   │   │   ├── glibc-hurd-clock_gettime_monotonic.patch
+│   │   │   │   │   ├── glibc-hurd-clock_t_centiseconds.patch
+│   │   │   │   │   ├── glibc-hurd-getauxval.patch
+│   │   │   │   │   ├── glibc-hurd-gettyent.patch
+│   │   │   │   │   ├── glibc-hurd-mach-print.patch
+│   │   │   │   │   ├── glibc-hurd-pthread_setcancelstate.patch
+│   │   │   │   │   ├── glibc-hurd-signal-fpe-exception.patch
+│   │   │   │   │   ├── glibc-hurd-signal-sa-siginfo.patch
+│   │   │   │   │   ├── glibc-hurd-xstate.patch
+│   │   │   │   │   ├── glibc-ldd-powerpc.patch
+│   │   │   │   │   ├── glibc-ldd-x86_64.patch
+│   │   │   │   │   ├── glibc-locales.patch
+│   │   │   │   │   ├── glibc-reinstate-prlimit64-fallback.patch
+│   │   │   │   │   ├── glibc-supported-locales.patch
+│   │   │   │   │   ├── glibc-versioned-locpath.patch
+│   │   │   │   │   ├── glib-skip-failing-test.patch
+│   │   │   │   │   ├── glycin-sandbox-Adapt-bwrap-invocation.patch
+│   │   │   │   │   ├── gmime-disable-tests.patch
+│   │   │   │   │   ├── gmp-arm-asm-nothumb.patch
+│   │   │   │   │   ├── gmp-faulty-test.patch
+│   │   │   │   │   ├── gnome-2048-fix-positional-argument.patch
+│   │   │   │   │   ├── gnome-contacts-evolution-compat.patch
+│   │   │   │   │   ├── gnome-control-center-firmware-security.patch
+│   │   │   │   │   ├── gnome-control-center-libexecdir.patch
+│   │   │   │   │   ├── gnome-dictionary-meson-i18n.patch
+│   │   │   │   │   ├── gnome-recipes-rest-in-soup.patch
+│   │   │   │   │   ├── gnome-session-support-elogind.patch
+│   │   │   │   │   ├── gnome-settings-daemon-gc.patch
+│   │   │   │   │   ├── gnome-tweaks-search-paths.patch
+│   │   │   │   │   ├── gnulib-bootstrap.patch
+│   │   │   │   │   ├── gnumach-version.patch
+│   │   │   │   │   ├── gnupg-1-build-with-gcc10.patch
+│   │   │   │   │   ├── gnupg-default-pinentry.patch
+│   │   │   │   │   ├── gnutls-no-which.patch
+│   │   │   │   │   ├── gobject-introspection-absolute-shlib-path.patch
+│   │   │   │   │   ├── gobject-introspection-cc.patch
+│   │   │   │   │   ├── gobject-introspection-girepository.patch
+│   │   │   │   │   ├── godot-glslang.patch
+│   │   │   │   │   ├── godot-libjpeg-turbo-unbundle.patch
+│   │   │   │   │   ├── go-fix-script-tests.patch
+│   │   │   │   │   ├── go-github-com-golang-snappy-32bit-test.patch
+│   │   │   │   │   ├── go-github-com-jbenet-go-context-fix-import-error.patch
+│   │   │   │   │   ├── go-github-com-skip2-go-qrcode-fix-tests.patch
+│   │   │   │   │   ├── go-github-com-warpfork-go-wish-fix-tests.patch
+│   │   │   │   │   ├── go-github-com-wraparound-wrap-free-fonts.patch
+│   │   │   │   │   ├── go-gopkg-in-yaml-v3-32bit.patch
+│   │   │   │   │   ├── go-skip-gc-test.patch
+│   │   │   │   │   ├── gourmet-sqlalchemy-compat.patch
+│   │   │   │   │   ├── gpaste-fix-paths.patch
+│   │   │   │   │   ├── gpm-glibc-2.26.patch
+│   │   │   │   │   ├── gpodder-disable-updater.patch
+│   │   │   │   │   ├── grantlee-fix-i586-precision.patch
+│   │   │   │   │   ├── grantlee-register-metaenumvariable.patch
+│   │   │   │   │   ├── grep-timing-sensitive-test.patch
+│   │   │   │   │   ├── grfcodec-gcc-compat.patch
+│   │   │   │   │   ├── groovy-add-exceptionutilsgenerator.patch
+│   │   │   │   │   ├── grub-efi-fat-serial-number.patch
+│   │   │   │   │   ├── grub-setup-root.patch
+│   │   │   │   │   ├── gst-plugins-base-null-pointer.patch
+│   │   │   │   │   ├── gtk2-fix-builder-test.patch
+│   │   │   │   │   ├── gtk2-harden-list-store.patch
+│   │   │   │   │   ├── gtk2-respect-GUIX_GTK2_IM_MODULE_FILE.patch
+│   │   │   │   │   ├── gtk2-respect-GUIX_GTK2_PATH.patch
+│   │   │   │   │   ├── gtk2-theme-paths.patch
+│   │   │   │   │   ├── gtk3-respect-GUIX_GTK3_IM_MODULE_FILE.patch
+│   │   │   │   │   ├── gtk3-respect-GUIX_GTK3_PATH.patch
+│   │   │   │   │   ├── gtk4-respect-GUIX_GTK4_PATH.patch
+│   │   │   │   │   ├── gtk-doc-mkhtml-test-fix.patch
+│   │   │   │   │   ├── gtk-doc-respect-xml-catalog.patch
+│   │   │   │   │   ├── gtkglext-disable-disable-deprecated.patch
+│   │   │   │   │   ├── gtksourceview-2-add-default-directory.patch
+│   │   │   │   │   ├── guile-1.8-cpp-4.5.patch
+│   │   │   │   │   ├── guile-2.2-default-utf8.patch
+│   │   │   │   │   ├── guile-2.2-skip-oom-test.patch
+│   │   │   │   │   ├── guile-2.2-skip-so-test.patch
+│   │   │   │   │   ├── guile-3.0.11-cross-compilation.patch
+│   │   │   │   │   ├── guile-3.0-linux-syscalls.patch
+│   │   │   │   │   ├── guile-3.0-relocatable.patch
+│   │   │   │   │   ├── guile-ac-d-bus-fix-tests.patch
+│   │   │   │   │   ├── guile-default-utf8.patch
+│   │   │   │   │   ├── guile-fibers-cross-build-fix.patch
+│   │   │   │   │   ├── guile-fibers-epoll-instance-is-dead.patch
+│   │   │   │   │   ├── guile-fibers-fd-finalizer-leak.patch
+│   │   │   │   │   ├── guile-fibers-libevent-32-bit.patch
+│   │   │   │   │   ├── guile-fibers-libevent-timeout.patch
+│   │   │   │   │   ├── guile-fibers-wait-for-io-readiness.patch
+│   │   │   │   │   ├── guile-fix-invalid-unicode-handling.patch
+│   │   │   │   │   ├── guile-gdbm-ffi-support-gdbm-1.14.patch
+│   │   │   │   │   ├── guile-gi-fix-marshall-tests.patch
+│   │   │   │   │   ├── guile-hurd-posix-spawn.patch
+│   │   │   │   │   ├── guile-lib-fix-tests-for-guile2.2.patch
+│   │   │   │   │   ├── guile-linux-syscalls.patch
+│   │   │   │   │   ├── guile-lzlib-gcc-14.patch
+│   │   │   │   │   ├── guile-lzlib-hurd64.patch
+│   │   │   │   │   ├── guile-present-coding.patch
+│   │   │   │   │   ├── guile-relocatable.patch
+│   │   │   │   │   ├── guile-rsvg-pkgconfig.patch
+│   │   │   │   │   ├── guile-srfi-125-fix-r7rs-rename-clause.patch
+│   │   │   │   │   ├── gzdoom-find-system-libgme.patch
+│   │   │   │   │   ├── gzdoom-search-in-installed-share.patch
+│   │   │   │   │   ├── hare-fallback-cache.patch
+│   │   │   │   │   ├── hdf4-reproducibility.patch
+│   │   │   │   │   ├── hdf4-shared-fortran.patch
+│   │   │   │   │   ├── hdf5-config-date.patch
+│   │   │   │   │   ├── hdf-eos2-build-shared.patch
+│   │   │   │   │   ├── hdf-eos2-fortrantests.patch
+│   │   │   │   │   ├── hdf-eos2-remove-gctp.patch
+│   │   │   │   │   ├── hdf-eos5-build-shared.patch
+│   │   │   │   │   ├── hdf-eos5-fix-szip.patch
+│   │   │   │   │   ├── hdf-eos5-fortrantests.patch
+│   │   │   │   │   ├── hdf-eos5-remove-gctp.patch
+│   │   │   │   │   ├── heatshrink-add-cmake.patch
+│   │   │   │   │   ├── heimdal-CVE-2022-45142.patch
+│   │   │   │   │   ├── helm-fix-gcc-9-build.patch
+│   │   │   │   │   ├── highlight-gui-data-dir.patch
+│   │   │   │   │   ├── hipblaslt-python-nanobind.patch
+│   │   │   │   │   ├── hplip-usb-timeout.patch
+│   │   │   │   │   ├── http-parser-CVE-2020-8287.patch
+│   │   │   │   │   ├── hubbub-sort-entities.patch
+│   │   │   │   │   ├── hueplusplus-mbedtls.patch
+│   │   │   │   │   ├── hugs-fix-build.patch
+│   │   │   │   │   ├── hurd-refcounts-assert.patch
+│   │   │   │   │   ├── hurd-rumpdisk-no-hd.patch
+│   │   │   │   │   ├── hurd-startup.patch
+│   │   │   │   │   ├── hwloc-1-test-btrfs.patch
+│   │   │   │   │   ├── hwloc-add-with-opencl.patch
+│   │   │   │   │   ├── i3lock-blur-fix-build-on-gcc-10.patch
+│   │   │   │   │   ├── i7z-gcc-10.patch
+│   │   │   │   │   ├── ibus-anthy-fix-tests.patch
+│   │   │   │   │   ├── ibus-table-paths.patch
+│   │   │   │   │   ├── icecat-adjust-mozilla-desktop.patch
+│   │   │   │   │   ├── icecat-avoid-bundled-libraries.patch
+│   │   │   │   │   ├── icecat-compare-paths.patch
+│   │   │   │   │   ├── icecat-fhs-configure-option.patch
+│   │   │   │   │   ├── icecat-makeicecat.patch
+│   │   │   │   │   ├── icecat-use-system-graphite2+harfbuzz.patch
+│   │   │   │   │   ├── icecat-use-system-media-libs.patch
+│   │   │   │   │   ├── icecat-use-system-wide-dir.patch
+│   │   │   │   │   ├── icedove-observer-fix.patch
+│   │   │   │   │   ├── icedtea-7-hotspot-aarch64-use-c++98.patch
+│   │   │   │   │   ├── icedtea-7-hotspot-pointer-comparison.patch
+│   │   │   │   │   ├── icu4c-20548-dateinterval-timezone.patch
+│   │   │   │   │   ├── icu4c-22132-standardize-vtzone-output.patch
+│   │   │   │   │   ├── icu4c-23069-rosh-hashanah-postponement.patch
+│   │   │   │   │   ├── icu4c-78-double-conversion.patch
+│   │   │   │   │   ├── icu4c-bug-1706949-wasi-workaround.patch
+│   │   │   │   │   ├── icu4c-bug-1790071-ICU-22132-standardize-vtzone-output.patch
+│   │   │   │   │   ├── icu4c-bug-1856290-ICU-20548-dateinterval-timezone.patch
+│   │   │   │   │   ├── icu4c-bug-1954138-dtitvfmt-adopt-calendar.patch
+│   │   │   │   │   ├── icu4c-bug-1972781-chinese-based-calendar.patch
+│   │   │   │   │   ├── icu4c-bug-2000225-ICU-23264-increase-measure-unit-capacity.patch
+│   │   │   │   │   ├── icu4c-bug-2002735-ICU-23277-coptic-single-era.patch
+│   │   │   │   │   ├── icu4c-dayperiod-fractional-seconds.patch
+│   │   │   │   │   ├── icu4c-double-conversion.patch
+│   │   │   │   │   ├── icu4c-dtitvfmt-adopt-calendar.patch
+│   │   │   │   │   ├── icu4c-fix-TestHebrewCalendarInTemporalLeapYear.patch
+│   │   │   │   │   ├── icu4c-icu-22132-fix-vtimezone.patch
+│   │   │   │   │   ├── icu4c-suppress-warnings.patch
+│   │   │   │   │   ├── icu4c-wasi-workaround.patch
+│   │   │   │   │   ├── id3lib-CVE-2007-4460.patch
+│   │   │   │   │   ├── id3lib-UTF16-writing-bug.patch
+│   │   │   │   │   ├── ilmbase-fix-tests.patch
+│   │   │   │   │   ├── inetutils-hurd64.patch
+│   │   │   │   │   ├── inferno-fix-crash.patch
+│   │   │   │   │   ├── iniparser-remove-fetchcontent-usage.patch
+│   │   │   │   │   ├── inkscape-libxml2.patch
+│   │   │   │   │   ├── insight-toolkit-fix-build.patch
+│   │   │   │   │   ├── instead-use-games-path.patch
+│   │   │   │   │   ├── intltool-perl-compatibility.patch
+│   │   │   │   │   ├── irrlicht-link-against-needed-libs.patch
+│   │   │   │   │   ├── irrlicht-use-system-libs.patch
+│   │   │   │   │   ├── isl-0.11.1-aarch64-support.patch
+│   │   │   │   │   ├── ispell-for-linphone-cmake.patch
+│   │   │   │   │   ├── jami-avutil-link.patch
+│   │   │   │   │   ├── jami-libjami-cmake.patch
+│   │   │   │   │   ├── jamvm-1.5.1-aarch64-support.patch
+│   │   │   │   │   ├── jamvm-1.5.1-armv7-support.patch
+│   │   │   │   │   ├── jamvm-2.0.0-aarch64-support.patch
+│   │   │   │   │   ├── jamvm-2.0.0-disable-branch-patching.patch
+│   │   │   │   │   ├── jamvm-2.0.0-opcode-guard.patch
+│   │   │   │   │   ├── java-antlr4-Add-standalone-generator.patch
+│   │   │   │   │   ├── java-apache-ivy-port-to-latest-bouncycastle.patch
+│   │   │   │   │   ├── java-commons-collections-fix-java8.patch
+│   │   │   │   │   ├── java-guava-remove-annotation-deps.patch
+│   │   │   │   │   ├── java-jeromq-fix-tests.patch
+│   │   │   │   │   ├── java-openjfx-build-jdk_version.patch
+│   │   │   │   │   ├── java-powermock-fix-java-files.patch
+│   │   │   │   │   ├── java-simple-xml-fix-tests.patch
+│   │   │   │   │   ├── java-svg-salamander-Fix-non-det.patch
+│   │   │   │   │   ├── java-tunnelvisionlabs-antlr-code-too-large.patch
+│   │   │   │   │   ├── java-xerces-bootclasspath.patch
+│   │   │   │   │   ├── java-xerces-build_dont_unzip.patch
+│   │   │   │   │   ├── java-xerces-xjavac_taskdef.patch
+│   │   │   │   │   ├── jbr-17-xcursor-no-dynamic.patch
+│   │   │   │   │   ├── jdk-currency-time-bomb2.patch
+│   │   │   │   │   ├── jdk-currency-time-bomb.patch
+│   │   │   │   │   ├── jfsutils-add-sysmacros.patch
+│   │   │   │   │   ├── jfsutils-gcc-compat.patch
+│   │   │   │   │   ├── jfsutils-include-systypes.patch
+│   │   │   │   │   ├── john-the-ripper-jumbo-with-gcc-11.patch
+│   │   │   │   │   ├── json-c-0.12-CVE-2020-12762.patch
+│   │   │   │   │   ├── json-c-0.13-CVE-2020-12762.patch
+│   │   │   │   │   ├── jsonnet-include-cstdint-for-gcc-13-builds.patch
+│   │   │   │   │   ├── julia-SOURCE_DATE_EPOCH-mtime.patch
+│   │   │   │   │   ├── julia-Use-MPFR-4.2.patch
+│   │   │   │   │   ├── kaldi-ignore-failing-test.patch
+│   │   │   │   │   ├── kaldi-openblas-0.3.29-compatibility.patch
+│   │   │   │   │   ├── kcontacts-incorrect-country-name.patch
+│   │   │   │   │   ├── kde-cli-tools-delay-mime-db.patch
+│   │   │   │   │   ├── kdiagram-Fix-missing-link-libraries.patch
+│   │   │   │   │   ├── kiki-level-selection-crash.patch
+│   │   │   │   │   ├── kiki-makefile.patch
+│   │   │   │   │   ├── kiki-missing-includes.patch
+│   │   │   │   │   ├── kiki-portability-64bit.patch
+│   │   │   │   │   ├── kinit-kdeinit-extra_libs.patch
+│   │   │   │   │   ├── kio-search-smbd-on-PATH.patch
+│   │   │   │   │   ├── kismet-unbundle-boost.patch
+│   │   │   │   │   ├── kissfft-tflite-micro.patch
+│   │   │   │   │   ├── kitty-fix-wayland-protocols.patch
+│   │   │   │   │   ├── kmod-module-directory.patch
+│   │   │   │   │   ├── kmscon-runtime-keymap-switch.patch
+│   │   │   │   │   ├── knot-remove-runtime-deps.patch
+│   │   │   │   │   ├── kobodeluxe-const-charp-conversion.patch
+│   │   │   │   │   ├── kobodeluxe-enemies-pipe-decl.patch
+│   │   │   │   │   ├── kobodeluxe-graphics-window-signed-char.patch
+│   │   │   │   │   ├── kobodeluxe-manpage-minus-not-hyphen.patch
+│   │   │   │   │   ├── kobodeluxe-midicon-segmentation-fault.patch
+│   │   │   │   │   ├── kobodeluxe-paths.patch
+│   │   │   │   │   ├── kodi-set-libcurl-ssl-parameters.patch
+│   │   │   │   │   ├── krita-bump-sip-abi-version-to-12.8.patch
+│   │   │   │   │   ├── kvantum-1.1.5-xdg-dirs-support.patch
+│   │   │   │   │   ├── kwayland-5-fix-build.patch
+│   │   │   │   │   ├── kwin-unwrap-executable-name-for-dot-desktop-search.patch
+│   │   │   │   │   ├── laby-make-install.patch
+│   │   │   │   │   ├── laby-use-tmpdir-from-runtime.patch
+│   │   │   │   │   ├── ldc-i686-int128-alignment.patch
+│   │   │   │   │   ├── ldns-drill-examples.patch
+│   │   │   │   │   ├── leela-zero-gtest.patch
+│   │   │   │   │   ├── less-hurd-path-max.patch
+│   │   │   │   │   ├── libaio-32bit-test.patch
+│   │   │   │   │   ├── libaio-riscv-test5.patch
+│   │   │   │   │   ├── libbase-fix-includes.patch
+│   │   │   │   │   ├── libbase-use-own-logging.patch
+│   │   │   │   │   ├── libbonobo-activation-test-race.patch
+│   │   │   │   │   ├── libbraiding-no-s.patch
+│   │   │   │   │   ├── libcaca-CVE-2021-3410-pt1.patch
+│   │   │   │   │   ├── libcaca-CVE-2021-3410-pt2.patch
+│   │   │   │   │   ├── libcall-ui-make-it-installable.patch
+│   │   │   │   │   ├── libcamera-ipa_manager-disable-signature-verification.patch
+│   │   │   │   │   ├── libcanberra-sound-theme-freedesktop.patch
+│   │   │   │   │   ├── libcanberra-wayland-crash.patch
+│   │   │   │   │   ├── libcap-magic-glibc-constant.patch
+│   │   │   │   │   ├── libcdio-glibc-compat.patch
+│   │   │   │   │   ├── libconfuse-CVE-2022-40320.patch
+│   │   │   │   │   ├── libcroco-CVE-2020-12825.patch
+│   │   │   │   │   ├── libcss-check-format.patch
+│   │   │   │   │   ├── libcyaml-libyaml-compat.patch
+│   │   │   │   │   ├── libeb-gcc-14.patch
+│   │   │   │   │   ├── libexpected-use-provided-catch2.patch
+│   │   │   │   │   ├── libextractor-tidy-support.patch
+│   │   │   │   │   ├── libfaketime-32bit.patch
+│   │   │   │   │   ├── libftdi-fix-paths-when-FTDIPP-set.patch
+│   │   │   │   │   ├── libgcrypt-arm32-register-pressure.patch
+│   │   │   │   │   ├── libgda-CVE-2021-39359.patch
+│   │   │   │   │   ├── libgda-disable-data-proxy-test.patch
+│   │   │   │   │   ├── libgda-fix-build.patch
+│   │   │   │   │   ├── libgda-fix-missing-initialization.patch
+│   │   │   │   │   ├── libgda-skip-postgresql-tests.patch
+│   │   │   │   │   ├── libgdata-fix-tests.patch
+│   │   │   │   │   ├── libgeotiff-fix-tests-on-i386.patch
+│   │   │   │   │   ├── libgeotiff-fix-tests-with-proj-9.1.1.patch
+│   │   │   │   │   ├── libgeotiff-fix-tests-with-proj-9.3.0.patch
+│   │   │   │   │   ├── libgeotiff-fix-tests-with-proj-9.3.1.patch
+│   │   │   │   │   ├── libgit2-mtime-0.patch
+│   │   │   │   │   ├── libgit2-path-max.patch
+│   │   │   │   │   ├── libgit2-proxy-reconnection.patch
+│   │   │   │   │   ├── libgit2-uninitialized-proxy-settings.patch
+│   │   │   │   │   ├── libgnome-encoding.patch
+│   │   │   │   │   ├── libgnomeui-utf8.patch
+│   │   │   │   │   ├── libgrss-CVE-2016-2001.patch
+│   │   │   │   │   ├── libguestfs-syms.patch
+│   │   │   │   │   ├── libinfinity-renew-test-certificate.patch
+│   │   │   │   │   ├── libjxr-fix-function-signature.patch
+│   │   │   │   │   ├── libjxr-fix-typos.patch
+│   │   │   │   │   ├── libksieve-Fix-missing-link-libraries.patch
+│   │   │   │   │   ├── liblinphone-jsoncpp.patch
+│   │   │   │   │   ├── libmad-armv7-thumb-pt1.patch
+│   │   │   │   │   ├── libmad-armv7-thumb-pt2.patch
+│   │   │   │   │   ├── libmad-length-check.patch
+│   │   │   │   │   ├── libmad-md_size.patch
+│   │   │   │   │   ├── libmad-mips-newgcc.patch
+│   │   │   │   │   ├── libmaus2-fix-gcc-13-require-include-cstdint.patch
+│   │   │   │   │   ├── libmemcached-build-with-gcc7.patch
+│   │   │   │   │   ├── libmhash-hmac-fix-uaf.patch
+│   │   │   │   │   ├── libmodbus-disable-networking-test.patch
+│   │   │   │   │   ├── libmp4v2-c++11.patch
+│   │   │   │   │   ├── libmpeg2-arm-private-symbols.patch
+│   │   │   │   │   ├── libmpeg2-global-symbol-test.patch
+│   │   │   │   │   ├── libofa-curl.diff
+│   │   │   │   │   ├── libofa-ftbfs-1.diff
+│   │   │   │   │   ├── libofa-ftbfs-2.diff
+│   │   │   │   │   ├── libosinfo-libxml2-fix.patch
+│   │   │   │   │   ├── libotr-test-auth-fix.patch
+│   │   │   │   │   ├── libphonenumber-reproducible-build.patch
+│   │   │   │   │   ├── libportal-qt-6.9.patch
+│   │   │   │   │   ├── libqalculate-3.8.0-libcurl-ssl-fix.patch
+│   │   │   │   │   ├── libquicktime-ffmpeg.patch
+│   │   │   │   │   ├── libretranslate-use-flasgger.patch
+│   │   │   │   │   ├── libretro-dolphin-emu-data.patch
+│   │   │   │   │   ├── libretro-dolphin-emu-gc-font-tool.patch
+│   │   │   │   │   ├── libretro-dolphin-emu-libusb-assert.patch
+│   │   │   │   │   ├── libretro-dolphin-emu-vulkan-headers.patch
+│   │   │   │   │   ├── librewolf-add-store-to-rdd-allowlist.patch
+│   │   │   │   │   ├── librewolf-compare-paths.patch
+│   │   │   │   │   ├── librewolf-neuter-locale-download.patch
+│   │   │   │   │   ├── librewolf-use-system-wide-dir.patch
+│   │   │   │   │   ├── libsepol-versioned-docbook.patch
+│   │   │   │   │   ├── libsequoia-fix-ffi-Makefile.patch
+│   │   │   │   │   ├── libsequoia-remove-store.patch
+│   │   │   │   │   ├── libskk-fix-invalid-escape.patch
+│   │   │   │   │   ├── libsolv-conda-variant-priorization.patch
+│   │   │   │   │   ├── libsoup-auth-digest-fix-crash.patch
+│   │   │   │   │   ├── libsoup-deadlock-in-add_listener_in_thread.patch
+│   │   │   │   │   ├── libsoup-fix-merge-of-ranges.patch
+│   │   │   │   │   ├── libsoup-memory-leak-in-soup_form_decode.patch
+│   │   │   │   │   ├── libsoup-multipart-bounds-check.patch
+│   │   │   │   │   ├── libsoup-use-libdl-instead-of-gmodule.patch
+│   │   │   │   │   ├── libspatialite-libxml2-2.14.patch
+│   │   │   │   │   ├── libtar-CVE-2013-4420.patch
+│   │   │   │   │   ├── libtar-CVE-2021-33643-CVE-2021-33644.patch
+│   │   │   │   │   ├── libtar-CVE-2021-33645-CVE-2021-33646.patch
+│   │   │   │   │   ├── libtgvoip-disable-sse2.patch
+│   │   │   │   │   ├── libtgvoip-disable-webrtc.patch
+│   │   │   │   │   ├── libtheora-config-guess.patch
+│   │   │   │   │   ├── libtiff-CVE-2022-34526.patch
+│   │   │   │   │   ├── libtirpc-CVE-2021-46828.patch
+│   │   │   │   │   ├── libtirpc-hurd.patch
+│   │   │   │   │   ├── lib-tl-for-telegram-memcpy.patch
+│   │   │   │   │   ├── libtool-grep-compat.patch
+│   │   │   │   │   ├── libtool-skip-tests2.patch
+│   │   │   │   │   ├── libtree-fix-check-non-x86.patch
+│   │   │   │   │   ├── libusb-0.1-disable-tests.patch
+│   │   │   │   │   ├── libusb-for-axoloti.patch
+│   │   │   │   │   ├── libutils-add-includes.patch
+│   │   │   │   │   ├── libutils-remove-damaging-includes.patch
+│   │   │   │   │   ├── libvdpau-va-gl-unbundle.patch
+│   │   │   │   │   ├── libvirt-add-install-prefix.patch
+│   │   │   │   │   ├── libvirt-respect-modules-path.patch
+│   │   │   │   │   ├── libvpx-CVE-2016-2818.patch
+│   │   │   │   │   ├── libvpx-CVE-2026-2447.patch
+│   │   │   │   │   ├── libwpd-gcc-compat.patch
+│   │   │   │   │   ├── libxcb-path-max.patch
+│   │   │   │   │   ├── libxml2-xpath0-Add-option-xpath0.patch
+│   │   │   │   │   ├── libxt-guix-search-paths.patch
+│   │   │   │   │   ├── libziparchive-add-includes.patch
+│   │   │   │   │   ├── libzmf-doxygen-1.14.patch
+│   │   │   │   │   ├── lierolibre-check-unaligned-access.patch
+│   │   │   │   │   ├── lierolibre-is-free-software.patch
+│   │   │   │   │   ├── lierolibre-newer-libconfig.patch
+│   │   │   │   │   ├── lierolibre-remove-arch-warning.patch
+│   │   │   │   │   ├── lierolibre-try-building-other-arch.patch
+│   │   │   │   │   ├── lightdm-arguments-ordering.patch
+│   │   │   │   │   ├── lightdm-vnc-color-depth.patch
+│   │   │   │   │   ├── lightdm-vnc-ipv6.patch
+│   │   │   │   │   ├── lightdm-vncserver-check.patch
+│   │   │   │   │   ├── linphone-desktop-cmake-belcard.patch
+│   │   │   │   │   ├── linphone-desktop-cmake-find-modules.patch
+│   │   │   │   │   ├── linphone-desktop-ispell.patch
+│   │   │   │   │   ├── linphone-desktop-qtkeychain.patch
+│   │   │   │   │   ├── linux-libre-arm64-mnt-reform-revert-phy-rockchip-samsung.patch
+│   │   │   │   │   ├── linux-libre-arm64-mnt-reform-revert-rk-samsung-hdptx.patch
+│   │   │   │   │   ├── linux-libre-arm64-mnt-reform-revert-vop2-display-modes.patch
+│   │   │   │   │   ├── linux-libre-infodocs-target.patch
+│   │   │   │   │   ├── linux-pam-no-setfsuid.patch
+│   │   │   │   │   ├── linux-pam-unix_chkpwd.patch
+│   │   │   │   │   ├── lirc-localstatedir.patch
+│   │   │   │   │   ├── lirc-reproducible-build.patch
+│   │   │   │   │   ├── llhttp-ponyfill-object-fromentries.patch
+│   │   │   │   │   ├── llvm-13-gcc-14.patch
+│   │   │   │   │   ├── lm-sensors-hwmon-attrs.patch
+│   │   │   │   │   ├── localed-xorg-keyboard.patch
+│   │   │   │   │   ├── lsof-fatal-test-failures.patch
+│   │   │   │   │   ├── lua51-liblua-so.patch
+│   │   │   │   │   ├── lua51-pkgconfig.patch
+│   │   │   │   │   ├── lua-5.1-search-paths.patch
+│   │   │   │   │   ├── lua-5.2-search-paths.patch
+│   │   │   │   │   ├── lua-5.3-search-paths.patch
+│   │   │   │   │   ├── lua-5.4-liblua-so.patch
+│   │   │   │   │   ├── lua-5.4-pkgconfig.patch
+│   │   │   │   │   ├── lua-5.4-search-paths.patch
+│   │   │   │   │   ├── lua-5.x-search-path-helpers.patch
+│   │   │   │   │   ├── lua-CVE-2014-5461.patch
+│   │   │   │   │   ├── luajit-add-riscv64-support.patch
+│   │   │   │   │   ├── luajit-search-paths.patch
+│   │   │   │   │   ├── lua-lgi-fix-pango.patch
+│   │   │   │   │   ├── lua-lgi-fix-ref.patch
+│   │   │   │   │   ├── lua-liblua-so.patch
+│   │   │   │   │   ├── luanti-paths.patch
+│   │   │   │   │   ├── lua-pkgconfig.patch
+│   │   │   │   │   ├── lufa-fix-incompatible-cast.patch
+│   │   │   │   │   ├── lugaru-fix-sound.patch
+│   │   │   │   │   ├── luit-posix.patch
+│   │   │   │   │   ├── lvm2-no-systemd.patch
+│   │   │   │   │   ├── lxc-no-static-bin.patch
+│   │   │   │   │   ├── lxsession-potfiles-ignore.patch
+│   │   │   │   │   ├── m17n-lib-1.8.0-use-pkg-config-for-freetype.patch
+│   │   │   │   │   ├── mactelnet-remove-init.patch
+│   │   │   │   │   ├── mailutils-variable-lookup.patch
+│   │   │   │   │   ├── make-impure-dirs.patch
+│   │   │   │   │   ├── makem-replace-git.patch
+│   │   │   │   │   ├── mandoc-support-zstd-compression.patch
+│   │   │   │   │   ├── mantid-openmp-cleanup.patch
+│   │   │   │   │   ├── marisa-fix-MARISA_WORD_SIZE.patch
+│   │   │   │   │   ├── mash-add-missing-headers.patch
+│   │   │   │   │   ├── mate-common-honor-aclocal.patch
+│   │   │   │   │   ├── mathjax-3.1.2-no-a11y.patch
+│   │   │   │   │   ├── mathjax-4.0.0-disable-webpack.patch
+│   │   │   │   │   ├── mathjax-4.0.0-no-a11y.patch
+│   │   │   │   │   ├── mathjax-disable-webpack.patch
+│   │   │   │   │   ├── mathjax-no-a11y.patch
+│   │   │   │   │   ├── maturin-no-cross-compile.patch
+│   │   │   │   │   ├── maven-generate-component-xml.patch
+│   │   │   │   │   ├── maven-generate-javax-inject-named.patch
+│   │   │   │   │   ├── maxima-defsystem-mkdir.patch
+│   │   │   │   │   ├── mc2mt-add-packaging-support.patch
+│   │   │   │   │   ├── mcrypt-CVE-2012-4409.patch
+│   │   │   │   │   ├── mcrypt-CVE-2012-4426.patch
+│   │   │   │   │   ├── mcrypt-CVE-2012-4527.patch
+│   │   │   │   │   ├── mecab-variable-param.patch
+│   │   │   │   │   ├── mediasdk-gcc-14.patch
+│   │   │   │   │   ├── mediastreamer2-cmake-findgsm.patch
+│   │   │   │   │   ├── memtest86+-build-reproducibly.patch
+│   │   │   │   │   ├── mercurial-hg-extension-path.patch
+│   │   │   │   │   ├── mhash-keygen-test-segfault.patch
+│   │   │   │   │   ├── mia-fix-boost-headers.patch
+│   │   │   │   │   ├── mia-gcc11.patch
+│   │   │   │   │   ├── mia-openexr3.patch
+│   │   │   │   │   ├── mia-vtk92.patch
+│   │   │   │   │   ├── mia-vtk9.patch
+│   │   │   │   │   ├── mia-vtk-version.patch
+│   │   │   │   │   ├── minisat-friend-declaration.patch
+│   │   │   │   │   ├── minisat-install.patch
+│   │   │   │   │   ├── miniz-for-pytorch.patch
+│   │   │   │   │   ├── miopen-zstd.patch
+│   │   │   │   │   ├── mit-krb5-hurd.patch
+│   │   │   │   │   ├── mitm-cache-head-requests.patch
+│   │   │   │   │   ├── modem-manager-fix-test-wrapper.patch
+│   │   │   │   │   ├── modglue-fix-build.patch
+│   │   │   │   │   ├── module-init-tools-moduledir.patch
+│   │   │   │   │   ├── monero-use-system-miniupnpc.patch
+│   │   │   │   │   ├── mono-1.2.6-bootstrap.patch
+│   │   │   │   │   ├── mono-1.9.1-add-MONO_CREATE_IMAGE_VERSION.patch
+│   │   │   │   │   ├── mono-1.9.1-fixes.patch
+│   │   │   │   │   ├── mono-1.9.1-reproducibility.patch
+│   │   │   │   │   ├── mono-2.11.4-fixes.patch
+│   │   │   │   │   ├── mono-2.4.2.3-fixes.patch
+│   │   │   │   │   ├── mono-2.4.2.3-fix-parallel-builds.patch
+│   │   │   │   │   ├── mono-2.4.2.3-reproducibility.patch
+│   │   │   │   │   ├── mono-2.6.4-fixes.patch
+│   │   │   │   │   ├── mono-4.9.0-fix-runtimemetadataversion.patch
+│   │   │   │   │   ├── mono-5.10.0-later-mcs-changes.patch
+│   │   │   │   │   ├── mono-5.4.0-patches.patch
+│   │   │   │   │   ├── mono-5.8.0-patches.patch
+│   │   │   │   │   ├── mono-6.12.0-add-runpath.patch
+│   │   │   │   │   ├── mono-6.12.0-fix-AssemblyResolver.patch
+│   │   │   │   │   ├── mono-6.12.0-fix-ConditionParser.patch
+│   │   │   │   │   ├── mono-mcs-patches-from-5.10.0.patch
+│   │   │   │   │   ├── mono-msbuild-15.7.179-fix-build.patch
+│   │   │   │   │   ├── mono-msbuild-15.7.179-fix-resources.patch
+│   │   │   │   │   ├── mosaicatcher-unbundle-htslib.patch
+│   │   │   │   │   ├── mpc123-initialize-ao.patch
+│   │   │   │   │   ├── mpg321-CVE-2019-14247.patch
+│   │   │   │   │   ├── mpg321-gcc-10.patch
+│   │   │   │   │   ├── mrrescue-support-love-11.patch
+│   │   │   │   │   ├── mrustc-patches.patch
+│   │   │   │   │   ├── mswebrtc-b64-refactor.patch
+│   │   │   │   │   ├── mswebrtc-cmake.patch
+│   │   │   │   │   ├── mtools-mformat-uninitialized.patch
+│   │   │   │   │   ├── mupen64plus-ui-console-notice.patch
+│   │   │   │   │   ├── musl-cross-locale.patch
+│   │   │   │   │   ├── mutt-store-references.patch
+│   │   │   │   │   ├── nanosvg-prusa-slicer.patch
+│   │   │   │   │   ├── nautilus-extension-search-path.patch
+│   │   │   │   │   ├── ncftp-paths.patch
+│   │   │   │   │   ├── ncftp-reproducible.patch
+│   │   │   │   │   ├── ncompress-fix-softlinks.patch
+│   │   │   │   │   ├── netcdf-date-time.patch
+│   │   │   │   │   ├── netdde-build-fix.patch
+│   │   │   │   │   ├── netdde-csum.patch
+│   │   │   │   │   ├── netpbm-CVE-2017-2586.patch
+│   │   │   │   │   ├── netpbm-CVE-2017-2587.patch
+│   │   │   │   │   ├── netsurf-longer-test-timeout.patch
+│   │   │   │   │   ├── netsurf-message-timestamp.patch
+│   │   │   │   │   ├── netsurf-system-utf8proc.patch
+│   │   │   │   │   ├── netsurf-y2038-tests.patch
+│   │   │   │   │   ├── network-manager-plugin-ownership.patch
+│   │   │   │   │   ├── network-manager-plugin-path.patch
+│   │   │   │   │   ├── newlib-getentropy.patch
+│   │   │   │   │   ├── nfs4-acl-tools-0.3.7-fixpaths.patch
+│   │   │   │   │   ├── nginx-socket-cloexec.patch
+│   │   │   │   │   ├── nhc98-c-update.patch
+│   │   │   │   │   ├── nheko-0-12-1-fix-rendering-replies.patch
+│   │   │   │   │   ├── nix-dont-build-html-doc.diff
+│   │   │   │   │   ├── nlopt_CMake-Assume-working-c-compiler-597.patch
+│   │   │   │   │   ├── nnpack-system-libraries.patch
+│   │   │   │   │   ├── nsis-env-passthru.patch
+│   │   │   │   │   ├── nss-3.115-disable-broken-tests.patch
+│   │   │   │   │   ├── nss-3.115-disable-pkix-ocsp-tests.patch
+│   │   │   │   │   ├── nss-3.56-pkgconfig.patch
+│   │   │   │   │   ├── nss-disable-broken-tests.patch
+│   │   │   │   │   ├── nss-getcwd-nonnull.patch
+│   │   │   │   │   ├── nss-increase-test-timeout.patch
+│   │   │   │   │   ├── ntp-fix-dereferencing-the-wrong-variable.patch
+│   │   │   │   │   ├── nvi-add-function-prototypes.patch
+│   │   │   │   │   ├── nvi-assume-preserve-path.patch
+│   │   │   │   │   ├── nvi-db4.patch
+│   │   │   │   │   ├── nvi-dbpagesize-binpower.patch
+│   │   │   │   │   ├── obs-advanced-masks-nlohmann-json.patch
+│   │   │   │   │   ├── obs-modules-location.patch
+│   │   │   │   │   ├── ocaml-4.07-dynamically-allocate-signal-stack.patch
+│   │   │   │   │   ├── ocaml-4.09-dynamically-allocate-signal-stack.patch
+│   │   │   │   │   ├── ocaml-4.09-multiple-definitions.patch
+│   │   │   │   │   ├── ocaml-ctypes-test-oo.patch
+│   │   │   │   │   ├── ocaml-multiple-definitions.patch
+│   │   │   │   │   ├── ogre-next-add-riscv64-support.patch
+│   │   │   │   │   ├── ogs-6.5.7-netcdfconverter.patch
+│   │   │   │   │   ├── omake-fix-non-determinism.patch
+│   │   │   │   │   ├── oneko-remove-nonfree-characters.patch
+│   │   │   │   │   ├── onetbb-other-arches.patch
+│   │   │   │   │   ├── online-judge-tools.patch
+│   │   │   │   │   ├── onnx-1.13.1-use-system-googletest.patch
+│   │   │   │   │   ├── onnx-1.17.0-for-onnxruntime.patch
+│   │   │   │   │   ├── onnx-optimizer-system-library.patch
+│   │   │   │   │   ├── onnxruntime-1.22.0-splittosequence-bool.patch
+│   │   │   │   │   ├── onnx-shared-libraries.patch
+│   │   │   │   │   ├── onnx-skip-model-downloads.patch
+│   │   │   │   │   ├── openbios-aarch64-riscv64-support.patch
+│   │   │   │   │   ├── openboardview-use-system-imgui.patch
+│   │   │   │   │   ├── openboardview-use-system-mpc.patch
+│   │   │   │   │   ├── openbox-add-fix-for-glib2-exposed-segfault.patch
+│   │   │   │   │   ├── openbox-python3.patch
+│   │   │   │   │   ├── openexr-2-gcc-14.patch
+│   │   │   │   │   ├── openfst-for-vosk-fix-unique-ptr.patch
+│   │   │   │   │   ├── openjdk-10-char-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-classlist-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-corba-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-idlj-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-jar-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-jtask-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-module3-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-module4-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-module-reproducibility.patch
+│   │   │   │   │   ├── openjdk-10-pointer-comparison.patch
+│   │   │   │   │   ├── openjdk-10-setsignalhandler.patch
+│   │   │   │   │   ├── openjdk-11-classlist-reproducibility.patch
+│   │   │   │   │   ├── openjdk-13-classlist-reproducibility.patch
+│   │   │   │   │   ├── openjdk-15-jtask-reproducibility.patch
+│   │   │   │   │   ├── openjdk-15-xcursor-no-dynamic.patch
+│   │   │   │   │   ├── openjdk-21-fix-rpath.patch
+│   │   │   │   │   ├── openjdk-9-classlist-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-idlj-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-jar-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-module2-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-module3-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-module-reproducibility.patch
+│   │   │   │   │   ├── openjdk-9-pointer-comparison.patch
+│   │   │   │   │   ├── openjdk-9-setsignalhandler.patch
+│   │   │   │   │   ├── openjdk-currency-time-bomb2.patch
+│   │   │   │   │   ├── openjdk-currency-time-bomb.patch
+│   │   │   │   │   ├── openmpi-mtl-priorities.patch
+│   │   │   │   │   ├── openresolv-restartcmd-guix.patch
+│   │   │   │   │   ├── openrgb-unbundle-hueplusplus.patch
+│   │   │   │   │   ├── openscad-fix-path-in-expected-test-results-to-acommodate-diff.patch
+│   │   │   │   │   ├── opensles-add-license-file.patch
+│   │   │   │   │   ├── opensp-maxpathlen.patch
+│   │   │   │   │   ├── openssh-trust-guix-store-directory.patch
+│   │   │   │   │   ├── openssl-1.1-c-rehash-in.patch
+│   │   │   │   │   ├── openssl-3.0-c-rehash-in.patch
+│   │   │   │   │   ├── openssl-hurd64.patch
+│   │   │   │   │   ├── opentaxsolver-file-browser-fix.patch
+│   │   │   │   │   ├── open-zwave-hidapi.patch
+│   │   │   │   │   ├── opusfile-CVE-2022-47021.patch
+│   │   │   │   │   ├── orbit2-fix-array-allocation-32bit.patch
+│   │   │   │   │   ├── orpheus-cast-errors-and-includes.patch
+│   │   │   │   │   ├── ots-no-include-missing-file.patch
+│   │   │   │   │   ├── owncloud-disable-updatecheck.patch
+│   │   │   │   │   ├── pam-krb5-CVE-2020-10595.patch
+│   │   │   │   │   ├── password-store-tree-compat.patch
+│   │   │   │   │   ├── patch-hurd-path-max.patch
+│   │   │   │   │   ├── pciutils-hurd64.patch
+│   │   │   │   │   ├── pcsxr-find-harfbuzz.patch
+│   │   │   │   │   ├── pcsxr-fix-definitions.patch
+│   │   │   │   │   ├── pdl-2.019-glut-bitmap-fonts.patch
+│   │   │   │   │   ├── pdl-2.100-reproducibility.patch
+│   │   │   │   │   ├── perl-5.14-autosplit-default-time.patch
+│   │   │   │   │   ├── perl-5.14-module-pluggable-search.patch
+│   │   │   │   │   ├── perl-5.14-no-sys-dirs.patch
+│   │   │   │   │   ├── perl-autosplit-default-time.patch
+│   │   │   │   │   ├── perl-class-methodmaker-reproducible.patch
+│   │   │   │   │   ├── perl-crypt-des-implicit-func-decl.patch
+│   │   │   │   │   ├── perl-image-exiftool-CVE-2021-22204.patch
+│   │   │   │   │   ├── perl-module-pluggable-search.patch
+│   │   │   │   │   ├── perl-net-amazon-s3-moose-warning.patch
+│   │   │   │   │   ├── perl-net-dns-resolver-programmable-fix.patch
+│   │   │   │   │   ├── perl-net-ssleay-colon-parsing.patch
+│   │   │   │   │   ├── perl-no-sys-dirs.patch
+│   │   │   │   │   ├── perl-reproducible-build-date.patch
+│   │   │   │   │   ├── perl-text-markdown-discount-unbundle.patch
+│   │   │   │   │   ├── perl-www-curl-fix-struct-void.patch
+│   │   │   │   │   ├── perl-www-curl-remove-symbol.patch
+│   │   │   │   │   ├── perl-xml-libxml-fix-function-prototypes.patch
+│   │   │   │   │   ├── petri-foo-0.1.87-fix-recent-file-not-exist.patch
+│   │   │   │   │   ├── pharo-vm-cmake.patch
+│   │   │   │   │   ├── phoronix-test-suite-fsdg.patch
+│   │   │   │   │   ├── picprog-non-intel-support.patch
+│   │   │   │   │   ├── pidgin-add-search-path.patch
+│   │   │   │   │   ├── pinball-system-ltdl.patch
+│   │   │   │   │   ├── pingus-boost-headers.patch
+│   │   │   │   │   ├── pingus-sdl-libs-config.patch
+│   │   │   │   │   ├── pipewire-0.2.7-fno-common.patch
+│   │   │   │   │   ├── pixman-CVE-2016-5296.patch
+│   │   │   │   │   ├── plasma-framework-fix-KF5PlasmaMacros.cmake.patch
+│   │   │   │   │   ├── plasp-fix-normalization.patch
+│   │   │   │   │   ├── plasp-include-iostream.patch
+│   │   │   │   │   ├── plib-CVE-2011-4620.patch
+│   │   │   │   │   ├── plib-CVE-2012-4552.patch
+│   │   │   │   │   ├── plink-1.07-unclobber-i.patch
+│   │   │   │   │   ├── plink-endian-detection.patch
+│   │   │   │   │   ├── ploticus-pointer-types.patch
+│   │   │   │   │   ├── plotutils-spline-test.patch
+│   │   │   │   │   ├── pnet-fix-line-number-info.patch
+│   │   │   │   │   ├── pnet-fix-off-by-one.patch
+│   │   │   │   │   ├── pnet-newer-libgc-fix.patch
+│   │   │   │   │   ├── pnet-newer-texinfo-fix.patch
+│   │   │   │   │   ├── pocketfft-cpp-prefer-preprocessor-if.patch
+│   │   │   │   │   ├── podofo-gcc-14.patch
+│   │   │   │   │   ├── pokerth-boost.patch
+│   │   │   │   │   ├── polkit-disable-systemd.patch
+│   │   │   │   │   ├── portaudio-audacity-compat.patch
+│   │   │   │   │   ├── portmidi-modular-build.patch
+│   │   │   │   │   ├── postgresql-disable-normalize_exec_path.patch
+│   │   │   │   │   ├── postgresql-disable-resolve_symlinks.patch
+│   │   │   │   │   ├── pounce-readable-checks.patch
+│   │   │   │   │   ├── ppsspp-disable-upgrade-and-gold.patch
+│   │   │   │   │   ├── procmail-ambiguous-getline-debian.patch
+│   │   │   │   │   ├── procmail-CVE-2014-3618.patch
+│   │   │   │   │   ├── procmail-CVE-2017-16844.patch
+│   │   │   │   │   ├── procmail-gcc-14.patch
+│   │   │   │   │   ├── procps-strtod-test.patch
+│   │   │   │   │   ├── proj-7-initialize-memory.patch
+│   │   │   │   │   ├── proot-add-clone3.patch
+│   │   │   │   │   ├── proot-add-missing-include.patch
+│   │   │   │   │   ├── protobuf-fix-build-on-32bit.patch
+│   │   │   │   │   ├── prusa-slicer-add-cmake-module.patch
+│   │   │   │   │   ├── psm2-compile-ctor-without-avx.patch
+│   │   │   │   │   ├── psm-arch.patch
+│   │   │   │   │   ├── psm-disable-memory-stats.patch
+│   │   │   │   │   ├── psm-ldflags.patch
+│   │   │   │   │   ├── psm-repro.patch
+│   │   │   │   │   ├── pstoedit-fix-gcc12.patch
+│   │   │   │   │   ├── pstoedit-fix-plainC.patch
+│   │   │   │   │   ├── pstoedit-pkglibdir.patch
+│   │   │   │   │   ├── pthreadpool-system-libraries.patch
+│   │   │   │   │   ├── pulseaudio-fix-mult-test.patch
+│   │   │   │   │   ├── pulseaudio-longer-test-timeout.patch
+│   │   │   │   │   ├── pulseview-glib-2.68.patch
+│   │   │   │   │   ├── pulseview-qt515-compat.patch
+│   │   │   │   │   ├── pybugz-encode-error.patch
+│   │   │   │   │   ├── pybugz-stty.patch
+│   │   │   │   │   ├── python-2.7-adjust-tests.patch
+│   │   │   │   │   ├── python-2.7-CVE-2021-3177.patch
+│   │   │   │   │   ├── python-2.7-expat-compat.patch
+│   │   │   │   │   ├── python-2.7-no-static-lib.patch
+│   │   │   │   │   ├── python-2.7-search-paths.patch
+│   │   │   │   │   ├── python-2.7-site-prefixes.patch
+│   │   │   │   │   ├── python-2.7-source-date-epoch.patch
+│   │   │   │   │   ├── python-2-deterministic-build-info.patch
+│   │   │   │   │   ├── python-3.11-fix-tests.patch
+│   │   │   │   │   ├── python-3.12-fix-tests.patch
+│   │   │   │   │   ├── python-3-arm-alignment.patch
+│   │   │   │   │   ├── python-3-deterministic-build-info.patch
+│   │   │   │   │   ├── python-3-fix-tests.patch
+│   │   │   │   │   ├── python-3-hurd-configure.patch
+│   │   │   │   │   ├── python-3-reproducible-build.patch
+│   │   │   │   │   ├── python-3-search-paths.patch
+│   │   │   │   │   ├── python-angr-check-exec-deps.patch
+│   │   │   │   │   ├── python-anyio-unuse-exceptiongroup-in-test.patch
+│   │   │   │   │   ├── python-bed-reader-use-store-samples.patch
+│   │   │   │   │   ├── python-chai-drop-python2.patch
+│   │   │   │   │   ├── python-clarabel-blas.patch
+│   │   │   │   │   ├── python-colour-remove-d2to1.patch
+│   │   │   │   │   ├── python-cross-compile.patch
+│   │   │   │   │   ├── python-daemon-relax-lockfile.patch
+│   │   │   │   │   ├── python-debugpy-unbundle-pydevd.patch
+│   │   │   │   │   ├── python-docopt-pytest6-compat.patch
+│   │   │   │   │   ├── python-docrepr-fix-tests.patch
+│   │   │   │   │   ├── python-fixtures-remove-monkeypatch-test.patch
+│   │   │   │   │   ├── python-gpg-setup-72.patch
+│   │   │   │   │   ├── python-hdmedians-replace-nose.patch
+│   │   │   │   │   ├── python-hiredis-use-system-hiredis.patch
+│   │   │   │   │   ├── python-jinja2-fragments-modify-conftest-py.patch
+│   │   │   │   │   ├── python-libxml2-utf8.patch
+│   │   │   │   │   ├── python-louvain-fix-test.patch
+│   │   │   │   │   ├── python-memcached-syntax-warnings.patch
+│   │   │   │   │   ├── python-mohawk-pytest.patch
+│   │   │   │   │   ├── python-msal-requests.patch
+│   │   │   │   │   ├── python-mslice-matplotlib-3.6-compatibility.patch
+│   │   │   │   │   ├── python-norns-nose.patch
+│   │   │   │   │   ├── python-numpy-gcc-14.patch
+│   │   │   │   │   ├── python-online-judge-api-client-tests.patch
+│   │   │   │   │   ├── python-onnx-asr-0.10.2-bundled-parakeet-model.patch
+│   │   │   │   │   ├── python-packaging-test-arch.patch
+│   │   │   │   │   ├── python-pandas-2-no-pytz_datetime.patch
+│   │   │   │   │   ├── python-peachpy-determinism.patch
+│   │   │   │   │   ├── python-pep8-stdlib-tokenize-compat.patch
+│   │   │   │   │   ├── python-piexif-fix-tests-with-pillow-7.2.patch
+│   │   │   │   │   ├── python-pillow-CVE-2022-45199.patch
+│   │   │   │   │   ├── python-pillow-use-zlib-1.3.patch
+│   │   │   │   │   ├── python-property-cached-asyncio-3_11.patch
+│   │   │   │   │   ├── python-pyan3-fix-absolute-path-bug.patch
+│   │   │   │   │   ├── python-pyan3-fix-positional-arguments.patch
+│   │   │   │   │   ├── python-pydocstyle-add-support-for-pep701.patch
+│   │   │   │   │   ├── python-pypytools-python-3-fixes.patch
+│   │   │   │   │   ├── python-pyreadstat-link-libiconv.patch
+│   │   │   │   │   ├── python-pytorch-fix-codegen.patch
+│   │   │   │   │   ├── python-pytorch-for-r-torch-fix-codegen.patch
+│   │   │   │   │   ├── python-pytorch-for-r-torch-system-libraries.patch
+│   │   │   │   │   ├── python-pytorch-for-r-torch-without-kineto.patch
+│   │   │   │   │   ├── python-pytorch-runpath.patch
+│   │   │   │   │   ├── python-pytorch-system-libraries.patch
+│   │   │   │   │   ├── python-pytorch-without-kineto.patch
+│   │   │   │   │   ├── python-random2-getrandbits-test.patch
+│   │   │   │   │   ├── python-robotframework-sshlibrary-rf5-compat.patch
+│   │   │   │   │   ├── python-scikit-build-setuptools-compat.patch
+│   │   │   │   │   ├── python-sgmllib3k-assertions.patch
+│   │   │   │   │   ├── python-sip-include-dirs.patch
+│   │   │   │   │   ├── python-sphinx-prompt-docutils-0.19.patch
+│   │   │   │   │   ├── python-sphobjinv-defer-ssl-import.patch
+│   │   │   │   │   ├── python-sshtunnel-pep518.patch
+│   │   │   │   │   ├── python-treelib-remove-python2-compat.patch
+│   │   │   │   │   ├── python-vaex-core-fix-tsl-use.patch
+│   │   │   │   │   ├── python-vega-datasets-remove-la-riots-code.patch
+│   │   │   │   │   ├── python-versioneer-guix-support.patch
+│   │   │   │   │   ├── python-werkzeug-tests.patch
+│   │   │   │   │   ├── python-zeroc-ice-3.6.5-python-3.11-support.patch
+│   │   │   │   │   ├── qcodeeditor-qt6.patch
+│   │   │   │   │   ├── qdigidoc-bundle-config-files.patch
+│   │   │   │   │   ├── qdigidoc-bundle-tsl-files.patch
+│   │   │   │   │   ├── qemu-build-info-manual.patch
+│   │   │   │   │   ├── qemu-disable-aarch64-migration-test.patch
+│   │   │   │   │   ├── qemu-fix-agent-paths.patch
+│   │   │   │   │   ├── qemu-fix-test-virtio-version.patch
+│   │   │   │   │   ├── qmk-firmware-fix-hacker-dvorak.patch
+│   │   │   │   │   ├── qrcodegen-cpp-cmake.patch
+│   │   │   │   │   ├── qtbase-5-use-TZDIR.patch
+│   │   │   │   │   ├── qtbase-absolute-runpath.patch
+│   │   │   │   │   ├── qtbase-moc-ignore-gcc-macro.patch
+│   │   │   │   │   ├── qtbase-patch-libvulkan.patch
+│   │   │   │   │   ├── qtbase-qmake-fix-includedir.patch
+│   │   │   │   │   ├── qtbase-qmake-use-libname.patch
+│   │   │   │   │   ├── qtbase-qmlimportscanner-qml-import-path.patch
+│   │   │   │   │   ├── qtdeclarative-5-disable-qmlcache.patch
+│   │   │   │   │   ├── qtdeclarative-disable-qmlcache.patch
+│   │   │   │   │   ├── qtlocation-5.15.8-mapboxgl-gcc13.patch
+│   │   │   │   │   ├── qtscript-disable-tests.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0001-client-announce-an-output-after-receiving-more-compl.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0002-fix-issue-with-repeated-window-size-changes.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0003-client-connect-drags-being-accepted-to-updating-the-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0004-client-disconnect-registry-listener-on-destruction.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0005-client-set-xdgshell-size-hints-before-the-first-comm.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0006-fix-build.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0007-fix-remove-listener.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0008-hook-up-querykeyboardmodifers.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0009-correctly-detect-if-image-format-is-supported-by-qim.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0010-client-don-t-always-recreate-frame-callbacks.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0011-client-always-destroy-frame-callback-in-the-actual-c.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0012-wayland-client-use-wl_keyboard-to-determine-active-s.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0013-client-do-not-empty-clipboard-when-a-new-popup-windo.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0014-client-implement-datadevicev3.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0015-client-delay-deletion-of-qdrag-object-until-after-we.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0016-client-avoid-processing-of-events-when-showing-windo.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0017-handle-registry_global-out-of-constructor.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0018-connect-flushrequest-after-forceroundtrip.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0019-move-the-wayland-socket-polling-to-a-separate-event-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0020-client-remove-mwaitingforupdatedelivery.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0021-client-simplify-round-trip-behavior.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0022-client-fix-opaque-region-setter.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0023-use-proper-dependencies-in-compile-tests.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0024-revert-client-remove-mwaitingforupdatedelivery.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0025-fix-race-condition-on-mwaitingforupdatedelivery.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0026-use-poll-2-when-reading-from-clipboard.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0027-reduce-memory-leakage.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0028-only-close-popup-in-the-the-hierchary.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0029-check-pointer-for-null-before-use-in-assert.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0030-use-wl_surface.damage_buffer-on-the-client-side.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0031-client-clear-focus-on-touch-cancel.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0032-guard-mresizedirty-by-the-correctmutex.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0033-fix-compile-tests.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0034-call-finishdrag-in-qwaylanddatadevice-dragsourcecanc.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0035-hold-surface-read-lock-throughout-qwaylandeglwindow-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0036-keep-toplevel-windows-in-the-top-left-corner-of-the-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0037-client-add-f_seal_shrink-seal-to-shm-backing-file.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0038-client-call-wl_output_release-upon-qwaylandscreen-de.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0039-client-bump-wl_output-version.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0040-fix-frame-sync-related-to-unprotected-multithread-ac.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0041-client-handle-zwp_primary_selection_device_manager_v.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0042-fixes-the-build-on-centos.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0043-client-avoid-protocol-error-with-invalid-min-max-siz.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0044-client-fix-handling-of-qt-blankcursor.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0045-client-force-a-roundtrip-when-an-xdgoutput-is-not-re.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0046-destroy-frame-queue-before-display.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0047-client-fix-crash-on-dnd-updates-after-client-facing-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0048-convert-cursor-bitmap-to-supported-format.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0049-replace-scale-with-devicepixelratio-for-non-integer-.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0050-client-fix-buffer-damage.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0051-client-commit-the-initial-surface-state-explicitly.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0052-tests-fix-tst_xdgshell-minmaxsize.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0053-client-remove-some-surface-commits.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0054-client-avoid-locking-resizing-in-qwaylandshmbackings.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0055-bradient-use-qwaylandwindow-actual-window-title.patch
+│   │   │   │   │   ├── qtwayland-5.15.18-0056-redraw-hidpi.patch
+│   │   │   │   │   ├── qtwayland-update-wayland-xml.patch
+│   │   │   │   │   ├── qtwebengine-revert-egl.patch
+│   │   │   │   │   ├── qtwebsockets-6.9-fix-tst_QWebSocket.patch
+│   │   │   │   │   ├── quagga-reproducible-build.patch
+│   │   │   │   │   ├── quickjs-ng-64-bits-precision-on-i686.patch
+│   │   │   │   │   ├── quickjs-ng-fix-atomics.pause-on-32-bit.patch
+│   │   │   │   │   ├── quilt-grep-compat.patch
+│   │   │   │   │   ├── quodlibet-disable-bundled-packages.patch
+│   │   │   │   │   ├── qxlsx-fix-include-directory.patch
+│   │   │   │   │   ├── rabbitmq-defaults.patch
+│   │   │   │   │   ├── racket-chez-scheme-bin-sh.patch
+│   │   │   │   │   ├── racket-launcher-config-dir.patch
+│   │   │   │   │   ├── racket-rktio-bin-sh.patch
+│   │   │   │   │   ├── radare2-fix-meson-build-to-use-sys-qjs.patch
+│   │   │   │   │   ├── radare2-fix-meson-build-to-use-sys-sdb.patch
+│   │   │   │   │   ├── ragel-char-signedness.patch
+│   │   │   │   │   ├── randomjungle-disable-static-build.patch
+│   │   │   │   │   ├── rapidcheck-fix-libs.patch
+│   │   │   │   │   ├── raptor2-libxml2.patch
+│   │   │   │   │   ├── ratpoison-shell.patch
+│   │   │   │   │   ├── rct-add-missing-headers.patch
+│   │   │   │   │   ├── rdkit-unbundle-external-dependencies.patch
+│   │   │   │   │   ├── re2c-Use-maximum-alignment.patch
+│   │   │   │   │   ├── readline-link-ncurses.patch
+│   │   │   │   │   ├── readymedia-ffmpeg7.patch
+│   │   │   │   │   ├── reduce-unbundle-libffi.patch
+│   │   │   │   │   ├── remake-impure-dirs.patch
+│   │   │   │   │   ├── renpy-fix-integer-slots.patch
+│   │   │   │   │   ├── renpy-python-3.11-compat.patch
+│   │   │   │   │   ├── reposurgeon-add-missing-docbook-files.patch
+│   │   │   │   │   ├── restartd-update-robust.patch
+│   │   │   │   │   ├── restic-0.9.6-fix-tests-for-go1.15.patch
+│   │   │   │   │   ├── retroarch-unbundle-spirv-cross.patch
+│   │   │   │   │   ├── r-httpuv-1.6.6-unvendor-libuv.patch
+│   │   │   │   │   ├── ripperx-missing-file.patch
+│   │   │   │   │   ├── rlwrap-no-rbgen.patch
+│   │   │   │   │   ├── rng-tools-revert-build-randstat.patch
+│   │   │   │   │   ├── rocclr-5.6.0-enable-gfx800.patch
+│   │   │   │   │   ├── rochpl-supported-distros.patch
+│   │   │   │   │   ├── rocm-bandwidth-test-fix-external-packages-search.patch
+│   │   │   │   │   ├── rocm-bandwidth-test-fix-hsa-include-file-lookup.patch
+│   │   │   │   │   ├── rocm-bandwidth-test-take-default-gpus-from-environment.patch
+│   │   │   │   │   ├── rocm-opencl-runtime-4.3-noclinfo.patch
+│   │   │   │   │   ├── rocprim-placement-new-delete.patch
+│   │   │   │   │   ├── rottlog-direntry.patch
+│   │   │   │   │   ├── rpcbind-CVE-2017-8779.patch
+│   │   │   │   │   ├── r-sapa-lapack.patch
+│   │   │   │   │   ├── rtags-separate-rct.patch
+│   │   │   │   │   ├── rtosc-0.3.1-fix-invalid-comparison-operator.patch
+│   │   │   │   │   ├── ruby-actionpack-remove-browser-tests.patch
+│   │   │   │   │   ├── ruby-activesupport-fix-deprecation-warning.patch
+│   │   │   │   │   ├── ruby-anystyle-data-immutable-install.patch
+│   │   │   │   │   ├── ruby-anystyle-fix-dictionary-populate.patch
+│   │   │   │   │   ├── ruby-asciidoctor-pdf-support-prawn-svg-0_36.patch
+│   │   │   │   │   ├── ruby-chunky-png-ruby-3-2-support.patch
+│   │   │   │   │   ├── ruby-flores-fix-deprecations.patch
+│   │   │   │   │   ├── ruby-hiredis-use-system-hiredis.patch
+│   │   │   │   │   ├── ruby-hydra-minimal-no-byebug.patch
+│   │   │   │   │   ├── ruby-latex-decode-fix-test.patch
+│   │   │   │   │   ├── ruby-mustache-1.1.1-fix-race-condition-tests.patch
+│   │   │   │   │   ├── ruby-pg-fix-connect-timeout.patch
+│   │   │   │   │   ├── ruby-x25519-automatic-fallback-non-x86_64.patch
+│   │   │   │   │   ├── rust-1.64-fix-riscv64-bootstrap.patch
+│   │   │   │   │   ├── rust-1.70-fix-rustix-build.patch
+│   │   │   │   │   ├── rust-1.78-unwinding-fix.patch
+│   │   │   │   │   ├── rust-1.81-fix-riscv64-bootstrap.patch
+│   │   │   │   │   ├── rust-codex-0.98.0-core-remove-self-dep.patch
+│   │   │   │   │   ├── rust-codex-0.98.0-test-shebangs.patch
+│   │   │   │   │   ├── rust-codex-0.98.0-test-timeout.patch
+│   │   │   │   │   ├── rust-codex-0.98.0-windows-sandbox-protocol-version.patch
+│   │   │   │   │   ├── rust-ring-0.17-ring-core.patch
+│   │   │   │   │   ├── rw-igraph-0.10.patch
+│   │   │   │   │   ├── rxvt-unicode-fix-cursor-position.patch
+│   │   │   │   │   ├── s7-flint-3.patch
+│   │   │   │   │   ├── safeint-disable-tests.patch
+│   │   │   │   │   ├── sajson-build-with-gcc10.patch
+│   │   │   │   │   ├── sajson-for-gemmi-numbers-as-strings.patch
+│   │   │   │   │   ├── sane-look-for-plugins-in-SANE_BACKEND_LIB_PATH.patch
+│   │   │   │   │   ├── sbc-fix-build-non-x86.patch
+│   │   │   │   │   ├── sbcl-aserve-add-HTML-5-elements.patch
+│   │   │   │   │   ├── sbcl-aserve-fix-rfe12668.patch
+│   │   │   │   │   ├── sbcl-burgled-batteries3-fix-signals.patch
+│   │   │   │   │   ├── sbcl-ciel-repl.patch
+│   │   │   │   │   ├── sbcl-clml-fix-types.patch
+│   │   │   │   │   ├── sbcl-cl-posix-mqueue-mqattr-size.patch
+│   │   │   │   │   ├── sbcl-cl-redis-replace-sbcl-specific-calls.patch
+│   │   │   │   │   ├── sbcl-eazy-gnuplot-skip-path-check.patch
+│   │   │   │   │   ├── sbcl-fix-arm64-shared-lib.patch
+│   │   │   │   │   ├── sbcl-lack-fix-tests.patch
+│   │   │   │   │   ├── sbcl-png-fix-sbcl-compatibility.patch
+│   │   │   │   │   ├── sbcl-s-sysdeps-bt2.patch
+│   │   │   │   │   ├── scheme48-tests.patch
+│   │   │   │   │   ├── schiffbruch-fix-build-for-gcc-13.patch
+│   │   │   │   │   ├── scilab-better-compiler-detection.patch
+│   │   │   │   │   ├── scilab-tbx_build_help.patch
+│   │   │   │   │   ├── scn-fast-float-compat.patch
+│   │   │   │   │   ├── scons-test-environment.patch
+│   │   │   │   │   ├── scotch-cmake-remove-metis.patch
+│   │   │   │   │   ├── screen-hurd-path-max.patch
+│   │   │   │   │   ├── scsh-nonstring-search-path.patch
+│   │   │   │   │   ├── sdcc-disable-non-free-code.patch
+│   │   │   │   │   ├── sdl-pango-api_additions.patch
+│   │   │   │   │   ├── sdl-pango-blit_overflow.patch
+│   │   │   │   │   ├── sdl-pango-fillrect_crash.patch
+│   │   │   │   │   ├── sdl-pango-header-guard.patch
+│   │   │   │   │   ├── sdl-pango-matrix_declarations.patch
+│   │   │   │   │   ├── sdl-pango-sans-serif.patch
+│   │   │   │   │   ├── seed-webkit.patch
+│   │   │   │   │   ├── sendgmail-accept-ignored-gsuite-flag.patch
+│   │   │   │   │   ├── sendgmail-remove-domain-restriction.patch
+│   │   │   │   │   ├── seq24-rename-mutex.patch
+│   │   │   │   │   ├── serious-sam-classic-engine-patch-paths.patch
+│   │   │   │   │   ├── shakespeare-spl-fix-grammar.patch
+│   │   │   │   │   ├── shared-mime-info-xdgmime-path.patch
+│   │   │   │   │   ├── sharutils-CVE-2018-1000097.patch
+│   │   │   │   │   ├── showtime-python-3.11-compat.patch
+│   │   │   │   │   ├── sipwitch-fix-build-with-exosip5.patch
+│   │   │   │   │   ├── slim-config.patch
+│   │   │   │   │   ├── slim-display.patch
+│   │   │   │   │   ├── slim-gcc-14.patch
+│   │   │   │   │   ├── slim-login.patch
+│   │   │   │   │   ├── slurm-23-salloc-fallback-shell.patch
+│   │   │   │   │   ├── slurm-drmaa-25.patch
+│   │   │   │   │   ├── smalltalk-multiplication-overflow.patch
+│   │   │   │   │   ├── snappy-add-inline-for-GCC.patch
+│   │   │   │   │   ├── snappy-add-O2-flag-in-CmakeLists.txt.patch
+│   │   │   │   │   ├── soci-mysql-ddl-types.patch
+│   │   │   │   │   ├── solarus-launcher-qlementine-and-qtappinstancemanager-reference.patch
+│   │   │   │   │   ├── solarus-quest-editor-qlementine-reference.patch
+│   │   │   │   │   ├── source-highlight-gcc-compat.patch
+│   │   │   │   │   ├── sourcetrail-fix-cmakelists-and-paths.patch
+│   │   │   │   │   ├── spectre-meltdown-checker-externalize-fwdb.patch
+│   │   │   │   │   ├── sphinxbase-fix-doxygen.patch
+│   │   │   │   │   ├── spice-vdagent-monitor-size-calculation.patch
+│   │   │   │   │   ├── sqlite-hurd.patch
+│   │   │   │   │   ├── squeak-vm-gcc-14-fix.patch
+│   │   │   │   │   ├── sssd-system-directories.patch
+│   │   │   │   │   ├── steghide-fixes.patch
+│   │   │   │   │   ├── stepmania-ffmpeg-compat.patch
+│   │   │   │   │   ├── stex-copy-from-immutable-store.patch
+│   │   │   │   │   ├── stk-5.0.1-fix-typo.patch
+│   │   │   │   │   ├── strace-readlink-tests.patch
+│   │   │   │   │   ├── strutcpp-fix-includes.patch
+│   │   │   │   │   ├── suitesparse-mongoose-cmake.patch
+│   │   │   │   │   ├── sunxi-tools-remove-sys-io.patch
+│   │   │   │   │   ├── superlu-dist-awpm-grid.patch
+│   │   │   │   │   ├── superlu-dist-scotchmetis.patch
+│   │   │   │   │   ├── supertux-unbundle-squirrel.patch
+│   │   │   │   │   ├── swift-5.7.3-sdk-path.patch
+│   │   │   │   │   ├── swift-5.7.3-sourcekit-rpath.patch
+│   │   │   │   │   ├── swift-6.2-cplus-include-path.patch
+│   │   │   │   │   ├── swift-6.2-exclude-scan-test.patch
+│   │   │   │   │   ├── swift-corelibs-libdispatch-5.6.3-lock-cpp.patch
+│   │   │   │   │   ├── swift-corelibs-libdispatch-5.7.3-modulemap.patch
+│   │   │   │   │   ├── swift-llvm-5.7.3-linux.patch
+│   │   │   │   │   ├── swig-support-gcc-12.patch
+│   │   │   │   │   ├── swish-e-format-security.patch
+│   │   │   │   │   ├── swish-e-search.patch
+│   │   │   │   │   ├── sysdig-shared-falcosecurity-libs.patch
+│   │   │   │   │   ├── syslinux-gcc10.patch
+│   │   │   │   │   ├── syslinux-strip-gnu-property.patch
+│   │   │   │   │   ├── t1lib-CVE-2010-2642.patch
+│   │   │   │   │   ├── t1lib-CVE-2011-0764.patch
+│   │   │   │   │   ├── t1lib-CVE-2011-1552+.patch
+│   │   │   │   │   ├── t4k-common-libpng16.patch
+│   │   │   │   │   ├── tao-add-missing-headers.patch
+│   │   │   │   │   ├── tao-fix-parser-types.patch
+│   │   │   │   │   ├── tao-synth-include-string-you-use.patch
+│   │   │   │   │   ├── tar-remove-wholesparse-check.patch
+│   │   │   │   │   ├── tar-skip-unreliable-tests.patch
+│   │   │   │   │   ├── taskwarrior-link-taskchampion-cpp-with-sqlite3.patch
+│   │   │   │   │   ├── tbb-gcc-14.patch
+│   │   │   │   │   ├── tbb-other-arches.patch
+│   │   │   │   │   ├── tclxml-3.2-install.patch
+│   │   │   │   │   ├── tcsh-fix-autotest.patch
+│   │   │   │   │   ├── teensy-loader-cli-help.patch
+│   │   │   │   │   ├── telegram-desktop-hashmap-incomplete-value.patch
+│   │   │   │   │   ├── telegram-desktop-qguiapp.patch
+│   │   │   │   │   ├── telegram-desktop-unbundle-cppgir.patch
+│   │   │   │   │   ├── telegram-purple-adjust-test.patch
+│   │   │   │   │   ├── telepathy-glib-fix-test.patch
+│   │   │   │   │   ├── tensile-copy-if-not-exist.patch
+│   │   │   │   │   ├── tensorflow-c-api-fix.patch
+│   │   │   │   │   ├── texi2html-document-encoding.patch
+│   │   │   │   │   ├── texi2html-i18n.patch
+│   │   │   │   │   ├── texinfo-5-perl-compat.patch
+│   │   │   │   │   ├── texinfo-headings-single.patch
+│   │   │   │   │   ├── texmacs-wayland-hidpi.patch
+│   │   │   │   │   ├── tflite-micro_disable_download.patch
+│   │   │   │   │   ├── thefuck-remove-broken-tests.patch
+│   │   │   │   │   ├── thefuck-test-environ.patch
+│   │   │   │   │   ├── tidy-CVE-2015-5522+5523.patch
+│   │   │   │   │   ├── timewarrior-time-sensitive-tests.patch
+│   │   │   │   │   ├── tinydir-fix-cbehave-test.patch
+│   │   │   │   │   ├── tinyxml-CVE-2023-34194.patch
+│   │   │   │   │   ├── tinyxml-use-stl.patch
+│   │   │   │   │   ├── tk-find-library.patch
+│   │   │   │   │   ├── tkremind-fix-fontchooser.patch
+│   │   │   │   │   ├── tla2tools-build-xml.patch
+│   │   │   │   │   ├── tlf-support-hamlib-4.2+.patch
+│   │   │   │   │   ├── tofi-32bit-compat.patch
+│   │   │   │   │   ├── torbrowser-compare-paths.patch
+│   │   │   │   │   ├── torbrowsers-add-store-to-rdd-allowlist.patch
+│   │   │   │   │   ├── torbrowser-use-system-wide-dir.patch
+│   │   │   │   │   ├── transcode-ffmpeg.patch
+│   │   │   │   │   ├── trytond-add-guix_trytond_path.patch
+│   │   │   │   │   ├── ttf2eot-cstddef.patch
+│   │   │   │   │   ├── tuxpaint-stamps-path.patch
+│   │   │   │   │   ├── tvm_fix_cpptest_build.patch
+│   │   │   │   │   ├── twinkle-bcg729.patch
+│   │   │   │   │   ├── u-boot-allow-disabling-openssl.patch
+│   │   │   │   │   ├── ucx-tcp-iface-ioctl.patch
+│   │   │   │   │   ├── uftrace-fix-tests.patch
+│   │   │   │   │   ├── ultrastar-deluxe-no-freesans.patch
+│   │   │   │   │   ├── ungoogled-chromium-extension-search-path.patch
+│   │   │   │   │   ├── ungoogled-chromium-RUNPATH.patch
+│   │   │   │   │   ├── ungoogled-chromium-system-nspr.patch
+│   │   │   │   │   ├── ungoogled-chromium-unbundle-icu-target.patch
+│   │   │   │   │   ├── unity-test-set-subdir-correctly.patch
+│   │   │   │   │   ├── unity-test-support-int64.patch
+│   │   │   │   │   ├── unknown-horizons-python-3.10.patch
+│   │   │   │   │   ├── unknown-horizons-python-3.8-distro.patch
+│   │   │   │   │   ├── unknown-horizons-python-3.9.patch
+│   │   │   │   │   ├── unzip-32bit-zipbomb-fix.patch
+│   │   │   │   │   ├── unzip-allow-greater-hostver-values.patch
+│   │   │   │   │   ├── unzip-alt-iconv-utf8.patch
+│   │   │   │   │   ├── unzip-alt-iconv-utf8-print.patch
+│   │   │   │   │   ├── unzip-attribs-overflow.patch
+│   │   │   │   │   ├── unzip-case-insensitive.patch
+│   │   │   │   │   ├── unzip-close.patch
+│   │   │   │   │   ├── unzip-COVSCAN-fix-unterminated-string.patch
+│   │   │   │   │   ├── unzip-CVE-2014-8139.patch
+│   │   │   │   │   ├── unzip-CVE-2014-8140.patch
+│   │   │   │   │   ├── unzip-CVE-2014-8141.patch
+│   │   │   │   │   ├── unzip-CVE-2014-9636.patch
+│   │   │   │   │   ├── unzip-CVE-2015-7696.patch
+│   │   │   │   │   ├── unzip-CVE-2015-7697.patch
+│   │   │   │   │   ├── unzip-CVE-2016-9844.patch
+│   │   │   │   │   ├── unzip-CVE-2018-1000035.patch
+│   │   │   │   │   ├── unzip-CVE-2018-18384.patch
+│   │   │   │   │   ├── unzip-CVE-2022-0529+CVE-2022-0530.patch
+│   │   │   │   │   ├── unzip-exec-shield.patch
+│   │   │   │   │   ├── unzip-fix-recmatch.patch
+│   │   │   │   │   ├── unzip-format-secure.patch
+│   │   │   │   │   ├── unzip-initialize-symlink-flag.patch
+│   │   │   │   │   ├── unzip-manpage-fix.patch
+│   │   │   │   │   ├── unzip-overflow-long-fsize.patch
+│   │   │   │   │   ├── unzip-overflow-on-invalid-input.patch
+│   │   │   │   │   ├── unzip-overflow.patch
+│   │   │   │   │   ├── unzip-remove-build-date.patch
+│   │   │   │   │   ├── unzip-timestamp.patch
+│   │   │   │   │   ├── unzip-valgrind.patch
+│   │   │   │   │   ├── unzip-x-option.patch
+│   │   │   │   │   ├── unzip-zipbomb-manpage.patch
+│   │   │   │   │   ├── unzip-zipbomb-part1.patch
+│   │   │   │   │   ├── unzip-zipbomb-part2.patch
+│   │   │   │   │   ├── unzip-zipbomb-part3.patch
+│   │   │   │   │   ├── ustr-fix-build-with-gcc-5.patch
+│   │   │   │   │   ├── util-linux-tests.patch
+│   │   │   │   │   ├── vagrant-bin-vagrant-silence-warning-about-installer.patch
+│   │   │   │   │   ├── vagrant-Support-system-installed-plugins.patch
+│   │   │   │   │   ├── vagrant-Use-a-private-temporary-dir.patch
+│   │   │   │   │   ├── vala-0.52-fix-valagirparser.patch
+│   │   │   │   │   ├── vcmi-disable-privacy-breach.patch
+│   │   │   │   │   ├── vinagre-newer-freerdp.patch
+│   │   │   │   │   ├── vinagre-newer-rdp-parameters.patch
+│   │   │   │   │   ├── vsearch-unbundle-cityhash.patch
+│   │   │   │   │   ├── vst3sdk-3.7.7-allow-winelib-compilation.patch
+│   │   │   │   │   ├── vte-CVE-2012-2738-pt1.patch
+│   │   │   │   │   ├── vte-CVE-2012-2738-pt2.patch
+│   │   │   │   │   ├── vtk-7-gcc-10-compat.patch
+│   │   │   │   │   ├── vtk-7-gcc-11-compat.patch
+│   │   │   │   │   ├── vtk-7-hdf5-compat.patch
+│   │   │   │   │   ├── vtk-7-python-compat.patch
+│   │   │   │   │   ├── vulkan-tools-wayland-1.24.patch
+│   │   │   │   │   ├── warsow-qfusion-fix-bool-return-type.patch
+│   │   │   │   │   ├── warzone2100-unbundle-libs.patch
+│   │   │   │   │   ├── wcstools-extend-makefiles.patch
+│   │   │   │   │   ├── wdl-link-libs-and-fix-jnetlib.patch
+│   │   │   │   │   ├── webkitgtk-adjust-bubblewrap-paths.patch
+│   │   │   │   │   ├── webrtc-audio-processing-big-endian.patch
+│   │   │   │   │   ├── webrtc-audio-processing-byte-order-pointer-size.patch
+│   │   │   │   │   ├── webrtc-audio-processing-x86-no-sse.patch
+│   │   │   │   │   ├── websocketpp-boost-compat.patch
+│   │   │   │   │   ├── websocketpp-fix-for-cmake-3.15.patch
+│   │   │   │   │   ├── wmctrl-64-fix.patch
+│   │   │   │   │   ├── wmfire-dont-inline-draw-fire.patch
+│   │   │   │   │   ├── wmfire-update-for-new-gdk-versions.patch
+│   │   │   │   │   ├── wordnet-CVE-2008-2149.patch
+│   │   │   │   │   ├── wordnet-CVE-2008-3908-pt1.patch
+│   │   │   │   │   ├── wordnet-CVE-2008-3908-pt2.patch
+│   │   │   │   │   ├── wpa-supplicant-dbus-group-policy.patch
+│   │   │   │   │   ├── x265-4-arm-flags.patch
+│   │   │   │   │   ├── x265-arm-flags.patch
+│   │   │   │   │   ├── x2goclient-fix-makefile.patch
+│   │   │   │   │   ├── xdg-desktop-portal-wlr-harcoded-length.patch
+│   │   │   │   │   ├── xf86-video-siliconmotion-fix-ftbfs.patch
+│   │   │   │   │   ├── xfce4-settings-defaults.patch
+│   │   │   │   │   ├── xfig-Enable-error-message-for-missing-libraries.patch
+│   │   │   │   │   ├── xfig-Fix-double-free-when-requesting-MediaBox.patch
+│   │   │   │   │   ├── xfig-Use-pkg-config-to-set-fontconfig-CFLAGS-and-LIBS.patch
+│   │   │   │   │   ├── xgboost-use-system-dmlc-core.patch
+│   │   │   │   │   ├── xiphos-glib.patch
+│   │   │   │   │   ├── xlispstat-fix-compilation-with-modern-gcc.patch
+│   │   │   │   │   ├── xmonad-dynamic-linking.patch
+│   │   │   │   │   ├── xorg-server-tearfree-modesetting.patch
+│   │   │   │   │   ├── xplanet-1.3.1-cxx11-eof.patch
+│   │   │   │   │   ├── xplanet-1.3.1-libdisplay_DisplayOutput.cpp.patch
+│   │   │   │   │   ├── xplanet-1.3.1-libimage_gif.c.patch
+│   │   │   │   │   ├── xplanet-1.3.1-xpUtil-Add2017LeapSecond.cpp.patch
+│   │   │   │   │   ├── xpra-5.0-install_libs.patch
+│   │   │   │   │   ├── xpra-5.0-systemd-run.patch
+│   │   │   │   │   ├── xpra-6.4-install_libs.patch
+│   │   │   │   │   ├── xpra-6.4-systemd-run.patch
+│   │   │   │   │   ├── xterm-370-explicit-xcursor.patch
+│   │   │   │   │   ├── xygrib-fix-finding-data.patch
+│   │   │   │   │   ├── xygrib-newer-proj.patch
+│   │   │   │   │   ├── yajl-CVE-2023-33460.patch
+│   │   │   │   │   ├── yggdrasil-extra-config.patch
+│   │   │   │   │   ├── ypsilon-Use-GNU-toolchain-as-default.patch
+│   │   │   │   │   ├── zabbix-agent2-test-timezone-fix.patch
+│   │   │   │   │   ├── zig-0.10.0-1638-re-add-qualCast.patch
+│   │   │   │   │   ├── zig-0.10.0-610-bootstrap-resolve-conflicts.patch
+│   │   │   │   │   ├── zig-0.10.0-675-TypeOf-hack.patch
+│   │   │   │   │   ├── zig-0.10.0-747-CallOptions.patch
+│   │   │   │   │   ├── zig-0.10-build-respect-PKG_CONFIG-env-var.patch
+│   │   │   │   │   ├── zig-0.10-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.10-use-system-paths.patch
+│   │   │   │   │   ├── zig-0.11-build-respect-PKG_CONFIG-env-var.patch
+│   │   │   │   │   ├── zig-0.11-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.11-use-system-paths.patch
+│   │   │   │   │   ├── zig-0.12-build-respect-PKG_CONFIG-env-var.patch
+│   │   │   │   │   ├── zig-0.12-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.12-use-baseline-cpu-by-default.patch
+│   │   │   │   │   ├── zig-0.12-use-system-paths.patch
+│   │   │   │   │   ├── zig-0.13-build-respect-PKG_CONFIG-env-var.patch
+│   │   │   │   │   ├── zig-0.13-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.14-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.14-use-baseline-cpu-by-default.patch
+│   │   │   │   │   ├── zig-0.14-use-system-paths.patch
+│   │   │   │   │   ├── zig-0.15-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.9-build-respect-PKG_CONFIG-env-var.patch
+│   │   │   │   │   ├── zig-0.9-fix-runpath.patch
+│   │   │   │   │   ├── zig-0.9-riscv-support.patch
+│   │   │   │   │   ├── zig-0.9-use-baseline-cpu-by-default.patch
+│   │   │   │   │   ├── zig-0.9-use-system-paths.patch
+│   │   │   │   │   ├── zsh-egrep-failing-test.patch
+│   │   │   │   │   ├── zuo-bin-sh.patch
+│   │   │   │   │   ├── zxing-cpp-1.2.0-gcc-14.patch
+│   │   │   │   │   ├── zynaddsubfx-3.0.6-include-cstdint.patch
+│   │   │   │   │   └── zynaddsubfx-3.0.6-system-rtosc.patch
+│   │   │   │   ├── patchutils.scm
+│   │   │   │   ├── patool.scm
+│   │   │   │   ├── pciutils.scm
+│   │   │   │   ├── pcre.scm
+│   │   │   │   ├── pdf.scm
+│   │   │   │   ├── pem.scm
+│   │   │   │   ├── perl6.scm
+│   │   │   │   ├── perl-check.scm
+│   │   │   │   ├── perl-compression.scm
+│   │   │   │   ├── perl-maths.scm
+│   │   │   │   ├── perl.scm
+│   │   │   │   ├── perl-web.scm
+│   │   │   │   ├── phabricator.scm
+│   │   │   │   ├── photo.scm
+│   │   │   │   ├── php.scm
+│   │   │   │   ├── php-xyz.scm
+│   │   │   │   ├── physics.scm
+│   │   │   │   ├── piet.scm
+│   │   │   │   ├── pkg-config.scm
+│   │   │   │   ├── plan9.scm
+│   │   │   │   ├── playwright.scm
+│   │   │   │   ├── plotutils.scm
+│   │   │   │   ├── poedit.scm
+│   │   │   │   ├── polkit.scm
+│   │   │   │   ├── popt.scm
+│   │   │   │   ├── postmarketos.scm
+│   │   │   │   ├── potassco.scm
+│   │   │   │   ├── power.scm
+│   │   │   │   ├── pretty-print.scm
+│   │   │   │   ├── printers.scm
+│   │   │   │   ├── profiling.scm
+│   │   │   │   ├── prolog.scm
+│   │   │   │   ├── prometheus.scm
+│   │   │   │   ├── protobuf.scm
+│   │   │   │   ├── pth.scm
+│   │   │   │   ├── pulseaudio.scm
+│   │   │   │   ├── pumpio.scm
+│   │   │   │   ├── purescript.scm
+│   │   │   │   ├── pv.scm
+│   │   │   │   ├── pypy.scm
+│   │   │   │   ├── python-build.scm
+│   │   │   │   ├── python-check.scm
+│   │   │   │   ├── python-compression.scm
+│   │   │   │   ├── python-crypto.scm
+│   │   │   │   ├── python-graphics.scm
+│   │   │   │   ├── python-science.scm
+│   │   │   │   ├── python.scm
+│   │   │   │   ├── python-web.scm
+│   │   │   │   ├── python-xyz.scm
+│   │   │   │   ├── qt.scm
+│   │   │   │   ├── quantum.scm
+│   │   │   │   ├── racket.scm
+│   │   │   │   ├── radio.scm
+│   │   │   │   ├── ragel.scm
+│   │   │   │   ├── rails.scm
+│   │   │   │   ├── raspberry-pi.scm
+│   │   │   │   ├── ratpoison.scm
+│   │   │   │   ├── rcm.scm
+│   │   │   │   ├── rdesktop.scm
+│   │   │   │   ├── rdf.scm
+│   │   │   │   ├── re2c.scm
+│   │   │   │   ├── readline.scm
+│   │   │   │   ├── rednotebook.scm
+│   │   │   │   ├── regex.scm
+│   │   │   │   ├── robotics.scm
+│   │   │   │   ├── rocm-apps.scm
+│   │   │   │   ├── rocm-libs.scm
+│   │   │   │   ├── rocm.scm
+│   │   │   │   ├── rocm-tools.scm
+│   │   │   │   ├── rpc.scm
+│   │   │   │   ├── rpm.scm
+│   │   │   │   ├── rrdtool.scm
+│   │   │   │   ├── rsync.scm
+│   │   │   │   ├── ruby-check.scm
+│   │   │   │   ├── ruby.scm
+│   │   │   │   ├── ruby-xyz.scm
+│   │   │   │   ├── rust-apps.scm
+│   │   │   │   ├── rust-crates.scm
+│   │   │   │   ├── rust.scm
+│   │   │   │   ├── rust-sources.scm
+│   │   │   │   ├── sagemath.scm
+│   │   │   │   ├── samba.scm
+│   │   │   │   ├── scanner.scm
+│   │   │   │   ├── scheme.scm
+│   │   │   │   ├── screen.scm
+│   │   │   │   ├── scribus.scm
+│   │   │   │   ├── scsi.scm
+│   │   │   │   ├── sdl.scm
+│   │   │   │   ├── search.scm
+│   │   │   │   ├── security-token.scm
+│   │   │   │   ├── selinux.scm
+│   │   │   │   ├── sequoia.scm
+│   │   │   │   ├── serialization.scm
+│   │   │   │   ├── serveez.scm
+│   │   │   │   ├── shells.scm
+│   │   │   │   ├── shellutils.scm
+│   │   │   │   ├── simh.scm
+│   │   │   │   ├── simulation.scm
+│   │   │   │   ├── skarnet.scm
+│   │   │   │   ├── skribilo.scm
+│   │   │   │   ├── slang.scm
+│   │   │   │   ├── smalltalk.scm
+│   │   │   │   ├── sml.scm
+│   │   │   │   ├── solidity.scm
+│   │   │   │   ├── sourcehut.scm
+│   │   │   │   ├── specifications.scm
+│   │   │   │   ├── speech.scm
+│   │   │   │   ├── sphinx.scm
+│   │   │   │   ├── spice.scm
+│   │   │   │   ├── spreadsheet.scm
+│   │   │   │   ├── sqlite.scm
+│   │   │   │   ├── squirrel.scm
+│   │   │   │   ├── ssh.scm
+│   │   │   │   ├── sssd.scm
+│   │   │   │   ├── statistics.scm
+│   │   │   │   ├── stb.scm
+│   │   │   │   ├── stenography.scm
+│   │   │   │   ├── storage.scm
+│   │   │   │   ├── suckless.scm
+│   │   │   │   ├── sugar.scm
+│   │   │   │   ├── swift.scm
+│   │   │   │   ├── swig.scm
+│   │   │   │   ├── sycl.scm
+│   │   │   │   ├── sync.scm
+│   │   │   │   ├── syncthing.scm
+│   │   │   │   ├── syndication.scm
+│   │   │   │   ├── synergy.scm
+│   │   │   │   ├── task-management.scm
+│   │   │   │   ├── task-runners.scm
+│   │   │   │   ├── tbb.scm
+│   │   │   │   ├── tcl.scm
+│   │   │   │   ├── telegram.scm
+│   │   │   │   ├── telephony.scm
+│   │   │   │   ├── terminals.scm
+│   │   │   │   ├── terraform.scm
+│   │   │   │   ├── texinfo.scm
+│   │   │   │   ├── texlive.scm
+│   │   │   │   ├── tex.scm
+│   │   │   │   ├── text-editors.scm
+│   │   │   │   ├── textutils.scm
+│   │   │   │   ├── time.scm
+│   │   │   │   ├── tls.scm
+│   │   │   │   ├── tmux.scm
+│   │   │   │   ├── toolkits.scm
+│   │   │   │   ├── tor-browsers.scm
+│   │   │   │   ├── tor.scm
+│   │   │   │   ├── toys.scm
+│   │   │   │   ├── tree-sitter.scm
+│   │   │   │   ├── tryton.scm
+│   │   │   │   ├── tv.scm
+│   │   │   │   ├── uglifyjs.scm
+│   │   │   │   ├── uml.scm
+│   │   │   │   ├── unicode.scm
+│   │   │   │   ├── unrtf.scm
+│   │   │   │   ├── upnp.scm
+│   │   │   │   ├── usb-modeswitch.scm
+│   │   │   │   ├── uucp.scm
+│   │   │   │   ├── valgrind.scm
+│   │   │   │   ├── version-control.scm
+│   │   │   │   ├── video.scm
+│   │   │   │   ├── vim.scm
+│   │   │   │   ├── virtualization.scm
+│   │   │   │   ├── vlang.scm
+│   │   │   │   ├── vnc.scm
+│   │   │   │   ├── vpn.scm
+│   │   │   │   ├── vulkan.scm
+│   │   │   │   ├── w3m.scm
+│   │   │   │   ├── weather.scm
+│   │   │   │   ├── web-browsers.scm
+│   │   │   │   ├── webkit.scm
+│   │   │   │   ├── web.scm
+│   │   │   │   ├── wget.scm
+│   │   │   │   ├── wine.scm
+│   │   │   │   ├── wireservice.scm
+│   │   │   │   ├── wm.scm
+│   │   │   │   ├── wordnet.scm
+│   │   │   │   ├── wv.scm
+│   │   │   │   ├── wxwidgets.scm
+│   │   │   │   ├── xdisorg.scm
+│   │   │   │   ├── xfce.scm
+│   │   │   │   ├── xfig.scm
+│   │   │   │   ├── xiph.scm
+│   │   │   │   ├── xml.scm
+│   │   │   │   ├── xorg.scm
+│   │   │   │   ├── zig.scm
+│   │   │   │   ├── zig-xyz.scm
+│   │   │   │   ├── zile.scm
+│   │   │   │   └── zwave.scm
+│   │   │   ├── packages.scm
+│   │   │   ├── services
+│   │   │   │   ├── admin.scm
+│   │   │   │   ├── audio.scm
+│   │   │   │   ├── auditd.scm
+│   │   │   │   ├── authentication.scm
+│   │   │   │   ├── avahi.scm
+│   │   │   │   ├── backup.scm
+│   │   │   │   ├── base.scm
+│   │   │   │   ├── certbot.scm
+│   │   │   │   ├── cgit.scm
+│   │   │   │   ├── ci.scm
+│   │   │   │   ├── configuration.scm
+│   │   │   │   ├── containers.scm
+│   │   │   │   ├── cuirass.scm
+│   │   │   │   ├── cups.scm
+│   │   │   │   ├── databases.scm
+│   │   │   │   ├── dav.scm
+│   │   │   │   ├── dbus.scm
+│   │   │   │   ├── desktop.scm
+│   │   │   │   ├── dict.scm
+│   │   │   │   ├── dns.scm
+│   │   │   │   ├── docker.scm
+│   │   │   │   ├── file-sharing.scm
+│   │   │   │   ├── games.scm
+│   │   │   │   ├── ganeti.scm
+│   │   │   │   ├── getmail.scm
+│   │   │   │   ├── guix.scm
+│   │   │   │   ├── herd.scm
+│   │   │   │   ├── high-availability.scm
+│   │   │   │   ├── hurd.scm
+│   │   │   │   ├── kerberos.scm
+│   │   │   │   ├── ldap.scm
+│   │   │   │   ├── lightdm.scm
+│   │   │   │   ├── linux.scm
+│   │   │   │   ├── lirc.scm
+│   │   │   │   ├── mail.scm
+│   │   │   │   ├── mcron.scm
+│   │   │   │   ├── messaging.scm
+│   │   │   │   ├── monitoring.scm
+│   │   │   │   ├── networking.scm
+│   │   │   │   ├── nfs.scm
+│   │   │   │   ├── nix.scm
+│   │   │   │   ├── opensnitch.scm
+│   │   │   │   ├── pam-mount.scm
+│   │   │   │   ├── pm.scm
+│   │   │   │   ├── power.scm
+│   │   │   │   ├── rsync.scm
+│   │   │   │   ├── samba.scm
+│   │   │   │   ├── science.scm
+│   │   │   │   ├── sddm.scm
+│   │   │   │   ├── security.scm
+│   │   │   │   ├── security-token.scm
+│   │   │   │   ├── shepherd.scm
+│   │   │   │   ├── sound.scm
+│   │   │   │   ├── spice.scm
+│   │   │   │   ├── ssh.scm
+│   │   │   │   ├── syncthing.scm
+│   │   │   │   ├── sysctl.scm
+│   │   │   │   ├── telephony.scm
+│   │   │   │   ├── upnp.scm
+│   │   │   │   ├── version-control.scm
+│   │   │   │   ├── virtualization.scm
+│   │   │   │   ├── vnc.scm
+│   │   │   │   ├── vpn.scm
+│   │   │   │   ├── web.scm
+│   │   │   │   └── xorg.scm
+│   │   │   ├── services.scm
+│   │   │   ├── system
+│   │   │   │   ├── accounts.scm
+│   │   │   │   ├── examples
+│   │   │   │   │   ├── bare-bones.tmpl
+│   │   │   │   │   ├── bare-hurd64.tmpl
+│   │   │   │   │   ├── bare-hurd.tmpl
+│   │   │   │   │   ├── beaglebone-black.tmpl
+│   │   │   │   │   ├── desktop.tmpl
+│   │   │   │   │   ├── devel-hurd64.tmpl
+│   │   │   │   │   ├── devel-hurd.tmpl
+│   │   │   │   │   ├── docker-image.tmpl
+│   │   │   │   │   ├── lightweight-desktop.tmpl
+│   │   │   │   │   ├── plasma.tmpl
+│   │   │   │   │   ├── raspberry-pi-64-nfs-root.tmpl
+│   │   │   │   │   ├── raspberry-pi-64.tmpl
+│   │   │   │   │   ├── vm-image-efi.tmpl
+│   │   │   │   │   └── vm-image.tmpl
+│   │   │   │   ├── file-systems.scm
+│   │   │   │   ├── hurd.scm
+│   │   │   │   ├── images
+│   │   │   │   │   ├── a20-olinuxino-lime2.scm
+│   │   │   │   │   ├── am335x-evm.scm
+│   │   │   │   │   ├── hurd.scm
+│   │   │   │   │   ├── novena.scm
+│   │   │   │   │   ├── orangepi-r1-plus-lts-rk3328.scm
+│   │   │   │   │   ├── pine64.scm
+│   │   │   │   │   ├── pinebook-pro.scm
+│   │   │   │   │   ├── rock-4c-plus.scm
+│   │   │   │   │   ├── rock64.scm
+│   │   │   │   │   ├── unmatched.scm
+│   │   │   │   │   ├── visionfive2.scm
+│   │   │   │   │   └── wsl2.scm
+│   │   │   │   ├── image.scm
+│   │   │   │   ├── install.scm
+│   │   │   │   ├── keyboard.scm
+│   │   │   │   ├── linux-container.scm
+│   │   │   │   ├── linux-initrd.scm
+│   │   │   │   ├── locale.scm
+│   │   │   │   ├── mapped-devices.scm
+│   │   │   │   ├── nss.scm
+│   │   │   │   ├── pam.scm
+│   │   │   │   ├── privilege.scm
+│   │   │   │   ├── setuid.scm
+│   │   │   │   ├── shadow.scm
+│   │   │   │   ├── uuid.scm
+│   │   │   │   └── vm.scm
+│   │   │   ├── system.scm
+│   │   │   ├── tests
+│   │   │   │   ├── audio.scm
+│   │   │   │   ├── avahi.scm
+│   │   │   │   ├── base.scm
+│   │   │   │   ├── cachefilesd.scm
+│   │   │   │   ├── ci.scm
+│   │   │   │   ├── containers.scm
+│   │   │   │   ├── cups.scm
+│   │   │   │   ├── data
+│   │   │   │   │   └── jami-dummy-account.dat
+│   │   │   │   ├── databases.scm
+│   │   │   │   ├── desktop.scm
+│   │   │   │   ├── dict.scm
+│   │   │   │   ├── dns.scm
+│   │   │   │   ├── docker.scm
+│   │   │   │   ├── emacs.scm
+│   │   │   │   ├── file-sharing.scm
+│   │   │   │   ├── foreign.scm
+│   │   │   │   ├── games.scm
+│   │   │   │   ├── ganeti.scm
+│   │   │   │   ├── gdm.scm
+│   │   │   │   ├── guix.scm
+│   │   │   │   ├── high-availability.scm
+│   │   │   │   ├── image.scm
+│   │   │   │   ├── install.scm
+│   │   │   │   ├── ldap.scm
+│   │   │   │   ├── lightdm.scm
+│   │   │   │   ├── linux-modules.scm
+│   │   │   │   ├── linux.scm
+│   │   │   │   ├── mail.scm
+│   │   │   │   ├── mcron.scm
+│   │   │   │   ├── messaging.scm
+│   │   │   │   ├── monitoring.scm
+│   │   │   │   ├── networking.scm
+│   │   │   │   ├── nfs.scm
+│   │   │   │   ├── package-management.scm
+│   │   │   │   ├── pam.scm
+│   │   │   │   ├── reconfigure.scm
+│   │   │   │   ├── rsync.scm
+│   │   │   │   ├── samba.scm
+│   │   │   │   ├── sddm.scm
+│   │   │   │   ├── security.scm
+│   │   │   │   ├── security-token.scm
+│   │   │   │   ├── shadow.scm
+│   │   │   │   ├── singularity.scm
+│   │   │   │   ├── ssh.scm
+│   │   │   │   ├── telephony.scm
+│   │   │   │   ├── upnp.scm
+│   │   │   │   ├── version-control.scm
+│   │   │   │   ├── virtualization.scm
+│   │   │   │   ├── vnc.scm
+│   │   │   │   ├── vnstat.scm
+│   │   │   │   └── web.scm
+│   │   │   └── tests.scm
+│   │   ├── gnu.scm
+│   │   ├── guix
+│   │   │   ├── amd-gpu.scm
+│   │   │   ├── android-repo-download.scm
+│   │   │   ├── avahi.scm
+│   │   │   ├── base16.scm
+│   │   │   ├── base32.scm
+│   │   │   ├── base64.scm
+│   │   │   ├── build
+│   │   │   │   ├── agda-build-system.scm
+│   │   │   │   ├── android-ndk-build-system.scm
+│   │   │   │   ├── android-repo.scm
+│   │   │   │   ├── ant-build-system.scm
+│   │   │   │   ├── asdf-build-system.scm
+│   │   │   │   ├── bournish.scm
+│   │   │   │   ├── bzr.scm
+│   │   │   │   ├── cargo-build-system.scm
+│   │   │   │   ├── cargo-utils.scm
+│   │   │   │   ├── chicken-build-system.scm
+│   │   │   │   ├── clojure-build-system.scm
+│   │   │   │   ├── clojure-utils.scm
+│   │   │   │   ├── cmake-build-system.scm
+│   │   │   │   ├── compile.scm
+│   │   │   │   ├── composer-build-system.scm
+│   │   │   │   ├── copy-build-system.scm
+│   │   │   │   ├── cvs.scm
+│   │   │   │   ├── debug-link.scm
+│   │   │   │   ├── download-nar.scm
+│   │   │   │   ├── download.scm
+│   │   │   │   ├── dub-build-system.scm
+│   │   │   │   ├── dune-build-system.scm
+│   │   │   │   ├── elm-build-system.scm
+│   │   │   │   ├── emacs-build-system.scm
+│   │   │   │   ├── emacs-utils.scm
+│   │   │   │   ├── font-build-system.scm
+│   │   │   │   ├── git.scm
+│   │   │   │   ├── glib-or-gtk-build-system.scm
+│   │   │   │   ├── gnu-bootstrap.scm
+│   │   │   │   ├── gnu-build-system.scm
+│   │   │   │   ├── gnu-dist.scm
+│   │   │   │   ├── go-build-system.scm
+│   │   │   │   ├── graft.scm
+│   │   │   │   ├── gremlin.scm
+│   │   │   │   ├── guile-build-system.scm
+│   │   │   │   ├── hare-build-system.scm
+│   │   │   │   ├── haskell-build-system.scm
+│   │   │   │   ├── hg.scm
+│   │   │   │   ├── java-utils.scm
+│   │   │   │   ├── julia-build-system.scm
+│   │   │   │   ├── kconfig.scm
+│   │   │   │   ├── linux-module-build-system.scm
+│   │   │   │   ├── lisp-utils.scm
+│   │   │   │   ├── luanti-build-system.scm
+│   │   │   │   ├── make-bootstrap.scm
+│   │   │   │   ├── maven
+│   │   │   │   │   ├── java.scm
+│   │   │   │   │   ├── plugin.scm
+│   │   │   │   │   └── pom.scm
+│   │   │   │   ├── maven-build-system.scm
+│   │   │   │   ├── meson-build-system.scm
+│   │   │   │   ├── meson-configuration.scm
+│   │   │   │   ├── minetest-build-system.scm
+│   │   │   │   ├── minify-build-system.scm
+│   │   │   │   ├── mix-build-system.scm
+│   │   │   │   ├── node-build-system.scm
+│   │   │   │   ├── ocaml-build-system.scm
+│   │   │   │   ├── pack.scm
+│   │   │   │   ├── perl-build-system.scm
+│   │   │   │   ├── po.scm
+│   │   │   │   ├── profiles.scm
+│   │   │   │   ├── pyproject-build-system.scm
+│   │   │   │   ├── python-build-system.scm
+│   │   │   │   ├── qt-build-system.scm
+│   │   │   │   ├── qt-utils.scm
+│   │   │   │   ├── rakudo-build-system.scm
+│   │   │   │   ├── r-build-system.scm
+│   │   │   │   ├── rebar-build-system.scm
+│   │   │   │   ├── renpy-build-system.scm
+│   │   │   │   ├── ruby-build-system.scm
+│   │   │   │   ├── scons-build-system.scm
+│   │   │   │   ├── store-copy.scm
+│   │   │   │   ├── svn.scm
+│   │   │   │   ├── syscalls.scm
+│   │   │   │   ├── texlive-build-system.scm
+│   │   │   │   ├── toml.scm
+│   │   │   │   ├── tree-sitter-build-system.scm
+│   │   │   │   ├── union.scm
+│   │   │   │   ├── utils.scm
+│   │   │   │   ├── vim-build-system.scm
+│   │   │   │   ├── waf-build-system.scm
+│   │   │   │   ├── zig-build-system.scm
+│   │   │   │   └── zig-utils.scm
+│   │   │   ├── build-system
+│   │   │   │   ├── agda.scm
+│   │   │   │   ├── android-ndk.scm
+│   │   │   │   ├── ant.scm
+│   │   │   │   ├── asdf.scm
+│   │   │   │   ├── cargo.scm
+│   │   │   │   ├── channel.scm
+│   │   │   │   ├── chicken.scm
+│   │   │   │   ├── clojure.scm
+│   │   │   │   ├── cmake.scm
+│   │   │   │   ├── composer.scm
+│   │   │   │   ├── copy.scm
+│   │   │   │   ├── dub.scm
+│   │   │   │   ├── dune.scm
+│   │   │   │   ├── elm.scm
+│   │   │   │   ├── emacs.scm
+│   │   │   │   ├── font.scm
+│   │   │   │   ├── glib-or-gtk.scm
+│   │   │   │   ├── gnu.scm
+│   │   │   │   ├── go.scm
+│   │   │   │   ├── guile.scm
+│   │   │   │   ├── hare.scm
+│   │   │   │   ├── haskell.scm
+│   │   │   │   ├── julia.scm
+│   │   │   │   ├── linux-module.scm
+│   │   │   │   ├── luanti.scm
+│   │   │   │   ├── maven.scm
+│   │   │   │   ├── meson.scm
+│   │   │   │   ├── minetest.scm
+│   │   │   │   ├── minify.scm
+│   │   │   │   ├── mix.scm
+│   │   │   │   ├── mozilla.scm
+│   │   │   │   ├── node.scm
+│   │   │   │   ├── ocaml.scm
+│   │   │   │   ├── perl.scm
+│   │   │   │   ├── pyproject.scm
+│   │   │   │   ├── python.scm
+│   │   │   │   ├── qt.scm
+│   │   │   │   ├── rakudo.scm
+│   │   │   │   ├── rebar.scm
+│   │   │   │   ├── renpy.scm
+│   │   │   │   ├── r.scm
+│   │   │   │   ├── ruby.scm
+│   │   │   │   ├── scons.scm
+│   │   │   │   ├── texlive.scm
+│   │   │   │   ├── tree-sitter.scm
+│   │   │   │   ├── trivial.scm
+│   │   │   │   ├── vim.scm
+│   │   │   │   ├── waf.scm
+│   │   │   │   └── zig.scm
+│   │   │   ├── build-system.scm
+│   │   │   ├── bzr-download.scm
+│   │   │   ├── cache.scm
+│   │   │   ├── channels.scm
+│   │   │   ├── ci.scm
+│   │   │   ├── colors.scm
+│   │   │   ├── combinators.scm
+│   │   │   ├── config.scm.in
+│   │   │   ├── cpio.scm
+│   │   │   ├── cpu.scm
+│   │   │   ├── cve.scm
+│   │   │   ├── cvs-download.scm
+│   │   │   ├── d3.v3.js
+│   │   │   ├── deprecation.scm
+│   │   │   ├── derivations.scm
+│   │   │   ├── describe.scm
+│   │   │   ├── diagnostics.scm
+│   │   │   ├── discovery.scm
+│   │   │   ├── docker.scm
+│   │   │   ├── download.scm
+│   │   │   ├── elf.scm
+│   │   │   ├── ftp-client.scm
+│   │   │   ├── gexp.scm
+│   │   │   ├── git-authenticate.scm
+│   │   │   ├── git-download.scm
+│   │   │   ├── git.scm
+│   │   │   ├── glob.scm
+│   │   │   ├── gnu-maintenance.scm
+│   │   │   ├── gnupg.scm
+│   │   │   ├── grafts.scm
+│   │   │   ├── graph.js
+│   │   │   ├── graph.scm
+│   │   │   ├── hash.scm
+│   │   │   ├── hg-download.scm
+│   │   │   ├── http-client.scm
+│   │   │   ├── i18n.scm
+│   │   │   ├── import
+│   │   │   │   ├── apache.scm
+│   │   │   │   ├── cabal.scm
+│   │   │   │   ├── composer.scm
+│   │   │   │   ├── cpan.scm
+│   │   │   │   ├── cran.scm
+│   │   │   │   ├── crate
+│   │   │   │   │   └── cargo-lock.scm
+│   │   │   │   ├── crate.scm
+│   │   │   │   ├── egg.scm
+│   │   │   │   ├── elm.scm
+│   │   │   │   ├── elpa.scm
+│   │   │   │   ├── gem.scm
+│   │   │   │   ├── github.scm
+│   │   │   │   ├── git.scm
+│   │   │   │   ├── gnome.scm
+│   │   │   │   ├── gnu.scm
+│   │   │   │   ├── go.scm
+│   │   │   │   ├── hackage.scm
+│   │   │   │   ├── hexpm.scm
+│   │   │   │   ├── json.scm
+│   │   │   │   ├── kde.scm
+│   │   │   │   ├── launchpad.scm
+│   │   │   │   ├── luanti.scm
+│   │   │   │   ├── minetest.scm
+│   │   │   │   ├── npm-binary.scm
+│   │   │   │   ├── nuget.scm
+│   │   │   │   ├── opam.scm
+│   │   │   │   ├── print.scm
+│   │   │   │   ├── pypi.scm
+│   │   │   │   ├── stackage.scm
+│   │   │   │   ├── test.scm
+│   │   │   │   ├── texlive.scm
+│   │   │   │   └── utils.scm
+│   │   │   ├── inferior.scm
+│   │   │   ├── ipfs.scm
+│   │   │   ├── least-authority.scm
+│   │   │   ├── licenses.scm
+│   │   │   ├── lint.scm
+│   │   │   ├── man-db.scm
+│   │   │   ├── memoization.scm
+│   │   │   ├── modules.scm
+│   │   │   ├── monad-repl.scm
+│   │   │   ├── monads.scm
+│   │   │   ├── narinfo.scm
+│   │   │   ├── nar.scm
+│   │   │   ├── openpgp.scm
+│   │   │   ├── packages.scm
+│   │   │   ├── pki.scm
+│   │   │   ├── platforms
+│   │   │   │   ├── arm.scm
+│   │   │   │   ├── avr.scm
+│   │   │   │   ├── loongarch.scm
+│   │   │   │   ├── mips.scm
+│   │   │   │   ├── or1k.scm
+│   │   │   │   ├── powerpc.scm
+│   │   │   │   ├── riscv.scm
+│   │   │   │   ├── x86.scm
+│   │   │   │   └── xtensa.scm
+│   │   │   ├── platform.scm
+│   │   │   ├── profiles.scm
+│   │   │   ├── profiling.scm
+│   │   │   ├── progress.scm
+│   │   │   ├── quirks.scm
+│   │   │   ├── read-print.scm
+│   │   │   ├── records.scm
+│   │   │   ├── remote-procedures.scm
+│   │   │   ├── remote.scm
+│   │   │   ├── repl.scm
+│   │   │   ├── rpm.scm
+│   │   │   ├── scripts
+│   │   │   │   ├── archive.scm
+│   │   │   │   ├── authenticate.scm
+│   │   │   │   ├── build.scm
+│   │   │   │   ├── challenge.scm
+│   │   │   │   ├── container
+│   │   │   │   │   └── exec.scm
+│   │   │   │   ├── container.scm
+│   │   │   │   ├── copy.scm
+│   │   │   │   ├── deploy.scm
+│   │   │   │   ├── describe.scm
+│   │   │   │   ├── discover.scm
+│   │   │   │   ├── download.scm
+│   │   │   │   ├── edit.scm
+│   │   │   │   ├── environment.scm
+│   │   │   │   ├── gc.scm
+│   │   │   │   ├── git
+│   │   │   │   │   └── authenticate.scm
+│   │   │   │   ├── git.scm
+│   │   │   │   ├── graph.scm
+│   │   │   │   ├── hash.scm
+│   │   │   │   ├── home
+│   │   │   │   │   ├── edit.scm
+│   │   │   │   │   └── import.scm
+│   │   │   │   ├── home.scm
+│   │   │   │   ├── import
+│   │   │   │   │   ├── composer.scm
+│   │   │   │   │   ├── cpan.scm
+│   │   │   │   │   ├── cran.scm
+│   │   │   │   │   ├── crate.scm
+│   │   │   │   │   ├── egg.scm
+│   │   │   │   │   ├── elm.scm
+│   │   │   │   │   ├── elpa.scm
+│   │   │   │   │   ├── gem.scm
+│   │   │   │   │   ├── gnu.scm
+│   │   │   │   │   ├── go.scm
+│   │   │   │   │   ├── hackage.scm
+│   │   │   │   │   ├── hexpm.scm
+│   │   │   │   │   ├── json.scm
+│   │   │   │   │   ├── luanti.scm
+│   │   │   │   │   ├── minetest.scm
+│   │   │   │   │   ├── npm-binary.scm
+│   │   │   │   │   ├── nuget.scm
+│   │   │   │   │   ├── opam.scm
+│   │   │   │   │   ├── pypi.scm
+│   │   │   │   │   ├── stackage.scm
+│   │   │   │   │   └── texlive.scm
+│   │   │   │   ├── import.scm
+│   │   │   │   ├── install.scm
+│   │   │   │   ├── lint.scm
+│   │   │   │   ├── locate.scm
+│   │   │   │   ├── offload.scm
+│   │   │   │   ├── package.scm
+│   │   │   │   ├── pack.scm
+│   │   │   │   ├── perform-download.scm
+│   │   │   │   ├── processes.scm
+│   │   │   │   ├── publish.scm
+│   │   │   │   ├── pull.scm
+│   │   │   │   ├── refresh.scm
+│   │   │   │   ├── remove.scm
+│   │   │   │   ├── repl.scm
+│   │   │   │   ├── search.scm
+│   │   │   │   ├── shell.scm
+│   │   │   │   ├── show.scm
+│   │   │   │   ├── size.scm
+│   │   │   │   ├── style.scm
+│   │   │   │   ├── substitute.scm
+│   │   │   │   ├── system
+│   │   │   │   │   ├── edit.scm
+│   │   │   │   │   ├── installer.scm
+│   │   │   │   │   ├── reconfigure.scm
+│   │   │   │   │   └── search.scm
+│   │   │   │   ├── system.scm
+│   │   │   │   ├── time-machine.scm
+│   │   │   │   ├── upgrade.scm
+│   │   │   │   └── weather.scm
+│   │   │   ├── scripts.scm
+│   │   │   ├── search-paths.scm
+│   │   │   ├── self.scm
+│   │   │   ├── serialization.scm
+│   │   │   ├── sets.scm
+│   │   │   ├── ssh.scm
+│   │   │   ├── status.scm
+│   │   │   ├── store
+│   │   │   │   ├── database.scm
+│   │   │   │   ├── deduplication.scm
+│   │   │   │   ├── roots.scm
+│   │   │   │   ├── schema.sql
+│   │   │   │   └── ssh.scm
+│   │   │   ├── store.scm
+│   │   │   ├── substitutes.scm
+│   │   │   ├── svn-download.scm
+│   │   │   ├── swh.scm
+│   │   │   ├── tests
+│   │   │   │   ├── git.scm
+│   │   │   │   ├── gnupg.scm
+│   │   │   │   └── http.scm
+│   │   │   ├── tests.scm
+│   │   │   ├── transformations.scm
+│   │   │   ├── ui.scm
+│   │   │   ├── upstream.scm
+│   │   │   ├── utils.scm
+│   │   │   └── workers.scm
+│   │   ├── guix.scm
+│   │   ├── m4
+│   │   │   └── guix.m4
+│   │   ├── Makefile.am
+│   │   ├── manifest.scm
+│   │   ├── nix
+│   │   │   ├── AUTHORS
+│   │   │   ├── COPYING
+│   │   │   ├── libstore
+│   │   │   │   ├── build.cc
+│   │   │   │   ├── builtins.cc
+│   │   │   │   ├── builtins.hh
+│   │   │   │   ├── derivations.cc
+│   │   │   │   ├── derivations.hh
+│   │   │   │   ├── gc.cc
+│   │   │   │   ├── globals.cc
+│   │   │   │   ├── globals.hh
+│   │   │   │   ├── local-store.cc
+│   │   │   │   ├── local-store.hh
+│   │   │   │   ├── misc.cc
+│   │   │   │   ├── misc.hh
+│   │   │   │   ├── optimise-store.cc
+│   │   │   │   ├── pathlocks.cc
+│   │   │   │   ├── pathlocks.hh
+│   │   │   │   ├── references.cc
+│   │   │   │   ├── references.hh
+│   │   │   │   ├── sqlite.cc
+│   │   │   │   ├── sqlite.hh
+│   │   │   │   ├── store-api.cc
+│   │   │   │   ├── store-api.hh
+│   │   │   │   └── worker-protocol.hh
+│   │   │   ├── libutil
+│   │   │   │   ├── affinity.cc
+│   │   │   │   ├── affinity.hh
+│   │   │   │   ├── archive.cc
+│   │   │   │   ├── archive.hh
+│   │   │   │   ├── hash.cc
+│   │   │   │   ├── hash.hh
+│   │   │   │   ├── seccomp.cc
+│   │   │   │   ├── seccomp.hh
+│   │   │   │   ├── serialise.cc
+│   │   │   │   ├── serialise.hh
+│   │   │   │   ├── spawn.cc
+│   │   │   │   ├── spawn.hh
+│   │   │   │   ├── types.hh
+│   │   │   │   ├── util.cc
+│   │   │   │   └── util.hh
+│   │   │   ├── local.mk
+│   │   │   └── nix-daemon
+│   │   │       ├── guix-daemon.cc
+│   │   │       ├── nix-daemon.cc
+│   │   │       └── nix-daemon.hh
+│   │   ├── po
+│   │   │   ├── doc
+│   │   │   │   ├── guix-cookbook.de.po
+│   │   │   │   ├── guix-cookbook.es.po
+│   │   │   │   ├── guix-cookbook.fr.po
+│   │   │   │   ├── guix-cookbook.it.po
+│   │   │   │   ├── guix-cookbook.ko.po
+│   │   │   │   ├── guix-cookbook.pt_BR.po
+│   │   │   │   ├── guix-cookbook.ru.po
+│   │   │   │   ├── guix-cookbook.sk.po
+│   │   │   │   ├── guix-cookbook.sv.po
+│   │   │   │   ├── guix-cookbook.ta.po
+│   │   │   │   ├── guix-cookbook.zh_CN.po
+│   │   │   │   ├── guix-manual.de.po
+│   │   │   │   ├── guix-manual.es.po
+│   │   │   │   ├── guix-manual.fr.po
+│   │   │   │   ├── guix-manual.it.po
+│   │   │   │   ├── guix-manual.pt_BR.po
+│   │   │   │   ├── guix-manual.ru.po
+│   │   │   │   ├── guix-manual.zh_CN.po
+│   │   │   │   ├── local.mk
+│   │   │   │   └── po4a.cfg
+│   │   │   ├── guix
+│   │   │   │   ├── ar.po
+│   │   │   │   ├── bn.po
+│   │   │   │   ├── ca.po
+│   │   │   │   ├── cs.po
+│   │   │   │   ├── da.po
+│   │   │   │   ├── de.po
+│   │   │   │   ├── el.po
+│   │   │   │   ├── eo.po
+│   │   │   │   ├── es.po
+│   │   │   │   ├── fa.po
+│   │   │   │   ├── fi.po
+│   │   │   │   ├── fr.po
+│   │   │   │   ├── hu.po
+│   │   │   │   ├── it.po
+│   │   │   │   ├── ja.po
+│   │   │   │   ├── kab.po
+│   │   │   │   ├── ka.po
+│   │   │   │   ├── ko.po
+│   │   │   │   ├── LINGUAS
+│   │   │   │   ├── lt.po
+│   │   │   │   ├── Makevars
+│   │   │   │   ├── nl.po
+│   │   │   │   ├── oc.po
+│   │   │   │   ├── pl.po
+│   │   │   │   ├── POTFILES.in
+│   │   │   │   ├── pt_BR.po
+│   │   │   │   ├── pt.po
+│   │   │   │   ├── ru.po
+│   │   │   │   ├── si.po
+│   │   │   │   ├── sk.po
+│   │   │   │   ├── sr.po
+│   │   │   │   ├── sv.po
+│   │   │   │   ├── ta.po
+│   │   │   │   ├── tr.po
+│   │   │   │   ├── uk.po
+│   │   │   │   ├── vi.po
+│   │   │   │   └── zh_CN.po
+│   │   │   └── packages
+│   │   │       ├── ar.po
+│   │   │       ├── da.po
+│   │   │       ├── de.po
+│   │   │       ├── eo.po
+│   │   │       ├── es.po
+│   │   │       ├── fa.po
+│   │   │       ├── fi.po
+│   │   │       ├── fr.po
+│   │   │       ├── hu.po
+│   │   │       ├── it.po
+│   │   │       ├── ja.po
+│   │   │       ├── kab.po
+│   │   │       ├── ko.po
+│   │   │       ├── LINGUAS
+│   │   │       ├── Makevars
+│   │   │       ├── nl.po
+│   │   │       ├── oc.po
+│   │   │       ├── pl.po
+│   │   │       ├── POTFILES.in
+│   │   │       ├── pt_BR.po
+│   │   │       ├── ru.po
+│   │   │       ├── sk.po
+│   │   │       ├── sr.po
+│   │   │       ├── sv.po
+│   │   │       ├── ta.po
+│   │   │       ├── tr.po
+│   │   │       ├── uk.po
+│   │   │       ├── vi.po
+│   │   │       └── zh_CN.po
+│   │   ├── scripts
+│   │   │   └── guix.in
+│   │   └── tests
+│   │       ├── accounts.scm
+│   │       ├── base16.scm
+│   │       ├── base32.scm
+│   │       ├── base64.scm
+│   │       ├── boot-parameters.scm
+│   │       ├── bournish.scm
+│   │       ├── build-emacs-utils.scm
+│   │       ├── builders.scm
+│   │       ├── build-utils.scm
+│   │       ├── cache.scm
+│   │       ├── #challenge.scm#
+│   │       ├── challenge.scm
+│   │       ├── channels.scm
+│   │       ├── combinators.scm
+│   │       ├── containers.scm
+│   │       ├── cpio.scm
+│   │       ├── cve-sample.json
+│   │       ├── cve.scm
+│   │       ├── debug-link.scm
+│   │       ├── derivations.scm
+│   │       ├── discovery.scm
+│   │       ├── file-systems.scm
+│   │       ├── gexp.scm
+│   │       ├── git-authenticate.scm
+│   │       ├── git.scm
+│   │       ├── glob.scm
+│   │       ├── gnu-maintenance.scm
+│   │       ├── grafts.scm
+│   │       ├── graph.scm
+│   │       ├── gremlin.scm
+│   │       ├── guix-archive.sh
+│   │       ├── guix-authenticate.sh
+│   │       ├── guix-build-branch.sh
+│   │       ├── guix-build.sh
+│   │       ├── guix-daemon.sh
+│   │       ├── guix-describe.sh
+│   │       ├── guix-download.sh
+│   │       ├── guix-environment-container.sh
+│   │       ├── guix-environment.sh
+│   │       ├── guix-gc.sh
+│   │       ├── guix-git-authenticate.sh
+│   │       ├── guix-graph.sh
+│   │       ├── guix-hash.sh
+│   │       ├── guix-home.sh
+│   │       ├── guix-lint.sh
+│   │       ├── guix-locate.sh
+│   │       ├── guix-package-aliases.sh
+│   │       ├── guix-package-net.sh
+│   │       ├── guix-package.sh
+│   │       ├── guix-pack-localstatedir.sh
+│   │       ├── guix-pack-relocatable.sh
+│   │       ├── guix-pack.sh
+│   │       ├── guix-refresh.sh
+│   │       ├── guix-repl.sh
+│   │       ├── guix-shell-export-manifest.sh
+│   │       ├── guix-shell.sh
+│   │       ├── guix-style.sh
+│   │       ├── guix-system.sh
+│   │       ├── guix-time-machine.sh
+│   │       ├── home-import.scm
+│   │       ├── home-services.scm
+│   │       ├── http-client.scm
+│   │       ├── import
+│   │       │   ├── composer.scm
+│   │       │   ├── cpan.scm
+│   │       │   ├── cran.scm
+│   │       │   ├── crate.scm
+│   │       │   ├── egg.scm
+│   │       │   ├── elm.scm
+│   │       │   ├── elpa.scm
+│   │       │   ├── gem.scm
+│   │       │   ├── github.scm
+│   │       │   ├── git.scm
+│   │       │   ├── go.scm
+│   │       │   ├── hackage.scm
+│   │       │   ├── hexpm.scm
+│   │       │   ├── luanti.scm
+│   │       │   ├── npm-binary.scm
+│   │       │   ├── nuget.scm
+│   │       │   ├── opam.scm
+│   │       │   ├── print.scm
+│   │       │   ├── pypi.scm
+│   │       │   ├── texlive.scm
+│   │       │   └── utils.scm
+│   │       ├── inferior.scm
+│   │       ├── ipfs.scm
+│   │       ├── keys
+│   │       │   ├── civodul.pub
+│   │       │   ├── dsa.pub
+│   │       │   ├── ed25519-2.pub
+│   │       │   ├── ed25519-2.sec
+│   │       │   ├── ed25519-3.pub
+│   │       │   ├── ed25519-3.sec
+│   │       │   ├── ed25519.pub
+│   │       │   ├── ed25519.sec
+│   │       │   ├── rsa.pub
+│   │       │   ├── signing-key.pub
+│   │       │   └── signing-key.sec
+│   │       ├── ld-wrapper.scm
+│   │       ├── lint.scm
+│   │       ├── machine
+│   │       │   ├── hetzner
+│   │       │   │   └── http.scm
+│   │       │   └── hetzner.scm
+│   │       ├── modules.scm
+│   │       ├── monads.scm
+│   │       ├── nar.scm
+│   │       ├── networking.scm
+│   │       ├── offload.scm
+│   │       ├── openpgp.scm
+│   │       ├── packages.scm
+│   │       ├── pack.scm
+│   │       ├── pki.scm
+│   │       ├── processes.scm
+│   │       ├── profiles.scm
+│   │       ├── publish.scm
+│   │       ├── read-print.scm
+│   │       ├── records.scm
+│   │       ├── rpm.scm
+│   │       ├── scripts.scm
+│   │       ├── search-paths.scm
+│   │       ├── services
+│   │       │   ├── configuration.scm
+│   │       │   ├── file-sharing.scm
+│   │       │   ├── lightdm.scm
+│   │       │   ├── linux.scm
+│   │       │   ├── pam-mount.scm
+│   │       │   ├── telephony.scm
+│   │       │   ├── vpn.scm
+│   │       │   └── xorg.scm
+│   │       ├── services.scm
+│   │       ├── sets.scm
+│   │       ├── size.scm
+│   │       ├── status.scm
+│   │       ├── store-database.scm
+│   │       ├── store-deadlock.scm
+│   │       ├── store-deduplication.scm
+│   │       ├── store-roots.scm
+│   │       ├── store.scm
+│   │       ├── style.scm
+│   │       ├── substitute.scm
+│   │       ├── swh.scm
+│   │       ├── syscalls.scm
+│   │       ├── system.scm
+│   │       ├── test.drv
+│   │       ├── toml.scm
+│   │       ├── transformations.scm
+│   │       ├── ui.scm
+│   │       ├── union.scm
+│   │       ├── upstream.scm
+│   │       ├── utils.scm
+│   │       ├── uuid.scm
+│   │       └── workers.scm
+│   └── nonguix
+│       ├── guix
+│       │   └── import
+│       │       ├── firefox.scm
+│       │       └── nvidia.scm
+│       ├── nongnu
+│       │   ├── ci.scm
+│       │   ├── packages
+│       │   │   ├── anydesk.scm
+│       │   │   ├── benchmark.scm
+│       │   │   ├── cad.scm
+│       │   │   ├── chrome.scm
+│       │   │   ├── chromium.scm
+│       │   │   ├── clojure.scm
+│       │   │   ├── compression.scm
+│       │   │   ├── coq.scm
+│       │   │   ├── databases.scm
+│       │   │   ├── dotnet.scm
+│       │   │   ├── dyalog.scm
+│       │   │   ├── editors.scm
+│       │   │   ├── electron.scm
+│       │   │   ├── emacs.scm
+│       │   │   ├── emulators.scm
+│       │   │   ├── engineering.scm
+│       │   │   ├── firmware.scm
+│       │   │   ├── fonts.scm
+│       │   │   ├── game-client.scm
+│       │   │   ├── game-development.scm
+│       │   │   ├── gog.scm
+│       │   │   ├── gradle.scm
+│       │   │   ├── hardware.scm
+│       │   │   ├── hugo.scm
+│       │   │   ├── k8s.scm
+│       │   │   ├── linux.scm
+│       │   │   ├── lisp.scm
+│       │   │   ├── messaging.scm
+│       │   │   ├── mozilla.scm
+│       │   │   ├── music.scm
+│       │   │   ├── ncurses.scm
+│       │   │   ├── node.scm
+│       │   │   ├── nvidia.scm
+│       │   │   ├── password-utils.scm
+│       │   │   ├── patches
+│       │   │   │   ├── firefox-add-store-to-rdd-allowlist.patch
+│       │   │   │   ├── firefox-esr-add-store-to-rdd-allowlist.patch
+│       │   │   │   ├── firefox-esr-use-system-wide-dir.patch
+│       │   │   │   ├── firefox-ge-138-compare-paths.patch
+│       │   │   │   ├── firefox-restore-desktop-files.patch
+│       │   │   │   └── firefox-use-system-wide-dir.patch
+│       │   │   ├── playonlinux.scm
+│       │   │   ├── printers.scm
+│       │   │   ├── productivity.scm
+│       │   │   ├── radio.scm
+│       │   │   ├── scanner.scm
+│       │   │   ├── sml.scm
+│       │   │   ├── version-control.scm
+│       │   │   ├── video.scm
+│       │   │   ├── vpn.scm
+│       │   │   ├── wasm.scm
+│       │   │   └── wine.scm
+│       │   ├── packages.scm
+│       │   ├── services
+│       │   │   ├── nvidia.scm
+│       │   │   └── vpn.scm
+│       │   └── system
+│       │       ├── install.scm
+│       │       └── linux-initrd.scm
+│       ├── nonguix
+│       │   ├── build
+│       │   │   ├── binary-build-system.scm
+│       │   │   ├── chromium-binary-build-system.scm
+│       │   │   └── utils.scm
+│       │   ├── build-system
+│       │   │   ├── binary.scm
+│       │   │   └── chromium-binary.scm
+│       │   ├── download.scm
+│       │   ├── licenses.scm
+│       │   ├── modules.scm
+│       │   ├── multiarch-container.scm
+│       │   ├── transformations.scm
+│       │   └── utils.scm
+│       └── nonguix.scm
+├── todo.org
+└── tree.txt
+
+192 directories, 3694 files
