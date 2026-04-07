@@ -1,6 +1,6 @@
 * OPENCODE.EL — Emacs Interface to OpenCode
 :PROPERTIES:
-:PACKAGE:  emacs-opencode-el
+:PACKAGE:  opencode
 :CATEGORY: ai
 :VERSION:  0.0.1
 :END:
