@@ -23,20 +23,21 @@ Integrates with org-supertag for hierarchical tagging and note discovery.
 :END:
 
 #+BEGIN_SRC emacs-lisp
-;; Use org-id instead of date-based filenames
+;; Configure denote to use org-id for file naming
 (setq denote-directory (expand-file-name "~/denote"))
+
+;; Use identifier-only format (org-id based) instead of date-based
 (setq denote-file-type 'org)
-(setq denote-infer-keywords t)
-(setq denote-sort-keywords t)
+(setq denote-naming-scheme 'identifier-only)
 
-;; Use org-id for filenames instead of dates
+;; Use org-id format for identifiers
+(setq denote-id-format 'uuid)
 (setq denote-prompts '(title keywords))
-(setq denote-date-prompt-use-org-read-date nil)
 
-;; Org-id configuration for denote files
+;; Org-id configuration
 (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 
-;; Auto-add org-id to new denote files
+;; Auto-create org-id for denote files
 (add-hook 'denote-mode-hook
           (lambda ()
             (when (and (buffer-file-name)
@@ -54,9 +55,6 @@ Integrates with org-supertag for hierarchical tagging and note discovery.
     (denote-mode 1)))
 
 (add-hook 'org-mode-hook #'denote--auto-enable)
-
-;; Link formatting with org-id
-(setq denote-link-format-org-with-post-title-emphasis t)
 #+END_SRC
 
 ** Usage with org-supertag
@@ -66,7 +64,7 @@ Denote notes can be tagged with org-supertag for hierarchical organization:
 #+BEGIN_SRC org
 * Meeting Notes :meeting:project-x:
 :PROPERTIES:
-:ID: unique-org-id
+:ID: 550e8400-e29b-41d4-a716-446655440000
 :KEYWORDS: meeting project
 :END:
 
@@ -74,7 +72,8 @@ Discussion about denote integration...
 #+END_SRC
 
 Each denote file:
-- Uses org-id (UUID) as unique identifier
+- Uses UUID (org-id) as unique identifier
 - Maintains keywords for search/filtering
 - Can be tagged with org-supertag categories
 - Integrates with literate-config-system packages
+
