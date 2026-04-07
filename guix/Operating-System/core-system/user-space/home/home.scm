@@ -3,6 +3,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services xdg)
   #:use-module (gnu services guix)
+  #:use-module (gnu packages emacs-xyz)
   #:use-module (guix gexp)
   #:use-module (core-system user-space home loaders audio)
   #:use-module (core-system user-space root editors emacs-packages)
@@ -22,7 +23,11 @@
                                 opencode
                                 emacs-avy
                                 emacs-geiser
-                                emacs-geiser-guile))
+                                emacs-geiser-guile
+                                emacs-god-mode
+                                emacs-modus-themes
+                                emacs-multiple-cursors
+                                emacs-mcp))
           (simple-service 'wireplumber-config
                           home-xdg-configuration-files-service-type
                           (list (list "wireplumber/wireplumber.conf.d/disable-logind.conf"
