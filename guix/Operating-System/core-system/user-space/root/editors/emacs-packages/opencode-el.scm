@@ -27,8 +27,8 @@
            emacs-plz-event-source))
     (arguments
      (list
-       #:include (list "^opencode" "^README")
-       #:exclude (list "^.*test\\.el$" "^AGENTS\\.md$")))
+       #:include (list "^opencode.*\\.el$" "^README\\..*")
+       #:exclude (list ".*-test\\.el$" "^AGENTS\\.md$")))
     (home-page "https://codeberg.org/sczi/opencode.el")
     (synopsis "Emacs interface to OpenCode")
     (description

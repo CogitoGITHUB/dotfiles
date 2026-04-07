@@ -20,8 +20,8 @@
     (build-system emacs-build-system)
     (arguments
      (list
-       #:include (list "^mcp-server-lib" "^emacs-mcp-stdio")
-       #:exclude (list "^.+test\\.el$" "^.*-test\\.el$")))
+       #:include (list "^mcp-server-lib.*\\.el$" "^emacs-mcp-stdio.*\\.el$")
+       #:exclude (list ".*-test\\.el$")))
     (home-page "https://github.com/laurynas-biveinis/mcp-server-lib.el")
     (synopsis "Emacs library for implementing MCP servers")
     (description
