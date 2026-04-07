@@ -15,9 +15,9 @@ Hierarchical tagging system for Org-mode with powerful query and filtering capab
 ** Config
 
 #+BEGIN_SRC elisp :config
-;; org-supertag doesn't have a mode, but provides supertag- commands
-;; Enable vault indicator if you want to show current vault
+(setq org-supertag-sync-directories '("~/.config/emacs"
+                                      "~/org"
+                                      "~/.config"))
 (when (fboundp 'supertag-vault-indicator-mode)
   (supertag-vault-indicator-mode 1))
-(message "✓ org-supertag loaded and ready")
 #+END_SRC
