@@ -1,0 +1,93 @@
+* GEISER — Emacs Scheme IDE Integration
+:PROPERTIES:
+:PACKAGE:  geiser
+:CATEGORY: development
+:VERSION:  0.31
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+Geiser provides a powerful interactive development environment for Scheme in Emacs. It connects Emacs to a running Scheme REPL (read-eval-print-loop) for live coding, debugging, and experimentation.
+
+*Key Features:*
+- Interactive Scheme evaluation
+- REPL in Emacs buffer
+- Macro expansion
+- Symbol lookup and completion
+- Jump to definition
+- Debugger integration
+- Support for multiple Scheme implementations (Guile, Racket, etc.)
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GEISER — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'geiser)
+
+#+end_src
+
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GEISER — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Default Scheme implementation (Guile is primary for LiterativeOS)
+(setq geiser-default-implementation 'guile)
+
+;; Auto-switch to Geiser REPL when evaluating expressions
+(setq geiser-mode-auto-p t)
+
+;; Display image results inline
+(setq geiser-image-cache-dir (format "%s/geiser-images" user-emacs-directory))
+
+;; Enable eldoc in scheme files
+(add-hook 'geiser-mode-hook (lambda () (eldoc-mode 1)))
+
+#+end_src
+
+** Keybindings
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § GEISER — KEYBINDINGS
+;; ════════════════════════════════════════════════════════════
+
+;; Geiser automatically adds keybindings in scheme buffers:
+;; C-c C-z   - Switch to Geiser REPL
+;; C-x C-e   - Evaluate last s-expression
+;; C-c C-b   - Evaluate current buffer
+;; C-c C-r   - Evaluate region
+;; C-c C-m   - Expand macro
+;; C-c C-l   - Load current file
+
+#+end_src
+
+** Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+Geiser requires a Scheme implementation to be available. For LiterativeOS:
+
+- **Guile** (via emacs-geiser-guile) is the primary implementation
+- Used extensively for Guix package definitions
+- Perfect for interactive Scheme development
+
+To use: `M-x geiser` starts a new Guile REPL in Emacs.

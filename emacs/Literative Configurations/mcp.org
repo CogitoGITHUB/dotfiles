@@ -1,0 +1,60 @@
+* MCP — Model Context Protocol for Emacs
+:PROPERTIES:
+:PACKAGE:  mcp
+:CATEGORY: ai
+:VERSION:  0.1.0
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+MCP (Model Context Protocol) enables Emacs to communicate with AI models and LLMs through a standardized protocol. Perfect for integrating OpenCode and other AI assistants directly into your editor.
+
+*Key Features:*
+- Standard protocol for AI communication
+- Works with Claude, OpenAI, and other models
+- Share context from your buffer with AI
+- Insert AI responses directly into documents
+- Error handling and streaming support
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MCP — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'mcp)
+
+#+end_src
+
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § MCP — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; MCP provides the foundation for AI integrations
+;; Configuration is typically handled by specific backends (claude-code, llm, etc.)
+
+#+end_src
+
+** Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+MCP is the communication layer that:
+- Connects Emacs to OpenCode and other AI systems
+- Handles protocol details transparently
+- Works with org-mode for context sharing
+- Enables literate AI development

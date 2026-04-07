@@ -1,0 +1,126 @@
+#+TITLE: OpenCode AI Integration
+#+AUTHOR: Shape
+
+* OPENCODE — AI Coding Agent for LiterativeOS
+:PROPERTIES:
+:PACKAGE:  opencode
+:CATEGORY: ai
+:VERSION:  1.3.0
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+OpenCode is the core AI engine that powers LiterativeOS. It provides:
+
+- **Code Generation** - Create packages, configurations, and modules
+- **Literate Support** - Works seamlessly with org-mode
+- **System Awareness** - Understands Guix, Scheme, and your architecture
+- **Context Integration** - Shares context with literate-config-system
+- **Interactive Development** - Live coding with AI assistance
+
+** Architecture Role
+:PROPERTIES:
+:tangle: no
+:END:
+
+OpenCode is positioned at the center of LiterativeOS:
+
+#+begin_src
+                     OPENCODE (Center)
+                          |
+         ____________________+____________________
+        |           |            |           |
+    Primitives   Mind        World        Forge
+    (Core)    (Config)     (System)   (Development)
+        |           |            |           |
+    Guix      Emacs/Org    Shell/Git   Programming
+    Packages   Literate     Services     Languages
+#+end_src
+
+** Why Built With OpenCode
+:PROPERTIES:
+:tangle: no
+:END:
+
+1. **Consistency** - Single AI voice across all system layers
+2. **Understanding** - OpenCode understands literate programming
+3. **Evolution** - System grows and improves through AI feedback
+4. **Documentation** - All changes documented in org-mode
+5. **Integration** - Works with Guix, Emacs, Scheme naturally
+
+** System Integration Points
+:PROPERTIES:
+:tangle: no
+:END:
+
+*** 1. Package Development
+Create new Guix packages with OpenCode guidance:
+#+begin_src bash
+opencode prompt --file package.scm
+# Get help with module structure, dependencies, etc.
+#+end_src
+
+*** 2. Literate Configuration
+Develop org-mode configs with AI assistance:
+#+begin_src bash
+opencode prompt --file config.org
+# Structure configs, generate elisp, validate syntax
+#+end_src
+
+*** 3. System Architecture
+Maintain manuals.org (87,698 lines) with OpenCode:
+#+begin_src bash
+opencode prompt --file manuals.org
+# Refactor sections, improve documentation, ensure consistency
+#+end_src
+
+*** 4. Scheme Development
+Interactive Guile/Guix development:
+#+begin_src bash
+opencode prompt --file module.scm
+# Debug, optimize, understand complex code
+#+end_src
+
+** Usage Workflow
+:PROPERTIES:
+:tangle: no
+:END:
+
+Typical LiterativeOS development:
+
+1. **Start OpenCode** - `opencode prompt` in terminal
+2. **Share Context** - Show relevant org files or code
+3. **Get Suggestions** - Receive AI-powered recommendations
+4. **Implement Changes** - Create/modify files based on guidance
+5. **Validate** - Test with Guix or Emacs
+6. **Iterate** - Refine with OpenCode feedback
+
+** Guix Package Module
+:PROPERTIES:
+:tangle: no
+:END:
+
+The opencode.scm module:
+
+#+begin_src scheme
+(define-module (core-system user-space root editors emacs-packages opencode)
+  #:use-module (core-system user-space root ai opencode)
+  #:re-export (opencode)
+  #:export (opencode-config))
+
+;; Provides access to OpenCode CLI tool
+;; Configuration metadata for literate system
+#+end_src
+
+** References
+:PROPERTIES:
+:tangle: no
+:END:
+
+- OpenCode: https://opencode.ai
+- GitHub: https://github.com/anomalyco/opencode
+- Feedback: https://github.com/anomalyco/opencode/issues
+- System Philosophy: See ~/manuals.org Primitives section

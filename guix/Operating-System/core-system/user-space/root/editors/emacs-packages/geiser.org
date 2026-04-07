@@ -1,0 +1,88 @@
+#+TITLE: Geiser Integration for Emacs
+#+AUTHOR: Shape
+
+* GEISER — Emacs Scheme IDE Integration
+:PROPERTIES:
+:PACKAGE:  geiser
+:CATEGORY: development
+:VERSION:  0.31
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+Geiser provides a powerful interactive development environment for Scheme in Emacs. It connects Emacs to a running Scheme REPL for live coding and debugging.
+
+*Key Features:*
+- Interactive Scheme evaluation with multiple implementations
+- REPL in Emacs buffer
+- Macro expansion
+- Symbol lookup and completion
+- Jump to definition
+- Debugger integration
+- Support for Guile (primary for LiterativeOS), Racket, and more
+
+** Architecture Note
+:PROPERTIES:
+:tangle: no
+:END:
+
+Geiser is critical for LiterativeOS because:
+
+1. **Guix uses Scheme** - Geiser lets you interactively develop Guix modules
+2. **System configuration** - Debug and test Guix code live
+3. **Integration** - Works seamlessly with our literate-config-system (also Scheme-based)
+4. **Development** - Essential for modifying Guix packages and Scheme code
+
+** Guix Package Module
+:PROPERTIES:
+:tangle: no
+:END:
+
+The geiser.scm module provides:
+
+#+begin_src scheme
+(define-module (core-system user-space root editors emacs-packages geiser)
+  #:use-module (gnu packages emacs-xyz)
+  #:re-export (emacs-geiser emacs-geiser-guile))
+#+end_src
+
+This re-exports:
+- `emacs-geiser` - Main Geiser package
+- `emacs-geiser-guile` - Guile implementation support
+
+** Emacs Configuration
+:PROPERTIES:
+:tangle: no
+:END:
+
+The geiser.org in Literative Configurations handles Emacs-side setup:
+- Auto-initialization
+- Guile as default implementation
+- REPL mode hooks
+- Keybindings
+
+** Usage
+:PROPERTIES:
+:tangle: no
+:END:
+
+After Emacs loads with our system:
+
+1. Open a `.scm` or `.ss` Scheme file
+2. Press `M-x geiser` or `C-c C-z` to start REPL
+3. Use `C-x C-e` to evaluate expressions
+4. Use `C-c C-b` to evaluate entire buffer
+
+Perfect for interactive Guix development!
+
+** References
+:PROPERTIES:
+:tangle: no
+:END:
+
+- Geiser manual: https://www.nongnu.org/geiser/geiser_manual.html
+- Guile manual: https://www.gnu.org/software/guile/manual/
+- Integration with Guix: Essential for package development

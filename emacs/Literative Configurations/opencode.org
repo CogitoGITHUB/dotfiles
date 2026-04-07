@@ -1,0 +1,108 @@
+* OPENCODE — AI Coding Agent Integration
+:PROPERTIES:
+:PACKAGE:  opencode
+:CATEGORY: ai
+:VERSION:  1.3.0
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+OpenCode is the open source AI coding agent that powers LiterativeOS. It provides intelligent code completion, generation, refactoring, and literate programming support.
+
+*Key Features:*
+- AI-powered code generation and completion
+- Understands your codebase context
+- Works with literate-config-system
+- Integrates with Emacs and terminal
+- Supports multiple programming languages
+- Helps with Guix package definitions and Scheme code
+
+** Why OpenCode for LiterativeOS
+:PROPERTIES:
+:tangle: no
+:END:
+
+LiterativeOS is built *with* OpenCode:
+1. **System design** documented in ~/manuals.org (87,698 lines)
+2. **Guix packages** generated with AI assistance
+3. **Literate configs** created and refined by OpenCode
+4. **Architecture** layered approach (Primitives → Mind → World → Forge → Archives)
+5. **Integration** OpenCode helps maintain coherence across all layers
+
+## Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § OPENCODE — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+;; OpenCode integration is available via opencode CLI
+;; No Elisp initialization needed - accessed via terminal or shell
+
+#+end_src
+
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § OPENCODE — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Access OpenCode via M-x shell or terminal integration
+;; Use: opencode help  for all commands
+;; Use: opencode prompt  to start interactive session
+
+#+end_src
+
+** Integration Points
+:PROPERTIES:
+:tangle: no
+:END:
+
+OpenCode integrates with LiterativeOS at multiple levels:
+
+1. **System Bootstrap** - Guides initial setup and architecture
+2. **Package Development** - Helps create and refine Guix packages
+3. **Literate Programming** - Assists with org-mode configuration
+4. **Scheme Development** - Supports Guix module and Guile code
+5. **Documentation** - Maintains consistency across manuals.org
+
+** Usage Examples
+:PROPERTIES:
+:tangle: no
+:END:
+
+From Emacs terminal:
+
+#+begin_src bash
+# Start interactive OpenCode session
+opencode prompt
+
+# Get help on commands
+opencode help
+
+# Work with specific files
+opencode prompt --file path/to/file.scm
+
+# Analyze codebase
+opencode analyze ~/guix/Operating-System/
+#+end_src
+
+** References
+:PROPERTIES:
+:tangle: no
+:END:
+
+- OpenCode website: https://opencode.ai
+- OpenCode GitHub: https://github.com/anomalyco/opencode
+- LiterativeOS integration: System-wide AI assistance
+- MCP Protocol: Communication between Emacs and OpenCode
