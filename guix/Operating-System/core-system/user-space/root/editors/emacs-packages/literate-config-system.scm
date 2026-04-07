@@ -1,5 +1,6 @@
 (define-module (core-system user-space root editors emacs-packages literate-config-system)
   #:use-module (srfi srfi-1)
+  #:use-module (gnu packages emacs-xyz)
   #:export (literate-config-system make-lcs-config lcs-config?))
 
 ;; ════════════════════════════════════════════════════════════════════════════
@@ -35,6 +36,7 @@ DEFER: #t if should defer loading"
 ;; § LITERATE-CONFIG-SYSTEM PROVIDER
 ;; ════════════════════════════════════════════════════════════════════════════
 
-;; The actual loader is the Elisp file in ~/.config/emacs/lisp/literate-config-system/
-;; This Scheme module just provides the package declaration and metadata
-(define literate-config-system 'literate-config-system-package)
+;; The actual loader is the Elisp file in ~/.config/emacs/lisp/
+;; Since it's elisp-only, we re-export emacs-org which it depends on
+;; This ensures the loader has all dependencies in system
+(define-public literate-config-system emacs-org)
