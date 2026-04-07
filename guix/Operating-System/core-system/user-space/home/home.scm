@@ -2,8 +2,10 @@
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services xdg)
+  #:use-module (gnu home services shepherd)
   #:use-module (gnu services guix)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages emacs)
   #:use-module (guix gexp)
   #:use-module (core-system user-space home loaders audio)
   #:use-module (core-system user-space root editors emacs-packages)
@@ -15,6 +17,22 @@
       (append
         home-audio-services
         (list
+          ;; Emacs daemon service - starts emacs --daemon at login
+          ;; Uses guix shell wrapper to ensure proper library paths
+          (simple-service 'emacs-daemon
+                          home-shepherd-service-type
+                          (list
+                            (shepherd-service
+                              (provision '(emacs))
+                              (documentation "Start the Emacs daemon using guix environment for proper library paths.")
+                              (requirement '())
+                              (start #~(make-forkexec-constructor
+                                         (list #$(file-append emacs "/bin/emacs")
+                                               "--daemon"
+                                               "--no-native-compile")
+                                         #:log-file (string-append (getenv "HOME") "/.emacs.d/daemon.log")))
+                              (stop #~(make-kill-destructor))
+                              (respawn? #f))))
           ;; Home-wide packages - available in user's ~/.guix-home/profile
           (simple-service 'home-packages
                           home-profile-service-type
