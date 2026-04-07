@@ -1,6 +1,7 @@
 * Org-Supertag
 :PROPERTIES:
 :PACKAGE: org-supertag
+:CATEGORY: system
 :END:
 
 Hierarchical tagging system for Org-mode with powerful query and filtering capabilities.
@@ -27,3 +28,68 @@ Hierarchical tagging system for Org-mode with powerful query and filtering capab
 (when (fboundp 'supertag-vault-indicator-mode)
   (supertag-vault-indicator-mode 1))
 #+END_SRC
+
+** LiterativeOS Package Tags
+
+LiterativeOS integrates org-supertag with literate-config-system to automatically tag and organize packages:
+
+*** Tag Categories
+
+The following categories organize LiterativeOS packages:
+
+- *ai* - AI and machine learning packages (opencode, mcp, org-mcp, emacs-org-mcp)
+- *development* - Development and REPL tools (geiser)
+- *editing* - Text editing enhancements (god-mode, multiple-cursors)
+- *framework* - Core frameworks and loaders (leaf)
+- *navigation* - Text navigation packages (avy)
+- *system* - System management packages (org-supertag)
+- *ui* - User interface packages (modus-themes, dashboard)
+
+*** Package Registry
+
+When literate-config-system loads packages, it automatically:
+
+1. Creates nodes for each package in org-supertag
+2. Tags each node with its category from the :CATEGORY: property
+3. Stores package metadata (filename, category) for queries
+4. Enables filtering packages by category
+
+*** Querying Package Tags
+
+List all packages in a category:
+
+#+BEGIN_SRC emacs-lisp
+;; Find all AI packages
+(let ((ai-packages (mapcar (lambda (meta) (car meta))
+                           (seq-filter (lambda (m) (equal (nth 2 m) "ai"))
+                                       lc--package-metadata))))
+  ai-packages)
+;; → ("opencode" "mcp" "emacs-org-mcp" "org-mcp")
+
+;; Find all editing packages
+(let ((editing-packages (mapcar (lambda (meta) (car meta))
+                                (seq-filter (lambda (m) (equal (nth 2 m) "editing"))
+                                            lc--package-metadata))))
+  editing-packages)
+;; → ("god-mode" "multiple-cursors")
+#+END_SRC
+
+*** All Registered Packages
+
+Current packages registered with org-supertag (via literate-config-system):
+
+| Package           | Category    | Source File              |
+|-------------------|-------------|--------------------------|
+| avy               | navigation  | avy.org                  |
+| dashboard         | ui          | dashboard.org            |
+| geiser            | development | geiser.org               |
+| god-mode          | editing     | god-mode.org             |
+| leaf              | framework   | leaf.org                 |
+| mcp               | ai          | mcp.org                  |
+| emacs-org-mcp     | ai          | org-mcp.org              |
+| mcp-server-lib    | ai          | mcp-server-lib.org       |
+| modus-themes      | ui          | modus-theme.org          |
+| multiple-cursors  | editing     | multiple-cursors.org     |
+| opencode          | ai          | opencode-el.org          |
+| org-supertag      | system      | org-supertag.org         |
+

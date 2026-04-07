@@ -1,6 +1,7 @@
 * Dashboard
 :PROPERTIES:
 :PACKAGE: dashboard
+:CATEGORY: ui
 :END:
 
 Startup screen showing LiterativeOS system status, recent files, and quick actions.
