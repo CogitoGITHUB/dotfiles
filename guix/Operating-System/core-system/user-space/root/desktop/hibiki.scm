@@ -20,9 +20,9 @@
     (source
      (origin
        (method url-fetch)
-       (uri "file:///tmp/hibiki-build/target/release/hibiki")
+       (uri "file:///home/aoeu/.local/share/guix-binaries/hibiki")
        (sha256
-        (base32 "1jx0lyirk9mkl3wwvg4rnfmn48yqch7y63ajm3x2jhrh294my4rv"))))
+        (base32 "08krjb0xdp2wnjnjqimk41hszhsba7f64vm2np3f09s1n10r3hgf"))))
     (build-system trivial-build-system)
     (inputs (list gtk
                   gtk4-layer-shell

@@ -17,9 +17,9 @@
     (source
      (origin
        (method url-fetch)
-       (uri "file:///tmp/wayscriber-build/target/release/wayscriber")
+       (uri "file:///home/aoeu/.local/share/guix-binaries/wayscriber")
        (sha256
-        (base32 "04sr64dswc0vql7bas0aj0z2h9ipm491frg04cjk38w59giazxcs"))))
+        (base32 "02nk9qap3h53dsng1sbm6hzv4xdg7imizrf2aac4ir6igg7szkld"))))
     (build-system trivial-build-system)
     (inputs (list gtk
                   libxkbcommon

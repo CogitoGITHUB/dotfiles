@@ -10,6 +10,7 @@
   #:use-module (gnu services databases)
   #:use-module (gnu packages databases)
   #:use-module (core-system user-space root security sops services)
+  #:use-module (core-system user-space root services greetd)
   #:use-module (core-system user-space root users users)
   #:use-module (core-system user-space root loaders core)
   #:use-module (core-system user-space root loaders networking)
@@ -80,7 +81,11 @@
   (append
     (list
      (service openssh-service-type)
-     (service sops-secrets-service-type (sops-service-configuration)))
+     (service sops-secrets-service-type (sops-service-configuration))
+     (service greetd-service-type
+              (greetd-configuration
+               (command "Hyprland --config /home/aoeu/.config/lock-screen/config/greeter.hyprland.conf")
+               (user "greeter"))))
     root-networking-services
     root-containers-services
     root-audio-services
