@@ -1,19 +1,23 @@
 * Org-Supertag
 :PROPERTIES:
-:DISABLED: t
+:PACKAGE: org-supertag
 :END:
 
-Hierarchical tagging system for Org-mode with powerful query and filtering.
+Hierarchical tagging system for Org-mode with powerful query and filtering capabilities.
 
-WARNING: org-supertag requires many dependencies (gptel, posframe, and many internal modules).
-It's complex to integrate automatically. To use:
+** Init
 
-#+BEGIN_SRC elisp
-M-x eval-expression
-(progn
-  (add-to-list 'load-path "~/.config/emacs/lisp/org-supertag")
-  (require 'org-supertag)
-  (org-supertag-mode 1))
+#+BEGIN_SRC elisp :init
+(add-to-list 'load-path 
+             (expand-file-name "lisp/org-supertag" user-emacs-directory))
 #+END_SRC
 
-Source: https://github.com/yibie/org-supertag.git
+** Config
+
+#+BEGIN_SRC elisp :config
+;; org-supertag doesn't have a mode, but provides supertag- commands
+;; Enable vault indicator if you want to show current vault
+(when (fboundp 'supertag-vault-indicator-mode)
+  (supertag-vault-indicator-mode 1))
+(message "✓ org-supertag loaded and ready")
+#+END_SRC

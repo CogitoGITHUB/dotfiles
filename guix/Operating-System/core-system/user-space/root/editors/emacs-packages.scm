@@ -16,8 +16,8 @@
   #:use-module (core-system user-space root editors emacs-packages mcp-server-lib)
   #:use-module (core-system user-space root editors emacs-packages org-mcp)
    #:use-module (core-system user-space root editors emacs-packages opencode-el)
-   #:re-export (emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el)
-  #:export (root-emacs-packages))
+    #:re-export (emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-ht emacs-gptel emacs-posframe)
+   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-ht))
+  (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-ht emacs-gptel emacs-posframe))
