@@ -1,11 +1,12 @@
 ;;; literate-config-system.el --- Guix-native Literate Config Loader -*- lexical-binding: t -*-
 ;; Author: Shape
-;; Version: 5.0.0
-;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0"))
+;; Version: 5.1.0
+;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0") (org-supertag "5.8"))
 ;;; Code:
 
 (require 'org)
 (require 'cl-lib)
+(require 'org-supertag nil 'noerror)
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § CONFIGURATION
@@ -44,6 +45,9 @@
 
 (defvar lc--load-order nil
   "Ordered list of files as they were processed.")
+
+(defvar lc--package-metadata nil
+  "Alist of (package . (file category)) for org-supertag registration.")
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § SILENT MESSAGING
@@ -87,15 +91,16 @@ Guix sets EMACSLOADPATH; this makes sure Emacs sees it."
 (defun lc--extract-props ()
   "Extract package properties from org entry at point.
 Returns a plist or nil if no :PACKAGE: property found."
-  (let* ((props (org-entry-properties nil 'standard))
-         (package (cdr (assoc "PACKAGE" props))))
-    (when package
-      (list :package  package
-            :after    (cdr (assoc "AFTER"    props))
-            :depends  (cdr (assoc "DEPENDS"  props))
-            :category (cdr (assoc "CATEGORY" props))
-            :built-in (cdr (assoc "BUILT-IN" props))
-            :defer    (cdr (assoc "DEFER"    props))))))
+  (let ((warning-minimum-level :error))  ;; Suppress org-element warnings
+    (let* ((props (org-entry-properties nil 'standard))
+           (package (cdr (assoc "PACKAGE" props))))
+      (when package
+        (list :package  package
+              :after    (cdr (assoc "AFTER"    props))
+              :depends  (cdr (assoc "DEPENDS"  props))
+              :category (cdr (assoc "CATEGORY" props))
+              :built-in (cdr (assoc "BUILT-IN" props))
+              :defer    (cdr (assoc "DEFER"    props)))))))
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § CODE BLOCK EXTRACTION
@@ -180,7 +185,8 @@ Runs INIT-CODE, requires package, then runs CONFIG-CODE."
 ;; ════════════════════════════════════════════════════════════════════
 
 (defun lc--load-file (file)
-  "Process a single org FILE, loading all package headlines within it."
+  "Process a single org FILE, loading all package headlines within it.
+Also stores metadata for org-supertag registration."
   (condition-case err
       (with-temp-buffer
         (insert-file-contents file)
@@ -190,7 +196,8 @@ Runs INIT-CODE, requires package, then runs CONFIG-CODE."
         (while (re-search-forward "^\\* " nil t)
           (save-excursion
             (let* ((props (lc--extract-props))
-                   (package (plist-get props :package)))
+                   (package (plist-get props :package))
+                   (category (plist-get props :category)))
 
               (when (and props package)
                 (let* ((h-start (point))
@@ -206,7 +213,9 @@ Runs INIT-CODE, requires package, then runs CONFIG-CODE."
                             (lc--silent
                              (eval (lc--build-leaf props init-code config-code) t))
                           (lc--load-no-leaf props init-code config-code))
-                        (push package lc--loaded-packages))
+                        (push package lc--loaded-packages)
+                        ;; Store metadata for org-supertag
+                        (push (cons package (list file category)) lc--package-metadata))
                     (error
                      (let ((msg (format "%s in %s: %s"
                                         package
@@ -233,17 +242,45 @@ Runs INIT-CODE, requires package, then runs CONFIG-CODE."
      #'string<)))
 
 ;; ════════════════════════════════════════════════════════════════════
+;; § ORG-SUPERTAG INTEGRATION
+;; ════════════════════════════════════════════════════════════════════
+
+(defun lc--supertag-register-packages ()
+  "Register loaded packages as org-supertag nodes with category tags."
+  (when (and (featurep 'org-supertag) lc--package-metadata)
+    (lc--silent
+     (dolist (meta lc--package-metadata)
+       (let* ((package (car meta))
+              (file (car (cdr meta)))
+              (category (cadr (cdr meta)))
+              (tag-name (or category "uncategorized")))
+         (condition-case err
+             (progn
+               ;; Create package node
+               (supertag-node-create
+                (list :title (format "Package: %s" package)
+                      :type "package"
+                      :package package
+                      :file (file-name-nondirectory file)
+                      :category tag-name)))
+           (error
+            (message "Failed to register %s with org-supertag: %s"
+                     package (error-message-string err)))))))))
+
+;; ════════════════════════════════════════════════════════════════════
 ;; § MAIN ENTRY POINT
 ;; ════════════════════════════════════════════════════════════════════
 
 ;;;###autoload
 (defun literate-config-load ()
   "Load all literate org config files from `lc-org-directory'.
-Prints one success line or error details — nothing in between."
+Prints one success line or error details — nothing in between.
+Also registers packages with org-supertag if available."
   (interactive)
-  (setq lc--load-errors    nil
-        lc--loaded-packages nil
-        lc--load-order      nil)
+  (setq lc--load-errors      nil
+        lc--loaded-packages  nil
+        lc--load-order       nil
+        lc--package-metadata nil)
 
   (lc--ensure-guix-load-path)
 
@@ -260,9 +297,12 @@ Prints one success line or error details — nothing in between."
                      (length lc--load-errors))
             (dolist (e lc--load-errors)
               (message "  ✗ %s" (cdr e))))
-        (lc--log 'ok "%d packages loaded from %d files"
-                 (length lc--loaded-packages)
-                 (length files))))))
+        (progn
+          (lc--log 'ok "%d packages loaded from %d files"
+                   (length lc--loaded-packages)
+                   (length files))
+          ;; Register with org-supertag
+          (lc--supertag-register-packages))))))
 
 ;;;###autoload
 (defun literate-config-status ()
