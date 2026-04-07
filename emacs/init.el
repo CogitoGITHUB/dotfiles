@@ -14,6 +14,12 @@
           (when (file-directory-p dir)
             (add-to-list 'load-path dir)))))))
 
+;; Load Org from Guix before anything else that might load the built-in version
+;; This avoids "Org version mismatch" warnings
+(condition-case nil
+    (require 'org)
+  (file-missing nil))
+
 ;; Bootstrap leaf (installed via Guix Home, now on load-path)
 (require 'leaf)
 (condition-case nil
