@@ -257,24 +257,25 @@ FILE is the source config file, CATEGORY is the package category."
                 (note-file (expand-file-name 
                            (format "%s.org" (downcase package))
                            org-roam-directory)))
-           ;; Create note with org-roam
+           ;; Only create if doesn't exist
            (unless (file-exists-p note-file)
-             (org-roam-node-create
-              :title title
-              :file note-file)
-             ;; Add package metadata
+             ;; Create note file with title and metadata
              (with-current-buffer (find-file-noselect note-file)
-               (goto-char (point-max))
-               (insert (format "\n#+filetags: %s package\n\n" category))
+               (insert (format "#+title: %s\n#+filetags: package %s\n\n" title category))
+               ;; Create org-id
+               (org-id-get-create)
+               ;; Add package metadata section
                (insert (format "** Package Details\n:PROPERTIES:\n:PACKAGE: %s\n:SOURCE_FILE: %s\n:CATEGORY: %s\n:END:\n\n"
                                package file category))
                (insert (format "- **Package:** ~%s~\n" package))
                (insert (format "- **Source:** %s\n" file))
                (insert (format "- **Category:** %s\n" category))
                (insert "- **Status:** Loaded by literate-config-system\n")
-               (org-id-get-create)
                (save-buffer)
-               (kill-buffer))))
+               (kill-buffer))
+             ;; Add to org-roam database
+             (when (fboundp 'org-roam-db-update-file)
+               (org-roam-db-update-file note-file))))
        (error
         (message "Failed to create org-roam note for %s: %s"
                  package (error-message-string err)))))))
