@@ -1,3 +1,4 @@
+opencode -s ses_29dbdc1d7ffe5RRCCx3oaxoIX1
 
 add emacs daemon to system !! 
 

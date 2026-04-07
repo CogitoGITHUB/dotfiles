@@ -1,0 +1,198 @@
+* Modus Themes 
+:PROPERTIES:
+:PACKAGE:  modus-themes
+:STRAIGHT: (modus-themes :type git :host github :repo "protesilaos/modus-themes")
+:VERSION:  v4.4.0
+:CATEGORY: ui
+:END:
+
+** Description
+:PROPERTIES:
+:tangle: no
+:END:
+
+Modus Themes by Protesilaos Stavrou, configured for pure dark red text only. No background overrides anywhere. Cursor is grey.
+
+Repository: [[https://github.com/protesilaos/modus-themes][GitHub]]
+
+** Core Setup
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+(setq modus-themes-bold-constructs t
+      modus-themes-italic-constructs t
+      modus-themes-org-blocks 'gray-background
+      modus-themes-fringes 'intense
+      modus-themes-mode-line '(borderless)
+      modus-themes-common-palette-overrides
+      '((bg-main unspecified)
+        (bg-dim unspecified)
+        (bg-alt unspecified)
+        (bg-active unspecified)
+        (bg-inactive unspecified)
+        (bg-region "#d0d0d0")
+        (fringe unspecified)))
+#+end_src
+
+** Load Theme
+
+#+begin_src emacs-lisp
+(load-theme 'modus-operandi :no-confirm)
+#+end_src
+
+** Pure Dark-Red Override Function
+
+#+begin_src emacs-lisp
+(defun shapeshift/pure-monochrome ()
+  "Set dark red text globally, no backgrounds anywhere, grey cursor."
+
+  ;; Default text
+  (set-face-attribute 'default nil :foreground "#8B0000" :background 'unspecified)
+  (set-face-attribute 'fringe nil :foreground "#8B0000" :background 'unspecified)
+
+  ;; Selection
+  (set-face-attribute 'region nil :foreground "#8B0000" :background "#d0d0d0")
+  (set-face-attribute 'highlight nil :foreground "#8B0000" :background 'unspecified)
+
+  ;; Org headers
+  (dolist (level '(org-document-title org-level-1 org-level-2 org-level-3
+                   org-level-4 org-level-5 org-level-6 org-level-7 org-level-8))
+    (set-face-attribute level nil :foreground "#8B0000" :background 'unspecified :weight 'bold :inherit nil))
+  (set-face-attribute 'org-document-title nil :height 2.0)
+  (set-face-attribute 'org-level-1 nil :height 1.8)
+  (set-face-attribute 'org-level-2 nil :height 1.6)
+  (set-face-attribute 'org-level-3 nil :height 1.4)
+  (set-face-attribute 'org-level-4 nil :height 1.2)
+
+  ;; Org elements
+  (dolist (face '(org-link org-block org-block-begin-line org-block-end-line
+                  org-code org-verbatim org-meta-line org-todo org-done
+                  org-date org-special-keyword org-tag org-drawer
+                  org-property-value org-table))
+    (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'normal :inherit nil))
+
+  ;; Code faces
+  (dolist (face '(font-lock-comment-face font-lock-string-face font-lock-keyword-face
+                  font-lock-function-name-face font-lock-variable-name-face
+                  font-lock-type-face font-lock-constant-face font-lock-builtin-face
+                  font-lock-warning-face font-lock-doc-face font-lock-preprocessor-face
+                  font-lock-regexp-grouping-backslash font-lock-regexp-grouping-construct))
+    (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'normal :inherit nil))
+
+  ;; LaTeX
+  (with-eval-after-load 'tex-mode
+    (dolist (face '(font-latex-math-face font-latex-script-char-face
+                    font-latex-string-face font-latex-warning-face
+                    font-latex-sedate-face font-latex-sectioning-0-face
+                    font-latex-sectioning-1-face font-latex-sectioning-2-face
+                    font-latex-sectioning-3-face font-latex-sectioning-4-face
+                    font-latex-sectioning-5-face))
+      (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :inherit nil)))
+
+  ;; Dired
+  (with-eval-after-load 'dired
+    (dolist (face '(dired-directory dired-symlink dired-mark dired-marked
+                    dired-flagged dired-warning dired-perm-write dired-special
+                    dired-header dired-ignored))
+      (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'normal :inherit nil)))
+
+  ;; Magit
+  (with-eval-after-load 'magit
+    (dolist (face '(magit-section-heading magit-section-highlight magit-branch-local
+                    magit-branch-remote magit-branch-current magit-hash magit-tag
+                    magit-diff-added magit-diff-removed magit-diff-added-highlight
+                    magit-diff-removed-highlight magit-diff-context magit-diff-context-highlight
+                    magit-diff-hunk-heading magit-diff-hunk-heading-highlight
+                    magit-diff-file-heading magit-diff-file-heading-highlight magit-log-author
+                    magit-log-date magit-log-graph magit-process-ok magit-process-ng
+                    magit-signature-good magit-signature-bad magit-signature-untrusted
+                    magit-cherry-equivalent magit-cherry-unmatched))
+      (when (facep face)
+        (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'normal :inherit nil))))
+
+  ;; PDF-tools
+  (with-eval-after-load 'pdf-view
+    (setq pdf-view-midnight-colors '("#8B0000" . "unspecified")))
+
+  ;; Line numbers
+  (when (facep 'line-number)
+    (set-face-attribute 'line-number nil :foreground "#8B0000" :background 'unspecified)
+    (set-face-attribute 'line-number-current-line nil :foreground "#8B0000" :background 'unspecified :weight 'bold))
+
+  ;; Current line highlight
+  (with-eval-after-load 'hl-line
+    (set-face-attribute 'hl-line nil :background 'unspecified :inherit nil))
+
+  ;; Minibuffer
+  (dolist (face '(minibuffer-prompt completions-annotations completions-common-part
+                  completions-first-difference shadow help-key-binding))
+    (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'normal :inherit nil))
+  (when (facep 'completions-highlight)
+    (set-face-attribute 'completions-highlight nil :foreground "#8B0000" :background "#d0d0d0" :inherit nil))
+
+  ;; Vertico
+  (with-eval-after-load 'vertico
+    (dolist (face '(vertico-current vertico-group-title vertico-group-separator vertico-multiline))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#8B0000"
+                            :background (if (eq face 'vertico-current) "#d0d0d0" 'unspecified)
+                            :inherit nil))))
+
+  ;; Orderless
+  (with-eval-after-load 'orderless
+    (dolist (face '(orderless-match-face-0 orderless-match-face-1 orderless-match-face-2 orderless-match-face-3))
+      (set-face-attribute face nil :foreground "#8B0000" :background 'unspecified :weight 'bold :inherit nil)))
+
+  ;; Ivy
+  (with-eval-after-load 'ivy
+    (dolist (face '(ivy-current-match ivy-minibuffer-match-face-1 ivy-minibuffer-match-face-2
+                    ivy-minibuffer-match-face-3 ivy-minibuffer-match-face-4 ivy-action
+                    ivy-highlight-face ivy-remote ivy-subdir ivy-virtual ivy-confirm-face
+                    ivy-match-required-face))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#8B0000"
+                            :background (if (eq face 'ivy-current-match) "#d0d0d0" 'unspecified)
+                            :weight 'normal :inherit nil))))
+
+  ;; Helm
+  (with-eval-after-load 'helm
+    (dolist (face '(helm-selection helm-match helm-source-header helm-visible-mark
+                    helm-candidate-number helm-separator helm-M-x-key helm-buffer-directory
+                    helm-buffer-file helm-buffer-process helm-ff-directory helm-ff-file
+                    helm-grep-match))
+      (when (facep face)
+        (set-face-attribute face nil
+                            :foreground "#8B0000"
+                            :background (if (eq face 'helm-selection) "#d0d0d0" 'unspecified)
+                            :weight 'normal :inherit nil))))
+
+  ;; Mode line & header
+  (set-face-attribute 'mode-line nil :foreground "#8B0000" :background 'unspecified :box nil)
+  (set-face-attribute 'mode-line-inactive nil :foreground "#8B0000" :background 'unspecified :box nil)
+  (set-face-attribute 'header-line nil :foreground "#8B0000" :background 'unspecified :box nil :inherit nil)
+
+  ;; Cursor
+  (set-face-attribute 'cursor nil :background "#808080"))
+#+end_src
+
+** Apply Pure Monochrome
+
+#+begin_src emacs-lisp
+;; Apply immediately
+(shapeshift/pure-monochrome)
+
+;; Persist after theme reload
+(advice-add 'load-theme :after (lambda (&rest _) (shapeshift/pure-monochrome)))
+
+;; Apply to new frames
+(add-hook 'after-make-frame-functions (lambda (_frame) (shapeshift/pure-monochrome)))
+#+end_src
+
+** Performance Notes
+:PROPERTIES:
+:tangle: no
+:END:
