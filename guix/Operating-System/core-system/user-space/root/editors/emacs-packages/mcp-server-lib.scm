@@ -16,7 +16,7 @@
               "https://github.com/laurynas-biveinis/mcp-server-lib.el/archive/"
               "838b5f9.tar.gz"))
         (sha256
-         (base32 "014nb6c2aa5kv9sawqa6a7n2g0knnwy3jhjwd6w22hcax48qs0d6"))))
+         (base32 "08dmcjqghgiys061rfyssr3bqc54a1rbbibpbqxhfcfas81azhha"))))
     (build-system emacs-build-system)
     (arguments
      (list

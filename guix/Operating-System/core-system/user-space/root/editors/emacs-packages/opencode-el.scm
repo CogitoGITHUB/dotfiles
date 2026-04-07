@@ -17,7 +17,7 @@
               "https://codeberg.org/sczi/opencode.el/archive/"
               "3e3f9ff.tar.gz"))
         (sha256
-         (base32 "13h5a6maw8vn2dvqp5lgsrkc00khixafbrkhaz5fsxby635d2307"))))
+         (base32 "1ffzx0lh6rbmzrzqqrn70gpjg2brq67cppvgpry1hg6h598gf6si"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-magit

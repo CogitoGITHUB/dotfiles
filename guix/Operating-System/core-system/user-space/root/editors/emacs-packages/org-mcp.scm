@@ -17,7 +17,7 @@
               "https://github.com/laurynas-biveinis/org-mcp/archive/"
               "a443b5b.tar.gz"))
         (sha256
-         (base32 "0h76sif7pmk3yl9clp51qyq17jjc914dqav015km40l325336db8"))))
+         (base32 "1px6m4x509cjarhxk4whk69095rb87y5lmq80g3anghqghwzvcb3"))))
     (build-system emacs-build-system)
     (propagated-inputs
      (list emacs-mcp-server-lib))
