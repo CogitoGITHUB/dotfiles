@@ -1,0 +1,3 @@
+[submodule "emacs/lisp/dashboard"]
+	path = emacs/lisp/dashboard
+	url = https://github.com/emacs-dashboard/dashboard.git
