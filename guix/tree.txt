@@ -1,5 +1,8 @@
 what if i integrate emocs pack'ges in the structure i already have ? the plan is to use emacs for it all .. so this makes more sence anyway ...
 
+
+also ... i can add the configuration in the package declaration .. right ? 
+
 .
 ├── 20250102T182859--gnu-scheme__scheme.org
 ├── 20250102T183510--guile-sdl__guile.org
