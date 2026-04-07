@@ -1,0 +1,97 @@
+* ORG-MCP — MCP Server for Org-mode
+:PROPERTIES:
+:PACKAGE:  emacs-org-mcp
+:CATEGORY: ai
+:VERSION:  0.9.0
+:AFTER:    emacs-mcp-server-lib
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+org-mcp implements a Model Context Protocol (MCP) server for Org-mode, enabling AI assistants and other MCP clients to interact with your Org files through a structured API.
+
+*Key Features:*
+- AI-powered access to Org file contents
+- Hierarchical structure exploration (outlines, headlines)
+- Headline search and manipulation
+- TODO state management
+- Tag-based organization
+- Safe read-only and write operations
+
+** Usage
+:PROPERTIES:
+:tangle: no
+:END:
+
+After loading, register org-mcp with your MCP client (Claude, OpenCode, etc.):
+
+#+begin_src bash
+# Example Claude integration
+claude mcp add -s user -t stdio org-mcp -- \
+  ~/.emacs.d/emacs-mcp-stdio.sh \
+  --server-id=org-mcp \
+  --init-function=org-mcp-enable \
+  --stop-function=org-mcp-disable
+#+end_src
+
+**IMPORTANT:** Before using org-mcp, configure allowed files and start the server:
+
+1. Set allowed Org files in Emacs:
+   #+begin_src emacs-lisp
+   (setq org-mcp-allowed-files '("/path/to/file.org"))
+   #+end_src
+
+2. Start the server in Emacs with =M-x org-mcp-enable=
+
+3. Stop when done with =M-x org-mcp-disable=
+
+**WARNING:** org-mcp gives MCP clients WRITE access to Org files. Use backups
+and automatic versioning on every change.
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § ORG-MCP — INITIALIZATION
+;; ════════════════════════════════════════════════════════════
+
+(require 'org-mcp)
+
+#+end_src
+
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+begin_src emacs-lisp
+;; ════════════════════════════════════════════════════════════
+;; § ORG-MCP — CONFIGURATION
+;; ════════════════════════════════════════════════════════════
+
+;; Configure allowed Org files for MCP access
+;; Replace with your actual Org file paths
+(setq org-mcp-allowed-files
+      (list (expand-file-name "~/org/index.org")
+            (expand-file-name "~/org/notes.org")
+            (expand-file-name "~/org/projects.org")))
+
+;; You can also use wildcards if needed (depends on org-mcp version)
+;; (setq org-mcp-allowed-files '("~/org/*.org"))
+
+#+end_src
+
+** References
+:PROPERTIES:
+:tangle: no
+:END:
+
+- GitHub: https://github.com/laurynas-biveinis/org-mcp
+- MCP Protocol: https://modelcontextprotocol.io/
+- org-mcp README: https://github.com/laurynas-biveinis/org-mcp/blob/main/README.org

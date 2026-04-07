@@ -1,0 +1,44 @@
+* MCP-SERVER-LIB — MCP Server Library for Emacs
+:PROPERTIES:
+:CATEGORY: ai
+:VERSION:  0.2.0
+:BUILT-IN: t
+:END:
+
+** Overview
+:PROPERTIES:
+:tangle: no
+:END:
+
+mcp-server-lib is a foundational Emacs Lisp library that simplifies the implementation of Model Context Protocol (MCP) servers within Emacs. It provides utilities for handling MCP protocol messages, managing connections, and implementing tools and resources.
+
+This is a library package - not meant for direct user interaction, but used by other packages like org-mcp.
+
+*Key Features:*
+- MCP protocol message handling
+- Server lifecycle management
+- Tool and resource definitions
+- Connection management
+- Extensible architecture
+
+** Role in LiterativeOS
+:PROPERTIES:
+:tangle: no
+:END:
+
+mcp-server-lib enables MCP server implementations in Emacs:
+
+1. **org-mcp** uses it to expose Org files to MCP clients
+2. **Custom servers** can be built on top of it
+3. **AI Integration** - Provides the bridge between Emacs and AI systems like Claude/OpenCode
+
+** References
+:PROPERTIES:
+:tangle: no
+:END:
+
+- GitHub: https://github.com/laurynas-biveinis/mcp-server-lib.el
+- MCP Specification: https://modelcontextprotocol.io/
+- Emacs Lisp: https://www.gnu.org/software/emacs/manual/eintr.html
+
+**Note:** This is a library package. Start org-mcp via =M-x org-mcp-enable= to activate MCP server capabilities.
