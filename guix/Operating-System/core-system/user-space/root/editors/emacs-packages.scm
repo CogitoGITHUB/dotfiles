@@ -2,7 +2,7 @@
   #:use-module (gnu packages emacs-xyz)
   #:use-module (core-system user-space root editors emacs-packages emacs-leaf)
   #:use-module (core-system user-space root editors emacs-packages literate-config-system)
-  #:use-module (core-system user-space root editors emacs-packages opencode)
+
   #:use-module (core-system user-space root editors emacs-packages avy)
   #:use-module (core-system user-space root editors emacs-packages geiser)
   #:use-module (core-system user-space root editors emacs-packages emacs-sops)
@@ -13,8 +13,8 @@
   #:use-module (core-system user-space root editors emacs-packages emacs-monkeytype)
   #:use-module (core-system user-space root editors emacs-packages quick-peek)
   #:use-module (core-system user-space root editors emacs-packages scrollable-quick-peek)
-  #:re-export (emacs-leaf literate-config-system opencode emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek)
+  #:re-export (emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp)
   #:export (root-emacs-packages))
 
 (define-public root-emacs-packages
-  (list emacs-leaf literate-config-system opencode emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek))
+  (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-soap-client emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp))
