@@ -1,19 +1,25 @@
+#+TITLE: AVY Configuration
+#+AUTHOR: Shape
+
 * AVY — Jump Navigation
 :PROPERTIES:
 :PACKAGE:  avy
-:STRAIGHT: avy
 :CATEGORY: navigation
 :VERSION:  0.5.0
 :END:
 
-** Description
+** Overview
 :PROPERTIES:
 :tangle: no
 :END:
 
-Avy configuration for Emacs. Jump to visible text using character-based decision tree.
+Avy is a simple, elegant jump navigation system for Emacs. Rather than moving the cursor slowly with arrow keys, avy lets you jump directly to any visible character using a decision tree of key presses.
 
-Version: 0.5.0
+*Key Features:*
+- Jump to any visible character by prefix
+- Multiple jump modes (char, word, line)
+- Integration with god-mode and other modal editors
+- Customizable key maps and styling
 
 ** Initialization
 :PROPERTIES:
@@ -30,6 +36,9 @@ Version: 0.5.0
 #+end_src
 
 ** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
 
 #+begin_src emacs-lisp
 ;; ════════════════════════════════════════════════════════════
@@ -60,6 +69,9 @@ Version: 0.5.0
 #+end_src
 
 ** Keybindings
+:PROPERTIES:
+:tangle: config
+:END:
 
 #+begin_src emacs-lisp
 ;; ════════════════════════════════════════════════════════════
@@ -88,17 +100,51 @@ Version: 0.5.0
   (define-key god-local-mode-map (kbd "j") #'avy-goto-char)
   (define-key god-local-mode-map (kbd "J") #'avy-goto-char-2))
 
-;; Avy integration with helix-mode
-(with-eval-after-load 'helix
-  (helix-define-key 'normal (kbd "SPC j") #'avy-goto-char)
-  (helix-define-key 'normal (kbd "SPC J") #'avy-goto-line))
-
 #+end_src
 
-** Performance Notes
+** Guix Package Module
 :PROPERTIES:
 :tangle: no
 :END:
 
-Startup time will be tracked automatically.
+Create or update ~/..emacs-packages/avy.scm~:
 
+#+begin_src scheme
+(define-module (core-system user-space root editors emacs-packages avy)
+  #:use-module (gnu packages emacs-xyz)
+  #:use-module (core-system user-space root editors emacs-packages literate-config-system)
+  #:re-export (emacs-avy)
+  #:export (avy-config))
+
+;; Configuration metadata from avy.org
+(define avy-config
+  (make-lcs-config
+    "avy.org"                    ; org-file: path to source .org
+    "0.5.0"                      ; version
+    '()                          ; depends: empty for now
+    '()                          ; after: load after these packages
+    #f                           ; built-in: not a built-in package
+    #f))                         ; defer: load immediately
+
+#+end_src
+
+** Architecture Notes
+:PROPERTIES:
+:tangle: no
+:END:
+
+The new system workflow:
+
+1. *Write* your configuration in this .org file with ~:tangle:~ blocks
+2. *Define* a Guix module (~avy.scm~) that:
+   - Re-exports the upstream package (~emacs-avy~)
+   - Creates a metadata record pointing to this .org file
+   - Includes any custom dependencies or ordering
+3. *Bootstrap* Emacs by calling ~literate-config-load~
+4. The loader will:
+   - Read this .org file from ~/Literative Configurations/avy.org~
+   - Extract init blocks and config blocks
+   - Build a ~leaf~ form with your settings
+   - Evaluate it using the Guix-provided package
+
+No need for straight, no package.el conflict—just Guix packages + leaf.el + literate org files.

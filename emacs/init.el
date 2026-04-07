@@ -2,8 +2,11 @@
 
 ;; Bootstrap leaf (installed via Guix, just require it)
 (require 'leaf)
-(require 'leaf-keywords)
-(leaf-keywords-init)
+(condition-case nil
+    (progn
+      (require 'leaf-keywords)
+      (leaf-keywords-init))
+  (file-missing nil))  ;; leaf-keywords is optional
 
 ;; Load the system
 (add-to-list 'load-path
