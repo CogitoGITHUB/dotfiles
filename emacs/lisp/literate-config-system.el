@@ -1,12 +1,14 @@
 ;;; literate-config-system.el --- Guix-native Literate Config Loader -*- lexical-binding: t -*-
 ;; Author: Shape
-;; Version: 5.1.0
-;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0") (org-supertag "5.8"))
+;; Version: 5.3.0
+;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0") (org-supertag "5.8") (org-roam "2.0"))
 ;;; Code:
 
 (require 'org)
 (require 'cl-lib)
 (require 'org-supertag nil 'noerror)
+(require 'org-roam nil 'noerror)
+(require 'org-id)
 
 ;; ════════════════════════════════════════════════════════════════════
 ;; § CONFIGURATION
@@ -242,7 +244,55 @@ Also stores metadata for org-supertag registration."
      #'string<)))
 
 ;; ════════════════════════════════════════════════════════════════════
-;; § ORG-SUPERTAG INTEGRATION
+;; § ORG-ROAM INTEGRATION
+;; ════════════════════════════════════════════════════════════════════
+
+(defun lc--org-roam-create-package-note (package file category)
+  "Create an org-roam note for a loaded PACKAGE.
+FILE is the source config file, CATEGORY is the package category."
+  (when (and (featurep 'org-roam) (fboundp 'org-roam-node-create))
+    (lc--silent
+     (condition-case err
+         (let* ((title (format "%s (Package)" package))
+                (note-file (expand-file-name 
+                           (format "%s.org" (downcase package))
+                           org-roam-directory)))
+           ;; Create note with org-roam
+           (unless (file-exists-p note-file)
+             (org-roam-node-create
+              :title title
+              :file note-file)
+             ;; Add package metadata
+             (with-current-buffer (find-file-noselect note-file)
+               (goto-char (point-max))
+               (insert (format "\n#+filetags: %s package\n\n" category))
+               (insert (format "** Package Details\n:PROPERTIES:\n:PACKAGE: %s\n:SOURCE_FILE: %s\n:CATEGORY: %s\n:END:\n\n"
+                               package file category))
+               (insert (format "- **Package:** ~%s~\n" package))
+               (insert (format "- **Source:** %s\n" file))
+               (insert (format "- **Category:** %s\n" category))
+               (insert "- **Status:** Loaded by literate-config-system\n")
+               (org-id-get-create)
+               (save-buffer)
+               (kill-buffer))))
+       (error
+        (message "Failed to create org-roam note for %s: %s"
+                 package (error-message-string err)))))))
+
+;; ════════════════════════════════════════════════════════════════════
+;; § ORG-ROAM BATCH CREATE
+;; ════════════════════════════════════════════════════════════════════
+
+(defun lc--org-roam-create-all-notes ()
+  "Create org-roam notes for all loaded packages."
+  (when (and (featurep 'org-roam) lc--package-metadata)
+    (lc--silent
+     (dolist (meta lc--package-metadata)
+       (let ((package (car meta))
+             (file (car (cdr meta)))
+             (category (cadr (cdr meta))))
+         (lc--org-roam-create-package-note package file category))))))
+
 ;; ════════════════════════════════════════════════════════════════════
 
 (defun lc--supertag-register-packages ()
@@ -301,6 +351,8 @@ Also registers packages with org-supertag if available."
           (lc--log 'ok "%d packages loaded from %d files"
                    (length lc--loaded-packages)
                    (length files))
+           ;; Create org-roam notes for packages
+          (lc--org-roam-create-all-notes)
           ;; Register with org-supertag
           (lc--supertag-register-packages))))))
 

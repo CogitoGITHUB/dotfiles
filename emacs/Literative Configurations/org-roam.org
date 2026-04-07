@@ -1,0 +1,101 @@
+* Org-Roam
+:PROPERTIES:
+:PACKAGE: org-roam
+:CATEGORY: system
+:END:
+
+Powerful note-taking and knowledge management system using org-mode.
+Enables bidirectional links, backlinks, and visual graph representations.
+Integrates with org-roam-ui for web-based knowledge graph visualization.
+
+** Initialization
+:PROPERTIES:
+:tangle: init
+:END:
+
+#+BEGIN_SRC emacs-lisp
+;; Ensure org-roam database is initialized
+(require 'org-roam)
+(require 'org-roam-ui nil t)
+#+END_SRC
+
+** Configuration
+:PROPERTIES:
+:tangle: config
+:END:
+
+#+BEGIN_SRC emacs-lisp
+;; Configure org-roam
+(setq org-roam-directory (expand-file-name "~/org-roam"))
+(setq org-roam-db-location (expand-file-name "~/.emacs.d/org-roam.db"))
+
+;; Create roam directory if it doesn't exist
+(unless (file-exists-p org-roam-directory)
+  (make-directory org-roam-directory t))
+
+;; Initialize org-roam database
+(org-roam-db-autosync-mode)
+
+;; Configure org-roam-ui
+(when (featurep 'org-roam-ui)
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start nil))
+
+;; Org-roam completion at point
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?"
+         :if-new (org-roam-node-create-with-capture-template)
+         :unnarrowed t)
+        ("l" "literature" plain
+         "Source: %^{Source}\n#+filetags: literature\n\n%?"
+         :if-new (org-roam-node-create-with-capture-template)
+         :unnarrowed t)
+        ("p" "project" plain
+         "Status: %^{Status|TODO|ACTIVE|DONE}\n#+filetags: project\n\n%?"
+         :if-new (org-roam-node-create-with-capture-template)
+         :unnarrowed t)
+        ("i" "insight" plain
+         "#+filetags: insight\n\n%?"
+         :if-new (org-roam-node-create-with-capture-template)
+         :unnarrowed t)))
+
+;; Key bindings for org-roam
+(leaf org-roam
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ("C-c n g" . org-roam-ui-open)))
+#+END_SRC
+
+** Usage Examples
+
+Create a new note:
+- ~C-c n c~ to capture a new note
+- Choose template (default, literature, project, insight)
+- Edit and save
+
+Find and link existing notes:
+- ~C-c n f~ to find a note by title
+- ~C-c n i~ to insert a link to another note
+- Backlinks automatically created
+
+View knowledge graph:
+- ~C-c n g~ to open org-roam-ui in browser
+- Interactive graph visualization of all notes and connections
+- Real-time updates as you edit
+
+View backlinks:
+- ~C-c n l~ to toggle the backlinks buffer
+- Shows all notes that link to current note
+
+** Integration with LiterativeOS
+
+Org-roam notes can reference package documentation:
+- Create notes about package functionality
+- Link to package files in Literative Configurations/
+- Use org-supertag for hierarchical organization of notes
+- Query knowledge graph for design decisions and architectural notes
