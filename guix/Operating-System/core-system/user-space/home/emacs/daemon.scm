@@ -6,8 +6,6 @@
   #:export (home-emacs-daemon-service))
 
 (define-public home-emacs-daemon-service
-  "Start Emacs daemon at login so emacsclient can connect immediately.
-The daemon uses the LiterativeOS emacs configuration with all guix packages."
   (simple-service 'emacs-daemon
                   home-shepherd-service-type
                   (list
@@ -18,6 +16,14 @@ The daemon uses the LiterativeOS emacs configuration with all guix packages."
                       (start #~(make-forkexec-constructor
                                  (list #$(file-append emacs "/bin/emacs")
                                        "--daemon")
-                                 #:log-file (string-append (getenv "HOME") "/.emacs.d/daemon.log")))
+                                 #:environment-variables
+                                 (list (string-append "HOME=" (getenv "HOME"))
+                                       (string-append "XDG_RUNTIME_DIR=/run/user/" 
+                                                      (number->string (getuid)))
+                                       "EMACS_NATIVECOMP_AOTCOMP=no"
+                                       "EMACS_NATIVECOMP_DRIVER=no")
+                                 #:log-file (string-append (getenv "HOME") "/.emacs.d/daemon.log")
+                                 #:directory (getenv "HOME")))
                       (stop #~(make-kill-destructor))
-                      (respawn? #f)))))
+                      (respawn? #f)
+                      (one-shot? #f)))))

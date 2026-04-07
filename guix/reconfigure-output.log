@@ -1,0 +1,71 @@
+guix system: warning: string value for 'user' is deprecated, use user-account instead
+guix system: warning: the following accounts appear more than once: aoeu
+guix/gexp.scm:2010:2: warning: importing modules (srfi srfi-1) (srfi srfi-26) from the host
+guix system: warning: the following accounts appear more than once: aoeu
+The following derivation will be built:
+  /gnu/store/98khb6jih5k3j8wjqik1w3nijinlg5va-grub.cfg.drv
+
+building /gnu/store/98khb6jih5k3j8wjqik1w3nijinlg5va-grub.cfg.drv...
+/gnu/store/hp11ps2ndvibnll6x4g3i6xdv4sn1p2a-system
+/gnu/store/r0vj07lpiqmlda07hxqg1dri6hihgmnq-grub.cfg
+
+activating system...
+guix system: warning: the following accounts appear more than once: aoeu
+making '/var/guix/profiles/system-428-link' the current system...
+populating /etc from /gnu/store/kgxnp4wc9058dcygpv475rdwqapzcsl7-etc...
+setting up privileged programs in '/run/privileged/bin'...
+warning: failed to privilege "/gnu/store/92mp5l4487pzn4rv96jn8qfcimbwkpym-sudo-1.9.17p1/bin/sudo": File exists
+#<&compound-exception components: (#<&external-error> #<&origin origin: "open-file"> #<&message message: "~A: ~S"> #<&irritants irritants: ("Read-only file system" "/etc/greetd/config.toml")> #<&exception-with-kind-and-args kind: system-error args: ("open-file" "~A: ~S" ("Read-only file system" "/etc/greetd/config.toml") (30))>)>
+guix system: warning: failed to activate '/gnu/store/pyxgck9hkamj2n5qpbdj1jkxv74srmk1-activate-service.scm'
+The following derivation will be built:
+  /gnu/store/0l0yrqikz4i7sqi3b8a8720bvmg0936m-install-bootloader.scm.drv
+
+building /gnu/store/0l0yrqikz4i7sqi3b8a8720bvmg0936m-install-bootloader.scm.drv...
+guix system: bootloader successfully installed on '(/boot/efi)'
+shepherd: Starting service host-name...
+shepherd: Service host-name started.
+shepherd: Service host-name running with value "LiterativeOS".
+shepherd: Service host-name has been started.
+shepherd: Starting service user-homes...
+shepherd: Service user-homes started.
+shepherd: Service user-homes running with value #t.
+shepherd: Service user-homes has been started.
+shepherd: Service user-homes has been started.
+shepherd: Starting service guix-home-aoeu...
+shepherd: Service guix-home-aoeu started.
+shepherd: Service guix-home-aoeu running with value #<<process> id: 15361 command: ("/gnu/store/c1yw1da2kf54bb8jzfcjmn11ysfbqd4m-home/activate")>.
+shepherd: Service guix-home-aoeu has been started.
+shepherd: Starting service sysctl...
+shepherd: Service sysctl started.
+shepherd: Service sysctl running with value #t.
+shepherd: Service sysctl has been started.
+shepherd: Service user-homes has been started.
+shepherd: Starting service guix-ownership...
+shepherd: Service guix-ownership started.
+shepherd: Service guix-ownership running with value #t.
+shepherd: Service guix-ownership has been started.
+shepherd: Service host-name has been started.
+shepherd: Service user-homes has been started.
+shepherd: Service term-tty1 is currently disabled.
+shepherd: Service user-homes has been started.
+shepherd: Service libvirtd is currently disabled.
+shepherd: Service user-homes has been started.
+shepherd: Service greetd is currently disabled.
+shepherd: Service user-homes has been started.
+shepherd: Starting service sops-secrets...
+shepherd: Service sops-secrets started.
+shepherd: Service sops-secrets running with value #t.
+shepherd: Service sops-secrets has been started.
+shepherd: Starting service kernel-module-loader...
+shepherd: Service kernel-module-loader started.
+shepherd: Service kernel-module-loader running with value #<unspecified>.
+shepherd: Service kernel-module-loader has been started.
+shepherd: Service user-homes has been started.
+shepherd: Service docker-blackbox-exporter is currently disabled.
+shepherd: Service user-homes has been started.
+shepherd: Service docker-grafana is currently disabled.
+To complete the upgrade, run 'herd restart SERVICE' to stop,
+upgrade, and restart each service that was not automatically restarted.
+Run 'herd status' to view the list of services on your system.
+WARNING: (guile-user): imported module (guix build utils) overrides core binding `delete'
+guix system: system loaded for fast reboot with 'reboot --kexec'

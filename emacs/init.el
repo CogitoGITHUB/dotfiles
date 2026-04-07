@@ -31,7 +31,16 @@
 ;; Load the system
 (add-to-list 'load-path
              (expand-file-name "lisp/" user-emacs-directory))
-(require 'literate-config-system)
-(literate-config-load)
+(condition-case err
+    (progn
+      (require 'literate-config-system)
+      (literate-config-load))
+  (error
+   (message "Error loading literate-config-system: %S" err)))
+
+;; Ensure server is started when daemon mode is requested
+(when (daemonp)
+  (unless (server-running-p)
+    (server-start)))
 
 ;;; init.el ends here
