@@ -1,5 +1,5 @@
-* TODO Solve binary persistence problem — hibiki, wayscriber, wiremix binaries in /tmp/ get GC'd. Need to store in persistent location (e.g. ~/.local/share/guix-binaries/) and update package definitions to use those paths.
-* add emacs daemon to system !! 
+
+add emacs daemon to system !! 
 
 https://github.com/liixini/skwd-wall.git
 

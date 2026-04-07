@@ -1,6 +1,0 @@
-;; This file is best viewed as -*- Scheme -*-.
-
-(channel
-  (version 0)
-  (news-file "news.txt")
-  (url "https://gitlab.com/nonguix/nonguix")) ; the primary URL
