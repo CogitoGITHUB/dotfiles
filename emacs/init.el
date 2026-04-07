@@ -36,9 +36,11 @@
 (condition-case err
     (progn
       (require 'literate-config-system)
-      (literate-config-load))
-  (error
-   (message "Error loading literate-config-system: %S" err)))
+      (literate-config-load)
+      (when (fboundp 'dashboard-open)
+        (dashboard-open)))
+   (error
+    (message "Error loading literate-config-system: %S" err)))
 
 ;; Ensure server is started when daemon mode is requested
 (when (daemonp)
