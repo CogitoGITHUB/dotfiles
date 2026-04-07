@@ -1,5 +1,6 @@
 (define-module (core-system user-space root editors emacs-packages literate-config-system)
   #:use-module (srfi srfi-1)
+  #:use-module (guix packages)
   #:use-module (gnu packages emacs-xyz)
   #:export (literate-config-system make-lcs-config lcs-config?))
 
