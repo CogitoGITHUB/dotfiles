@@ -1,6 +1,6 @@
 ;;; literate-config-system.el --- Guix-native Literate Config Loader -*- lexical-binding: t -*-
 ;; Author: Shape
-;; Version: 5.3.0
+;; Version: 5.4.0
 ;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0") (org-supertag "5.8") (org-roam "2.0"))
 ;;; Code:
 

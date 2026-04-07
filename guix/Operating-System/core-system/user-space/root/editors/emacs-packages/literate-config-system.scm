@@ -37,6 +37,18 @@ DEFER: #t if should defer loading"
 ;; ════════════════════════════════════════════════════════════════════════════
 
 ;; The actual loader is the Elisp file in ~/.config/emacs/lisp/
-;; Since it's elisp-only, we re-export emacs-org which it depends on
-;; This ensures the loader has all dependencies in system
-(define-public literate-config-system emacs-org)
+;; It depends on: org, leaf, org-supertag, org-roam
+;; We re-export org and org-roam to ensure deps are in system
+(define-public literate-config-system
+  (let ((base emacs-org))
+    (package
+      (inherit base)
+      (name "emacs-literate-config-system")
+      (version "5.4.0")
+      (synopsis "Guix-native literate configuration loader with org-roam integration")
+      (description "Literate configuration system for Emacs using org-mode files.
+Integrates with org-supertag for hierarchical package tagging and org-roam for
+note-taking and knowledge management of loaded packages.")
+      (propagated-inputs
+        (modify-inputs (package-propagated-inputs base)
+          (prepend emacs-org-roam))))))
