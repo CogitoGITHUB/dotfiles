@@ -6,7 +6,6 @@
 
 Powerful note-taking and knowledge management system using org-mode.
 Enables bidirectional links, backlinks, and visual graph representations.
-Integrates with org-roam-ui for web-based knowledge graph visualization.
 
 ** Initialization
 :PROPERTIES:
@@ -16,7 +15,6 @@ Integrates with org-roam-ui for web-based knowledge graph visualization.
 #+BEGIN_SRC emacs-lisp
 ;; Ensure org-roam database is initialized
 (require 'org-roam)
-(require 'org-roam-ui nil t)
 #+END_SRC
 
 ** Configuration
@@ -35,13 +33,6 @@ Integrates with org-roam-ui for web-based knowledge graph visualization.
 
 ;; Initialize org-roam database
 (org-roam-db-autosync-mode)
-
-;; Configure org-roam-ui
-(when (featurep 'org-roam-ui)
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start nil))
 
 ;; Org-roam completion at point
 (setq org-roam-capture-templates
@@ -67,8 +58,7 @@ Integrates with org-roam-ui for web-based knowledge graph visualization.
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
-         ("C-c n g" . org-roam-ui-open)))
+         ("C-c n c" . org-roam-capture)))
 #+END_SRC
 
 ** Usage Examples
@@ -82,11 +72,6 @@ Find and link existing notes:
 - ~C-c n f~ to find a note by title
 - ~C-c n i~ to insert a link to another note
 - Backlinks automatically created
-
-View knowledge graph:
-- ~C-c n g~ to open org-roam-ui in browser
-- Interactive graph visualization of all notes and connections
-- Real-time updates as you edit
 
 View backlinks:
 - ~C-c n l~ to toggle the backlinks buffer
