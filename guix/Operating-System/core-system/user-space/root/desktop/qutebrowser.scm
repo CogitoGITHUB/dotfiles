@@ -4,6 +4,12 @@
   #:use-module (guix build-system pyproject)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages qt)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages python-build)
+  #:use-module (gnu packages gtk)
+  #:use-module (gnu packages qt)
+  #:use-module (gnu packages)
   #:export (qutebrowser))
 
 (define-public qutebrowser

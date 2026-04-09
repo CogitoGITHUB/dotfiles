@@ -2,6 +2,8 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
+  #:use-module (core-system user-space root desktop wayland grim)
+  #:use-module (core-system user-space root desktop wayland slurp)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (grimblast))
 

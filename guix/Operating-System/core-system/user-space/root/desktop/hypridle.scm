@@ -4,6 +4,7 @@
   #:use-module (guix build-system cmake)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages cpp)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages pkg-config)
   #:export (hypridle))

@@ -81,7 +81,7 @@
   (append
     (list
      (service openssh-service-type)
-     (service sops-secrets-service-type (sops-service-configuration))
+     ;; (service sops-secrets-service-type (sops-service-configuration))
      (service greetd-service-type
               (greetd-configuration
                (command "Hyprland --config /home/aoeu/.config/lock-screen/config/greeter.hyprland.conf")

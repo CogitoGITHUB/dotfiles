@@ -1,7 +1,7 @@
 (define-module (core-system user-space root desktop video mlt)
   #:use-module (guix packages)
-  #:use-module (guix build-system cmake)
   #:use-module (guix git-download)
+  #:use-module (guix build-system cmake)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (mlt))
 

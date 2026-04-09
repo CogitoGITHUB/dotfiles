@@ -2,6 +2,13 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system meson)
+  #:use-module (gnu packages gtk)
+  #:use-module (gnu packages man)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages xorg)
+  #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages pkg-config)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (swaylock))
 

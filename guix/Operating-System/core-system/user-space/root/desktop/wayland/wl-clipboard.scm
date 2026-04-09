@@ -6,6 +6,7 @@
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages documentation)
+  #:use-module (gnu packages man)
   #:export (wl-clipboard))
 
 (define-public wl-clipboard

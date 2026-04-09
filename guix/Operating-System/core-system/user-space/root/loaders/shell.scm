@@ -24,7 +24,7 @@
   #:use-module (core-system user-space root shell fetch fastfetch)
   #:use-module (core-system user-space root shell rip)
   #:re-export (nushell television fzf starship bash zoxide zellij carapace atuin superfile rip-cli
-               btop htop ncdu glances
+htop ncdu glances
                upower tlp acpi
                zip unzip zstd xz
                neofetch fastfetch)

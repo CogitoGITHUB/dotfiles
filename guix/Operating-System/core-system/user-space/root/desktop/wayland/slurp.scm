@@ -2,6 +2,12 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system meson)
+  #:use-module (gnu packages gtk)
+  #:use-module (gnu packages man)
+  #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages xorg)
+  #:use-module (gnu packages pkg-config)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (slurp))
 
@@ -19,7 +25,7 @@
         (sha256
           (base32 "0wlml42c3shma50bsvqzll7p3zn251jaf0jm59q2idks8gg1zkyq"))))
     (build-system meson-build-system)
-    (inputs (list cairo libpixman libxkbcommon wayland))
+    (inputs (list cairo pixman libxkbcommon wayland))
     (native-inputs (list pkg-config scdoc))
     (home-page "https://github.com/emersion/slurp")
     (synopsis "Select a region in a Wayland compositor")

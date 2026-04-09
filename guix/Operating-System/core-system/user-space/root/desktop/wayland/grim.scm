@@ -2,6 +2,12 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system meson)
+  #:use-module (gnu packages man)
+  #:use-module (gnu packages image)
+  #:use-module (gnu packages graphics)
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages pkg-config)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (grim))
 

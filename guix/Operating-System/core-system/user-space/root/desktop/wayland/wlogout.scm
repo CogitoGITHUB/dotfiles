@@ -1,7 +1,10 @@
 (define-module (core-system user-space root desktop wayland wlogout)
   #:use-module (guix packages)
+  #:use-module (gnu packages man)
   #:use-module (guix git-download)
   #:use-module (guix build-system meson)
+  #:use-module (gnu packages gtk)
+  #:use-module (gnu packages pkg-config)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (wlogout))
 

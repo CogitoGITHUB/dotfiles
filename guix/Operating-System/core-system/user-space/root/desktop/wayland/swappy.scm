@@ -2,6 +2,10 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system meson)
+  #:use-module (gnu packages gtk)
+  #:use-module (gnu packages gnome)
+  #:use-module (gnu packages glib)
+  #:use-module (gnu packages pkg-config)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (swappy))
 
