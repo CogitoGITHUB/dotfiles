@@ -55,7 +55,18 @@ Validate in REPL first. See [[./guix-repl.org][guix-repl.org]].
 
 ** Quick Commands
 
-| Action           | Command                                                          |
+Use OpenCode commands for common operations:
+
+| Action           | OpenCode Command |
+|------------------|------------------|
+| Apply config     | /guix-reconfigure |
+| List generations | /show-generations |
+| Rollback         | /rollback |
+| Update Guix      | /guix-pull |
+
+Or run directly:
+
+| Action           | Direct Command                                                   |
 |------------------|------------------------------------------------------------------|
 | Apply config     | sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm |
 | Build only       | guix system build /home/aoeu/.config/guix/guixos.scm            |

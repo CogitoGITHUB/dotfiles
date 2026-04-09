@@ -1,3 +1,71 @@
 (define-module (core-system user-space root security opensnitch)
-  #:use-module (gnu packages networking)
-  #:re-export (opensnitch-daemon opensnitch-ui))
+  #:use-module (guix packages)
+  #:use-module (guix gexp)
+  #:use-module (guix build-system go)
+  #:use-module (guix build-system pyproject)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages)
+  #:export (opensnitch-daemon opensnitch-ui))
+
+;; Simplified from gnu/packages/networking.scm
+(define-public opensnitch-daemon
+  (package
+    (name "opensnitch-daemon")
+    (version "1.8.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/evilsocket/opensnitch")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1bvpv4n3a4q8pg3wj9cv7fyqs7l2d1cw96g5j7lmpsq267c62gh7"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:install-source? #f
+      #:import-path "github.com/evilsocket/opensnitch/daemon"
+      #:unpack-path "github.com/evilsocket/opensnitch"
+      #:tests? #f))
+    (inputs (list libnetfilter-queue libnfnetlink libvarlink))
+    (home-page "https://github.com/evilsocket/opensnitch")
+    (synopsis "Interactive application firewall daemon")
+    (description
+     "OpenSnitch is an application-level firewall that gives you granular
+control over outbound network connections on your system.")
+    (license license:gpl3+)))
+
+(define-public opensnitch-ui
+  (package
+    (name "opensnitch-ui")
+    (version "1.8.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/evilsocket/opensnitch")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1bvpv4n3a4q8pg3wj9cv7fyqs7l2d1cw96g5j7lmpsq267c62gh7"))))
+    (build-system pyproject-build-system)
+    (arguments (list #:tests? #f))
+    (inputs (list python-grpcio-tools
+                  python-notify2
+                  python-pyasn1
+                  python-pyinotify
+                  python-pyqt-6
+                  python-protobuf
+                  python-requests
+                  python-slugify
+                  qtbase
+                  qtsvg
+                  qtwayland))
+    (home-page "https://github.com/evilsocket/opensnitch")
+    (synopsis "UI for opensnitch")
+    (description
+     "Graphical user interface for OpenSnitch firewall daemon.")
+    (license license:gpl3+)))

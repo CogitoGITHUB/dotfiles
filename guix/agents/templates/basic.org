@@ -3,12 +3,36 @@
 Zero prose. Copy, fill blanks, validate in REPL before touching anything else.
 <ANGLE_BRACKETS> = fill in.
 
-** Template A — Thin submodule (package exists in Guix)
+** ALWAYS FULL DECLARATION — NEVER THIN RE-EXPORT
+
+Every submodule MUST contain a full package definition. Never use thin re-export.
+
+** Template A — Full declaration for package from Guix
 
 #+BEGIN_SRC scheme
 (define-module (core-system user-space root <CATEGORY> <NAME>)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (guix build-system <BUILD-SYSTEM>)
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages <GNU-MODULE>)
-  #:re-export (<NAME>))
+  #:export (<NAME>))
+
+(define-public <NAME>
+  (package
+    (name "<name>")
+    (version "<version>")
+    (source
+      (origin
+        (method url-fetch)
+        (uri "<url>")
+        (sha256 (base32 "<hash>"))))
+    (build-system <BUILD-SYSTEM>-build-system)
+    (inputs (list <dep>))
+    (home-page "<url>")
+    (synopsis "<short description>")
+    (description "<longer description>")
+    (license license:<LICENSE>)))
 #+END_SRC
 
 Find the correct (gnu packages ...) module:

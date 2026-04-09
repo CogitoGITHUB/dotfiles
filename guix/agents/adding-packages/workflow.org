@@ -65,6 +65,8 @@ root-system-packages  ; must load clean
 #+END_SRC
 
 *** Step 7 — Reconfigure
+Use OpenCode command: =/guix-reconfigure=
+Or run directly:
 #+BEGIN_SRC sh
 sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm
 #+END_SRC

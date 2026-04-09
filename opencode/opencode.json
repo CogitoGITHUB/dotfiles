@@ -1,25 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "command": {
-    "guix-pull": {
-      "agent": "build",
-      "description": "Update Guix",
-      "template": "Run `guix pull` to update Guix channels and package definitions."
-    },
-    "guix-reconfigure": {
-      "agent": "build",
-      "description": "Reconfigure Guix system",
-      "template": "Run `sudo guix system reconfigure /home/aoeu/.config/guix/guixos.scm` to apply configuration changes."
-    },
-    "rollback": {
-      "description": "Rollback Guix system",
-      "template": "Run `sudo guix system roll-back` to revert to previous generation."
-    },
-    "show-generations": {
-      "description": "List Guix generations",
-      "template": "Run `guix system list-generations` to see available system generations."
-    }
-  },
   "formatter": {
     "latexindent": {
       "command": [

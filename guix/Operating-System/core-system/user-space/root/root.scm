@@ -10,7 +10,6 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services databases)
   #:use-module (gnu packages databases)
-  #:use-module (core-system user-space root security sops services)
   #:use-module (core-system user-space root services greetd)
   #:use-module (core-system user-space root users users)
   #:use-module (core-system user-space root loaders core)

@@ -1,3 +1,42 @@
 (define-module (core-system user-space root desktop video mpv)
+  #:use-module (guix packages)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system meson)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages audio)
+  #:use-module (gnu packages pulseaudio)
+  #:use-module (gnu packages cdrom)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages cups)
+  #:use-module (gnu packages gl)
+  #:use-module (gnu packages image)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages lua)
   #:use-module (gnu packages video)
-  #:re-export (mpv))
+  #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xorg)
+  #:use-module (gnu packages xml)
+  #:export (mpv))
+
+(define-public mpv
+  (package
+    (name "mpv")
+    (version "0.41.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/mpv-player/mpv")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "18l25s12g4sr0p3y6hk3cqa5rr5jykbdfhaqz4wyrvs8hy6b5xhk"))))
+    (build-system meson-build-system)
+    (arguments '(#:tests? #f))
+    (inputs (list alsa-lib ass ffmpeg jack lcms2 libarchive libass libcaca libcdio-paranoia libdvdnav libdvdread libjpeg-turbo libva libvdpau libxinerama libxrandr libxss luajit openal pango pulseaudio rubberband sdl2 uchardet vapoursynth wayland xcb-util xcb-util-keysyms))
+    (native-inputs (list pkg-config python docutils))
+    (home-page "https://mpv.io")
+    (synopsis "General-purpose video player")
+    (description "mpv is a general-purpose video player, audio player, and subtitle renderer.")
+    (license license:gpl2+)))
