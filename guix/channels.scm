@@ -10,4 +10,4 @@
   (channel
     (name 'literativeos)
     (url "file:///home/aoeu/.config/guix")
-    (branch "main")))
+    (branch "master")))
