@@ -6,9 +6,20 @@
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages curl)
+  #:use-module (gnu packages dns)
+  #:use-module (gnu packages gawk)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages mail)
+  #:use-module (gnu packages networking)
+  #:use-module (gnu packages perl)
+  #:use-module (gnu packages python-build)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages sqlite)
+  #:use-module (gnu packages web)
   #:export (fail2ban))
 
-;; Simplified from gnu/packages/admin.scm
 (define-public fail2ban
   (package
     (name "fail2ban")
@@ -24,7 +35,7 @@
         (base32 "0lfakna6ad2xwz95sjxzkavipcsxiy7ybavkdkf9zzmspf2ws4yk"))))
     (build-system pyproject-build-system)
     (arguments
-     (list #:tests? #f)) ; Many tests require system access
+     (list #:tests? #f))
     (native-inputs (list python-setuptools python-aiosmtpd))
     (inputs (list gawk
                   coreutils-minimal
@@ -34,6 +45,7 @@
                   iproute
                   ipset
                   iptables
+                  `(,isc-bind "utils")
                   nftables
                   perl
                   python-pyinotify
@@ -43,7 +55,6 @@
                   whois))
     (home-page "http://www.fail2ban.org")
     (synopsis "Daemon to ban hosts that cause multiple authentication errors")
-    (description
-     "Fail2Ban scans log files and bans IP addresses conducting too many
-failed login attempts by updating firewall rules.")
+    (description "Fail2Ban scans log files and bans IP addresses conducting
+too many failed login attempts by updating firewall rules.")
     (license license:gpl2+)))

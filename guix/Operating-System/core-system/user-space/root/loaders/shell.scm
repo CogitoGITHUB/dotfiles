@@ -16,7 +16,6 @@
   #:use-module (core-system user-space root shell power upower)
   #:use-module (core-system user-space root shell power tlp)
   #:use-module (core-system user-space root shell power acpi)
-  #:use-module (core-system user-space root shell archive zip)
   #:use-module (core-system user-space root shell archive unzip)
   #:use-module (core-system user-space root shell archive zstd)
   #:use-module (core-system user-space root shell archive xz)
@@ -26,7 +25,7 @@
   #:re-export (nushell television fzf starship bash zoxide zellij carapace atuin superfile rip-cli
 htop ncdu glances
                upower tlp acpi
-               zip unzip zstd xz
+               unzip zstd xz
                neofetch fastfetch)
   #:export (root-shell-packages
             root-shell-system-monitor-packages
@@ -44,7 +43,7 @@ htop ncdu glances
   (list upower tlp acpi))
 
 (define-public root-shell-archive-packages
-  (list zip unzip zstd xz))
+  (list unzip zstd xz))
 
 (define-public root-shell-fetch-packages
   (list neofetch fastfetch))

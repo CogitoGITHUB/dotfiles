@@ -3,7 +3,8 @@
   #:use-module (guix packages)
   #:use-module (guix build-system gnu)
   #:use-module (guix download)
-  #:use-module ((guix licenses) #:prefix license:))
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (core-system user-space root shell archive zlib))
 
 (define-public git
   (package

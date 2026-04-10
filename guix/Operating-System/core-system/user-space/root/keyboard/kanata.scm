@@ -5,10 +5,10 @@
   #:use-module (guix gexp)
   #:use-module (gnu services)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu packages compression)
   #:use-module (gnu packages elf)
   #:use-module (gnu packages base)
   #:use-module (gnu packages gcc)
+  #:use-module (core-system user-space root shell archive unzip)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (kanata kanata-service))
 

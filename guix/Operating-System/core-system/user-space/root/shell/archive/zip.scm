@@ -3,7 +3,7 @@
   #:use-module (guix download)
   #:use-module (guix build-system gnu)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages compression)
+  #:use-module (core-system user-space root shell archive unzip)
   #:export (zip))
 
 (define-public zip

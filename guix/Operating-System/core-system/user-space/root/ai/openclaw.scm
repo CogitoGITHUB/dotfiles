@@ -4,7 +4,8 @@
   #:use-module (guix build-system trivial)
   #:use-module (gnu packages base)
   #:use-module (gnu packages node)
-  #:use-module (gnu packages compression)
+  #:use-module (core-system user-space root shell archive unzip)
+  #:use-module (core-system user-space root shell archive gzip)
   #:use-module ((guix licenses) #:prefix license:)
   #:export (openclaw))
 

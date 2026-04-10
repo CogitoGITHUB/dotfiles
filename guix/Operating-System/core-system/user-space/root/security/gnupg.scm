@@ -7,12 +7,13 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages ldap)
+  #:use-module (gnu packages openldap)
   #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages pcsclite)
+  #:use-module (gnu packages security-token)
   #:use-module (gnu packages readline)
   #:use-module (gnu packages sqlite)
-  #:use-module (gnu packages compression)
+  #:use-module (core-system user-space root shell archive unzip)
+  #:use-module (core-system user-space root shell archive zlib)
   #:export (gnupg))
 
 ;; Simplified from gnu/packages/gnupg.scm

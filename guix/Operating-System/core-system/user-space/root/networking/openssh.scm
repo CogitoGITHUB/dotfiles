@@ -4,7 +4,8 @@
   #:use-module (guix build-system gnu)
   #:use-module (guix download)
   #:use-module (guix licenses)
-  #:use-module (srfi srfi-1))
+  #:use-module (srfi srfi-1)
+  #:use-module (core-system user-space root shell archive zlib))
 
 (define-public openssh
   (package

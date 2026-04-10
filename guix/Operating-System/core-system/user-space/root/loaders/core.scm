@@ -5,11 +5,12 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages elf)
   #:use-module (gnu packages file)
-  #:use-module (gnu packages compression)
+  #:use-module (core-system user-space root shell archive unzip)
+  #:use-module (core-system user-space root shell archive gzip)
   #:use-module (gnu packages wget)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages man)
-  #:re-export (sudo)
+  #:re-export (sudo gzip)
   #:export (root-core-packages))
 
 (define-public root-core-packages

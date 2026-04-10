@@ -1,10 +1,12 @@
 (define-module (core-system user-space root editors emacs-packages)
+  #:use-module (guix packages)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages emacs-build)
+  #:use-module (gnu packages scheme)
+  #:use-module (gnu packages guile)
   #:use-module (core-system user-space root editors emacs-packages emacs-leaf)
   #:use-module (core-system user-space root editors emacs-packages literate-config-system)
   #:use-module (core-system user-space root editors emacs-packages avy)
-  #:use-module (core-system user-space root editors emacs-packages geiser)
   #:use-module (core-system user-space root editors emacs-packages emacs-sops)
   #:use-module (core-system user-space root editors emacs-packages emacs-tmr)
   #:use-module (core-system user-space root editors emacs-packages emacs-org-repeat-by-cron)
@@ -27,6 +29,13 @@
   #:use-module (core-system user-space root editors emacs-packages emacs-posframe)
   #:re-export (emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-org-roam emacs-ht emacs-gptel emacs-posframe)
   #:export (root-emacs-packages))
+
+(define-public emacs-geiser-guile
+  (package
+    (inherit emacs-geiser)
+    (name "emacs-geiser-guile")
+    (propagated-inputs (list emacs-geiser guile-3.0))
+    (synopsis "Guile support for Geiser")))
 
 (define-public root-emacs-packages
    (list emacs-leaf literate-config-system emacs-avy emacs-geiser emacs-geiser-guile emacs-sops emacs-password-store emacs-pass emacs-tmr emacs-org-repeat-by-cron emacs-fuzzy-clock emacs-notebook-mode emacs-monkeytype emacs-quick-peek emacs-scrollable-quick-peek emacs-god-mode emacs-modus-themes emacs-multiple-cursors emacs-mcp emacs-mcp-server-lib emacs-org-mcp emacs-opencode-el emacs-ht emacs-gptel emacs-posframe))

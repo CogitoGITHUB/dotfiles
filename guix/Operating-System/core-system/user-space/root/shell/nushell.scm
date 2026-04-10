@@ -4,7 +4,7 @@
   #:use-module (guix build-system cargo)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages c)
-  #:use-module (gnu packages compression)
+  #:use-module (core-system user-space root shell archive unzip)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages sqlite)
   #:use-module (gnu packages ssh)

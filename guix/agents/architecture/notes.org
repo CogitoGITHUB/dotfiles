@@ -1,5 +1,15 @@
 * LiterativeOS — Architecture: Notes & Gotchas
 
+** !! CRITICAL RULE: Custom Modules for EVERY external package !!
+
+If any package (like gzip, zlib, libxml2, etc.) is used as an input in a custom package definition, you MUST create a dedicated module for it:
+  - Path: Operating-System/core-system/user-space/root/<category>/<name>.scm
+  - Template: Full define-public with origin, uri, sha256 hash from `guix download`
+  - THEN import that module in the package that needs it
+
+NEVER import directly from (gnu packages ...) for these. Self-contained always.
+This rule exists because Guix will be cut from the system.
+
 ** Notes
 
 - guixos.scm is at /home/aoeu/.config/guix/guixos.scm (repo root), NOT under Operating-System/

@@ -6,6 +6,7 @@
   #:use-module (gnu packages networking)
   #:use-module ((gnu packages admin) #:select (wpa-supplicant))
   #:use-module ((gnu packages networking) #:select (iwd))
+  #:use-module (gnu packages linux)
   #:use-module (core-system user-space root networking version-control github-cli)
   #:use-module (core-system user-space root networking version-control lazygit)
   #:use-module (core-system user-space root networking yt-dlp)
@@ -13,6 +14,7 @@
   #:use-module (core-system user-space root networking network-manager)
   #:use-module (core-system user-space root networking gazelle-tui)
   #:use-module (core-system user-space root networking bluetooth)
+  #:use-module (core-system user-space root networking bluetuith)
   #:use-module (core-system user-space root networking tools)
   #:use-module (gnu services)
   #:use-module (gnu services networking)
@@ -24,7 +26,7 @@
   #:export (root-networking-packages root-networking-services))
 
 (define-public root-networking-packages
-  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez blueman bluetuith nmap wireshark bind-dns iperf iproute wpa-supplicant iwd))
+  (list git github-cli lazygit openssh curl yt-dlp tailscale nss-certs network-manager gazelle-tui bluez bluetuith nmap wireshark bind-dns iperf iproute wpa-supplicant iwd))
 
 (define-public root-networking-services
   (list (service network-manager-service-type

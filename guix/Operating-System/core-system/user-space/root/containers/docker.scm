@@ -19,8 +19,8 @@
              (url "https://github.com/moby/moby")
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
-       (sha256
-        (base32 "017frilx35w3m4dz3n6m2f293q4fq4jrk6hl8f7wg5xs3r8hswvq"))))
+        (sha256
+         (base32 "14lmpj804lp1yvpaymsx1xv5d93ksznqv3qbbv96y02dy05w6zfs"))))
     (build-system gnu-build-system)
     (home-page "https://www.docker.com/")
     (synopsis "Set of programs to manage container images and containers")
