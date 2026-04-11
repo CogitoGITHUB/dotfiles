@@ -3,12 +3,12 @@ carapace _carapace nushell | save -f ($nu.data-dir | path join "carapace-init.nu
 $env.EDITOR = "nvim"
 
 # --- Guix Configuration ---
-$env.GUIX_PROFILE = "/home/aoeu/.config/guix/current"
+$env.GUIX_PROFILE = "/root/.config/guix/current"
 $env.GUIX_SUBSTITUTE_URLS = "https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
 
 
-# --- Guile Module Path for LiterativeOS ---
-$env.GUILE_LOAD_PATH = $"/home/aoeu/.config/guix/Operating-System:($env.GUILE_LOAD_PATH? | default "")"
+# --- Guile Module Path for ManifoldOS ---
+$env.GUILE_LOAD_PATH = $"/ManifoldOS/Manifold:($env.GUILE_LOAD_PATH? | default "")"
 
 # --- PATH Setup ---
 let path_without_setuid = ($env.PATH | where {|x| $x != "/run/setuid-programs" })
@@ -27,6 +27,6 @@ $env.FZF_DEFAULT_OPTS = "--color=fg:#8B0000,fg+:#8B0000,hl:#CC0000,hl+:#FF0000,h
 # --- Guix Home Shepherd ---
 let shepherd_socket = $"/run/user/1000/shepherd/socket"
 if not ($shepherd_socket | path exists) {
-    bash -c "~/.guix-home/on-first-login"
-    bash -c "~/.guix-home/profile/bin/shepherd --silent --logfile=$HOME/.local/state/shepherd/shepherd.log"
+    bash -c "~/.config/guix/home/on-first-login"
+    bash -c "~/.config/guix/home/profile/bin/shepherd --silent --logfile=$HOME/.local/state/shepherd/shepherd.log"
 }

@@ -1,8 +1,0 @@
-(channel
-  (version 0)
-  (directory "Operating-System")
-  (dependencies
-    (channel
-      (name nonguix)
-      (url "https://gitlab.com/nonguix/nonguix")
-      (branch "master"))))

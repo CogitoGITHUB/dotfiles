@@ -9,6 +9,16 @@ let keybindings = [
       cmd: "nu -c '~/.config/nushell/aeon-modules/scripts/say.nu'"
     }
   }
+  {
+    name: reshape
+    modifier: control
+    keycode: char_s
+    mode: emacs
+    event: {
+      send: executehostcommand
+      cmd: "reshape"
+    }
+  }
     {
     name: rmpc
     modifier: control

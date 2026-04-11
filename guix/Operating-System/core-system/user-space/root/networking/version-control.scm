@@ -1,5 +1,0 @@
-(define-module (core-system user-space root networking version-control)
-  #:use-module (core-system user-space root networking version-control git)
-  #:use-module (core-system user-space root networking version-control github-cli)
-  #:use-module (core-system user-space root networking version-control lazygit)
-  #:re-export (git github-cli lazygit))

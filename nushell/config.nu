@@ -4,6 +4,7 @@ source "~/.config/nushell/core-modules/plugins.nu"
 source "~/.config/nushell/aeon-modules/keybindings/editors.nu"
 source "~/.config/nushell/aeon-modules/keybindings/wallpaper.nu"
 source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
+source "~/.config/nushell/aeon-modules/scripts/shape.nu"
 source "~/.config/nushell/core-modules/completion.nu"
 source ~/.zoxide.nu
 source ~/.local/share/nushell/vendor/autoload/atuin.nu
