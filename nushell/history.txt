@@ -77,3 +77,10 @@ emacs ~/.config/nushell/aeon-modules/keybindings/nix.nu
 cd ..
 emacs nushell/aeon-modules/keybindings/
 nu
+bash -c 'cat > /home/aoeu/.config/nushell/aeon-modules/scripts/shape.nu << EOF<\n>def reshape [] {<\n>    cd /ManifoldOS<\n>    git gg<\n>    sudo rm -rf /root/.cache/guile/ccache/3.0-LE-8-4.7/ManifoldOS<\n>    sudo guix pull<\n>    if \$env.LAST_EXIT_CODE == 0 {<\n>        sudo guix system reconfigure /ManifoldOS/constitution.scm<\n>    } else {<\n>        sudo zcat (ls /var/log/guix/drvs/**/*.gz | sort-by modified | last | get name) | tail -20<\n>    }<\n>}<\n>EOF'
+ni
+nu
+ls
+emacs shape.nu
+emacs reshape.nu
+nu
