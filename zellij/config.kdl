@@ -215,8 +215,8 @@ copy_command "wl-copy"
 //copy_clipboard "primary"
 copy_on_select true
 scrollback_editor "/usr/bin/emacs"
-session_name "Master"
-attach_to_session true
+// session_name "Master"
+attach_to_session false
 // auto_layout false
 session_serialization false
 serialize_pane_viewport false

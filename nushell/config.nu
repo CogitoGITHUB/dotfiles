@@ -16,10 +16,6 @@ source ($nu.data-dir | path join "carapace-init.nu")
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
 
-
-
-
-
 # zellij
 def start_zellij [] {
   if 'ZELLIJ' not-in ($env | columns) {
@@ -36,5 +32,3 @@ def start_zellij [] {
 }
 
 start_zellij
-
-
