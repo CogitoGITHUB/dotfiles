@@ -2,7 +2,7 @@
 keybinds clear-defaults=true {
   locked {
     bind "Ctrl a" { SwitchToMode "normal"; }
-    bind "Ctrl q" { Detach; }
+    bind "Ctrl d" { Detach; }
     bind "Alt d" { MoveFocusOrTab "Left"; }
     bind "Alt h" { MoveFocus "Down"; }
     bind "Alt t" { MoveFocus "Up"; }
@@ -202,7 +202,7 @@ ui {
 theme "dark-red"
 default_mode "locked"
 default_shell "nu"
-default_cwd ""
+default_cwd "/"
 default_layout "default"
 layout_dir "/home/aoeu/.config/zellij/layouts"
 theme_dir "/home/aoeu/.config/zellij/themes"
@@ -218,10 +218,10 @@ scrollback_editor "/usr/bin/emacs"
 // session_name "Master"
 attach_to_session false
 // auto_layout false
-session_serialization false
-serialize_pane_viewport false
+session_serialization true
+serialize_pane_viewport true
 scrollback_lines_to_serialize 10000
-styled_underlines false
+styled_underlines true
 serialization_interval 10000
 disable_session_metadata false
 stacked_resize false
