@@ -23,10 +23,13 @@ def --env --wrapped __zoxide_z [...rest: string] {
     [ '-' ] => { '-' },
     [ $arg ] if ($arg | path type) == 'dir' => { $arg }
     _ => {
-      zoxide query --exclude $env.PWD -- ...$rest | str trim -r -c "\n"
+      let result = (do { zoxide query --exclude $env.PWD -- ...$rest } | complete)
+      if $result.exit_code == 0 { $result.stdout | str trim } else { $rest | str join " " }
     }
   }
   cd $path
+  ls | print
+  if ("TODO.org" | path exists) { bat TODO.org }
 }
 
 def --env __zoxide_zi [...rest: string] {
@@ -35,7 +38,11 @@ def --env __zoxide_zi [...rest: string] {
     | to text
     | fzf --height=40% --reverse --no-preview
   } catch { "" })
-  if ($sel | str trim) != "" { cd ($sel | str trim) }
+  if ($sel | str trim) != "" { 
+    cd ($sel | str trim)
+    ls | print
+    if ("TODO.org" | path exists) { bat TODO.org }
+  }
 }
 
 alias eu = __zoxide_z
