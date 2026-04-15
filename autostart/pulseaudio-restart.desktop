@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=PulseAudio Restart
-Exec=pulseaudio -k && sleep 1 && pulseaudio --start
-Terminal=false
-X-GNOME-Autostart-enabled=true

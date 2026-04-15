@@ -1,5 +1,6 @@
 def reshape [] {
     cd /ManifoldOS
+    clear
     try { git gg } catch { print "nothing to commit, skipping" }
     try {
         sudo guix pull

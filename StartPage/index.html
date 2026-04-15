@@ -1,0 +1,851 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="noindex" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>~</title>
+
+<style>
+  @font-face {
+    font-family: 'SpaceGrotesk';
+    font-style: normal;
+    font-weight: normal;
+    src: url('./fonts/SpaceGrotesk-Regular.woff2') format('woff2');
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'SpaceGrotesk';
+    font-style: normal;
+    font-weight: bold;
+    src: url('./fonts/SpaceGrotesk-Bold.woff2') format('woff2');
+    font-display: swap;
+  }
+
+  :root {
+    --color-background: #111;
+    --color-text-subtle: #888;
+    --color-text: #eee;
+    --font-family: SpaceGrotesk, -apple-system, Helvetica, sans-serif;
+    --font-size: clamp(16px, 1.5vw, 18px);
+    --color-accent: #e34;
+    --transition-speed: 200ms;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --color-background: #e8e8e8;
+      --color-text-subtle: #606060;
+      --color-text: #111;
+    }
+  }
+</style>
+
+<script>
+  const CONFIG = {
+    commandPathDelimiter: '/',
+    commandSearchDelimiter: ' ',
+    defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
+    openLinksInNewTab: true,
+    suggestionLimit: 4,
+  };
+
+  // prettier-ignore
+  const COMMANDS = new Map([
+    ['a', { name: 'AI', suggestions: ['a/chatgpt', 'a/gemini', 'a/grok', 'a/lumo'], url: 'https://claude.ai/new' }],
+    ['a/chatgpt', { url: 'https://chatgpt.com' }],
+    ['a/gemini', { url: 'https://gemini.google.com' }],
+    ['a/grok', { url: 'https://grok.com' }],
+    ['a/lumo', { url: 'https://lumo.proton.me/u/0' }],
+    ['c', { name: 'Cloudflare', url: 'https://dash.cloudflare.com' }],
+    ['d', { name: 'Discord', url: 'https://discord.com/channels/@me' }],
+    ['e', { name: 'PostHog', url: 'https://us.posthog.com' }],
+    ['f', { name: 'Figma', url: 'https://www.figma.com' }],
+    ['g', { name: 'GitHub', searchTemplate: '/search?q={}', suggestions: ['g/copilot', 'g/trending'], url: 'https://github.com' }],
+    ['h', { name: 'Hetzner', url: 'https://console.hetzner.cloud/projects' }],
+    ['i', { name: 'InstantDB', url: 'https://instantdb.com/dash' }],
+    ['l', { name: 'LinkedIn', url: 'https://www.linkedin.com/feed/' }],
+    ['m', { name: 'Modal', url: 'https://modal.com/apps' }],
+    ['n', { name: 'Pinecone', url: 'https://app.pinecone.io' }],
+    ['o', { name: 'OpenRouter', url: 'https://openrouter.ai/models' }],
+    ['p', { name: 'Proton', suggestions: ['p/drive', 'p/pass'], url: 'https://mail.proton.me/u/0/inbox' }],
+    ['p/drive', { url: 'https://drive.proton.me/u/0' }],
+    ['p/pass', { url: 'https://pass.proton.me/u/0' }],
+    ['q', { name: 'QBO', url: 'https://qbo.intuit.com' }],
+    ['r', { name: 'Reddit', url: 'https://www.reddit.com' }],
+    ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/organizations' }],
+    ['t', { name: 'TickTick', url: 'https://ticktick.com/webapp/#q/today/tasks' }],
+    ['u', { name: 'Duolingo', url: 'https://www.duolingo.com/learn' }],
+    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
+    ['x', { name: '𝕏', suggestions: ['x/dev', 'x/n8n', 'x/nginx', 'x/wg'], url: 'https://x.com/home' }],
+    ['x/bazarr', { url: 'https://bazarr.xvyz.co' }],
+    ['x/dev', { url: 'https://dev.xvyz.co' }],
+    ['x/jellyfin', { url: 'https://jellyfin.xvyz.co' }],
+    ['x/n8n', { url: 'https://n8n.xvyz.co/home/workflows' }],
+    ['x/nginx', { url: 'https://nginx.xvyz.co' }],
+    ['x/nzbget', { url: 'https://nzbget.xvyz.co' }],
+    ['x/profilarr', { url: 'https://profilarr.xvyz.co' }],
+    ['x/prowlarr', { url: 'https://prowlarr.xvyz.co' }],
+    ['x/radarr', { url: 'https://radarr.xvyz.co' }],
+    ['x/seerr', { url: 'https://seerr.xvyz.co' }],
+    ['x/sonarr', { url: 'https://sonarr.xvyz.co' }],
+    ['x/wg', { url: 'https://wg.xvyz.co' }],
+    ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://www.youtube.com/feed/subscriptions' }],
+    ['0', { name: 'localhost', url: 'http://localhost:3000' }],
+  ]);
+</script>
+
+<template id="commands-template">
+  <style>
+    nav {
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      min-height: 100dvh;
+      position: relative;
+      width: 100%;
+    }
+
+    .commands {
+      aspect-ratio: 1;
+      height: min(55vh, 55vw);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    .commands li {
+      border-radius: 50%;
+      height: calc(var(--item-size) * 100%);
+      left: calc(var(--x) * 100%);
+      position: absolute;
+      top: calc(var(--y) * 100%);
+      transform: translate(-50%, -50%) scale(0.8);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
+      width: calc(var(--item-size) * 100%);
+    }
+
+    .command {
+      align-items: center;
+      border-radius: 50%;
+      color: var(--color-text);
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      outline: 0;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .key {
+      color: var(--color-text-subtle);
+      position: absolute;
+      transition: all var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover) .key {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(1.5em) scale(0.9);
+    }
+
+    .name {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-1.5em) scale(0.9);
+      transition: all var(--transition-speed);
+    }
+
+    .command:where(:focus, :hover) .name {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .clock {
+      aspect-ratio: 1;
+      height: calc(min(55vh, 55vw) * 0.85);
+      left: 50%;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hand {
+      background: var(--color-text);
+      border-radius: 2px;
+      bottom: 50%;
+      left: 50%;
+      position: absolute;
+      transform-origin: bottom center;
+    }
+
+    .hand--hour {
+      height: 30%;
+      width: 3px;
+      margin-left: -1.5px;
+    }
+
+    .hand--minute {
+      height: 40%;
+      width: 2px;
+      margin-left: -1px;
+    }
+
+    .hand--second {
+      background: var(--color-accent);
+      height: 45%;
+      width: 1px;
+      margin-left: -0.5px;
+    }
+
+    .dot {
+      background: var(--color-text);
+      border-radius: 50%;
+      height: 6px;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 6px;
+    }
+  </style>
+  <nav>
+    <menu class="commands"></menu>
+    <div class="clock">
+      <div class="hand hand--hour"></div>
+      <div class="hand hand--minute"></div>
+      <div class="hand hand--second"></div>
+      <div class="dot"></div>
+    </div>
+  </nav>
+</template>
+
+<template id="command-template">
+  <li>
+    <a class="command" rel="noopener noreferrer" aria-label="">
+      <span class="key" aria-hidden="true"></span>
+      <span class="name"></span>
+    </a>
+  </li>
+</template>
+
+<script type="module">
+  class Commands extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const template = document.getElementById('commands-template');
+      const clone = template.content.cloneNode(true);
+      const commands = clone.querySelector('.commands');
+      const commandTemplate = document.getElementById('command-template');
+
+      const entries = [...COMMANDS.entries()].filter(
+        ([, { name, url }]) => name && url
+      );
+
+      const total = entries.length;
+
+      commands.style.setProperty(
+        '--item-size',
+        Math.sin(Math.PI / total) / 0.8
+      );
+
+      for (const [index, [key, { name, url }]] of entries.entries()) {
+        const clone = commandTemplate.content.cloneNode(true);
+        const li = clone.querySelector('li');
+        const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+        li.style.setProperty('--x', 0.5 + 0.5 * Math.cos(angle));
+        li.style.setProperty('--y', 0.5 + 0.5 * Math.sin(angle));
+        const command = clone.querySelector('.command');
+        command.href = url;
+        command.setAttribute('aria-label', name);
+        if (CONFIG.openLinksInNewTab) command.target = '_blank';
+        clone.querySelector('.key').innerText = key;
+        clone.querySelector('.name').innerText = name;
+        commands.append(clone);
+      }
+
+      this.shadowRoot.append(clone);
+      const items = commands.querySelectorAll('li');
+
+      for (const [i] of entries.entries()) {
+        const li = items[i];
+
+        li.addEventListener('mouseenter', () => {
+          for (const [j] of entries.entries()) {
+            const dist = Math.min(Math.abs(j - i), total - Math.abs(j - i));
+
+            if (dist === 0) {
+              items[j].style.transform = 'translate(-50%, -50%) scale(1)';
+            } else if (dist === 1) {
+              items[j].style.opacity = '0.25';
+            } else if (dist === 2) {
+              items[j].style.opacity = '0.5';
+            } else if (dist === 3) {
+              items[j].style.opacity = '0.75';
+            }
+          }
+        });
+
+        li.addEventListener('mouseleave', () => {
+          for (const item of items) {
+            item.style.opacity = '';
+            item.style.transform = '';
+          }
+        });
+      }
+
+      this.#startClock();
+    }
+
+    #startClock() {
+      const hour = this.shadowRoot.querySelector('.hand--hour');
+      const minute = this.shadowRoot.querySelector('.hand--minute');
+      const second = this.shadowRoot.querySelector('.hand--second');
+
+      const tick = () => {
+        const now = new Date();
+        const h = now.getHours() % 12;
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        second.style.transform = `rotate(${s * 6}deg)`;
+        minute.style.transform = `rotate(${(m + s / 60) * 6}deg)`;
+        hour.style.transform = `rotate(${(h + m / 60) * 30}deg)`;
+      };
+
+      tick();
+      setInterval(tick, 1000);
+    }
+  }
+
+  customElements.define('commands-component', Commands);
+</script>
+
+<template id="search-template">
+  <style>
+    input,
+    button {
+      -moz-appearance: none;
+      font-family: var(--font-family);
+      -webkit-appearance: none;
+      background: transparent;
+      border: 0;
+      display: block;
+      outline: 0;
+    }
+
+    .dialog {
+      align-items: center;
+      background: var(--color-background);
+      border: none;
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      justify-content: center;
+      left: 0;
+      opacity: 0;
+      padding: 0;
+      top: 0;
+      transform: translateY(10px);
+      transition:
+        opacity var(--transition-speed),
+        transform var(--transition-speed);
+      width: 100%;
+    }
+
+    .dialog[open] {
+      display: flex;
+    }
+
+    .dialog.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .form {
+      width: 100%;
+    }
+
+    .sr-only {
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    .input {
+      color: var(--color-text);
+      font-size: 2rem;
+      font-weight: bold;
+      padding: 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    .suggestions {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: center;
+      list-style: none;
+      margin: 1rem 0 0;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .suggestion {
+      color: var(--color-text);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 1rem;
+      position: relative;
+      transition: color var(--transition-speed);
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    .suggestion:where(:focus, :hover) {
+      color: var(--color-background);
+    }
+
+    .suggestions:hover .suggestion:focus:not(:hover) {
+      color: var(--color-text);
+    }
+
+    .suggestion::before {
+      background-color: var(--color-text);
+      border-radius: 1em;
+      content: ' ';
+      inset: 0.8em 0.4em;
+      opacity: 0;
+      position: absolute;
+      transform: translateY(0.3em) scale(0.9);
+      transition: all var(--transition-speed);
+      z-index: -1;
+    }
+
+    .suggestion:where(:focus, :hover)::before {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .suggestions:hover .suggestion:focus:not(:hover)::before {
+      opacity: 0;
+      transform: translateY(0.3em) scale(0.9);
+    }
+
+    .match {
+      color: var(--color-text-subtle);
+      transition: color var(--transition-speed);
+    }
+
+    .suggestion:where(:focus, :hover) .match {
+      color: var(--color-background);
+    }
+
+    .suggestions:hover .suggestion:focus:not(:hover) .match {
+      color: var(--color-text-subtle);
+    }
+
+    @media (min-width: 700px) {
+      .suggestions {
+        flex-direction: row;
+      }
+    }
+  </style>
+  <dialog class="dialog" aria-label="Search">
+    <form autocomplete="off" class="form" method="dialog" spellcheck="false">
+      <label for="search-input" class="sr-only">Search</label>
+      <input class="input" id="search-input" type="text" />
+      <menu class="suggestions"></menu>
+    </form>
+  </dialog>
+</template>
+
+<template id="suggestion-template">
+  <li>
+    <button class="suggestion" type="button"></button>
+  </li>
+</template>
+
+<template id="match-template">
+  <span class="match"></span>
+</template>
+
+<script type="module">
+  class Search extends HTMLElement {
+    #dialog;
+    #form;
+    #input;
+    #suggestions;
+    #lastSuggestions = [];
+    #closeController = null;
+
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      const template = document.getElementById('search-template');
+      const clone = template.content.cloneNode(true);
+      this.#dialog = clone.querySelector('.dialog');
+      this.#form = clone.querySelector('.form');
+      this.#input = clone.querySelector('.input');
+      this.#suggestions = clone.querySelector('.suggestions');
+      this.#form.addEventListener('submit', this.#onSubmit, false);
+      this.#input.addEventListener('input', this.#onInput);
+      this.#suggestions.addEventListener('click', this.#onSuggestionClick);
+      document.addEventListener('keydown', this.#onKeydown);
+      document.addEventListener('paste', this.#onPaste);
+      this.shadowRoot.append(clone);
+    }
+
+    static #escapeRegexCharacters(s) {
+      return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    static #fetchDuckDuckGoSuggestions(search) {
+      return new Promise((resolve) => {
+        window.autocompleteCallback = (res) => {
+          const suggestions = [];
+
+          for (const item of res) {
+            if (item.phrase === search.toLowerCase()) continue;
+            suggestions.push(item.phrase);
+          }
+
+          resolve(suggestions);
+        };
+
+        const script = document.createElement('script');
+        document.querySelector('head').appendChild(script);
+        script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`;
+        script.onload = script.remove;
+
+        script.onerror = () => {
+          script.remove();
+          resolve([]);
+        };
+      });
+    }
+
+    static #formatSearchUrl(template, search) {
+      return template.replace(/{}/g, encodeURIComponent(search));
+    }
+
+    static #hasProtocol(s) {
+      return /^[a-zA-Z]+:\/\//i.test(s);
+    }
+
+    static #isUrl(s) {
+      return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i.test(s);
+    }
+
+    static #parseQuery = (raw) => {
+      const query = raw.trim();
+
+      if (this.#isUrl(query)) {
+        const url = this.#hasProtocol(query) ? query : `https://${query}`;
+        return { query, url };
+      }
+
+      if (COMMANDS.has(query)) {
+        const { url } = COMMANDS.get(query);
+        return { key: query, query, url };
+      }
+
+      let splitBy = CONFIG.commandSearchDelimiter;
+      const [searchKey, rawSearch] = query.split(new RegExp(`${splitBy}(.*)`));
+
+      if (COMMANDS.has(searchKey)) {
+        const command = COMMANDS.get(searchKey);
+        const template = new URL(command.searchTemplate ?? '', command.url);
+        const search = rawSearch.trim();
+        const url = Search.#formatSearchUrl(decodeURI(template.href), search);
+        return { key: searchKey, query, search, splitBy, url };
+      }
+
+      splitBy = CONFIG.commandPathDelimiter;
+      const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`));
+
+      if (COMMANDS.has(pathKey)) {
+        const command = COMMANDS.get(pathKey);
+        const url = `${new URL(command.url).origin}/${path}`;
+        return { key: pathKey, path, query, splitBy, url };
+      }
+
+      const url = Search.#formatSearchUrl(CONFIG.defaultSearchTemplate, query);
+      return { query, search: query, url };
+    };
+
+    #open() {
+      this.#closeController?.abort();
+      this.#closeController = null;
+      this.#dialog.show();
+      requestAnimationFrame(() => this.#dialog.classList.add('visible'));
+    }
+
+    #close() {
+      this.#closeController?.abort();
+      this.#closeController = new AbortController();
+      this.#dialog.classList.remove('visible');
+      this.#input.value = '';
+      this.#input.blur();
+      this.#suggestions.innerHTML = '';
+
+      this.#dialog.addEventListener(
+        'transitionend',
+        () => {
+          if (!this.#dialog.classList.contains('visible')) {
+            this.#dialog.close();
+          }
+
+          this.#closeController = null;
+        },
+        { once: true, signal: this.#closeController.signal }
+      );
+    }
+
+    #execute(query) {
+      const target = CONFIG.openLinksInNewTab ? '_blank' : '_self';
+      window.open(Search.#parseQuery(query).url, target, 'noopener noreferrer');
+      this.#close();
+    }
+
+    #focusNextSuggestion(previous = false) {
+      const active = this.shadowRoot.activeElement;
+      let nextIndex;
+
+      if (active.dataset.index) {
+        const activeIndex = Number(active.dataset.index);
+        nextIndex = previous ? activeIndex - 1 : activeIndex + 1;
+      } else {
+        nextIndex = previous ? this.#suggestions.childElementCount - 1 : 0;
+      }
+
+      const next = this.#suggestions.children[nextIndex];
+      if (next) next.querySelector('.suggestion').focus();
+      else this.#input.focus();
+    }
+
+    #onInput = async () => {
+      const oq = Search.#parseQuery(this.#input.value);
+
+      if (!oq.query) {
+        this.#close();
+        return;
+      }
+
+      const parentKey = oq.query.split(CONFIG.commandPathDelimiter)[0];
+      const exactMatch = COMMANDS.has(oq.query);
+
+      let suggestions = [
+        ...(COMMANDS.get(oq.query)?.suggestions ??
+          COMMANDS.get(parentKey)?.suggestions ??
+          []),
+      ];
+
+      if (exactMatch) {
+        suggestions = suggestions.filter((s) => s.startsWith(oq.query));
+      }
+
+      for (const [key, cmd] of COMMANDS.entries()) {
+        if (key !== oq.query && !suggestions.includes(key)) {
+          if (key.includes(oq.query)) {
+            suggestions.push(key);
+          }
+        }
+
+        for (const s of cmd.suggestions ?? []) {
+          if (s !== oq.query && !suggestions.includes(s)) {
+            if (s.includes(oq.query)) {
+              suggestions.push(s);
+            }
+          }
+        }
+      }
+
+      suggestions = suggestions.filter((s) => s.includes(oq.query));
+
+      const withStale = [
+        ...suggestions,
+        ...this.#lastSuggestions.filter((s) => s.includes(oq.query)),
+      ].slice(0, CONFIG.suggestionLimit);
+
+      if (withStale.length) {
+        this.#renderSuggestions(withStale, oq.query);
+      } else if (!(oq.search?.length > 1)) {
+        this.#suggestions.innerHTML = '';
+      }
+
+      if (oq.search?.length > 1) {
+        const res = await Search.#fetchDuckDuckGoSuggestions(oq.search);
+        const nq = Search.#parseQuery(this.#input.value);
+        if (nq.query !== oq.query) return;
+
+        const ddgSuggestions = oq.splitBy
+          ? res.map((search) => `${oq.key}${oq.splitBy}${search}`)
+          : res;
+
+        this.#lastSuggestions = ddgSuggestions;
+
+        suggestions = [...suggestions, ...ddgSuggestions].slice(
+          0,
+          CONFIG.suggestionLimit
+        );
+
+        if (suggestions.length) {
+          this.#renderSuggestions(suggestions, oq.query);
+        } else {
+          this.#suggestions.innerHTML = '';
+        }
+      }
+    };
+
+    #onPaste = (e) => {
+      if (this.#dialog.classList.contains('visible')) return;
+      const text = e.clipboardData?.getData('text');
+      if (!text) return;
+      e.preventDefault();
+      this.#open();
+      this.#input.focus();
+      this.#input.value = text;
+      this.#onInput();
+    };
+
+    #onKeydown = (e) => {
+      if (!this.#dialog.classList.contains('visible')) {
+        if (e.key === 'Escape') {
+          if (this.#dialog.open) {
+            this.#closeController?.abort();
+            this.#closeController = null;
+            this.#input.value = '';
+            this.#input.blur();
+            this.#dialog.close();
+            this.#suggestions.innerHTML = '';
+          }
+
+          return;
+        }
+
+        this.#closeController?.abort();
+        this.#closeController = null;
+        this.#dialog.show();
+        this.#input.focus();
+
+        requestAnimationFrame(() => {
+          // close the search dialog before the next repaint if a character is
+          // not produced (e.g. if you type shift, control, alt etc.)
+          if (!this.#input.value) {
+            this.#input.blur();
+            this.#dialog.close();
+            this.#suggestions.innerHTML = '';
+          } else {
+            this.#dialog.classList.add('visible');
+          }
+        });
+
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        this.#close();
+        return;
+      }
+
+      const alt = e.altKey ? 'alt-' : '';
+      const ctrl = e.ctrlKey ? 'ctrl-' : '';
+      const meta = e.metaKey ? 'meta-' : '';
+      const shift = e.shiftKey ? 'shift-' : '';
+      const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${e.key}`;
+
+      if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
+        e.preventDefault();
+        this.#focusNextSuggestion();
+        return;
+      }
+
+      if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
+        e.preventDefault();
+        this.#focusNextSuggestion(true);
+      }
+    };
+
+    #onSubmit = () => {
+      this.#execute(this.#input.value);
+    };
+
+    #onSuggestionClick = (e) => {
+      const ref = e.target.closest('.suggestion');
+      if (!ref) return;
+      this.#execute(ref.dataset.suggestion);
+    };
+
+    #renderSuggestions(suggestions, query) {
+      const focused = this.shadowRoot.activeElement?.dataset?.suggestion;
+      this.#suggestions.innerHTML = '';
+      const suggestionTemplate = document.getElementById('suggestion-template');
+      const matchTemplate = document.getElementById('match-template');
+      const pattern = new RegExp(Search.#escapeRegexCharacters(query), 'i');
+
+      for (const [index, suggestion] of suggestions.entries()) {
+        const clone = suggestionTemplate.content.cloneNode(true);
+        const ref = clone.querySelector('.suggestion');
+        ref.dataset.index = index;
+        ref.dataset.suggestion = suggestion;
+        const matched = suggestion.match(pattern);
+
+        if (matched) {
+          const matchClone = matchTemplate.content.cloneNode(true);
+          const matchRef = matchClone.querySelector('.match');
+          const pre = suggestion.slice(0, matched.index);
+          const post = suggestion.slice(matched.index + matched[0].length);
+          matchRef.innerText = matched[0];
+          matchRef.insertAdjacentText('beforebegin', pre);
+          matchRef.insertAdjacentText('afterend', post);
+          ref.append(matchClone);
+        } else {
+          ref.innerText = suggestion;
+        }
+
+        this.#suggestions.append(clone);
+      }
+
+      if (focused) {
+        const toRefocus = this.#suggestions.querySelector(
+          `[data-suggestion="${CSS.escape(focused)}"]`
+        );
+
+        toRefocus?.focus();
+      }
+    }
+  }
+
+  customElements.define('search-component', Search);
+</script>
+
+<style>
+  html {
+    background-color: var(--color-background);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: 1.4;
+    user-select: none;
+  }
+
+  body {
+    margin: 0;
+  }
+</style>
+
+<commands-component></commands-component>
+<search-component></search-component>
