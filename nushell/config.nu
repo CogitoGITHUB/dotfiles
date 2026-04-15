@@ -6,6 +6,7 @@ source "~/.config/nushell/aeon-modules/keybindings/wallpaper.nu"
 source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
 source "~/.config/nushell/aeon-modules/scripts/reshape.nu"
 source "~/.config/nushell/aeon-modules/aliases/guix.nu"
+source "~/.config/nushell/aeon-modules/aliases/cli.nu"
 source "~/.config/nushell/core-modules/completion.nu"
 source "~/.config/nushell/zellij.nu"
 source ~/.zoxide.nu

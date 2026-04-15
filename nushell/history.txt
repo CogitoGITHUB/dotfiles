@@ -84,3 +84,4 @@ ls
 emacs shape.nu
 emacs reshape.nu
 nu
+emacs .config/nushell/config.nu

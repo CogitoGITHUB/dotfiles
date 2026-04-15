@@ -1,4 +1,3 @@
-
 keybinds clear-defaults=true {
   locked {
     bind "Ctrl a" { SwitchToMode "normal"; }
@@ -163,8 +162,6 @@ keybinds clear-defaults=true {
   }
 }
 
-
-
 plugins {
     about location="zellij:about"
     compact-bar location="zellij:compact-bar"
@@ -196,7 +193,7 @@ load_plugins {
 }
 ui {
     pane_frames {
-        rounded_corners false
+        rounded_corners true
     }
 } 
 theme "dark-red"

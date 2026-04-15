@@ -1,5 +1,4 @@
 # Gazelle Theme Configuration
-# White-Red Theme (matching opencode red theme)
 # Colors should be in hex format (#RRGGBB) or 0xRRGGBB
 [colors.primary]
 foreground = "#8B0000"
