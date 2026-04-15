@@ -1,0 +1,1 @@
+alias reshape = ^/home/aoeu/.guix-profile/bin/nu -c 'source ~/.config/nushell/aeon-modules/scripts/reshape.nu; reshape'
