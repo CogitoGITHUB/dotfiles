@@ -1,1 +1,1 @@
-* ADD MORE USEFULL CLI CD TOOLS FOR WHEN YOU CHANGE DIR !!!
+* make ls better
