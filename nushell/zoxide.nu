@@ -28,7 +28,7 @@ def --env --wrapped __zoxide_z [...rest: string] {
     }
   }
   cd $path
-  ls | print
+  eza | print
   if ("TODO.org" | path exists) { bat TODO.org }
 }
 
@@ -40,7 +40,7 @@ def --env __zoxide_zi [...rest: string] {
   } catch { "" })
   if ($sel | str trim) != "" { 
     cd ($sel | str trim)
-    ls | print
+    eza | print
     if ("TODO.org" | path exists) { bat TODO.org }
   }
 }
