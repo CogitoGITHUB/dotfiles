@@ -37,15 +37,15 @@ $env.config = {
     }
 
     explore: {
-        status_bar_background: { fg: "#000000", bg: "#FFFFFF" }
-        command_bar_text: { fg: "#000000" }
-        highlight: { fg: "#000000", bg: "#DDDDDD" }
+        status_bar_background: { fg: "#8B0000", bg: "#3D0000" }
+        command_bar_text: { fg: "#8B0000" }
+        highlight: { fg: "#8B0000", bg: "#3D0000" }
         status: {
-            error: { fg: "#000000", bg: "#FFFFFF" }
-            warn: { fg: "#000000", bg: "#FFFFFF" }
-            info: { fg: "#000000", bg: "#FFFFFF" }
+            error: { fg: "#8B0000", bg: "#3D0000" }
+            warn: { fg: "#8B0000", bg: "#3D0000" }
+            info: { fg: "#8B0000", bg: "#3D0000" }
         }
-        selected_cell: { bg: "#DDDDDD" }
+        selected_cell: { bg: "#3D0000" }
     }
 
     history: {
@@ -64,7 +64,7 @@ $env.config = {
     footer_mode: 25
     float_precision: 2
     buffer_editor: null
-    use_ansi_coloring: false
+    use_ansi_coloring: true
     bracketed_paste: true
     edit_mode: emacs
 
@@ -105,11 +105,11 @@ $env.config = {
                 col_padding: 2
             }
             style: {
-                text: black
-                selected_text: { fg: black, bg: "#DDDDDD" }
-                description_text: black
+                text: dark_red
+                selected_text: { fg: dark_red, bg: "#3D0000" }
+                description_text: dark_red
                 match_text: { attr: u }
-                selected_match_text: { fg: black, bg: "#DDDDDD" }
+                selected_match_text: { fg: dark_red, bg: "#3D0000" }
             }
         }
         {
@@ -132,11 +132,11 @@ $env.config = {
                 correct_cursor_pos: false
             }
             style: {
-                text: black
-                selected_text: { fg: black, bg: "#DDDDDD" }
-                description_text: black
+                text: dark_red
+                selected_text: { fg: dark_red, bg: "#3D0000" }
+                description_text: dark_red
                 match_text: { attr: u }
-                selected_match_text: { fg: black, bg: "#DDDDDD" }
+                selected_match_text: { fg: dark_red, bg: "#3D0000" }
             }
         }
         {
@@ -148,9 +148,9 @@ $env.config = {
                 page_size: 10
             }
             style: {
-                text: black
-                selected_text: { fg: black, bg: "#DDDDDD" }
-                description_text: black
+                text: dark_red
+                selected_text: { fg: dark_red, bg: "#3D0000" }
+                description_text: dark_red
             }
         }
         {
@@ -166,11 +166,71 @@ $env.config = {
                 description_rows: 10
             }
             style: {
-                text: black
-                selected_text: { fg: black, bg: "#DDDDDD" }
-                description_text: black
+                text: dark_red
+                selected_text: { fg: dark_red, bg: "#3D0000" }
+                description_text: dark_red
             }
         }
     ]
+color_config: {
+        separator: "#8B0000"
+        leading_trailing_space_bg: { attr: n }
+        header: "#8B0000"
+        empty: "#8B0000"
+        bool: "#8B0000"
+        int: "#8B0000"
+        filesize: "#8B0000"
+        duration: "#8B0000"
+        date: "#8B0000"
+        range: "#8B0000"
+        float: "#8B0000"
+        string: "#8B0000"
+        nothing: "#8B0000"
+        binary: "#8B0000"
+        cell-path: "#8B0000"
+        row_index: "#8B0000"
+        record: "#8B0000"
+        list: "#8B0000"
+        block: "#8B0000"
+        hints: "#8B0000"
+        search_result: { bg: "#3D0000" fg: "#8B0000" }
+        shape_and: "#8B0000"
+        shape_binary: "#8B0000"
+        shape_block: "#8B0000"
+        shape_bool: "#8B0000"
+        shape_closure: "#8B0000"
+        shape_custom: "#8B0000"
+        shape_datetime: "#8B0000"
+        shape_directory: "#8B0000"
+        shape_external: "#8B0000"
+        shape_externalarg: "#8B0000"
+        shape_external_resolved: "#8B0000"
+        shape_filepath: "#8B0000"
+        shape_flag: "#8B0000"
+        shape_float: "#8B0000"
+        shape_garbage: { fg: "#8B0000" bg: "#3D0000" attr: b }
+        shape_glob_interpolation: "#8B0000"
+        shape_globpattern: "#8B0000"
+        shape_int: "#8B0000"
+        shape_internalcall: "#8B0000"
+        shape_keyword: "#8B0000"
+        shape_list: "#8B0000"
+        shape_literal: "#8B0000"
+        shape_match_pattern: "#8B0000"
+        shape_matching_brackets: { attr: u }
+        shape_nothing: "#8B0000"
+        shape_operator: "#8B0000"
+        shape_or: "#8B0000"
+        shape_pipe: "#8B0000"
+        shape_range: "#8B0000"
+        shape_record: "#8B0000"
+        shape_redirection: "#8B0000"
+        shape_signature: "#8B0000"
+        shape_string: "#8B0000"
+        shape_string_interpolation: "#8B0000"
+        shape_table: "#8B0000"
+        shape_variable: "#8B0000"
+        shape_vardecl: "#8B0000"
+        shape_raw_string: "#8B0000"
+    }
 }
-

@@ -88,3 +88,6 @@ emacs .config/nushell/config.nu
 emacs nushell/config.nu
 cd nushell/aeon-modules/
 emacs ls.nu
+d
+emacs .
+nu

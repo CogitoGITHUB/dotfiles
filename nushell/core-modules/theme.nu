@@ -1,71 +1,68 @@
-# Define a white-background theme (black text everywhere)
 let light_theme = {
-    separator: black
+    separator: dark_red
     leading_trailing_space_bg: { attr: n }
-    header: black
-    empty: black
-
-    bool: black
-    int: black
-    filesize: black
-    duration: black
-    date: black
-    range: black
-    float: black
-    string: black
-    nothing: black
-    binary: black
-    cell-path: black
-    row_index: black
-    record: black
-    list: black
-    block: black
-    hints: black
-    search_result: { bg: "#DDDDDD" fg: "#000000" }
-
-    shape_and: black
-    shape_binary: black
-    shape_block: black
-    shape_bool: black
-    shape_closure: black
-    shape_custom: black
-    shape_datetime: black
-    shape_directory: black
-    shape_external: black
-    shape_externalarg: black
-    shape_external_resolved: black
-    shape_filepath: black
-    shape_flag: black
-    shape_float: black
-    shape_garbage: { fg: black bg: "#FF0000" attr: b }
-    shape_glob_interpolation: black
-    shape_globpattern: black
-    shape_int: black
-    shape_internalcall: black
-    shape_keyword: black
-    shape_list: black
-    shape_literal: black
-    shape_match_pattern: black
+    header: dark_red
+    empty: dark_red
+    bool: dark_red
+    int: dark_red
+    filesize: dark_red
+    duration: dark_red
+    date: dark_red
+    range: dark_red
+    float: dark_red
+    string: dark_red
+    nothing: dark_red
+    binary: dark_red
+    cell-path: dark_red
+    row_index: dark_red
+    record: dark_red
+    list: dark_red
+    block: dark_red
+    hints: dark_red
+    search_result: { bg: "#3D0000" fg: "#8B0000" }
+    shape_and: dark_red
+    shape_binary: dark_red
+    shape_block: dark_red
+    shape_bool: dark_red
+    shape_closure: dark_red
+    shape_custom: dark_red
+    shape_datetime: dark_red
+    shape_directory: dark_red
+    shape_external: dark_red
+    shape_externalarg: dark_red
+    shape_external_resolved: dark_red
+    shape_filepath: dark_red
+    shape_flag: dark_red
+    shape_float: dark_red
+    shape_garbage: { fg: dark_red bg: "#3D0000" attr: b }
+    shape_glob_interpolation: dark_red
+    shape_globpattern: dark_red
+    shape_int: dark_red
+    shape_internalcall: dark_red
+    shape_keyword: dark_red
+    shape_list: dark_red
+    shape_literal: dark_red
+    shape_match_pattern: dark_red
     shape_matching_brackets: { attr: u }
-    shape_nothing: black
-    shape_operator: black
-    shape_or: black
-    shape_pipe: black
-    shape_range: black
-    shape_record: black
-    shape_redirection: black
-    shape_signature: black
-    shape_string: black
-    shape_string_interpolation: black
-    shape_table: black
-    shape_variable: black
-    shape_vardecl: black
-    shape_raw_string: black
+    shape_nothing: dark_red
+    shape_operator: dark_red
+    shape_or: dark_red
+    shape_pipe: dark_red
+    shape_range: dark_red
+    shape_record: dark_red
+    shape_redirection: dark_red
+    shape_signature: dark_red
+    shape_string: dark_red
+    shape_string_interpolation: dark_red
+    shape_table: dark_red
+    shape_variable: dark_red
+    shape_vardecl: dark_red
+    shape_raw_string: dark_red
 }
 
-let color_config = $light_theme
+let light_theme = $light_theme
 
-# Ensure autoload directory exists and Starship prompt works
+$env.config.color_config = $light_theme
+
 mkdir ($nu.data-dir | path join "vendor/autoload")
 starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
-
