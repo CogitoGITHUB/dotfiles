@@ -17,6 +17,24 @@ export-env {
   }
 }
 
+def parse-todo [todo_path: string] {
+    open $todo_path
+    | lines
+    | each {|line|
+        if ($line | str starts-with "* ") {
+            let content = ($line | str replace "* " "")
+            if ($content | str starts-with "http") {
+                {level: 1, kind: "link", description: $content}
+            } else {
+                {level: 1, kind: "task", description: $content}
+            }
+        } else if ($line | str starts-with "** ") {
+            {level: 2, kind: "note", description: ($line | str replace "** " "")}
+        } else { null }
+    }
+    | compact
+}
+
 def --env --wrapped __zoxide_z [...rest: string] {
   let path = match $rest {
     []      => { '~' },
@@ -28,8 +46,15 @@ def --env --wrapped __zoxide_z [...rest: string] {
     }
   }
   cd $path
-  ls | print
-  if ("TODO.org" | path exists) { bat TODO.org }
+  let todo_path = ($env.PWD | path join "TODO.org")
+  print ""
+  print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
+  ls -la | select name type mode num_links user group size modified | print
+  if ($todo_path | path exists) {
+    print ""
+    print $"(ansi red_bold)  TODO(ansi reset)"
+    parse-todo $todo_path | print
+  }
 }
 
 def --env __zoxide_zi [...rest: string] {
@@ -38,10 +63,17 @@ def --env __zoxide_zi [...rest: string] {
     | to text
     | fzf --height=40% --reverse --no-preview
   } catch { "" })
-  if ($sel | str trim) != "" { 
+  if ($sel | str trim) != "" {
     cd ($sel | str trim)
-    ls | print
-    if ("TODO.org" | path exists) { bat TODO.org }
+    let todo_path = ($env.PWD | path join "TODO.org")
+    print ""
+    print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
+    ls -la | select name type mode num_links user group size modified | print
+    if ($todo_path | path exists) {
+      print ""
+      print $"(ansi red_bold)  TODO(ansi reset)"
+      parse-todo $todo_path | print
+    }
   }
 }
 

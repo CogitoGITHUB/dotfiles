@@ -1,79 +1,112 @@
-# Multi-line Structured — Dark Red #8B0000
+# Advanced Dark Red Starship Config
 add_newline = false
 command_timeout = 800
 
 format = """
- $username $hostname $directory
-$git_branch$git_status$cmd_duration
+ $username$hostname$directory$git_branch$git_status
+$jobs$cmd_duration
  • $character"""
 
-# Directory — breadcrumb path in dark red
+right_format = """$time$battery$memory_usage"""
+
+# ── Directory ──────────────────────────────────────────────
 [directory]
 style = "bold #8B0000"
-format = "[$path]($style)"
+format = "[ 󰉋 $path]($style) "
 truncation_length = 4
-truncation_symbol = ""
-home_symbol = "home"
+truncation_symbol = "…/"
+home_symbol = "~"
+read_only = " 󰌾"
+read_only_style = "#3D0000"
 
-# Git branch — slightly dimmer red
+# ── Git Branch ─────────────────────────────────────────────
 [git_branch]
 symbol = " "
 style = "bold #8B0000"
-format = "[$symbol$branch]($style) "
+format = "[│](#3D0000) [$symbol$branch]($style) "
 
-# Git status — labeled counts, separated by dim │
+# ── Git Status ─────────────────────────────────────────────
 [git_status]
-style = "#8B0000"
-format = '([│](#3d0000) [$ahead_behind](#6b0000)[│](#3d0000) [$all_status](#6b0000) )'
+style = "#6B0000"
+format = '([$ahead_behind]($style) [$all_status](#6B0000) )'
 conflicted  = "⚔ "
-ahead       = "↑$count ahead "
-behind      = "↓$count behind "
-diverged    = "↕ diverged "
-untracked   = "? untracked "
-stashed     = "↪ stashed "
-modified    = "~$count modified "
-staged      = "+$count staged "
-renamed     = "» renamed "
-deleted     = "✘ deleted "
+ahead       = "↑$count "
+behind      = "↓$count "
+diverged    = "↕ "
+untracked   = "? "
+stashed     = "↪ "
+modified    = "~$count "
+staged      = "+$count "
+renamed     = "» "
+deleted     = "✘ "
 
-# Command duration — dim, separated by │
+# ── Jobs ───────────────────────────────────────────────────
+[jobs]
+symbol = "󰒓 "
+style = "#8B0000"
+format = "[$symbol$number]($style) "
+number_threshold = 1
+
+# ── Command Duration ───────────────────────────────────────
 [cmd_duration]
 min_time = 200
-style = "#3d0000"
-format = "[│](#3d0000) [⏱ $duration](#3d0000) "
+style = "#3D0000"
+format = "[│](#3D0000) [⏱ $duration]($style) "
 
-# Optional language versions (only show when in a project)
-[nodejs]
-format = "[│](#3d0000) [node $version](#3d0000) "
-symbol = ""
-
-[python]
-format = "[│](#3d0000) [py $version](#3d0000) "
-symbol = ""
-
-[rust]
-format = "[│](#3d0000) [rs $version](#3d0000) "
-symbol = ""
-
-# Prompt character
+# ── Character ──────────────────────────────────────────────
 [character]
 success_symbol = "[❯](bold #8B0000)"
-error_symbol   = "[❯](bold #8B0000)"
+error_symbol   = "[❯](bold red)"
 vimcmd_symbol  = "[❮](bold #8B0000)"
 
-# Disable modules not in use
-[package]
-disabled = true
-
+# ── Username ───────────────────────────────────────────────
 [username]
 disabled = false
 style_user = "#8B0000"
-style_root = "bold #8B0000"
-format = "[$user ]($style)[>](#3d0000)"
+style_root = "bold red"
+format = "[$user]($style)[](#3D0000) "
 show_always = true
 
+# ── Hostname ───────────────────────────────────────────────
 [hostname]
 disabled = false
-style = "#6b0000"
-format = "[$hostname](#6b0000) "
+style = "#6B0000"
+format = "[$hostname]($style) [│](#3D0000) "
 ssh_only = false
+
+# ── Time (right prompt) ────────────────────────────────────
+[time]
+disabled = false
+style = "#3D0000"
+format = "[│](#1A0000) [ $time]($style) "
+time_format = "%H:%M"
+use_12hr = false
+
+# ── Battery (right prompt) ─────────────────────────────────
+[battery]
+full_symbol     = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂃 "
+unknown_symbol  = "󰁽 "
+empty_symbol    = "󰂎 "
+format = "[│](#1A0000) [$symbol$percentage]($style) "
+
+[[battery.display]]
+threshold = 15
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "#6B0000"
+
+[[battery.display]]
+threshold = 100
+style = "#3D0000"
+
+# ── Memory (right prompt) ──────────────────────────────────
+[memory_usage]
+disabled = false
+symbol = "󰍛 "
+style = "#3D0000"
+format = "[│](#1A0000) [$symbol$ram]($style) "
+threshold = 0

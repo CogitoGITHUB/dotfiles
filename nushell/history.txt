@@ -97,3 +97,7 @@ nu
 d
 emacs .
 nu
+emacs .
+ls --help
+emocs .
+emacs .
