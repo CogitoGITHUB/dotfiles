@@ -3,3 +3,8 @@ def zellij-clean [] {
 }
 
 alias cd = __zoxide_z
+
+alias e = emacs
+alias d = emacs .
+alias t = emacs TODO.org
+alias n = nvim

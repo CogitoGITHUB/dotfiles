@@ -1,6 +1,5 @@
 ;;; literate-config-system.el --- Guix-native Literate Config Loader -*- lexical-binding: t -*-
 ;; Author: Shape
-;; Version: 5.4.0
 ;; Package-Requires: ((emacs "29.1") (org "9.6") (leaf "0") (org-supertag "5.8") (org-roam "2.0"))
 ;;; Code:
 
@@ -20,7 +19,7 @@
   :prefix "lc-")
 
 (defcustom lc-org-directory
-  (expand-file-name "Literative Configurations/" user-emacs-directory)
+  (expand-file-name "modules/" user-emacs-directory)
   "Root directory for literate config org files."
   :type 'directory
   :group 'literate-config)
