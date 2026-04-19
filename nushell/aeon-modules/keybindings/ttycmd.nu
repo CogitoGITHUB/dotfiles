@@ -9,16 +9,18 @@ let keybindings = [
       cmd: "nu -c '~/.config/nushell/aeon-modules/scripts/say.nu'"
     }
   }
-    {
+
+ {
     name: git_gg
     modifier: control
     keycode: char_g
     mode: emacs
     event: {
       send: executehostcommand
-      cmd: "git gg"
+      cmd: "try { git gg } catch { print 'Everything up to date' }"
     }
   }
+  
   {
     name: reshape
     modifier: control
