@@ -28,11 +28,18 @@ def render-table [results: list] {
     print ($colored | table --index false)
 }
 
+def maybe-open-log [log: string] {
+    let choice = (["no" "yes"] | input list --fuzzy "Open log in Emacs?")
+    if $choice == "yes" {
+        emacsclient --alternate-editor "emacs -nw" -n $log
+    } else {
+        rm -f $log
+    }
+}
+
 def reshape [] {
     let manifest = "/ManifoldOS/system.scm"
-    let log_dir = ($env.HOME | path join ".config" "reshape" "logs")
-    let log = ($log_dir | path join $"(date now | format date '%Y%m%d_%H%M%S').log")
-    mkdir $log_dir
+    let log = $"/tmp/reshape_(date now | format date '%Y%m%d_%H%M%S').log"
 
     mut results = []
     let start_total = (date now)
@@ -57,6 +64,7 @@ def reshape [] {
     #     print ""
     #     render-table $results
     #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
+    #     emacsclient -n $log
     #     return
     # }
     # $results = ($results | append { description: "Root channels up to date" })
@@ -74,6 +82,7 @@ def reshape [] {
     #     print ""
     #     render-table $results
     #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
+    #     emacsclient -n $log
     #     return
     # }
     # $results = ($results | append { description: "User channels up to date" })
@@ -91,7 +100,8 @@ def reshape [] {
         print ""
         render-table $results
         print $"(ansi red_bold)  Generations preserved for rollback.(ansi reset)"
-        print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
+        print ""
+        emacsclient -n $log
         return
     }
     $results = ($results | append { description: "System reconfigured" })
@@ -108,5 +118,5 @@ def reshape [] {
     print ""
     render-table $results
     print ""
-    rm $log
+    maybe-open-log $log
 }
