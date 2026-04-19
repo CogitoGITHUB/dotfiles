@@ -4,16 +4,6 @@ def zellij-clean [] {
 
 alias cd = __zoxide_z
 
-alias ls = ll
-def ll [...args] {
-    if ($args | is-empty) {
-        ls -la | select name type mode num_links user group size modified
-    } else {
-        ls -la $args.0 | select name type mode num_links user group size modified inode
-    }
-}
-
-
 alias e = emacs
 alias d = emacs .
 alias t = emacs TODO.org

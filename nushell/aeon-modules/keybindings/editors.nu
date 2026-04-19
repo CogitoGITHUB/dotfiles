@@ -6,7 +6,7 @@ let keybindings = [
     mode: ["emacs"]
     event: {
       send: "executehostcommand"
-      cmd: 'emacs -nw'
+      cmd: 'emacs -nw --eval "(dired \".\")"'
     }
   },
 
