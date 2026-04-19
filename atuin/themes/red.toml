@@ -1,5 +1,5 @@
 [theme]
-name = "white-red"
+name = "red"
 
 [colors]
 Base = "#8B0000"
@@ -10,4 +10,4 @@ AlertWarn = "#8B0000"
 Title = "#8B0000"
 Muted = "#8B0000"
 Important = "#8B0000"
-AlertError = "#8B0000"
+AlertError = "purple"
