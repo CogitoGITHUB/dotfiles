@@ -1,0 +1,7 @@
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+guix system: warning: string value for 'user' is deprecated, use user-account instead
+guix system: warning: the following accounts appear more than once: aoeu
+guix system: warning: the following groups appear more than once: cgroup

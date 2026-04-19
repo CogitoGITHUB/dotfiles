@@ -1,7 +1,7 @@
 let light_theme = {
     separator: "#8B0000"
     leading_trailing_space_bg: { attr: n }
-    header: "#8B0000"
+    header: { fg: "#8B0000" attr: b }
     empty: "#8B0000"
     bool: "#8B0000"
     int: "#8B0000"
