@@ -49,7 +49,7 @@ def --env --wrapped __zoxide_z [...rest: string] {
   let todo_path = ($env.PWD | path join "TODO.org")
   print ""
   print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
-  ls -la | select name type mode num_links user group size modified | print
+  ls -l | print
   if ($todo_path | path exists) {
     print ""
     print $"(ansi red_bold)  TODO(ansi reset)"
@@ -68,7 +68,7 @@ def --env __zoxide_zi [...rest: string] {
     let todo_path = ($env.PWD | path join "TODO.org")
     print ""
     print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
-    ls -la | select name type mode num_links user group size modified | print
+    ls -l | print
     if ($todo_path | path exists) {
       print ""
       print $"(ansi red_bold)  TODO(ansi reset)"

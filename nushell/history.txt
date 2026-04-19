@@ -101,3 +101,4 @@ emacs .
 ls --help
 emocs .
 emacs .
+nu
