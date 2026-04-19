@@ -8,3 +8,5 @@ alias e = emacs
 alias d = emacs .
 alias t = emacs TODO.org
 alias n = nvim
+
+alias o = opencode

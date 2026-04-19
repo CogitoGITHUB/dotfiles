@@ -19,7 +19,8 @@ let keybindings = [
       cmd: "reshape"
     }
   }
-    {
+
+{
     name: rmpc
     modifier: control
     keycode: char_p
@@ -27,6 +28,16 @@ let keybindings = [
     event: {
       send: executehostcommand
       cmd: "rmpc"
+    }
+  }
+  {
+    name: opencode
+    modifier: control
+    keycode: char_o
+    mode: emacs
+    event: {
+      send: executehostcommand
+      cmd: "opencode"
     }
   }
 {

@@ -91,3 +91,9 @@ emacs ls.nu
 d
 emacs .
 nu
+d
+emacs .
+nu
+d
+emacs .
+nu
