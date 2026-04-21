@@ -7,7 +7,6 @@ $env.EDITOR = "nvim"
 $env.GUIX_PROFILE = "/root/.config/guix/current"
 $env.GUIX_SUBSTITUTE_URLS = "https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
 
-
 # --- Guile Module Path for ManifoldOS ---
 $env.GUILE_LOAD_PATH = $"/ManifoldOS/Manifold:($env.GUILE_LOAD_PATH? | default "")"
 
