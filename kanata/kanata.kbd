@@ -1,7 +1,7 @@
 (defcfg process-unmapped-keys yes)
 
 (defsrc
-  caps a s d f g h j k l ;
+  caps a s d f g h j k l ; r
 )
 
 (defvar
@@ -16,18 +16,29 @@
   d (tap-hold $tap-time $hold-time d lsft)
   f (tap-hold $tap-time $hold-time f lctl)
   g (tap-hold $tap-time $hold-time g (layer-while-held delete))
-  h (tap-hold $tap-time $hold-time h (layer-while-held delete))
+  h (tap-hold $tap-time $hold-time h (layer-while-held enter))
   j (tap-hold $tap-time $hold-time j rctl)
   k (tap-hold $tap-time $hold-time k rsft)
   l (tap-hold $tap-time $hold-time l ralt)
   ; (tap-hold $tap-time $hold-time ; rmet)
+  r (tap-hold $tap-time $hold-time r (layer-while-held reload))
 )
 
 (deflayer base
-  @caps @a  @s  @d  @f  @g  @h  @j  @k  @l  @;
+  @caps @a  @s  @d  @f  @g  @h  @j  @k  @l  @;  @r
 )
 
 (deflayermap (delete)
   spc bspc
+  _   _
+)
+
+(deflayermap (enter)
+  spc ret
+  _   _
+)
+
+(deflayermap (reload)
+  spc lrld
   _   _
 )
