@@ -26,6 +26,7 @@ def ensure-workspace-files [] {
         { name: "Journal.org",   title: "Journal" }
         { name: "Context.org",   title: "Context" }
         { name: "State.org",     title: "State" }
+        { name: "Laws.org",      title: "Laws" }  # added
     ]
     for f in $files {
         let fpath = ($env.PWD | path join $f.name)
@@ -39,6 +40,7 @@ export def show-dir-info [] {
     let todo_path    = ($env.PWD | path join "TODO.org")
     let journal_path = ($env.PWD | path join "Journal.org")
     let state_path   = ($env.PWD | path join "State.org")
+    let laws_path    = ($env.PWD | path join "Laws.org")  # added
     let dir_name     = ($env.PWD | path basename)
 
     print ""
@@ -63,11 +65,17 @@ export def show-dir-info [] {
         print $"(ansi red_bold)  STATE(ansi reset)"
         parse-org $state_path | print
     }
+
+    if ($laws_path | path exists) {  # added
+        print ""
+        print $"(ansi red_bold)  LAWS(ansi reset)"
+        parse-org $laws_path | print
+    }
 }
 
 def show-prompt [] {
     print ""
-    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [space] skip(ansi reset)"
+    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [t] Laws  [space] skip(ansi reset)"
 
     let key = (input listen --types [key])
 
@@ -79,6 +87,7 @@ def show-prompt [] {
         "i" => { open-file-in-emacs ($env.PWD | path join "Journal.org") }
         "d" => { open-file-in-emacs ($env.PWD | path join "Context.org") }
         "h" => { open-file-in-emacs ($env.PWD | path join "State.org") }
+        "t" => { open-file-in-emacs ($env.PWD | path join "Laws.org") }  # added
         " " => { clear; show-dir-info }
         _   => { clear; show-dir-info }
     }
