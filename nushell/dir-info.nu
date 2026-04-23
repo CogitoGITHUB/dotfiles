@@ -16,11 +16,32 @@ export def parse-todo [todo_path: string] {
     | compact
 }
 
+def ensure-workspace-files [] {
+    let files = [
+        { name: "Agents.org",    title: "Agents" }
+        { name: "Blueprint.org", title: "Blueprint" }
+        { name: "Rules.org",     title: "Rules" }
+        { name: "TODO.org",      title: "TODO" }
+    ]
+    for f in $files {
+        let fpath = ($env.PWD | path join $f.name)
+        if not ($fpath | path exists) {
+            $"#+TITLE: ($f.title)\n" | save $fpath
+            print $"(ansi yellow)  Created ($f.name)(ansi reset)"
+        }
+    }
+}
+
 export def show-dir-info [] {
-    let todo_path = ($env.PWD | path join "TODO.org")
+    let agents_path    = ($env.PWD | path join "Agents.org")
+    let blueprint_path = ($env.PWD | path join "Blueprint.org")
+    let rules_path     = ($env.PWD | path join "Rules.org")
+    let todo_path      = ($env.PWD | path join "TODO.org")
+
     print ""
     print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
     ls -la | reject inode target num_links | print
+
     if ($todo_path | path exists) {
         print ""
         print $"(ansi red_bold)  TODO(ansi reset)"
@@ -28,25 +49,26 @@ export def show-dir-info [] {
     }
 }
 
-export def open-todo-in-emacs [] {
-    let todo_path = ($env.PWD | path join "TODO.org")
-    if ($todo_path | path exists) {
-        emacs $todo_path
-        show-dir-info
-    } else {
-        print $"(ansi yellow)No TODO.org found in ($env.PWD)(ansi reset)"
-    }
+export def open-file-in-emacs [fpath: string] {
+    emacs $fpath
+    show-dir-info
 }
 
 export def maybe-open-todo [] {
-    let todo_path = ($env.PWD | path join "TODO.org")
+    ensure-workspace-files
     show-dir-info
-    if ($todo_path | path exists) {
-        print ""
-        print $"(ansi purple)  Open TODO.org ? [enter=yes, space=no](ansi reset)"
-        let key = (input listen --types [key])
-        if $key.code == "enter" {
-            open-todo-in-emacs
-        }
+
+    print ""
+    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [space] skip(ansi reset)"
+
+    let key = (input listen --types [key])
+
+    match $key.code {
+        "a" => { open-file-in-emacs ($env.PWD | path join "Agents.org") }
+        "o" => { open-file-in-emacs ($env.PWD | path join "Blueprint.org") }
+        "e" => { open-file-in-emacs ($env.PWD | path join "Rules.org") }
+        "u" => { open-file-in-emacs ($env.PWD | path join "TODO.org") }
+        " " => {}
+        _   => {}
     }
 }
