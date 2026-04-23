@@ -51,41 +51,41 @@ def reshape [] {
     let elapsed = (step-time $t)
     $results = ($results | append { description: "Repository synchronized" })
 
-    # 2 — Root pull
-    render-progress $results "Pulling latest Guix channels for root"
-    let t = (date now)
-    let r = (^sudo guix pull err>> $log | complete)
-    let elapsed = (step-time $t)
-    if $r.exit_code != 0 {
-        $results = ($results | append { description: "Pull root channels" })
-        print -n "\e[2J\e[H"
-        print ""
-        print $"(ansi red_bold)  Reshape Failed(ansi reset)"
-        print ""
-        render-table $results
-        print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
-        emacsclient -n $log
-        return
-    }
-    $results = ($results | append { description: "Root channels up to date" })
+    # # 2 — Root pull
+    # render-progress $results "Pulling latest Guix channels for root"
+    # let t = (date now)
+    # let r = (^sudo guix pull err>> $log | complete)
+    # let elapsed = (step-time $t)
+    # if $r.exit_code != 0 {
+    #     $results = ($results | append { description: "Pull root channels" })
+    #     print -n "\e[2J\e[H"
+    #     print ""
+    #     print $"(ansi red_bold)  Reshape Failed(ansi reset)"
+    #     print ""
+    #     render-table $results
+    #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
+    #     emacsclient -n $log
+    #     return
+    # }
+    # $results = ($results | append { description: "Root channels up to date" })
 
-    # 3 — User pull
-    render-progress $results "Pulling latest Guix channels for user"
-    let t = (date now)
-    let r = (^guix pull err>> $log | complete)
-    let elapsed = (step-time $t)
-    if $r.exit_code != 0 {
-        $results = ($results | append { description: "Pull user channels" })
-        print -n "\e[2J\e[H"
-        print ""
-        print $"(ansi red_bold)  Reshape Failed(ansi reset)"
-        print ""
-        render-table $results
-        print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
-        emacsclient -n $log
-        return
-    }
-    $results = ($results | append { description: "User channels up to date" })
+    # # 3 — User pull
+    # render-progress $results "Pulling latest Guix channels for user"
+    # let t = (date now)
+    # let r = (^guix pull err>> $log | complete)
+    # let elapsed = (step-time $t)
+    # if $r.exit_code != 0 {
+    #     $results = ($results | append { description: "Pull user channels" })
+    #     print -n "\e[2J\e[H"
+    #     print ""
+    #     print $"(ansi red_bold)  Reshape Failed(ansi reset)"
+    #     print ""
+    #     render-table $results
+    #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
+    #     emacsclient -n $log
+    #     return
+    # }
+    # $results = ($results | append { description: "User channels up to date" })
 
     # 4 — Reconfigure
     render-progress $results "Reconfiguring system"
