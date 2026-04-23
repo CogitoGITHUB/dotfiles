@@ -1,22 +1,29 @@
-source "~/.config/nushell/core-modules/general.nu"
-source "~/.config/nushell/core-modules/theme.nu"
-source "~/.config/nushell/core-modules/plugins.nu"
-source "~/.config/nushell/aeon-modules/keybindings/editors.nu"
-source "~/.config/nushell/aeon-modules/keybindings/wallpaper.nu"
-source "~/.config/nushell/aeon-modules/keybindings/ttycmd.nu"
-source "~/.config/nushell/aeon-modules/scripts/reshape.nu"
-source "~/.config/nushell/aeon-modules/scripts/fzf-tools.nu"
-source "~/.config/nushell/aeon-modules/aliases/guix.nu"
-source "~/.config/nushell/aeon-modules/aliases/cli.nu"
-source "~/.config/nushell/core-modules/completion.nu"
+# substrate (core layer)
+source "~/.config/nushell/modules/substrate/general.nu"
+source "~/.config/nushell/modules/substrate/theme.nu"
+source "~/.config/nushell/modules/substrate/plugins.nu"
+source "~/.config/nushell/modules/substrate/completion.nu"
+
+# forms (interaction layer)
+source "~/.config/nushell/modules/forms/keybindings/editors.nu"
+source "~/.config/nushell/modules/forms/keybindings/wallpaper.nu"
+source "~/.config/nushell/modules/forms/keybindings/ttycmd.nu"
+
+source "~/.config/nushell/modules/forms/scripts/reshape.nu"
+source "~/.config/nushell/modules/forms/scripts/fzf-tools.nu"
+
+source "~/.config/nushell/modules/forms/aliases/cli.nu"
+
+# session / tools
 source "~/.config/nushell/zellij.nu"
 source "~/.config/nushell/zoxide.nu"
+
+# external integrations
 source ~/.local/share/nushell/vendor/autoload/atuin.nu
 source ($nu.data-dir | path join "carapace-init.nu")
 
 mkdir ($nu.data-dir | path join "vendor/autoload")
 tv init nu | save -f ($nu.data-dir | path join "vendor/autoload/tv.nu")
-
 
 
 
