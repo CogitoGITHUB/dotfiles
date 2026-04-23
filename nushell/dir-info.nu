@@ -2,16 +2,17 @@ export def parse-org [org_path: string] {
     open $org_path
     | lines
     | each {|line|
-        if ($line | str starts-with "* ") {
-            let content = ($line | str replace "* " "")
-            if ($content | str starts-with "http") {
-                {level: 1, kind: "link", description: $content}
-            } else {
-                {level: 1, kind: "task", description: $content}
-            }
-        } else if ($line | str starts-with "** ") {
-            {level: 2, kind: "note", description: ($line | str replace "** " "")}
-        } else { null }
+        try {
+            let level = ($line | parse -r '^(\*+) ' | get capture0.0? | default "" | str length)
+            if $level > 0 {
+                let content = ($line | str replace -r '^\*+ ' "")
+                if ($content | str starts-with "http") {
+                    {level: $level, kind: "link", description: $content}
+                } else {
+                    {level: $level, kind: "task", description: $content}
+                }
+            } else { null }
+        } catch { null }
     }
     | compact
 }
@@ -64,15 +65,7 @@ export def show-dir-info [] {
     }
 }
 
-export def open-file-in-emacs [fpath: string] {
-    emacs $fpath
-    show-dir-info
-}
-
-export def maybe-open-todo [] {
-    ensure-workspace-files
-    show-dir-info
-
+def show-prompt [] {
     print ""
     print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [space] skip(ansi reset)"
 
@@ -86,7 +79,21 @@ export def maybe-open-todo [] {
         "i" => { open-file-in-emacs ($env.PWD | path join "Journal.org") }
         "d" => { open-file-in-emacs ($env.PWD | path join "Context.org") }
         "h" => { open-file-in-emacs ($env.PWD | path join "State.org") }
-        " " => {}
-        _   => {}
+        " " => { clear; show-dir-info }
+        _   => { clear; show-dir-info }
     }
+}
+
+export def open-file-in-emacs [fpath: string] {
+    emacs $fpath
+    clear
+    show-dir-info
+    show-prompt
+}
+
+export def maybe-open-todo [] {
+    ensure-workspace-files
+    clear
+    show-dir-info
+    show-prompt
 }
