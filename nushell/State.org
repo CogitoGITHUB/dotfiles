@@ -1,3 +1,0 @@
-#+TITLE: State
-* wip
-* test
