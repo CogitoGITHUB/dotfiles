@@ -1,3 +1,1 @@
-add fzf-tools.nu > emacs todo.org
-
-resahpe :  zellish popup screnn 
+* resahpe :  zellish popup screnn 
