@@ -1,5 +1,5 @@
-export def parse-todo [todo_path: string] {
-    open $todo_path
+export def parse-org [org_path: string] {
+    open $org_path
     | lines
     | each {|line|
         if ($line | str starts-with "* ") {
@@ -22,30 +22,45 @@ def ensure-workspace-files [] {
         { name: "Blueprint.org", title: "Blueprint" }
         { name: "Rules.org",     title: "Rules" }
         { name: "TODO.org",      title: "TODO" }
+        { name: "Journal.org",   title: "Journal" }
+        { name: "Context.org",   title: "Context" }
+        { name: "State.org",     title: "State" }
     ]
     for f in $files {
         let fpath = ($env.PWD | path join $f.name)
         if not ($fpath | path exists) {
             $"#+TITLE: ($f.title)\n" | save $fpath
-            print $"(ansi yellow)  Created ($f.name)(ansi reset)"
         }
     }
 }
 
 export def show-dir-info [] {
-    let agents_path    = ($env.PWD | path join "Agents.org")
-    let blueprint_path = ($env.PWD | path join "Blueprint.org")
-    let rules_path     = ($env.PWD | path join "Rules.org")
-    let todo_path      = ($env.PWD | path join "TODO.org")
+    let todo_path    = ($env.PWD | path join "TODO.org")
+    let journal_path = ($env.PWD | path join "Journal.org")
+    let state_path   = ($env.PWD | path join "State.org")
+    let dir_name     = ($env.PWD | path basename)
 
     print ""
-    print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
+    print ($env.PWD | path split)
+    print $"(ansi red_bold)  ($dir_name)(ansi reset)"
     ls -la | reject inode target num_links | print
 
     if ($todo_path | path exists) {
         print ""
         print $"(ansi red_bold)  TODO(ansi reset)"
-        parse-todo $todo_path | print
+        parse-org $todo_path | print
+    }
+
+    if ($journal_path | path exists) {
+        print ""
+        print $"(ansi red_bold)  JOURNAL(ansi reset)"
+        parse-org $journal_path | print
+    }
+
+    if ($state_path | path exists) {
+        print ""
+        print $"(ansi red_bold)  STATE(ansi reset)"
+        parse-org $state_path | print
     }
 }
 
@@ -59,7 +74,7 @@ export def maybe-open-todo [] {
     show-dir-info
 
     print ""
-    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [space] skip(ansi reset)"
+    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [space] skip(ansi reset)"
 
     let key = (input listen --types [key])
 
@@ -68,6 +83,9 @@ export def maybe-open-todo [] {
         "o" => { open-file-in-emacs ($env.PWD | path join "Blueprint.org") }
         "e" => { open-file-in-emacs ($env.PWD | path join "Rules.org") }
         "u" => { open-file-in-emacs ($env.PWD | path join "TODO.org") }
+        "i" => { open-file-in-emacs ($env.PWD | path join "Journal.org") }
+        "d" => { open-file-in-emacs ($env.PWD | path join "Context.org") }
+        "h" => { open-file-in-emacs ($env.PWD | path join "State.org") }
         " " => {}
         _   => {}
     }
