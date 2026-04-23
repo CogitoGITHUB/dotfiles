@@ -1,22 +1,3 @@
-export-env {
-  $env.config = (
-    $env.config?
-    | default {}
-    | upsert hooks { default {} }
-    | upsert hooks.env_change { default {} }
-    | upsert hooks.env_change.PWD { default [] }
-  )
-  let __zoxide_hooked = (
-    $env.config.hooks.env_change.PWD | any { try { get __zoxide_hook } catch { false } }
-  )
-  if not $__zoxide_hooked {
-    $env.config.hooks.env_change.PWD = ($env.config.hooks.env_change.PWD | append {
-      __zoxide_hook: true,
-      code: {|_, dir| zoxide add -- $dir}
-    })
-  }
-}
-
 def parse-todo [todo_path: string] {
     open $todo_path
     | lines
@@ -35,47 +16,70 @@ def parse-todo [todo_path: string] {
     | compact
 }
 
-def --env --wrapped __zoxide_z [...rest: string] {
-  let path = match $rest {
-    []      => { '~' },
-    [ '-' ] => { '-' },
-    [ $arg ] if ($arg | path type) == 'dir' => { $arg }
-    _ => {
-      let result = (do { zoxide query --exclude $env.PWD -- ...$rest } | complete)
-      if $result.exit_code == 0 { $result.stdout | str trim } else { $rest | str join " " }
-    }
-  }
-  cd $path
-  let todo_path = ($env.PWD | path join "TODO.org")
-  print ""
-  print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
-  ls -la | reject inode target num_links | print
-  if ($todo_path | path exists) {
-    print ""
-    print $"(ansi red_bold)  TODO(ansi reset)"
-    parse-todo $todo_path | print
-  }
-}
-
-def --env __zoxide_zi [...rest: string] {
-  let sel = (try {
-    zoxide query --list
-    | to text
-    | fzf --height=40% --reverse --no-preview
-  } catch { "" })
-  if ($sel | str trim) != "" {
-    cd ($sel | str trim)
+def show-dir-info [] {
     let todo_path = ($env.PWD | path join "TODO.org")
     print ""
     print $"(ansi red_bold)  ($env.PWD)(ansi reset)"
-    ls -la | reject inode  target num_links  | print
+    ls -la | reject inode target num_links | print
     if ($todo_path | path exists) {
-      print ""
-      print $"(ansi red_bold)  TODO(ansi reset)"
-      parse-todo $todo_path | print
+        print ""
+        print $"(ansi red_bold)  TODO(ansi reset)"
+        parse-todo $todo_path | print
     }
-  }
+}
+
+def open-todo-in-emacs [] {
+    let todo_path = ($env.PWD | path join "TODO.org")
+    if ($todo_path | path exists) {
+        emacs $todo_path
+        show-dir-info
+    } else {
+        print $"(ansi yellow)No TODO.org found in ($env.PWD)(ansi reset)"
+    }
+}
+
+def maybe-open-todo [] {
+    let todo_path = ($env.PWD | path join "TODO.org")
+    if ($todo_path | path exists) {
+        print ""
+        print $"(ansi purple)  Open TODO.org ? [enter=yes, space=no](ansi reset)"
+        let key = (input listen --types [key])
+        if $key.code == "enter" {
+            open-todo-in-emacs
+        } else {
+            show-dir-info
+        }
+    } else {
+        show-dir-info
+    }
+}
+
+def --env --wrapped __zoxide_z [...rest: string] {
+    let path = match $rest {
+        []      => { '~' },
+        [ '-' ] => { '-' },
+        [ $arg ] if ($arg | path type) == 'dir' => { $arg }
+        _ => {
+            let result = (do { zoxide query --exclude $env.PWD -- ...$rest } | complete)
+            if $result.exit_code == 0 { $result.stdout | str trim } else { $rest | str join " " }
+        }
+    }
+    cd $path
+    maybe-open-todo
+}
+
+def --env __zoxide_zi [...rest: string] {
+    let sel = (try {
+        zoxide query --list
+        | to text
+        | fzf --height=40% --reverse --no-preview
+    } catch { "" })
+    if ($sel | str trim) != "" {
+        cd ($sel | str trim)
+        maybe-open-todo
+    }
 }
 
 alias eu = __zoxide_z
 alias ue = __zoxide_zi
+alias et = open-todo-in-emacs
