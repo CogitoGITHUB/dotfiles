@@ -18,7 +18,7 @@ def render-progress [results: list, current: string] {
 }
 
 def render-table [results: list] {
-    $env.config.color_config = ($env.config.color_config | insert header "red_bold")
+    $env.config.color_config = ($env.config.color_config | upsert header "red_bold")
     let colored = ($results | each {|row|
         {
             "ManifoldOS Reshaped": $"(ansi red_bold)($row.description)(ansi reset)"
@@ -51,65 +51,74 @@ def reshape [] {
     let elapsed = (step-time $t)
     $results = ($results | append { description: "Repository synchronized" })
 
-    # # 2 — Root pull
-    # render-progress $results "Pulling latest Guix channels for root"
-    # let t = (date now)
-    # let r = (^sudo guix pull err>> $log | complete)
-    # let elapsed = (step-time $t)
-    # if $r.exit_code != 0 {
-    #     $results = ($results | append { description: "Pull root channels" })
-    #     print -n "\e[2J\e[H"
-    #     print ""
-    #     print $"(ansi red_bold)  Reshape Failed(ansi reset)"
-    #     print ""
-    #     render-table $results
-    #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
-    #     emacsclient -n $log
-    #     return
-    # }
-    # $results = ($results | append { description: "Root channels up to date" })
+    # 2 — Clear cache
+    render-progress $results "Clearing Guile cache"
+    let t = (date now)
+    try { ^/run/setuid-programs/sudo rm -rf /root/.cache/guile/ccache out+err>> $log } catch { }
+    try { rm -rf ~/.cache/guile/ccache out+err>> $log } catch { }
+    let elapsed = (step-time $t)
+    $results = ($results | append { description: "Guile cache cleared" })
 
-    # # 3 — User pull
-    # render-progress $results "Pulling latest Guix channels for user"
-    # let t = (date now)
-    # let r = (^guix pull err>> $log | complete)
-    # let elapsed = (step-time $t)
-    # if $r.exit_code != 0 {
-    #     $results = ($results | append { description: "Pull user channels" })
-    #     print -n "\e[2J\e[H"
-    #     print ""
-    #     print $"(ansi red_bold)  Reshape Failed(ansi reset)"
-    #     print ""
-    #     render-table $results
-    #     print $"(ansi red_bold)  Check log: ($log)(ansi reset)"
-    #     emacsclient -n $log
-    #     return
-    # }
-    # $results = ($results | append { description: "User channels up to date" })
 
-    # 4 — Reconfigure
+    # 3 — Reconfigure
     render-progress $results "Reconfiguring system"
     let t = (date now)
-    let r = (^sudo guix system reconfigure $manifest err>> $log | complete)
+    let r = (^/run/setuid-programs/sudo guix system reconfigure $manifest | complete)
+    $r.stdout out>> $log
+    $r.stderr out>> $log
     let elapsed = (step-time $t)
     if $r.exit_code != 0 {
-        $results = ($results | append { description: "System reconfigure" })
         print -n "\e[2J\e[H"
         print ""
-        print $"(ansi red_bold)  Reshape Failed(ansi reset)"
+
+        let all_output = ($r.stdout + "\n" + $r.stderr)
+        let error_lines = ($all_output | lines | where { |l| $l =~ "error:" })
+
+        print $"(ansi red_bold)  Reshaping failed because:(ansi reset)"
         print ""
-        render-table $results
-        print $"(ansi red_bold)  Generations preserved for rollback.(ansi reset)"
+        for line in $error_lines {
+            print $"  (ansi red)($line)(ansi reset)"
+        }
         print ""
-        emacsclient -n $log
+
+        let drv_log_lines = ($all_output | lines | where { |l| $l =~ "View build log at" })
+        let drv_log = if ($drv_log_lines | is-empty) {
+            ""
+        } else {
+            $drv_log_lines | first | str replace -r `.*'([^']+)'.*` "$1" | str trim
+        }
+
+        if ($drv_log | is-not-empty) {
+            print $"(ansi red_bold)  Build Log:(ansi reset)"
+            print ""
+            ^/run/setuid-programs/sudo zcat $drv_log | bat --language=log --paging=never
+            print ""
+        }
+
+        print $"(ansi red_bold)  REPL Output:(ansi reset)"
+        print ""
+        let repl_out = (^/run/setuid-programs/sudo guix repl $manifest e>| str trim | lines | where { |l|
+            not ($l =~ "^;;;" or
+                 $l =~ "scheme@" or
+                 $l =~ "wrong-type-arg" or
+                 $l =~ "open-input-string" or
+                 $l =~ "WARNING:" or
+                 $l =~ "^$")
+        })
+        for line in $repl_out {
+            print $"  ($line)"
+        }
+        print ""
+
         return
     }
     $results = ($results | append { description: "System reconfigured" })
 
-    # 5 — GC
+
+    # 4 — GC
     render-progress $results "Pruning generations and collecting garbage"
     let t = (date now)
-    ^sudo guix gc --delete-generations out+err>> $log
+    ^/run/setuid-programs/sudo guix gc --delete-generations out+err>> $log
     let elapsed = (step-time $t)
     $results = ($results | append { description: "Generations pruned & store collected" })
 
@@ -118,5 +127,4 @@ def reshape [] {
     print ""
     render-table $results
     print ""
-    maybe-open-log $log
 }
