@@ -61,8 +61,3 @@ let light_theme = {
 }
 
 let light_theme = $light_theme
-
-$env.config.color_config = $light_theme
-
-mkdir ($nu.data-dir | path join "vendor/autoload")
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")

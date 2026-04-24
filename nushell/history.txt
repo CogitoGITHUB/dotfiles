@@ -109,3 +109,12 @@ tree
 cat config.nu
 d
 emacs .
+nu
+emacs .
+nu
+nu
+nu
+nu
+emacs .
+cd .config/nushell/
+emacs .

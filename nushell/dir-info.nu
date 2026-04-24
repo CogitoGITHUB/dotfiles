@@ -17,92 +17,92 @@ export def parse-org [org_path: string] {
     | compact
 }
 
-def ensure-workspace-files [] {
-    let files = [
-        { name: "Agents.org",    title: "Agents" }
-        { name: "Blueprint.org", title: "Blueprint" }
-        { name: "Rules.org",     title: "Rules" }
-        { name: "TODO.org",      title: "TODO" }
-        { name: "Journal.org",   title: "Journal" }
-        { name: "Context.org",   title: "Context" }
-        { name: "State.org",     title: "State" }
-        { name: "Laws.org",      title: "Laws" }  # added
-    ]
-    for f in $files {
-        let fpath = ($env.PWD | path join $f.name)
-        if not ($fpath | path exists) {
-            $"#+TITLE: ($f.title)\n" | save $fpath
+def print-section [path: string, label: string, subtitle: string] {
+    if ($path | path exists) {
+        let rows = (parse-org $path)
+        print ""
+        print $"(ansi red_bold)  ($label)(ansi reset)"
+        print $"(ansi grey)  ($subtitle)(ansi reset)"
+        if ($rows | length) > 0 {
+            $rows | print
+        } else {
+            print $"(ansi grey)  —(ansi reset)"
         }
     }
 }
 
-export def show-dir-info [] {
-    let todo_path    = ($env.PWD | path join "TODO.org")
-    let journal_path = ($env.PWD | path join "Journal.org")
-    let state_path   = ($env.PWD | path join "State.org")
-    let laws_path    = ($env.PWD | path join "Laws.org")  # added
-    let dir_name     = ($env.PWD | path basename)
+def ensure-workspace-files [] {
+    let files = [
+        "Agents.org" "Blueprint.org" "Rules.org" "TODO.org"
+        "Journal.org" "Context.org" "State.org" "Laws.org"
+        "Philosophy.org" "Advantages.org" "Quotes.org"
+        "Principles.org" "Traps.org"
+    ]
+    for name in $files {
+        let fpath = ($env.PWD | path join $name)
+        if not ($fpath | path exists) {
+            sudo touch $fpath
+        }
+    }
+}
 
+def draw-workspace [] {
+    let dir_name = ($env.PWD | path basename)
     print ""
     print ($env.PWD | path split)
     print $"(ansi red_bold)  ($dir_name)(ansi reset)"
     ls -la | reject inode target num_links | print
-
-    if ($todo_path | path exists) {
-        print ""
-        print $"(ansi red_bold)  TODO(ansi reset)"
-        parse-org $todo_path | print
-    }
-
-    if ($journal_path | path exists) {
-        print ""
-        print $"(ansi red_bold)  JOURNAL(ansi reset)"
-        parse-org $journal_path | print
-    }
-
-    if ($state_path | path exists) {
-        print ""
-        print $"(ansi red_bold)  STATE(ansi reset)"
-        parse-org $state_path | print
-    }
-
-    if ($laws_path | path exists) {  # added
-        print ""
-        print $"(ansi red_bold)  LAWS(ansi reset)"
-        parse-org $laws_path | print
-    }
-}
-
-def show-prompt [] {
+    print-section ($env.PWD | path join "TODO.org")        "TODO"        "a ledger of unfinished business. No speculation. Only executable items that remain open and consume attention."
+    print-section ($env.PWD | path join "Journal.org")     "JOURNAL"     "stripped observations. Events, reactions, deviations. No storytelling, only what can be examined later."
+    print-section ($env.PWD | path join "State.org")       "STATE"       "a current-state register. What exists, what's complete, what's degraded. A contrast between intent and reality."
+    print-section ($env.PWD | path join "Laws.org")        "LAWS"        "codified legal reality. Statutes, regulations, and case law within the relevant jurisdiction. Enforceable, external, indifferent to intent."
+    print-section ($env.PWD | path join "Rules.org")       "RULES"       "imposed constraints. Self-defined boundaries that structure action and reduce variance. Optional, but costly to ignore."
+    print-section ($env.PWD | path join "Context.org")     "CONTEXT"     "operational surroundings. Timing, environment, dependencies, pressures. The conditions that shape outcomes."
+    print-section ($env.PWD | path join "Philosophy.org")  "PHILOSOPHY"  "foundational logic. The reasoning that justifies action. If this fails, the rest becomes noise."
+    print-section ($env.PWD | path join "Advantages.org")  "ADVANTAGES"  "leverage inventory. Structural edges, asymmetries, resources that increase probability of success."
+    print-section ($env.PWD | path join "Quotes.org")      "QUOTES"      "compressed statements. Language retained for precision and recall. Only what remains accurate under scrutiny."
+    print-section ($env.PWD | path join "Traps.org") "TRAPS" "known failure modes. Patterns that have caused or will cause damage. Recognized in advance, not in retrospect."
     print ""
-    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [t] Laws  [space] skip(ansi reset)"
-
-    let key = (input listen --types [key])
-
-    match $key.code {
-        "a" => { open-file-in-emacs ($env.PWD | path join "Agents.org") }
-        "o" => { open-file-in-emacs ($env.PWD | path join "Blueprint.org") }
-        "e" => { open-file-in-emacs ($env.PWD | path join "Rules.org") }
-        "u" => { open-file-in-emacs ($env.PWD | path join "TODO.org") }
-        "i" => { open-file-in-emacs ($env.PWD | path join "Journal.org") }
-        "d" => { open-file-in-emacs ($env.PWD | path join "Context.org") }
-        "h" => { open-file-in-emacs ($env.PWD | path join "State.org") }
-        "t" => { open-file-in-emacs ($env.PWD | path join "Laws.org") }  # added
-        " " => { clear; show-dir-info }
-        _   => { clear; show-dir-info }
-    }
+    print ""
 }
 
-export def open-file-in-emacs [fpath: string] {
-    emacs $fpath
-    clear
-    show-dir-info
-    show-prompt
+def workspace-with-prompt [] {
+    draw-workspace
+    print $"(ansi purple)  [a] Agents  [o] Blueprint  [e] Rules  [u] TODO  [i] Journal  [d] Context  [h] State  [t] Laws  [p] Philosophy  [v] Advantages  [q] Quotes  [space] skip(ansi reset)"
+
+    let code = (try { input listen --types [key] } catch { {code: "escape"} }).code
+
+    match $code {
+        "a" => { emacs ($env.PWD | path join "Agents.org");     workspace-with-prompt }
+        "o" => { emacs ($env.PWD | path join "Blueprint.org");  workspace-with-prompt }
+        "e" => { emacs ($env.PWD | path join "Rules.org");      workspace-with-prompt }
+        "u" => { emacs ($env.PWD | path join "TODO.org");       workspace-with-prompt }
+        "i" => { emacs ($env.PWD | path join "Journal.org");    workspace-with-prompt }
+        "d" => { emacs ($env.PWD | path join "Context.org");    workspace-with-prompt }
+        "h" => { emacs ($env.PWD | path join "State.org");      workspace-with-prompt }
+        "t" => { emacs ($env.PWD | path join "Laws.org");       workspace-with-prompt }
+        "p" => { emacs ($env.PWD | path join "Philosophy.org"); workspace-with-prompt }
+        "v" => { emacs ($env.PWD | path join "Advantages.org"); workspace-with-prompt }
+        "q" => { emacs ($env.PWD | path join "Quotes.org");     workspace-with-prompt }
+        _ => {
+            draw-workspace
+            print $"(ansi red_bold)  🌹 Reshaping is only adaptation under pressure 🌹(ansi reset)"
+            print ""
+            print ""
+            $env.__skip_workspace = true
+        }
+    }
 }
 
 export def maybe-open-todo [] {
+    if ($env | get -i __skip_workspace) == true {
+        $env.__skip_workspace = false
+        return
+    }
     ensure-workspace-files
-    clear
-    show-dir-info
-    show-prompt
+    workspace-with-prompt
+}
+
+export def show-dir-info [] {
+    draw-workspace
 }
