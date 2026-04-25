@@ -11,13 +11,13 @@ let keybindings = [
   }
 
  {
-    name: git_gg
+    name: ManifoldOS-Reshaping-History
     modifier: control
     keycode: char_g
     mode: emacs
     event: {
       send: executehostcommand
-      cmd: "try { git gg } catch { print 'Everything up to date' }"
+      cmd: "nu -c '~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu'"
     }
   }
   
