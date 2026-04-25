@@ -22,6 +22,7 @@ $env.PATH = [
     $"($env.GUIX_PROFILE)/bin"
     $"($env.GUIX_PROFILE)/sbin"
     "/home/aoeu/.guix-profile/bin"
+    "/run/current-system/profile/sbin"
     ...$path_without_setuid
 ]
 
