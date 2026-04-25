@@ -213,7 +213,6 @@ def render-errors [all_output: string] {
     print ""
 }
 
-
 # =============================================================================
 # SECTION 4 — GIT OPERATIONS
 # =============================================================================
@@ -237,8 +236,8 @@ def git-sync [log: string] {
 }
 
 # Offers to revert local files to the last known good commit.
-# Since broken state was never pushed, no force push needed —
-# just reset local files and reshape again to restore the running system.
+# The system itself is untouched since reconfigure failed before any
+# generation was created — only local files need to be reset.
 #
 # Parameters:
 #   last_good — the commit hash to revert to (captured before the failed reshape)
@@ -247,24 +246,20 @@ def revert-to-last-good [last_good: string] {
     print ""
 
     let choice = (
-        ["no" "yes — revert to last good state"]
+        ["no" "yes — revert local files"]
         | input list --fuzzy "Revert local files to last working commit?"
     )
 
     if ($choice | str starts-with "yes") {
-        # Reset local files to last good commit
-        # No force push needed — broken state was never pushed to remote
+        # Reset local files only — system is still running last good generation
+        # No reshape needed — the running system was never touched
         git -C /ManifoldOS reset --hard $last_good
 
         print ""
-        print $"(ansi green_bold)  ✓ Reverted to ($last_good | str substring 0..7), reshaping back to working state...(ansi reset)"
+        print $"(ansi green_bold)  ✓ Local files reverted to ($last_good | str substring 0..7)(ansi reset)"
         print ""
-
-        # Reshape again — last_good is a known working state so this succeeds cleanly
-        reshape
     }
 }
-
 
 # =============================================================================
 # SECTION 5 — SYSTEM OPERATIONS

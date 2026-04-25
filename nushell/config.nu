@@ -16,7 +16,7 @@ source "~/.config/nushell/modules/forms/keybindings/editors.nu"
 source "~/.config/nushell/modules/forms/keybindings/wallpaper.nu"
 source "~/.config/nushell/modules/forms/keybindings/ttycmd.nu"
 
-source "~/.config/nushell/modules/forms/scripts/reshape.nu"
+source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping.nu"
 source "~/.config/nushell/modules/forms/scripts/fzf-tools.nu"
 
 source "~/.config/nushell/modules/forms/aliases/cli.nu"
