@@ -5,6 +5,35 @@
 # Shows recent commit history, repo stats, and current local status
 # in a single unified red table.
 #
+# ⚠️  SHARED MODULE WARNING
+# =============================================================================
+# This script is a shared data provider. The following scripts depend on it:
+#
+#   - ManifoldOS-Reshaping.nu  (uses reshaping-history-rows to build its
+#                               unified summary table)
+#
+# The following functions are part of the public API and must not be renamed,
+# removed, or have their return shape changed without updating all consumers:
+#
+#   - reshaping-history-rows [n: int = 10]
+#       Returns a list of records with columns "Reshaping History" and ""
+#
+#   - fetch-commits [n: int]
+#       Returns a list of records with fields: hash, date, stats
+#
+#   - fetch-status []
+#       Returns a list of strings (git status --short lines)
+#
+#   - fetch-repo-stats []
+#       Returns a record with fields: total, last_push, branch
+#
+# Safe to change freely:
+#   - reshaping-history (the display command, only used by the keybinding)
+#   - rh-progress (internal progress renderer)
+#   - Visual styling inside reshaping-history-rows (colors, dividers, labels)
+#     as long as the column names stay the same
+# =============================================================================
+#
 # Flow:
 #   1. Fetch latest remote state
 #   2. Build commit history table
@@ -17,11 +46,6 @@
 # SECTION 1 — PROGRESS
 # =============================================================================
 
-# Clears the screen and renders live progress while fetching repo data.
-#
-# Parameters:
-#   results — list of completed steps
-#   current — label for the step currently in progress
 def rh-progress [results: list, current: string] {
     print -n "\e[2J\e[H"
     print ""
@@ -37,16 +61,11 @@ def rh-progress [results: list, current: string] {
 
 
 # =============================================================================
-# SECTION 2 — DATA COLLECTION
+# SECTION 2 — DATA COLLECTION (public API — see warning above)
 # =============================================================================
 
-# Fetches the last N commits with hash, date, and change stats.
-# Parses git log and git show --stat into structured rows.
-#
-# Parameters:
-#   n — number of commits to fetch
 def fetch-commits [n: int] {
-    git log --format="%h|%ad|%s" --date=short -$n
+    git -C /ManifoldOS log --format="%h|%ad|%s" --date=short $"-($n)"
     | lines
     | where { |l| $l | is-not-empty }
     | each { |line|
@@ -54,7 +73,7 @@ def fetch-commits [n: int] {
         let hash = ($parts | get 0)
         let date = ($parts | get 1)
         let stats = (
-            git show --stat $hash
+            git -C /ManifoldOS show --stat $hash
             | lines
             | last
             | str trim
@@ -67,17 +86,14 @@ def fetch-commits [n: int] {
     }
 }
 
-# Fetches current local status — lists modified, added, or deleted files.
-# Returns a list of status lines or empty if working tree is clean.
 def fetch-status [] {
-    git status --short | lines | where { |l| $l | is-not-empty }
+    git -C /ManifoldOS status --short | lines | where { |l| $l | is-not-empty }
 }
 
-# Fetches total commit count and last push time.
 def fetch-repo-stats [] {
-    let total = (git rev-list --count HEAD | str trim)
-    let last_push = (git log -1 --format="%ad" --date=relative | str trim)
-    let branch = (git branch --show-current | str trim)
+    let total = (git -C /ManifoldOS rev-list --count HEAD | str trim)
+    let last_push = (git -C /ManifoldOS log -1 --format="%ad" --date=relative | str trim)
+    let branch = (git -C /ManifoldOS branch --show-current | str trim)
     {
         total: $total
         last_push: $last_push
@@ -87,24 +103,18 @@ def fetch-repo-stats [] {
 
 
 # =============================================================================
-# SECTION 3 — RENDERING
+# SECTION 3 — RENDERING (public API — see warning above)
 # =============================================================================
 
-# Renders the unified history table with three sections:
-#   - Recent commits (hash, date, stats)
-#   - Repo stats (branch, total commits, last push)
-#   - Local status (current dirty files or clean)
-#
-# Parameters:
-#   commits — list of commit records from fetch-commits
-#   stats   — repo stats record from fetch-repo-stats
-#   status  — list of dirty files from fetch-status
-def render-history [commits: list, stats: record, status: list] {
-    $env.config.color_config = ($env.config.color_config | upsert header "red_bold")
+# Returns rows for embedding in other scripts' tables.
+# Column names must stay as "Reshaping History" and "" — consumers depend on this.
+def reshaping-history-rows [n: int = 10] {
+    let commits = (fetch-commits $n)
+    let stats = (fetch-repo-stats)
+    let status = (fetch-status)
 
     mut rows = []
 
-    # --- Recent commits ---
     for commit in $commits {
         $rows = ($rows | append {
             "Reshaping History": $"(ansi red_bold)($commit.hash)  ($commit.date)(ansi reset)"
@@ -112,33 +122,20 @@ def render-history [commits: list, stats: record, status: list] {
         })
     }
 
-    # --- Divider ---
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
         "": ""
     })
 
-    # --- Repo stats ---
-    $rows = ($rows | append {
-        "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"
-        "": $"(ansi red)($stats.branch)(ansi reset)"
-    })
-    $rows = ($rows | append {
-        "Reshaping History": $"(ansi red_bold)Total Commits(ansi reset)"
-        "": $"(ansi red)($stats.total)(ansi reset)"
-    })
-    $rows = ($rows | append {
-        "Reshaping History": $"(ansi red_bold)Last Push(ansi reset)"
-        "": $"(ansi red)($stats.last_push)(ansi reset)"
-    })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"        "": $"(ansi red)($stats.branch)(ansi reset)" })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Total Commits(ansi reset)" "": $"(ansi red)($stats.total)(ansi reset)" })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Last Push(ansi reset)"     "": $"(ansi red)($stats.last_push)(ansi reset)" })
 
-    # --- Divider ---
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
         "": ""
     })
 
-    # --- Local status ---
     if ($status | is-empty) {
         $rows = ($rows | append {
             "Reshaping History": $"(ansi red_bold)Local Status(ansi reset)"
@@ -153,48 +150,38 @@ def render-history [commits: list, stats: record, status: list] {
         }
     }
 
-    print ($rows | table --index false)
+    $rows
 }
 
-
-# =============================================================================
-# SECTION 4 — MAIN ENTRYPOINT
-# =============================================================================
-
-# Main command. Fetches and displays ManifoldOS git history.
-#
-#   1. Fetch remote state
-#   2. Collect commit history, repo stats, local status
-#   3. Render unified summary table
-#
-# Parameters:
-#   n — number of recent commits to show (default: 10)
+# Safe to change freely — only used by the keybinding below.
 def reshaping-history [n: int = 10] {
     mut results = []
 
-    # --- Step 1: Fetch remote ---
     rh-progress $results "Fetching remote state"
     try { git -C /ManifoldOS fetch out+err> /dev/null } catch { }
     $results = ($results | append { description: "Remote state fetched" })
 
-    # --- Step 2: Collect commit history ---
-    rh-progress $results "Reading commit history"
-    let commits = (fetch-commits $n)
-    $results = ($results | append { description: "Commit history collected" })
+    rh-progress $results "Building history"
+    $results = ($results | append { description: "History built" })
 
-    # --- Step 3: Collect repo stats ---
-    rh-progress $results "Collecting repo stats"
-    let stats = (fetch-repo-stats)
-    $results = ($results | append { description: "Repo stats collected" })
-
-    # --- Step 4: Collect local status ---
-    rh-progress $results "Checking local status"
-    let status = (fetch-status)
-    $results = ($results | append { description: "Local status checked" })
-
-    # --- Done: Render unified table ---
     print -n "\e[2J\e[H"
     print ""
-    render-history $commits $stats $status
+    print (reshaping-history-rows $n | table --index false)
     print ""
 }
+
+
+# =============================================================================
+# SECTION 4 — KEYBINDING
+# =============================================================================
+
+$env.config.keybindings = ($env.config.keybindings | append {
+    name: ManifoldOS_Reshaping_History
+    modifier: control
+    keycode: char_g
+    mode: emacs
+    event: {
+        send: executehostcommand
+        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-history"
+    }
+})

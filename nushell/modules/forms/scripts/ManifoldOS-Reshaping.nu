@@ -5,6 +5,17 @@
 # version control for all config changes. Git only commits & pushes AFTER a
 # successful reconfigure — so the remote always reflects a working system.
 #
+# ⚠️  DEPENDENCY WARNING
+# =============================================================================
+# This script depends on ManifoldOS-Reshaping-History.nu being sourced first.
+# The following functions must be available in scope:
+#
+#   - reshaping-history-rows [n: int = 10]
+#
+# config.nu sources ManifoldOS-Reshaping-History.nu before this file so this
+# is always guaranteed. Do NOT remove or reorder those source lines.
+# =============================================================================
+#
 # Flow:
 #   1. Capture last-good git commit (current local state)
 #   2. Clear Guile cache
@@ -18,8 +29,6 @@
 # SECTION 1 — TIME UTILITIES
 # =============================================================================
 
-# Calculates elapsed seconds between a given datetime and now.
-# Used to measure how long each reshape step takes.
 def step-time [t: datetime] {
     let secs = (((date now) - $t) | into int) / 1_000_000_000
     let secs_rounded = ($secs | math round)
@@ -31,12 +40,6 @@ def step-time [t: datetime] {
 # SECTION 2 — DISPLAY / RENDERING
 # =============================================================================
 
-# Clears the screen and renders the live progress view during reshaping.
-# Shows completed steps (with ✓) and the currently running step (with >>>).
-#
-# Parameters:
-#   results  — list of completed steps, each with a `description` field
-#   current  — label for the step currently in progress
 def render-progress [results: list, current: string] {
     print -n "\e[2J\e[H"
     print ""
@@ -50,11 +53,6 @@ def render-progress [results: list, current: string] {
     print ""
 }
 
-# Renders one unified summary table with reshape steps, system info,
-# and key Shepherd services — all in dark red.
-#
-# Parameters:
-#   results — list of completed steps, each with a `description` field
 def render-summary [results: list] {
     $env.config.color_config = ($env.config.color_config | upsert header "red_bold")
 
@@ -100,8 +98,6 @@ def render-summary [results: list] {
     })
 
     # --- Shepherd services ---
-    # Filtered: skip file-system-*, term-*, console-font-*, one-shot, timers,
-    # and other low-level noise. Only show meaningful services.
     let skip_patterns = [
         "file-system-"
         "term-"
@@ -123,21 +119,21 @@ def render-summary [results: list] {
 
     for line in $lines {
         if ($line =~ "^Started:") {
-            $current_status = "🟢"
+            $current_status = "🌹"
         } else if ($line =~ "^Stopped:") {
-            $current_status = "🔴"
+            $current_status = "🥀"
         } else if ($line =~ "^Running timers:") {
-            $current_status = ""  # skip timers
+            $current_status = ""
         } else if ($line =~ "^One-shot:") {
-            $current_status = ""  # skip one-shot
+            $current_status = ""
         } else if ($line =~ "^\\s*[+\\-]\\s+\\S" and $current_status != "") {
             let name = ($line | str replace -r "^\\s*[+\\-]\\s+" "" | str trim)
             let should_skip = ($skip_patterns | any { |p| $name | str starts-with $p })
             if (not $should_skip) and ($name | is-not-empty) {
-                let status = if $current_status == "🟢" {
-                    $"(ansi red)🟢 running(ansi reset)"
+                let status = if $current_status == "🌹" {
+                    $"(ansi red)🌹 running(ansi reset)"
                 } else {
-                    $"(ansi red)🔴 stopped(ansi reset)"
+                    $"(ansi red)🥀 stopped(ansi reset)"
                 }
                 $rows = ($rows | append {
                     "ManifoldOS": $"(ansi red_bold)($name)(ansi reset)"
@@ -147,6 +143,18 @@ def render-summary [results: list] {
         }
     }
 
+    # --- Divider ---
+    $rows = ($rows | append {
+        "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
+        "": ""
+    })
+
+    # --- Git history (sourced from ManifoldOS-Reshaping-History.nu) ---
+    # reshaping-history-rows is defined in ManifoldOS-Reshaping-History.nu
+    # Any changes made there will automatically reflect here.
+    let git_rows = (reshaping-history-rows 10 | rename "ManifoldOS" "")
+    $rows = ($rows | append $git_rows)
+
     print ($rows | table --index false)
 }
 
@@ -155,18 +163,7 @@ def render-summary [results: list] {
 # SECTION 3 — ERROR DISPLAY
 # =============================================================================
 
-# Displays all available failure information after a failed reconfigure.
-# Shows:
-#   - The .drv build log via sudo zcat (actual low-level build failure)
-#   - Filtered guix repl output (Scheme-level errors from the manifest)
-#
-# Parameters:
-#   all_output — combined stdout + stderr string from the failed guix command
 def render-errors [all_output: string] {
-
-    # --- Build log ---
-    # Extract the .drv log path from the output if present and zcat it.
-    # This is the most detailed account of what went wrong during the build.
     let drv_log_lines = ($all_output | lines | where { |l| $l =~ "View build log at" })
     let drv_log = if ($drv_log_lines | is-empty) {
         ""
@@ -180,7 +177,6 @@ def render-errors [all_output: string] {
         ^/run/setuid-programs/sudo zcat $drv_log | bat --language=log --paging=never
         print ""
     } else {
-        # No .drv log found — fall back to printing raw error lines
         let error_lines = ($all_output | lines | where { |l| $l =~ "error:" })
         print $"(ansi red_bold)  Reshaping failed because:(ansi reset)"
         print ""
@@ -190,9 +186,6 @@ def render-errors [all_output: string] {
         print ""
     }
 
-    # --- REPL output ---
-    # Run guix repl on the manifest to surface Scheme-level errors.
-    # Filters out noise: warnings, scheme@ prompts, empty lines, etc.
     print $"(ansi red_bold)  REPL Output:(ansi reset)"
     print ""
     let repl_out = (
@@ -213,34 +206,19 @@ def render-errors [all_output: string] {
     print ""
 }
 
+
 # =============================================================================
 # SECTION 4 — GIT OPERATIONS
 # =============================================================================
 
-# Captures the current HEAD commit hash before any changes are made.
-# Since we never push broken state, HEAD is always a working commit.
-#
-# Returns: the full commit hash string
 def capture-last-good [] {
     git -C /ManifoldOS rev-parse HEAD | str trim
 }
 
-# Commits and pushes all pending changes in the ManifoldOS repo.
-# Only called AFTER a successful reconfigure — so remote is always clean.
-# Uses the custom `gg` alias (git add -A && git commit && git push).
-#
-# Parameters:
-#   log — path to the log file to append git output to
 def git-sync [log: string] {
     try { git -C /ManifoldOS gg out+err>> $log } catch { }
 }
 
-# Offers to revert local files to the last known good commit.
-# The system itself is untouched since reconfigure failed before any
-# generation was created — only local files need to be reset.
-#
-# Parameters:
-#   last_good — the commit hash to revert to (captured before the failed reshape)
 def revert-to-last-good [last_good: string] {
     print $"(ansi yellow_bold)  Last good commit: (ansi reset)(ansi yellow)($last_good | str substring 0..7)(ansi reset)"
     print ""
@@ -251,36 +229,23 @@ def revert-to-last-good [last_good: string] {
     )
 
     if ($choice | str starts-with "yes") {
-        # Reset local files only — system is still running last good generation
-        # No reshape needed — the running system was never touched
         git -C /ManifoldOS reset --hard $last_good
-
         print ""
         print $"(ansi green_bold)  ✓ Local files reverted to ($last_good | str substring 0..7)(ansi reset)"
         print ""
     }
 }
 
+
 # =============================================================================
 # SECTION 5 — SYSTEM OPERATIONS
 # =============================================================================
 
-# Clears the Guile bytecode cache for both root and the current user.
-# Prevents stale compiled Scheme files from interfering with reconfigure.
-#
-# Parameters:
-#   log — path to the log file to append output to
 def clear-guile-cache [log: string] {
     try { ^/run/setuid-programs/sudo rm -rf /root/.cache/guile/ccache out+err>> $log } catch { }
     try { rm -rf ~/.cache/guile/ccache out+err>> $log } catch { }
 }
 
-# Runs `guix system reconfigure` on the ManifoldOS manifest.
-# Returns the full `complete` record (stdout, stderr, exit_code).
-#
-# Parameters:
-#   manifest — path to the system manifest file
-#   log      — path to the log file to append output to
 def run-reconfigure [manifest: string, log: string] {
     let r = (^/run/setuid-programs/sudo guix system reconfigure $manifest | complete)
     $r.stdout out>> $log
@@ -288,17 +253,9 @@ def run-reconfigure [manifest: string, log: string] {
     $r
 }
 
-# Deletes all system generations except current, runs GC, then deduplicates
-# the store by hard-linking identical files to reclaim maximum space.
-#
-# Parameters:
-#   log — path to the log file to append output to
 def run-gc [log: string] {
-    # Delete all old generations — git handles rollback, we don't need them
     ^/run/setuid-programs/sudo guix system delete-generations out+err>> $log
-    # Collect all unreachable store paths
     ^/run/setuid-programs/sudo guix gc out+err>> $log
-    # Deduplicate store by hard-linking identical files
     ^/run/setuid-programs/sudo guix gc --optimize out+err>> $log
 }
 
@@ -307,24 +264,12 @@ def run-gc [log: string] {
 # SECTION 6 — MAIN RESHAPE ENTRYPOINT
 # =============================================================================
 
-# Main command. Orchestrates the full ManifoldOS reshape sequence:
-#
-#   1. Capture last-good commit (local HEAD, always a working state)
-#   2. Clear Guile cache
-#   3. Guix system reconfigure
-#      ├─ Failure → show build log → show REPL output → offer revert → done
-#      └─ Success → git commit & push → GC + optimize → unified summary table
-#
-# Git only touches the remote on success, so remote is always a clean history
-# of working system states.
-def reshape [] {
+def ManifoldOS-Reshaping [] {
     let manifest = "/ManifoldOS/system.scm"
     let log = $"/tmp/reshape_(date now | format date '%Y%m%d_%H%M%S').log"
 
     mut results = []
 
-    # --- Step 0: Capture last-good commit before touching anything ---
-    # Since we never push broken state, this is always a working commit.
     let last_good = (capture-last-good)
 
     # --- Step 1: Clear Guile cache ---
@@ -335,15 +280,12 @@ def reshape [] {
     $results = ($results | append { description: "Guile cache cleared" })
 
     # --- Step 2: Reconfigure ---
-    # Attempt reconfigure BEFORE committing anything.
-    # If it fails, local files are untouched and easy to revert.
     render-progress $results "Reconfiguring system"
     let t = (date now)
     let r = (run-reconfigure $manifest $log)
     let elapsed = (step-time $t)
 
     if $r.exit_code != 0 {
-        # Reconfigure failed — show build log and REPL output, then offer revert
         print -n "\e[2J\e[H"
         print ""
         let all_output = ($r.stdout + "\n" + $r.stderr)
@@ -355,7 +297,6 @@ def reshape [] {
     $results = ($results | append { description: "System reconfigured" })
 
     # --- Step 3: Git commit & push ---
-    # Only reached on successful reconfigure — remote stays a clean working history.
     render-progress $results "Committing working state"
     let t = (date now)
     git-sync $log
@@ -375,3 +316,19 @@ def reshape [] {
     render-summary $results
     print ""
 }
+
+
+# =============================================================================
+# SECTION 7 — KEYBINDING
+# =============================================================================
+
+$env.config.keybindings = ($env.config.keybindings | append {
+    name: ManifoldOS_Reshaping
+    modifier: control
+    keycode: char_s
+    mode: emacs
+    event: {
+        send: executehostcommand
+        cmd: "ManifoldOS-Reshaping"
+    }
+})

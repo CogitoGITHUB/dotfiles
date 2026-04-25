@@ -9,29 +9,7 @@ let keybindings = [
       cmd: "nu -c '~/.config/nushell/aeon-modules/scripts/say.nu'"
     }
   }
-
- {
-    name: ManifoldOS-Reshaping-History
-    modifier: control
-    keycode: char_g
-    mode: emacs
-    event: {
-      send: executehostcommand
-      cmd: "nu -c '~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu'"
-    }
-  }
   
-  {
-    name: reshape
-    modifier: control
-    keycode: char_s
-    mode: emacs
-    event: {
-      send: executehostcommand
-      cmd: "reshape"
-    }
-  }
-
 {
     name: rmpc
     modifier: control

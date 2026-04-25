@@ -16,9 +16,18 @@ source "~/.config/nushell/modules/forms/keybindings/editors.nu"
 source "~/.config/nushell/modules/forms/keybindings/wallpaper.nu"
 source "~/.config/nushell/modules/forms/keybindings/ttycmd.nu"
 
-source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping.nu"
-source "~/.config/nushell/modules/forms/scripts/fzf-tools.nu"
+# --- ManifoldOS Scripts ---
+# Load order matters: History must come before Reshaping.
+# ManifoldOS-Reshaping.nu depends on reshaping-history-rows
+# which is defined in ManifoldOS-Reshaping-History.nu.
+# Do NOT reorder these two lines.
 source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu"
+source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping.nu"
+
+
+
+source "~/.config/nushell/modules/forms/scripts/fzf-tools.nu"
+
 
 source "~/.config/nushell/modules/forms/aliases/cli.nu"
 
