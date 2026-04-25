@@ -118,3 +118,5 @@ nu
 emacs .
 cd .config/nushell/
 emacs .
+cd .config/nushell/modules/forms/scripts/
+emacs .
