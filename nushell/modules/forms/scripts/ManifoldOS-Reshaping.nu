@@ -72,6 +72,28 @@ def render-summary [results: list] {
         "": ""
     })
 
+    # --- 🌹 EMACS — Control Center ---
+    let emacs_status = (try {
+        herd status emacs-daemon | str trim
+    } catch { "" })
+
+    let emacs_icon = if ($emacs_status =~ "running") {
+        $"(ansi red_bold)🌹 running(ansi reset)"
+    } else {
+        $"(ansi red)🥀 stopped(ansi reset)"
+    }
+
+    $rows = ($rows | append {
+        "ManifoldOS": $"(ansi red_bold)🌹 Emacs — Control Center(ansi reset)"
+        "": $emacs_icon
+    })
+
+    # --- Divider ---
+    $rows = ($rows | append {
+        "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
+        "": ""
+    })
+
     # --- System info ---
     let kernel = (^uname -r | str trim)
 
@@ -149,9 +171,7 @@ def render-summary [results: list] {
         "": ""
     })
 
-    # --- Git history (sourced from ManifoldOS-Reshaping-History.nu) ---
-    # reshaping-history-rows is defined in ManifoldOS-Reshaping-History.nu
-    # Any changes made there will automatically reflect here.
+    # --- Git history ---
     let git_rows = (reshaping-history-rows 10 | rename "ManifoldOS" "")
     $rows = ($rows | append $git_rows)
 

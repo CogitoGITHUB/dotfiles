@@ -21,6 +21,16 @@ let keybindings = [
     }
   }
   {
+    name: htop
+    modifier: control
+    keycode: char_h
+    mode: emacs
+    event: {
+      send: executehostcommand
+      cmd: "htop"
+    }
+  }
+  {
     name: opencode
     modifier: control
     keycode: char_o
