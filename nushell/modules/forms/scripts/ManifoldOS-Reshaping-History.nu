@@ -129,8 +129,11 @@ def reshaping-push [msg: string = "ManifoldOS update"] {
     rh-progress $results "Committing"
     let commit_result = (commit-changes $msg | complete)
     if $commit_result.exit_code != 0 {
-        print $"(ansi red_bold)  ✗ Commit failed — nothing to commit?(ansi reset)"
-        print $commit_result.stderr
+        $results = ($results | append { description: "Nothing new to commit — already up to date" })
+        rh-progress $results "Done"
+        print ""
+        print (reshaping-history-rows 5 | table --index false)
+        print ""
         return
     }
     $results = ($results | append { description: $"Committed: ($msg)" })
