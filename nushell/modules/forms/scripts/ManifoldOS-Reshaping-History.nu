@@ -16,7 +16,7 @@
 # removed, or have their return shape changed without updating all consumers:
 #
 #   - reshaping-history-rows [n: int = 10]
-#       Returns a list of records with columns "Reshaping History" and ""
+#       Returns a list of records with columns "Reshaping History" and "Details"
 #
 #   - fetch-commits [n: int]
 #       Returns a list of records with fields: hash, date, stats
@@ -73,10 +73,12 @@ def fetch-commits [n: int] {
             | last
             | str trim
         )
+        let subject = (git -C $repo log -1 --format="%s" $hash | str trim)
         {
             hash: $hash
             date: $date
             stats: $stats
+            subject: $subject
         }
     }
 }
@@ -215,34 +217,34 @@ def reshaping-history-rows [n: int = 10] {
     for commit in $commits {
         $rows = ($rows | append {
             "Reshaping History": $"(ansi red_bold)($commit.hash)  ($commit.date)(ansi reset)"
-            "": $"(ansi red)($commit.stats)(ansi reset)"
+            "Details": $"(ansi red)($commit.subject)  ($commit.stats)(ansi reset)"
         })
     }
 
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "": ""
+        "Details": ""
     })
 
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"        "": $"(ansi red)($stats.branch)(ansi reset)" })
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Total Commits(ansi reset)" "": $"(ansi red)($stats.total)(ansi reset)" })
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Last Push(ansi reset)"     "": $"(ansi red)($stats.last_push)(ansi reset)" })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"        "Details": $"(ansi red)($stats.branch)(ansi reset)" })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Total Commits(ansi reset)" "Details": $"(ansi red)($stats.total)(ansi reset)" })
+    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Last Push(ansi reset)"     "Details": $"(ansi red)($stats.last_push)(ansi reset)" })
 
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "": ""
+        "Details": ""
     })
 
     if ($status | is-empty) {
         $rows = ($rows | append {
             "Reshaping History": $"(ansi red_bold)Local Status(ansi reset)"
-            "": $"(ansi red)✓ clean(ansi reset)"
+            "Details": $"(ansi red)✓ clean(ansi reset)"
         })
     } else {
         for line in $status {
             $rows = ($rows | append {
                 "Reshaping History": $"(ansi red_bold)Modified(ansi reset)"
-                "": $"(ansi red)($line | str trim)(ansi reset)"
+                "Details": $"(ansi red)($line | str trim)(ansi reset)"
             })
         }
     }
