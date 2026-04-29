@@ -29,7 +29,7 @@ source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu
 # SECTION 1 — TIME UTILITIES
 # =============================================================================
 
-def step-time [t: datetime] {
+def reshape-step-time [t: datetime] {
     let secs = (((date now) - $t) | into int) / 1_000_000_000
     let secs_rounded = ($secs | math round)
     $"($secs_rounded)s"
@@ -276,7 +276,7 @@ def run-reconfigure [manifest: string, log: string] {
 }
 
 def run-gc [log: string] {
-    ^/run/setuid-programs/sudo guix system delete-generations 3m out+err>> $log
+    try { ^/run/setuid-programs/sudo guix system delete-generations out+err>> $log } catch { }
 }
 
 
@@ -296,14 +296,14 @@ def ManifoldOS-Reshaping [] {
     render-progress $results "Clearing Guile cache"
     let t = (date now)
     clear-guile-cache $log
-    let elapsed = (step-time $t)
+    let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Guile cache cleared" })
 
     # --- Step 2: Reconfigure ---
     render-progress $results "Reconfiguring system"
     let t = (date now)
     let r = (run-reconfigure $manifest $log)
-    let elapsed = (step-time $t)
+    let elapsed = (reshape-step-time $t)
 
     if $r.exit_code != 0 {
         print -n "\e[2J\e[H"
@@ -320,14 +320,14 @@ def ManifoldOS-Reshaping [] {
     render-progress $results "Committing working state"
     let t = (date now)
     git-sync
-    let elapsed = (step-time $t)
+    let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Working state committed & pushed" })
 
     # --- Step 4: Garbage collection + optimization ---
     render-progress $results "Reshaping reality"
     let t = (date now)
     run-gc $log
-    let elapsed = (step-time $t)
+    let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Reality reshaped" })
 
     # --- Done: Print unified summary table ---
