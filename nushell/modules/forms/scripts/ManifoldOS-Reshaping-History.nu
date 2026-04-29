@@ -184,11 +184,15 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     # --- Changes ---
     print ""
     if ($changed | is-not-empty) {
-        print $"(ansi red_bold)  Changes:(ansi reset)"
-        print ""
-        for line in $changed {
-            print $"(ansi red)  ($line)(ansi reset)"
-        }
+        let change_rows = (git -C $repo diff --cached --numstat | lines | where { |l| $l | is-not-empty } | each { |line|
+            let parts = ($line | split row "\t")
+            {
+                "File": ($parts | get 2)
+                "+": ($parts | get 0)
+                "-": ($parts | get 1)
+            }
+        })
+        print ($change_rows | table --index false)
         print ""
     }
 
