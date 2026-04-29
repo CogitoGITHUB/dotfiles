@@ -184,19 +184,11 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     try { git -C $repo fetch out+err> /dev/null } catch { }
 
     # --- Changes ---
-    print ""
     if ($changed | is-not-empty) {
-        let change_rows = (git -C $repo diff --cached --numstat | lines | where { |l| $l | is-not-empty } | each { |line|
-            let parts = ($line | split row "\t")
-            {
-                "File": ($parts | get 2)
-                "+": ($parts | get 0)
-                "-": ($parts | get 1)
-            }
-        })
-        print ($change_rows | table --index false)
         print ""
+        print ($changed | table --index false)
     }
+    print ""
 
     print (reshaping-history-rows 5 | table --index false)
     print ""
