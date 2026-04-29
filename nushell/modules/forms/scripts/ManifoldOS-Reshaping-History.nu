@@ -34,13 +34,6 @@
 #   - Visual styling inside reshaping-history-rows (colors, dividers, labels)
 #     as long as the column names stay the same
 # =============================================================================
-#
-# Flow:
-#   1. Fetch latest remote state
-#   2. Build commit history table
-#   3. Repo stats
-#   4. Current local status
-# =============================================================================
 
 
 # =============================================================================
@@ -66,7 +59,8 @@ def rh-progress [results: list, current: string] {
 # =============================================================================
 
 def fetch-commits [n: int] {
-    git -C /ManifoldOS log --format="%h|%ad|%s" --date=short $"-($n)"
+    let repo = (git rev-parse --show-toplevel | str trim)
+    git -C $repo log --format="%h|%ad|%s" --date=short $"-($n)"
     | lines
     | where { |l| $l | is-not-empty }
     | each { |line|
@@ -74,7 +68,7 @@ def fetch-commits [n: int] {
         let hash = ($parts | get 0)
         let date = ($parts | get 1)
         let stats = (
-            git -C /ManifoldOS show --stat $hash
+            git -C $repo show --stat $hash
             | lines
             | last
             | str trim
@@ -88,13 +82,15 @@ def fetch-commits [n: int] {
 }
 
 def fetch-status [] {
-    git -C /ManifoldOS status --short | lines | where { |l| $l | is-not-empty }
+    let repo = (git rev-parse --show-toplevel | str trim)
+    git -C $repo status --short | lines | where { |l| $l | is-not-empty }
 }
 
 def fetch-repo-stats [] {
-    let total = (git -C /ManifoldOS rev-list --count HEAD | str trim)
-    let last_push = (git -C /ManifoldOS log -1 --format="%ad" --date=relative | str trim)
-    let branch = (git -C /ManifoldOS branch --show-current | str trim)
+    let repo = (git rev-parse --show-toplevel | str trim)
+    let total = (git -C $repo rev-list --count HEAD | str trim)
+    let last_push = (git -C $repo log -1 --format="%ad" --date=relative | str trim)
+    let branch = (git -C $repo branch --show-current | str trim)
     {
         total: $total
         last_push: $last_push
@@ -108,18 +104,22 @@ def fetch-repo-stats [] {
 # =============================================================================
 
 def stage-all [] {
-    git -C /ManifoldOS add --all
+    let repo = (git rev-parse --show-toplevel | str trim)
+    git -C $repo add --all
 }
 
 def commit-changes [msg: string] {
-    git -C /ManifoldOS commit -m $msg
+    let repo = (git rev-parse --show-toplevel | str trim)
+    git -C $repo commit -m $msg
 }
 
 def push-changes [] {
-    git -C /ManifoldOS push
+    let repo = (git rev-parse --show-toplevel | str trim)
+    git -C $repo push
 }
 
 def reshaping-push [msg: string = "ManifoldOS update"] {
+    let repo = (git rev-parse --show-toplevel | str trim)
     mut results = []
 
     rh-progress $results "Staging all changes"
@@ -149,7 +149,7 @@ def reshaping-push [msg: string = "ManifoldOS update"] {
 
     $results = ($results | append { description: "Done" })
     rh-progress $results "Done"
-    try { git -C /ManifoldOS fetch out+err> /dev/null } catch { }
+    try { git -C $repo fetch out+err> /dev/null } catch { }
     print ""
     print (reshaping-history-rows 5 | table --index false)
     print ""
@@ -160,8 +160,6 @@ def reshaping-push [msg: string = "ManifoldOS update"] {
 # SECTION 4 — RENDERING (public API — see warning above)
 # =============================================================================
 
-# Returns rows for embedding in other scripts' tables.
-# Column names must stay as "Reshaping History" and "" — consumers depend on this.
 def reshaping-history-rows [n: int = 10] {
     let commits = (fetch-commits $n)
     let stats = (fetch-repo-stats)
@@ -207,12 +205,12 @@ def reshaping-history-rows [n: int = 10] {
     $rows
 }
 
-# Safe to change freely — only used by the keybinding below.
 def reshaping-history [n: int = 10] {
+    let repo = (git rev-parse --show-toplevel | str trim)
     mut results = []
 
     rh-progress $results "Fetching remote state"
-    try { git -C /ManifoldOS fetch out+err> /dev/null } catch { }
+    try { git -C $repo fetch out+err> /dev/null } catch { }
     $results = ($results | append { description: "Remote state fetched" })
 
     rh-progress $results "Building history"
