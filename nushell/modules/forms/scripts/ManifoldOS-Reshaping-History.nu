@@ -118,7 +118,7 @@ def push-changes [] {
     git -C $repo push
 }
 
-def reshaping-push [msg: string = "ManifoldOS update"] {
+def reshaping-push [msg: string = "update"] {
     let repo = (git rev-parse --show-toplevel | str trim)
     mut results = []
 
@@ -234,6 +234,6 @@ $env.config.keybindings = ($env.config.keybindings | append {
     mode: emacs
     event: {
         send: executehostcommand
-        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push 'ManifoldOS update'"
+        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push 'update'"
     }
 })
