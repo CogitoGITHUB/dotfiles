@@ -235,12 +235,10 @@ def capture-last-good [] {
     git -C /ManifoldOS rev-parse HEAD | str trim
 }
 
-def git-sync [log: string] {
-    git -C /ManifoldOS add --all
-    let commit_result = (git -C /ManifoldOS commit -m "update" | complete)
-    if $commit_result.exit_code == 0 {
-        git -C /ManifoldOS push out+err>> $log
-    }
+def git-sync [] {
+    # Delegates entirely to ManifoldOS-Reshaping-History.nu
+    # To change git behaviour, edit reshaping-push there — not here
+    reshaping-push "update"
 }
 
 def revert-to-last-good [last_good: string] {
@@ -278,9 +276,7 @@ def run-reconfigure [manifest: string, log: string] {
 }
 
 def run-gc [log: string] {
-    ^/run/setuid-programs/sudo guix system delete-generations out+err>> $log
-    ^/run/setuid-programs/sudo guix gc out+err>> $log
-    ^/run/setuid-programs/sudo guix gc --optimize out+err>> $log
+    ^/run/setuid-programs/sudo guix system delete-generations 3m out+err>> $log
 }
 
 
@@ -323,7 +319,7 @@ def ManifoldOS-Reshaping [] {
     # --- Step 3: Git commit & push ---
     render-progress $results "Committing working state"
     let t = (date now)
-    git-sync $log
+    git-sync
     let elapsed = (step-time $t)
     $results = ($results | append { description: "Working state committed & pushed" })
 
