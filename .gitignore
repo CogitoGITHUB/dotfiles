@@ -1,24 +1,10 @@
- ---- GitHub CLI ----
+---- GitHub CLI ----
 gh/
-
-# ---- Emacs runtime ----
-emacs/history
-emacs/eln-cache/
-emacs/var/
-emacs/auto-save-list/
-# Emacs straight.el build and repos (derivable state)
-emacs/straight/
-
-# Straight.el (correct spelling)
-emacs/lib/
-
-# You *also* want to ignore the straight build cache:
-emacs/straight-build/
-emacs/straight-build-cache.el
 
 # ---- Nushell runtime ----
 nushell/history.sqlite3*
 
+# ---- Atuin runtime ----
+atuin/history.db
+atuin/history.db-wal
 
-
-guix/Operating-System/core-system/user-space/root/ai/sources/*.tar.gz
