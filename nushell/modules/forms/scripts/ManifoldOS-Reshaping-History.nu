@@ -147,7 +147,9 @@ def reshaping-push [msg: string = "ManifoldOS update"] {
     }
     $results = ($results | append { description: "Pushed to remote" })
 
+    $results = ($results | append { description: "Done" })
     rh-progress $results "Done"
+    try { git -C /ManifoldOS fetch out+err> /dev/null } catch { }
     print ""
     print (reshaping-history-rows 5 | table --index false)
     print ""
