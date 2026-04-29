@@ -40,7 +40,7 @@ This is a Guix-based system configuration called ManifoldOS.
 ## Key Paths
 
 - Config root: `/ManifoldOS/Manifold/` 
-- Main config: `/ManifoldOS/constitution.scm`
+- Main config: `/ManifoldOS/system.scm`
 - System modules: `Manifold/substrate/`
 - User packages: `Manifold/substrate/user-space/root/`
 - Loaders: `Manifold/substrate/user-space/root/loaders/`
@@ -50,7 +50,7 @@ This is a Guix-based system configuration called ManifoldOS.
 
 1. Create a module file in the appropriate category directory
 2. Add to the corresponding loader in `loaders/`
-3. Run: `sudo guix system reconfigure /ManifoldOS/constitution.scm`
+3. Run: `sudo guix system reconfigure /ManifoldOS/system.scm`
 
 ## Services
 
