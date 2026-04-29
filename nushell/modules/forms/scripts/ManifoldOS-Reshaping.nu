@@ -7,13 +7,11 @@
 #
 # ⚠️  DEPENDENCY WARNING
 # =============================================================================
-# This script depends on ManifoldOS-Reshaping-History.nu being sourced first.
-# The following functions must be available in scope:
+# This script sources ManifoldOS-Reshaping-History.nu directly.
+# The following functions are available after sourcing:
 #
 #   - reshaping-history-rows [n: int = 10]
 #
-# config.nu sources ManifoldOS-Reshaping-History.nu before this file so this
-# is always guaranteed. Do NOT remove or reorder those source lines.
 # =============================================================================
 #
 # Flow:
@@ -23,6 +21,8 @@
 #      ├─ Failure → show build log → show REPL output → offer revert
 #      └─ Success → commit & push (git) → GC → unified summary table
 # =============================================================================
+
+source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu
 
 
 # =============================================================================
@@ -171,7 +171,7 @@ def render-summary [results: list] {
         "": ""
     })
 
-    # --- Git history ---
+    # --- Git history (from ManifoldOS-Reshaping-History.nu) ---
     let git_rows = (reshaping-history-rows 10 | rename "ManifoldOS" "")
     $rows = ($rows | append $git_rows)
 
@@ -236,7 +236,11 @@ def capture-last-good [] {
 }
 
 def git-sync [log: string] {
-    try { git -C /ManifoldOS gg out+err>> $log } catch { }
+    git -C /ManifoldOS add --all
+    let commit_result = (git -C /ManifoldOS commit -m "update" | complete)
+    if $commit_result.exit_code == 0 {
+        git -C /ManifoldOS push out+err>> $log
+    }
 }
 
 def revert-to-last-good [last_good: string] {
