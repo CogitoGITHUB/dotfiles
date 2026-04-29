@@ -29,6 +29,7 @@
 #
 # Safe to change freely:
 #   - reshaping-history (the display command, only used by the keybinding)
+#   - reshaping-push (the add/commit/push command)
 #   - rh-progress (internal progress renderer)
 #   - Visual styling inside reshaping-history-rows (colors, dividers, labels)
 #     as long as the column names stay the same
@@ -103,7 +104,55 @@ def fetch-repo-stats [] {
 
 
 # =============================================================================
-# SECTION 3 — RENDERING (public API — see warning above)
+# SECTION 3 — WRITE OPERATIONS
+# =============================================================================
+
+def stage-all [] {
+    git -C /ManifoldOS add --all
+}
+
+def commit-changes [msg: string] {
+    git -C /ManifoldOS commit -m $msg
+}
+
+def push-changes [] {
+    git -C /ManifoldOS push
+}
+
+def reshaping-push [msg: string = "ManifoldOS update"] {
+    mut results = []
+
+    rh-progress $results "Staging all changes"
+    stage-all
+    $results = ($results | append { description: "All changes staged" })
+
+    rh-progress $results "Committing"
+    let commit_result = (commit-changes $msg | complete)
+    if $commit_result.exit_code != 0 {
+        print $"(ansi red_bold)  ✗ Commit failed — nothing to commit?(ansi reset)"
+        print $commit_result.stderr
+        return
+    }
+    $results = ($results | append { description: $"Committed: ($msg)" })
+
+    rh-progress $results "Pushing to remote"
+    let push_result = (push-changes | complete)
+    if $push_result.exit_code != 0 {
+        print $"(ansi red_bold)  ✗ Push failed(ansi reset)"
+        print $push_result.stderr
+        return
+    }
+    $results = ($results | append { description: "Pushed to remote" })
+
+    rh-progress $results "Done"
+    print ""
+    print (reshaping-history-rows 5 | table --index false)
+    print ""
+}
+
+
+# =============================================================================
+# SECTION 4 — RENDERING (public API — see warning above)
 # =============================================================================
 
 # Returns rows for embedding in other scripts' tables.
@@ -172,7 +221,7 @@ def reshaping-history [n: int = 10] {
 
 
 # =============================================================================
-# SECTION 4 — KEYBINDING
+# SECTION 5 — KEYBINDING
 # =============================================================================
 
 $env.config.keybindings = ($env.config.keybindings | append {
@@ -182,6 +231,6 @@ $env.config.keybindings = ($env.config.keybindings | append {
     mode: emacs
     event: {
         send: executehostcommand
-        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-history"
+        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push; reshaping-history"
     }
 })
