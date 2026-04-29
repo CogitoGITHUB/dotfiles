@@ -234,6 +234,6 @@ $env.config.keybindings = ($env.config.keybindings | append {
     mode: emacs
     event: {
         send: executehostcommand
-        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push 'ManifoldOS update'; reshaping-history"
+        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push 'ManifoldOS update'"
     }
 })
