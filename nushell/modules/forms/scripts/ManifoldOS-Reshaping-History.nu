@@ -1,4 +1,3 @@
-
 # =============================================================================
 # ManifoldOS Reshaping History
 # =============================================================================
@@ -148,8 +147,8 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     stage-all
     $results = ($results | append { description: "All changes staged" })
 
-    # --- Show changed files ---
-    let changed = (git -C $repo diff --cached --name-only | lines | where { |l| $l | is-not-empty })
+    # --- Capture what changed after staging ---
+    let changed = (git -C $repo diff --cached --stat | lines | where { |l| $l | is-not-empty })
 
     # --- Commit ---
     rh-progress $results "Committing"
@@ -182,13 +181,13 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     rh-progress $results "Done"
     try { git -C $repo fetch out+err> /dev/null } catch { }
 
-    # --- Changed files ---
+    # --- Changes ---
     print ""
     if ($changed | is-not-empty) {
-        print $"(ansi red_bold)  Files pushed:(ansi reset)"
+        print $"(ansi red_bold)  Changes:(ansi reset)"
         print ""
-        for f in $changed {
-            print $"(ansi red)  • ($f)(ansi reset)"
+        for line in $changed {
+            print $"(ansi red)  ($line)(ansi reset)"
         }
         print ""
     }
