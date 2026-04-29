@@ -237,8 +237,8 @@ def capture-last-good [] {
 
 def git-sync [] {
     # Delegates entirely to ManifoldOS-Reshaping-History.nu
-    # To change git behaviour, edit reshaping-push there — not here
-    reshaping-push "update"
+    # To change git behaviour, edit ManifoldOS-Reshaping-History there — not here
+    ManifoldOS-Reshaping-History "update"
 }
 
 def revert-to-last-good [last_good: string] {

@@ -1,3 +1,4 @@
+
 # =============================================================================
 # ManifoldOS Reshaping History
 # =============================================================================
@@ -118,14 +119,39 @@ def push-changes [] {
     git -C $repo push
 }
 
-def reshaping-push [msg: string = "update"] {
+def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let repo = (git rev-parse --show-toplevel | str trim)
     mut results = []
 
+    # --- Fetch remote first ---
+    rh-progress $results "Fetching remote state"
+    try { git -C $repo fetch out+err> /dev/null } catch { }
+    $results = ($results | append { description: "Remote state fetched" })
+
+    # --- Check if we are behind remote ---
+    let behind = (git -C $repo rev-list --count HEAD..@{u} | str trim | into int)
+    if $behind > 0 {
+        print -n "\e[2J\e[H"
+        print ""
+        print $"(ansi red_bold)  ⚠ This machine is ($behind) commit(s) behind remote. Pull before pushing.(ansi reset)"
+        print ""
+        let recent = (git -C $repo log HEAD..@{u} --format="%h  %ad  %s" --date=short | lines)
+        for line in $recent {
+            print $"(ansi red)  ($line)(ansi reset)"
+        }
+        print ""
+        return
+    }
+
+    # --- Stage ---
     rh-progress $results "Staging all changes"
     stage-all
     $results = ($results | append { description: "All changes staged" })
 
+    # --- Show changed files ---
+    let changed = (git -C $repo diff --cached --name-only | lines | where { |l| $l | is-not-empty })
+
+    # --- Commit ---
     rh-progress $results "Committing"
     let commit_result = (commit-changes $msg | complete)
     if $commit_result.exit_code != 0 {
@@ -138,11 +164,16 @@ def reshaping-push [msg: string = "update"] {
     }
     $results = ($results | append { description: $"Committed: ($msg)" })
 
+    # --- Push ---
     rh-progress $results "Pushing to remote"
     let push_result = (push-changes | complete)
     if $push_result.exit_code != 0 {
+        print -n "\e[2J\e[H"
+        print ""
         print $"(ansi red_bold)  ✗ Push failed(ansi reset)"
+        print ""
         print $push_result.stderr
+        print ""
         return
     }
     $results = ($results | append { description: "Pushed to remote" })
@@ -150,7 +181,18 @@ def reshaping-push [msg: string = "update"] {
     $results = ($results | append { description: "Done" })
     rh-progress $results "Done"
     try { git -C $repo fetch out+err> /dev/null } catch { }
+
+    # --- Changed files ---
     print ""
+    if ($changed | is-not-empty) {
+        print $"(ansi red_bold)  Files pushed:(ansi reset)"
+        print ""
+        for f in $changed {
+            print $"(ansi red)  • ($f)(ansi reset)"
+        }
+        print ""
+    }
+
     print (reshaping-history-rows 5 | table --index false)
     print ""
 }
@@ -234,6 +276,6 @@ $env.config.keybindings = ($env.config.keybindings | append {
     mode: emacs
     event: {
         send: executehostcommand
-        cmd: "source ~/.config/nushell/modules/forms/scripts/ManifoldOS-Reshaping-History.nu; reshaping-push 'update'"
+        cmd: "ManifoldOS-Reshaping-History"
     }
 })
