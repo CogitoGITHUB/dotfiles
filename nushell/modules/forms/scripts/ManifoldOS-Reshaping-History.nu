@@ -223,7 +223,7 @@ def reshaping-history-rows [n: int = 10] {
 
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "Details": ""
+        "Details": $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
     })
 
     $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"        "Details": $"(ansi red)($stats.branch)(ansi reset)" })
@@ -232,7 +232,7 @@ def reshaping-history-rows [n: int = 10] {
 
     $rows = ($rows | append {
         "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "Details": ""
+        "Details": $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
     })
 
     if ($status | is-empty) {
