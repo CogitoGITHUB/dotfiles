@@ -7,4 +7,4 @@ nushell/history.sqlite3*
 # ---- Atuin runtime ----
 atuin/history.db
 atuin/history.db-wal
-
+atuin/history.db-shm
