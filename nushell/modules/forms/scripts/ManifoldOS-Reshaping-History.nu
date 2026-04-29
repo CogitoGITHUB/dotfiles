@@ -199,7 +199,7 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
 # SECTION 4 — RENDERING (public API — see warning above)
 # =============================================================================
 
-def reshaping-history-rows [n: int = 10] {
+def reshaping-history-rows [n: int = 10, left: string = "Reshaping History", right: string = "Details"] {
     let commits = (fetch-commits $n)
     let stats = (fetch-repo-stats)
     let status = (fetch-status)
@@ -208,35 +208,35 @@ def reshaping-history-rows [n: int = 10] {
 
     for commit in $commits {
         $rows = ($rows | append {
-            "Reshaping History": $"(ansi red_bold)($commit.hash)  ($commit.date)(ansi reset)"
-            "Details": $"(ansi red)($commit.subject)  ($commit.stats)(ansi reset)"
+            ($left): $"(ansi red_bold)($commit.hash)  ($commit.date)(ansi reset)"
+            ($right): $"(ansi red)($commit.subject)  ($commit.stats)(ansi reset)"
         })
     }
 
     $rows = ($rows | append {
-        "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "Details": $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
+        ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
+        ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
     })
 
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Branch(ansi reset)"        "Details": $"(ansi red)($stats.branch)(ansi reset)" })
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Total Commits(ansi reset)" "Details": $"(ansi red)($stats.total)(ansi reset)" })
-    $rows = ($rows | append { "Reshaping History": $"(ansi red_bold)Last Push(ansi reset)"     "Details": $"(ansi red)($stats.last_push)(ansi reset)" })
+    $rows = ($rows | append { ($left): $"(ansi red_bold)Branch(ansi reset)"        ($right): $"(ansi red)($stats.branch)(ansi reset)" })
+    $rows = ($rows | append { ($left): $"(ansi red_bold)Total Commits(ansi reset)" ($right): $"(ansi red)($stats.total)(ansi reset)" })
+    $rows = ($rows | append { ($left): $"(ansi red_bold)Last Push(ansi reset)"     ($right): $"(ansi red)($stats.last_push)(ansi reset)" })
 
     $rows = ($rows | append {
-        "Reshaping History": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "Details": $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
+        ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
+        ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
     })
 
     if ($status | is-empty) {
         $rows = ($rows | append {
-            "Reshaping History": $"(ansi red_bold)Local Status(ansi reset)"
-            "Details": $"(ansi red)✓ clean(ansi reset)"
+            ($left): $"(ansi red_bold)Local Status(ansi reset)"
+            ($right): $"(ansi red)✓ clean(ansi reset)"
         })
     } else {
         for line in $status {
             $rows = ($rows | append {
-                "Reshaping History": $"(ansi red_bold)Modified(ansi reset)"
-                "Details": $"(ansi red)($line | str trim)(ansi reset)"
+                ($left): $"(ansi red_bold)Modified(ansi reset)"
+                ($right): $"(ansi red)($line | str trim)(ansi reset)"
             })
         }
     }

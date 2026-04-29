@@ -53,7 +53,7 @@ def render-progress [results: list, current: string] {
     print ""
 }
 
-def render-summary [results: list] {
+def render-summary [results: list, changed: list] {
     $env.config.color_config = ($env.config.color_config | upsert header "red_bold")
 
     mut rows = []
@@ -165,14 +165,22 @@ def render-summary [results: list] {
         }
     }
 
-    # --- Divider ---
-    $rows = ($rows | append {
-        "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        "": ""
-    })
+    # --- Changed files ---
+    if ($changed | is-not-empty) {
+        $rows = ($rows | append {
+            "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
+            "": ""
+        })
+        for row in $changed {
+            $rows = ($rows | append {
+                "ManifoldOS": $"(ansi red_bold)($row.File)(ansi reset)"
+                "": $"(ansi red)+($row."+")  -($row."-")(ansi reset)"
+            })
+        }
+    }
 
     # --- Git history (from ManifoldOS-Reshaping-History.nu) ---
-    let git_rows = (reshaping-history-rows 10 | rename "ManifoldOS" "")
+    let git_rows = (reshaping-history-rows 10 "ManifoldOS" "")
     $rows = ($rows | append $git_rows)
 
     print ($rows | table --index false)
@@ -236,9 +244,18 @@ def capture-last-good [] {
 }
 
 def git-sync [] {
-    # Delegates entirely to ManifoldOS-Reshaping-History.nu
-    # To change git behaviour, edit ManifoldOS-Reshaping-History there — not here
+    # Capture changes before committing
+    git -C /ManifoldOS add --all
+    let changed = (git -C /ManifoldOS diff --cached --numstat | lines | where { |l| $l | is-not-empty } | each { |line|
+        let parts = ($line | split row "\t")
+        {
+            "File": ($parts | get 2)
+            "+": ($parts | get 0)
+            "-": ($parts | get 1)
+        }
+    })
     ManifoldOS-Reshaping-History "update"
+    $changed
 }
 
 def revert-to-last-good [last_good: string] {
@@ -319,7 +336,7 @@ def ManifoldOS-Reshaping [] {
     # --- Step 3: Git commit & push ---
     render-progress $results "Committing working state"
     let t = (date now)
-    git-sync
+    let changed = (git-sync)
     let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Working state committed & pushed" })
 
@@ -333,7 +350,7 @@ def ManifoldOS-Reshaping [] {
     # --- Done: Print unified summary table ---
     print -n "\e[2J\e[H"
     print ""
-    render-summary $results
+    render-summary $results $changed
     print ""
 }
 
