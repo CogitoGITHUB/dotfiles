@@ -13,12 +13,16 @@ def sh [t: string] {
     print ""
 }
 
+def step_icon [done: bool] {
+    if $done { "🌹" } else { "●" }
+}
+
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
 
     h "MANIFOLD // EXECUTION FLOW"
-    sh "state transition across repository surfaces"
+    sh "A living sequence of mutations: each stage is a state-collapse in the repository’s memory lattice, not a task list."
 
     let indexed = ($steps | enumerate)
 
@@ -34,14 +38,16 @@ def rh-flow [steps: list, current: string, timings: record] {
         let idx  = $row.index
         let time = ($timings | get -i $name | default "")
 
-        if $current_index == -1 {
-            print $"  🌹 ($name) ───── ✓ ($time)"
-        } else if $idx < $current_index {
-            print $"  🌹 ($name) ───── ✓ ($time)"
+        let done = ($current_index != -1 and $idx <= $current_index)
+
+        let icon = (step_icon $done)
+
+        if $idx < $current_index {
+            print $"  ($icon) ($name) ───── ✓ ($time)"
         } else if $idx == $current_index {
-            print $"  🌹 ($name) ───► ✓ ($time)"
+            print $"  ($icon) ($name) ───► executing"
         } else {
-            print $"  🌹 ($name)"
+            print $"  ($icon) ($name) ───── pending"
         }
     }
 
@@ -122,20 +128,19 @@ def summarize-impact [changed: list] {
 def render-impact [impact] {
     print ""
     h "IMPACT VECTOR"
-    sh "structural mutation induced by this push"
+    sh "Every commit is a structural tremor: it rewires intent into filesystem reality, collapsing possibilities into a single recorded branch."
 
     print $"  Files touched : ($impact.files)"
     print $"  Added         : ($impact.added)"
     print $"  Deleted       : ($impact.deleted)"
     print $"  Modified      : ($impact.modified)"
-
     print ""
 }
 
 def render-position [stats, status] {
     print ""
     h "POSITIONAL STATE"
-    sh "alignment relative to remote topology"
+    sh "This repository is not static; it is drifting relative to its origin. This section measures its distance from synchronization equilibrium."
 
     print $"  Branch : ($stats.branch)"
     print $"  Sync   : +($stats.ahead) / -($stats.behind)"
@@ -143,9 +148,9 @@ def render-position [stats, status] {
     print $"  Push   : ($stats.last_push)"
 
     if ($status | is-empty) {
-        print "  State  : ✓ clean"
+        print "  State  : ✓ clean equilibrium"
     } else {
-        print "  State  : dirty"
+        print "  State  : divergence detected"
     }
 
     print ""
@@ -154,7 +159,7 @@ def render-position [stats, status] {
 def render-history [commits, changed] {
     print ""
     h "TEMPORAL TRACE"
-    sh "recent commit lineage"
+    sh "A collapsing wave of prior states: each commit is a frozen decision point in the system’s evolution."
 
     let head = ($commits | first)
 
@@ -165,6 +170,7 @@ def render-history [commits, changed] {
     }
 
     h "FILE DELTA (current snapshot)"
+    sh "The immediate surface of mutation: what reality has just rewritten."
 
     if ($changed | is-empty) {
         print "  — no staged mutations"
@@ -183,7 +189,7 @@ def render-history [commits, changed] {
     print ""
 
     h "FILE HISTORY (past snapshots)"
-    sh "structural evolution trace"
+    sh "A compressed archaeology of the repository: traces of intent, erosion, and reconstruction."
 
     let repo = (git rev-parse --show-toplevel | str trim)
 
