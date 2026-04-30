@@ -73,26 +73,9 @@ def fetch-repo-stats-from [repo: string] {
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
 
-    let added = (
-        git -C $repo diff --cached --name-only --diff-filter=A
-        | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "added" file: $f } }
-    )
-
-    let deleted = (
-        git -C $repo diff --cached --name-only --diff-filter=D
-        | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "deleted" file: $f } }
-    )
-
-    let modified = (
-        git -C $repo diff --cached --name-only --diff-filter=M
-        | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "modified" file: $f } }
-    )
+    let added = (git -C $repo diff --cached --name-only --diff-filter=A | lines | where { |l| $l != "" } | each { |f| { type: "added" file: $f } })
+    let deleted = (git -C $repo diff --cached --name-only --diff-filter=D | lines | where { |l| $l != "" } | each { |f| { type: "deleted" file: $f } })
+    let modified = (git -C $repo diff --cached --name-only --diff-filter=M | lines | where { |l| $l != "" } | each { |f| { type: "modified" file: $f } })
 
     ($added | append $deleted | append $modified)
 }
@@ -156,15 +139,9 @@ def render-history [commits, changed] {
         print "  — no staged mutations"
     } else {
         for c in $changed {
-            if $c.type == "added" {
-                print $"  + ($c.file)"
-            } else if $c.type == "deleted" {
-                print $"  - ($c.file)"
-            } else if $c.type == "modified" {
-                print $"  ~ ($c.file)"
-            } else {
-                print $"  ? ($c.file)"
-            }
+            if $c.type == "added" { print $"  + ($c.file)" }
+            else if $c.type == "deleted" { print $"  - ($c.file)" }
+            else if $c.type == "modified" { print $"  ~ ($c.file)" }
         }
     }
 
@@ -175,24 +152,22 @@ def render-history [commits, changed] {
 
     let repo = (git rev-parse --show-toplevel | str trim)
 
-    git -C $repo log --name-status --pretty=format:"%h %ad %s" --date=short -n 6
-    | lines
-    | where { |l| ($l | str trim) != "" }
-    | each { |l|
+    # IMPORTANT FIX: no pipeline return leak → use for-loop
+    let lines = (git -C $repo log --name-status --pretty=format:"%h %ad %s" --date=short -n 6 | lines)
+
+    for l in $lines {
+        if ($l | str trim) == "" {
+            continue
+        }
+
         if ($l | str contains "\t") {
             let parts = ($l | split row "\t")
             let tag = ($parts | get 0)
             let file = ($parts | get 1)
 
-            if $tag == "A" {
-                print $"  + ($file)"
-            } else if $tag == "D" {
-                print $"  - ($file)"
-            } else if $tag == "M" {
-                print $"  ~ ($file)"
-            } else {
-                print $"  ? ($l)"
-            }
+            if $tag == "A" { print $"  + ($file)" }
+            else if $tag == "D" { print $"  - ($file)" }
+            else if $tag == "M" { print $"  ~ ($file)" }
         } else {
             print $"  ● ($l)"
         }
