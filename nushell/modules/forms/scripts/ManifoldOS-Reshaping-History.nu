@@ -152,7 +152,7 @@ def render-history [commits, changed] {
         print ""
     }
 
-    print $"  FILE DELTA (current):"
+    print $"  FILE DELTA (current snapshot):"
 
     if ($changed | is-empty) {
         print $"  — no staged mutations"
@@ -168,8 +168,8 @@ def render-history [commits, changed] {
     }
 
     print ""
-    print $"  FILE HISTORY (past commits):"
-    print $"  — last structural snapshots —"
+    print $"  FILE HISTORY (past snapshots):"
+    print $"  — structural evolution trace —"
     print ""
 
     let repo = (git rev-parse --show-toplevel | str trim)
@@ -182,14 +182,21 @@ def render-history [commits, changed] {
             return
         }
 
-        if ($l | str length) < 10 {
-            return
-        }
+        if ($l | str contains "\t") {
+            let parts = ($l | split row "\t")
+            if ($parts | length) >= 2 {
+                let tag = ($parts | get 0)
+                let file = ($parts | get 1)
 
-        if ($l | str contains " ") {
-            print $"  ● ($l)"
+                match $tag {
+                    "A" => (print $"  + ($file)")
+                    "D" => (print $"  - ($file)")
+                    "M" => (print $"  ~ ($file)")
+                    _ => (print $"  ? ($l)")
+                }
+            }
         } else {
-            print $"  ─ ($l)"
+            print $"  ● ($l)"
         }
     }
 }
