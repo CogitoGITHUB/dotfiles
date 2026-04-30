@@ -3,11 +3,14 @@
 # =============================================================================
 
 def h [t: string] {
-    print $"(ansi red_bold)  ($t)(ansi reset)"
+    print ""
+    print $"🌹 (ansi red_bold)($t)(ansi reset) 🌹"
+    print ""
 }
 
 def sh [t: string] {
-    print $"(ansi grey)  ($t)(ansi reset)"
+    print $"(ansi grey)($t)(ansi reset)"
+    print ""
 }
 
 def rh-flow [steps: list, current: string, timings: record] {
@@ -16,7 +19,6 @@ def rh-flow [steps: list, current: string, timings: record] {
 
     h "MANIFOLD // EXECUTION FLOW"
     sh "state transition across repository surfaces"
-    print ""
 
     let indexed = ($steps | enumerate)
 
@@ -121,19 +123,19 @@ def render-impact [impact] {
     print ""
     h "IMPACT VECTOR"
     sh "structural mutation induced by this push"
-    print ""
 
     print $"  Files touched : ($impact.files)"
     print $"  Added         : ($impact.added)"
     print $"  Deleted       : ($impact.deleted)"
     print $"  Modified      : ($impact.modified)"
+
+    print ""
 }
 
 def render-position [stats, status] {
     print ""
     h "POSITIONAL STATE"
     sh "alignment relative to remote topology"
-    print ""
 
     print $"  Branch : ($stats.branch)"
     print $"  Sync   : +($stats.ahead) / -($stats.behind)"
@@ -145,13 +147,14 @@ def render-position [stats, status] {
     } else {
         print "  State  : dirty"
     }
+
+    print ""
 }
 
 def render-history [commits, changed] {
     print ""
     h "TEMPORAL TRACE"
     sh "recent commit lineage"
-    print ""
 
     let head = ($commits | first)
 
@@ -180,8 +183,7 @@ def render-history [commits, changed] {
     print ""
 
     h "FILE HISTORY (past snapshots)"
-    print "  — structural evolution trace —"
-    print ""
+    sh "structural evolution trace"
 
     let repo = (git rev-parse --show-toplevel | str trim)
 
@@ -208,6 +210,9 @@ def render-history [commits, changed] {
             print $"  ● ($l)"
         }
     }
+
+    print ""
+    print ""
 }
 
 def ManifoldOS-Reshaping-History [msg: string = "update"] {
@@ -238,6 +243,8 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
 
     if $c.exit_code != 0 {
         print "Nothing to commit"
+        print ""
+        print ""
         return
     }
 
@@ -256,6 +263,9 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     render-impact $impact
     render-position $stats $status
     render-history $commits $changed
+
+    print ""
+    print ""
 }
 
 $env.config.keybindings = (
