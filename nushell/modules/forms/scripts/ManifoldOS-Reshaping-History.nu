@@ -35,13 +35,13 @@ def rh-flow [steps: list, current: string, timings: record] {
         let time = ($timings | get -i $name | default "")
 
         if $current_index == -1 {
-            print $"  ● ($name) ───── ✓ ($time)"
+            print $"  🌹 ($name) ───── ✓ ($time)"
         } else if $idx < $current_index {
-            print $"  ● ($name) ───── ✓ ($time)"
+            print $"  🌹 ($name) ───── ✓ ($time)"
         } else if $idx == $current_index {
-            print $"  ● ($name) ───► ✓ ($time)"
+            print $"  🌹 ($name) ───► ✓ ($time)"
         } else {
-            print $"  ○ ($name)"
+            print $"  🌹 ($name)"
         }
     }
 
@@ -194,21 +194,7 @@ def render-history [commits, changed] {
     )
 
     for l in $lines {
-        if ($l | str contains "\t") {
-            let parts = ($l | split row "\t")
-            let tag = ($parts | get 0)
-            let file = ($parts | get 1)
-
-            if $tag == "A" {
-                print $"  + ($file)"
-            } else if $tag == "D" {
-                print $"  - ($file)"
-            } else if $tag == "M" {
-                print $"  ~ ($file)"
-            }
-        } else {
-            print $"  ● ($l)"
-        }
+        print $"  ($l)"
     }
 
     print ""
