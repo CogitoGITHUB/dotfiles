@@ -17,9 +17,19 @@ def step_icon [done: bool, active: bool] {
     if $done {
         "🌹"
     } else if $active {
-        "●"
+        "○"
     } else {
         "○"
+    }
+}
+
+def step_state_label [done: bool, active: bool] {
+    if $done {
+        "✓ done"
+    } else if $active {
+        "running"
+    } else {
+        "pending"
     }
 }
 
@@ -28,7 +38,7 @@ def rh-flow [steps: list, current: string, timings: record] {
     print ""
 
     h "MANIFOLD // EXECUTION FLOW"
-    sh "A staged collapse of repository time: actions exist first as tension, then crystallize into completion."
+    sh "A staged collapse of repository time: execution emerges as pressure before becoming history."
 
     let indexed = ($steps | enumerate)
 
@@ -48,14 +58,9 @@ def rh-flow [steps: list, current: string, timings: record] {
         let active = ($idx == $current_index)
 
         let icon = (step_icon $done $active)
+        let label = (step_state_label $done $active)
 
-        if $done {
-            print $"  ($icon) ($name) ───── ✓ ($time)"
-        } else if $active {
-            print $"  ($icon) ($name) ───► executing"
-        } else {
-            print $"  ($icon) ($name) ───── pending"
-        }
+        print $"  ($icon) ($name) ───── ($label) ($time)"
     }
 
     print ""
@@ -135,7 +140,7 @@ def summarize-impact [changed: list] {
 def render-impact [impact] {
     print ""
     h "IMPACT VECTOR"
-    sh "Each mutation leaves a residue in structure: additions extend possibility, deletions collapse it, modifications rewrite trajectory."
+    sh "Every change is a deformation of structure: growth, erosion, or rewriting of intent."
 
     print $"  Files touched : ($impact.files)"
     print $"  Added         : ($impact.added)"
@@ -147,7 +152,7 @@ def render-impact [impact] {
 def render-position [stats, status] {
     print ""
     h "POSITIONAL STATE"
-    sh "Distance from origin: how far local reality has drifted from upstream consensus."
+    sh "Relative drift between local memory and upstream reality."
 
     print $"  Branch : ($stats.branch)"
     print $"  Sync   : +($stats.ahead) / -($stats.behind)"
@@ -166,7 +171,7 @@ def render-position [stats, status] {
 def render-history [commits, changed] {
     print ""
     h "TEMPORAL TRACE"
-    sh "compressed history: decisions folded into a single visible present"
+    sh "Compressed history of decisions, collapsed into readable fragments."
 
     let head = ($commits | first)
 
@@ -177,7 +182,7 @@ def render-history [commits, changed] {
     }
 
     h "FILE DELTA (current snapshot)"
-    sh "active mutations currently staged in the system"
+    sh "What has just been altered in the system state."
 
     if ($changed | is-empty) {
         print "  — none"
@@ -196,7 +201,7 @@ def render-history [commits, changed] {
     print ""
 
     h "FILE HISTORY (past snapshots)"
-    sh "what the repository remembers after rewriting itself repeatedly"
+    sh "A compressed archaeology of structural evolution across time."
 
     let repo = (git rev-parse --show-toplevel | str trim)
 
