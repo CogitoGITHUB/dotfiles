@@ -90,10 +90,25 @@ def summarize-impact [changed: list] {
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
 
-    git -C $repo diff --cached --name-only
-    | lines
-    | where { |l| $l | is-not-empty }
-    | each { |f| { status: "modified" file: $f "+" : 0 "-" : 0 } }
+    let added = (
+        git -C $repo diff --cached --name-only --diff-filter=A
+        | lines
+        | each { |f| { type: "added" file: $f } }
+    )
+
+    let deleted = (
+        git -C $repo diff --cached --name-only --diff-filter=D
+        | lines
+        | each { |f| { type: "deleted" file: $f } }
+    )
+
+    let modified = (
+        git -C $repo diff --cached --name-only --diff-filter=M
+        | lines
+        | each { |f| { type: "modified" file: $f } }
+    )
+
+    $added | append $deleted | append $modified
 }
 
 def render-impact [impact] {
@@ -132,7 +147,7 @@ def render-position [stats, status] {
     }
 }
 
-def render-history [commits] {
+def render-history [commits, changed] {
     print ""
     print $"(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
     print $"(ansi grey)  recent state transitions(ansi reset)"
@@ -146,9 +161,19 @@ def render-history [commits] {
         print ""
     }
 
-    print $"  Past:"
-    for c in ($commits | skip 1 | take 6) {
-        print $"  ○ ($c.hash)  ($c.subject)"
+    print $"  FILE DELTA (latest snapshot):"
+    if ($changed | is-empty) {
+        print $"  — no file-level changes recorded"
+    } else {
+        $changed | each { |c|
+            if $c.type == "added" {
+                print $"  + added   ($c.file)"
+            } else if $c.type == "deleted" {
+                print $"  - deleted ($c.file)"
+            } else {
+                print $"  ~ modified ($c.file)"
+            }
+        }
     }
 }
 
@@ -199,7 +224,7 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     rh-flow $steps "" $timings
     render-impact $impact
     render-position $stats $status
-    render-history $commits
+    render-history $commits $changed
 }
 
 $env.config.keybindings = (
