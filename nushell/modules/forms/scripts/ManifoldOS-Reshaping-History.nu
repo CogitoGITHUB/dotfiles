@@ -2,6 +2,10 @@
 # ManifoldOS — Reshaping History (Temporal Interface)
 # =============================================================================
 
+# =============================================================================
+# SECTION 1 — FLOW ENGINE
+# =============================================================================
+
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
@@ -37,6 +41,10 @@ def rh-flow [steps: list, current: string, timings: record] {
     print ""
 }
 
+# =============================================================================
+# SECTION 2 — DATA
+# =============================================================================
+
 def fetch-commits-from [repo: string, n: int] {
     git -C $repo log --format="%h|%ad|%s|%an" --date=short $"-($n)"
     | lines
@@ -68,6 +76,10 @@ def fetch-repo-stats-from [repo: string] {
     }
 }
 
+# =============================================================================
+# SECTION 3 — IMPACT ANALYSIS
+# =============================================================================
+
 def summarize-impact [changed: list] {
     let added = ($changed | where status == "added" | length)
     let deleted = ($changed | where status == "deleted" | length)
@@ -87,6 +99,10 @@ def summarize-impact [changed: list] {
     }
 }
 
+# =============================================================================
+# SECTION 3.5 — CHANGE CAPTURE
+# =============================================================================
+
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
 
@@ -96,6 +112,10 @@ def capture-changed [] {
     | each { |f| { status: "modified" file: $f "+" : 0 "-" : 0 } }
 }
 
+# =============================================================================
+# SECTION 4 — RENDERING
+# =============================================================================
+
 def render-impact [impact] {
     print ""
     print $"(ansi red_bold)  IMPACT VECTOR(ansi reset)"
@@ -103,7 +123,7 @@ def render-impact [impact] {
     print ""
 
     print $"  Files touched : ($impact.files)"
-    print $"  Composition   : +($impact.plus) / -($impact.minus)  (net: ($impact.net))"
+    print $"  Composition   : +($impact.plus) / -($impact.minus)  net=($impact.net)"
 
     if $impact.files > 20 {
         print $"(ansi red)  ⚠ wide spread change surface(ansi reset)"
@@ -148,6 +168,10 @@ def render-history [commits] {
         print $"  ○ ($c.hash)  ($c.subject)"
     }
 }
+
+# =============================================================================
+# SECTION 5 — MAIN
+# =============================================================================
 
 def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let repo = (git rev-parse --show-toplevel | str trim)
@@ -198,6 +222,10 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     render-position $stats $status
     render-history $commits
 }
+
+# =============================================================================
+# KEYBINDING
+# =============================================================================
 
 $env.config.keybindings = (
     $env.config.keybindings
