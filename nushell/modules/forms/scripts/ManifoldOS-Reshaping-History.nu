@@ -2,6 +2,7 @@
 # ManifoldOS — Reshaping History (Temporal Interface)
 # =============================================================================
 
+
 # =============================================================================
 # SECTION 1 — FLOW ENGINE
 # =============================================================================
@@ -9,8 +10,9 @@
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
-    print $"🌹 MANIFOLD // EXECUTION FLOW 🌹"
-    print $"A staged collapse of repository time: actions exist as pressure before stabilizing into recorded history."
+
+    print $"(ansi red_bold)🌹 MANIFOLD // EXECUTION FLOW 🌹(ansi reset)"
+    print $"(ansi grey)A staged collapse of repository time: actions exist as pressure before stabilizing into recorded history.(ansi reset)"
     print ""
 
     let indexed = ($steps | enumerate)
@@ -24,20 +26,30 @@ def rh-flow [steps: list, current: string, timings: record] {
 
     for row in $indexed {
         let name = $row.item.name
-        let idx = $row.index
         let time = ($timings | get -i $name | default "")
+        let is_done = ($timings | get -i $name | is-not-empty)
+        let is_active = ($name == $current)
 
-        if $current == "" {
-            print $"  ○ ($name) ───── ($time)"
-        } else if $idx < $current_index {
-            print $"  ● ($name) ───── ✓ ($time)"
-        } else if $idx == $current_index {
-            print $"  ○ ($name) ───► ($time)"
+        let symbol = if $is_done and not $is_active {
+            "🌹"
+        } else if $is_active {
+            "○"
         } else {
-            print $"  ○ ($name) ───── pending"
+            "○"
         }
+
+        let status = if $is_done and not $is_active {
+            "✓"
+        } else if $is_active {
+            "───►"
+        } else {
+            "─────"
+        }
+
+        print $"  ($symbol) ($name) ($status) ($time)"
     }
 
+    print ""
     print ""
 }
 
@@ -48,14 +60,12 @@ def rh-flow [steps: list, current: string, timings: record] {
 def fetch-commits-from [repo: string, n: int] {
     git -C $repo log --format="%h|%ad|%s|%an" --date=short $"-($n)"
     | lines
-    | where { |l| ($l | str trim) != "" }
+    | where { |l| $l | is-not-empty }
     | each { |line|
         let p = ($line | split row "|")
-        let hash = ($p | get 0)
-        let stats = (git -C $repo show --stat $hash | lines | last | default "")
-
+        let stats = (git -C $repo show --stat ($p | get 0) | lines | last | str trim)
         {
-            hash: $hash
+            hash: ($p | get 0)
             date: ($p | get 1)
             subject: ($p | get 2)
             author: ($p | get 3)
@@ -67,7 +77,7 @@ def fetch-commits-from [repo: string, n: int] {
 def fetch-status-from [repo: string] {
     git -C $repo status --short
     | lines
-    | where { |l| ($l | str trim) != "" }
+    | where { |l| $l | is-not-empty }
 }
 
 def fetch-repo-stats-from [repo: string] {
@@ -81,7 +91,7 @@ def fetch-repo-stats-from [repo: string] {
 }
 
 # =============================================================================
-# SECTION 3 — CHANGES
+# SECTION 3 — IMPACT ANALYSIS
 # =============================================================================
 
 def capture-changed [] {
@@ -90,94 +100,63 @@ def capture-changed [] {
     let added = (
         git -C $repo diff --cached --name-only --diff-filter=A
         | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "added", file: $f } }
+        | where { |l| $l | is-not-empty }
+        | each { |f| { status: "added" file: $f } }
     )
 
     let deleted = (
         git -C $repo diff --cached --name-only --diff-filter=D
         | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "deleted", file: $f } }
+        | where { |l| $l | is-not-empty }
+        | each { |f| { status: "deleted" file: $f } }
     )
 
     let modified = (
-        git -C $repo diff --cached --numstat --diff-filter=M
+        git -C $repo diff --cached --name-only --diff-filter=M
         | lines
-        | where { |l| ($l | str trim) != "" }
-        | each { |line|
-            let p = ($line | split row "\t")
-            {
-                type: "modified"
-                file: ($p | get 2)
-                plus: ($p | get 0)
-                minus: ($p | get 1)
-            }
-        }
+        | where { |l| $l | is-not-empty }
+        | each { |f| { status: "modified" file: $f } }
     )
 
-    ($added | append $deleted | append $modified)
+    $added | append $deleted | append $modified
 }
-
-# =============================================================================
-# SECTION 4 — IMPACT
-# =============================================================================
 
 def summarize-impact [changed: list] {
     let files = ($changed | length)
-
-    let added = ($changed | where type == "added" | length)
-    let deleted = ($changed | where type == "deleted" | length)
-    let modified = ($changed | where type == "modified" | length)
-
-    let plus = (
-        $changed
-        | where type == "modified"
-        | get -i plus
-        | each { |x| if $x == "" { 0 } else { $x | into int } }
-        | math sum
-    )
-
-    let minus = (
-        $changed
-        | where type == "modified"
-        | get -i minus
-        | each { |x| if $x == "" { 0 } else { $x | into int } }
-        | math sum
-    )
+    let added = ($changed | where status == "added" | length)
+    let deleted = ($changed | where status == "deleted" | length)
+    let modified = ($changed | where status == "modified" | length)
 
     {
         files: $files
         added: $added
         deleted: $deleted
         modified: $modified
-        plus: $plus
-        minus: $minus
-        net: ($plus - $minus)
     }
 }
 
+# =============================================================================
+# SECTION 4 — RENDERING
+# =============================================================================
+
 def render-impact [impact] {
     print ""
-    print "🌹 IMPACT VECTOR 🌹"
-    print "Structural mutation signature of this commit."
+    print $"(ansi red_bold)🌹 IMPACT VECTOR 🌹(ansi reset)"
+    print $"(ansi grey)Structural mutation signature of this commit.(ansi reset)"
     print ""
 
     print $"  Files touched : ($impact.files)"
     print $"  Added         : ($impact.added)"
     print $"  Deleted       : ($impact.deleted)"
     print $"  Modified      : ($impact.modified)"
-    print $"  Composition   : +($impact.plus) / -($impact.minus) net=($impact.net)"
+
+    print ""
+    print ""
 }
 
-# =============================================================================
-# SECTION 5 — POSITION
-# =============================================================================
-
 def render-position [stats, status] {
-    print ""
-    print "🌹 POSITIONAL STATE 🌹"
-    print "Alignment between local drift and upstream truth."
+    print $"(ansi red_bold)🌹 POSITIONAL STATE 🌹(ansi reset)"
+    print $"(ansi grey)Alignment between local drift and upstream state.(ansi reset)"
     print ""
 
     print $"  Branch : ($stats.branch)"
@@ -185,25 +164,23 @@ def render-position [stats, status] {
     print $"  Total  : ($stats.total)"
     print $"  Push   : ($stats.last_push)"
 
-    if ($status | is-empty) {
-        print $"  State  : ✓ clean"
-    } else {
-        print $"  State  : dirty"
-    }
+    let clean = ($status | is-empty)
+
+    print $"  State  : (if $clean { '✓ clean' } else { 'dirty' })"
+
+    print ""
+    print ""
 }
 
-# =============================================================================
-# SECTION 6 — HISTORY
-# =============================================================================
-
 def render-history [commits] {
-    print ""
-    print "🌹 TEMPORAL TRACE 🌹"
-    print "Compressed lineage of repository evolution."
+    print $"(ansi red_bold)🌹 TEMPORAL TRACE 🌹(ansi reset)"
+    print $"(ansi grey)Compressed lineage of repository evolution.(ansi reset)"
     print ""
 
     if ($commits | is-empty) {
         print "  (no history)"
+        print ""
+        print ""
         return
     }
 
@@ -214,13 +191,39 @@ def render-history [commits] {
     print ""
 
     print "  Past:"
-    for c in ($commits | skip 1 | take 6) {
+    for c in ($commits | skip 1 | take 8) {
         print $"  ○ ($c.hash)  ($c.subject)"
     }
+
+    print ""
+    print ""
+}
+
+def render-file-delta [changed] {
+    print $"(ansi red_bold)🌹 FILE DELTA (current snapshot) 🌹(ansi reset)"
+    print $"(ansi grey)What has just been altered in the system state.(ansi reset)"
+    print ""
+
+    if ($changed | is-empty) {
+        print "  (no changes)"
+    } else {
+        for c in $changed {
+            if $c.status == "added" {
+                print $"  + ($c.file)"
+            } else if $c.status == "deleted" {
+                print $"  - ($c.file)"
+            } else {
+                print $"  ~ ($c.file)"
+            }
+        }
+    }
+
+    print ""
+    print ""
 }
 
 # =============================================================================
-# MAIN
+# SECTION 5 — MAIN
 # =============================================================================
 
 def ManifoldOS-Reshaping-History [msg: string = "update"] {
@@ -252,7 +255,10 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let c = (git -C $repo commit -m $msg | complete)
     $timings.Commit = ((date now) - $start)
 
-    if $c.exit_code != 0 { return }
+    if $c.exit_code != 0 {
+        print "Nothing to commit"
+        return
+    }
 
     $start = (date now)
     rh-flow $steps "Push" $timings
@@ -267,16 +273,15 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let impact = (summarize-impact $changed)
 
     rh-flow $steps "" $timings
+
     render-impact $impact
     render-position $stats $status
     render-history $commits
-
-    print ""
-    print ""
+    render-file-delta $changed
 }
 
 # =============================================================================
-# KEYBINDING
+# KEYBINDING (UNCHANGED)
 # =============================================================================
 
 $env.config.keybindings = ($env.config.keybindings | append {
