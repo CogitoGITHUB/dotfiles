@@ -28,7 +28,7 @@ def rh-flow [steps: list, current: string, timings: record] {
         } else if $idx < $current_index {
             print $"  ● ($name) ───── ✓ ($time)"
         } else if $idx == $current_index {
-            print $"  ● ($name) ───► ($time)"
+            print $"  ● ($name) ───► ✓ ($time)"
         } else {
             print $"  ○ ($name)"
         }
@@ -94,9 +94,7 @@ def capture-changed [] {
         | each { |f| { type: "modified" file: $f } }
     )
 
-    let result = ($added | append $deleted | append $modified)
-
-    if ($result | is-empty) { [] } else { $result }
+    ($added | append $deleted | append $modified)
 }
 
 def summarize-impact [changed: list] {
@@ -158,11 +156,14 @@ def render-history [commits, changed] {
         print $"  — no staged mutations"
     } else {
         for c in $changed {
-            match $c.type {
-                "added" => (print $"  + ($c.file)")
-                "deleted" => (print $"  - ($c.file)")
-                "modified" => (print $"  ~ ($c.file)")
-                _ => (print $"  ? ($c.file)")
+            if $c.type == "added" {
+                print $"  + ($c.file)"
+            } else if $c.type == "deleted" {
+                print $"  - ($c.file)"
+            } else if $c.type == "modified" {
+                print $"  ~ ($c.file)"
+            } else {
+                print $"  ? ($c.file)"
             }
         }
     }
@@ -178,22 +179,19 @@ def render-history [commits, changed] {
     | lines
     | where { |l| ($l | str trim) != "" }
     | each { |l|
-        if ($l | str starts-with " ") {
-            return
-        }
-
         if ($l | str contains "\t") {
             let parts = ($l | split row "\t")
-            if ($parts | length) >= 2 {
-                let tag = ($parts | get 0)
-                let file = ($parts | get 1)
+            let tag = ($parts | get 0)
+            let file = ($parts | get 1)
 
-                match $tag {
-                    "A" => (print $"  + ($file)")
-                    "D" => (print $"  - ($file)")
-                    "M" => (print $"  ~ ($file)")
-                    _ => (print $"  ? ($l)")
-                }
+            if $tag == "A" {
+                print $"  + ($file)"
+            } else if $tag == "D" {
+                print $"  - ($file)"
+            } else if $tag == "M" {
+                print $"  ~ ($file)"
+            } else {
+                print $"  ? ($l)"
             }
         } else {
             print $"  ● ($l)"
