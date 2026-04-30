@@ -2,11 +2,20 @@
 # ManifoldOS — Reshaping History (Temporal Interface)
 # =============================================================================
 
+def h [t: string] {
+    print $"(ansi red_bold)  ($t)(ansi reset)"
+}
+
+def sh [t: string] {
+    print $"(ansi grey)  ($t)(ansi reset)"
+}
+
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
-    print "(ansi red_bold)  MANIFOLD // EXECUTION FLOW(ansi reset)"
-    print "(ansi grey)  state transition across repository surfaces(ansi reset)"
+
+    h "MANIFOLD // EXECUTION FLOW"
+    sh "state transition across repository surfaces"
     print ""
 
     let indexed = ($steps | enumerate)
@@ -110,8 +119,8 @@ def summarize-impact [changed: list] {
 
 def render-impact [impact] {
     print ""
-    print "(ansi red_bold)  IMPACT VECTOR(ansi reset)"
-    print "(ansi grey)  structural mutation induced by this push(ansi reset)"
+    h "IMPACT VECTOR"
+    sh "structural mutation induced by this push"
     print ""
 
     print $"  Files touched : ($impact.files)"
@@ -122,8 +131,8 @@ def render-impact [impact] {
 
 def render-position [stats, status] {
     print ""
-    print "(ansi red_bold)  POSITIONAL STATE(ansi reset)"
-    print "(ansi grey)  alignment relative to remote topology(ansi reset)"
+    h "POSITIONAL STATE"
+    sh "alignment relative to remote topology"
     print ""
 
     print $"  Branch : ($stats.branch)"
@@ -140,8 +149,8 @@ def render-position [stats, status] {
 
 def render-history [commits, changed] {
     print ""
-    print "(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
-    print "(ansi grey)  recent commit lineage(ansi reset)"
+    h "TEMPORAL TRACE"
+    sh "recent commit lineage"
     print ""
 
     let head = ($commits | first)
