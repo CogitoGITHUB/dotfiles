@@ -155,13 +155,16 @@ def render-position [stats, status] {
 def render-history [commits] {
     print ""
     print $"(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
-    print $"(ansi grey)  recent state transitions (weighted)(ansi reset)"
+    print $"(ansi grey)  recent state transitions (weighted scan)(ansi reset)"
     print ""
 
     let head = ($commits | first)
-    print $"  ● ($head.hash)  ($head.subject)"
-    print $"    ($head.changes)"
-    print ""
+
+    if $head != null {
+        print $"  ● ($head.hash)  ($head.subject)"
+        print $"    ($head.changes)"
+        print ""
+    }
 
     print $"  Past:"
     for c in ($commits | skip 1 | take 6) {
