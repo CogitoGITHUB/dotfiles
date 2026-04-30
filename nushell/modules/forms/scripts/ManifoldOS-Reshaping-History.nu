@@ -5,8 +5,8 @@
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
-    print $"(ansi red_bold)  MANIFOLD // EXECUTION FLOW(ansi reset)"
-    print $"(ansi grey)  state transition across repository surfaces(ansi reset)"
+    print "(ansi red_bold)  MANIFOLD // EXECUTION FLOW(ansi reset)"
+    print "(ansi grey)  state transition across repository surfaces(ansi reset)"
     print ""
 
     let indexed = ($steps | enumerate)
@@ -108,8 +108,8 @@ def summarize-impact [changed: list] {
 
 def render-impact [impact] {
     print ""
-    print $"(ansi red_bold)  IMPACT VECTOR(ansi reset)"
-    print $"(ansi grey)  structural mutation induced by this push(ansi reset)"
+    print "(ansi red_bold)  IMPACT VECTOR(ansi reset)"
+    print "(ansi grey)  structural mutation induced by this push(ansi reset)"
     print ""
 
     print $"  Files touched : ($impact.files)"
@@ -120,8 +120,8 @@ def render-impact [impact] {
 
 def render-position [stats, status] {
     print ""
-    print $"(ansi red_bold)  POSITIONAL STATE(ansi reset)"
-    print $"(ansi grey)  alignment relative to remote topology(ansi reset)"
+    print "(ansi red_bold)  POSITIONAL STATE(ansi reset)"
+    print "(ansi grey)  alignment relative to remote topology(ansi reset)"
     print ""
 
     print $"  Branch : ($stats.branch)"
@@ -130,16 +130,16 @@ def render-position [stats, status] {
     print $"  Push   : ($stats.last_push)"
 
     if ($status | is-empty) {
-        print $"  State  : ✓ clean"
+        print "  State  : ✓ clean"
     } else {
-        print $"  State  : dirty"
+        print "  State  : dirty"
     }
 }
 
 def render-history [commits, changed] {
     print ""
-    print $"(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
-    print $"(ansi grey)  recent commit lineage(ansi reset)"
+    print "(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
+    print "(ansi grey)  recent commit lineage(ansi reset)"
     print ""
 
     let head = ($commits | first)
@@ -150,10 +150,10 @@ def render-history [commits, changed] {
         print ""
     }
 
-    print $"  FILE DELTA (current snapshot):"
+    print "  FILE DELTA (current snapshot):"
 
     if ($changed | is-empty) {
-        print $"  — no staged mutations"
+        print "  — no staged mutations"
     } else {
         for c in $changed {
             if $c.type == "added" {
@@ -169,8 +169,8 @@ def render-history [commits, changed] {
     }
 
     print ""
-    print $"  FILE HISTORY (past snapshots):"
-    print $"  — structural evolution trace —"
+    print "  FILE HISTORY (past snapshots):"
+    print "  — structural evolution trace —"
     print ""
 
     let repo = (git rev-parse --show-toplevel | str trim)
