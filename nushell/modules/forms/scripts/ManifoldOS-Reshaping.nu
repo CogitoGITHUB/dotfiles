@@ -257,7 +257,7 @@ $env.config.keybindings = (
     | append {
         name: ManifoldOS_Reshaping_History
         modifier: control
-        keycode: char_g
+        keycode: char_s
         mode: emacs
         event: {
             send: executehostcommand
