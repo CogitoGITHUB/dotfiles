@@ -1,77 +1,49 @@
 # =============================================================================
 # ManifoldOS — Reshaping History (Temporal Interface)
-# FIX: Nushell if/else expression correctness + stable lifecycle rendering
 # =============================================================================
 
-def h [t: string] {
-    print ""
-    print $"🌹 (ansi red_bold)($t)(ansi reset) 🌹"
-    print ""
-}
-
-def sh [t: string] {
-    print $"(ansi grey)($t)(ansi reset)"
-    print ""
-}
-
-def step_icon [done: bool, active: bool] {
-    if $done {
-        "🌹"
-    } else {
-        if $active {
-            "●"
-        } else {
-            "○"
-        }
-    }
-}
-
-def step_state_label [done: bool, active: bool] {
-    if $done {
-        "done"
-    } else {
-        if $active {
-            "running"
-        } else {
-            "pending"
-        }
-    }
-}
+# =============================================================================
+# SECTION 1 — FLOW ENGINE
+# =============================================================================
 
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
-
-    h "MANIFOLD // EXECUTION FLOW"
-    sh "A staged collapse of repository time: execution stabilizes only after execution ends."
+    print $"(ansi red_bold)🌹 MANIFOLD // EXECUTION FLOW 🌹(ansi reset)"
+    print $"(ansi grey)A staged collapse of repository time: actions exist as pressure before stabilizing into recorded history.(ansi reset)"
+    print ""
 
     let indexed = ($steps | enumerate)
 
-    let found = (
-        $indexed
-        | where item.name == $current
-        | get index
-        | first
-    )
-
-    let current_index = (if $found == null { -1 } else { $found })
+    mut current_index = -1
+    for row in $indexed {
+        if $row.item.name == $current {
+            $current_index = $row.index
+        }
+    }
 
     for row in $indexed {
         let name = $row.item.name
         let idx = $row.index
         let time = ($timings | get -i $name | default "")
 
-        let done = ($current_index != -1 and $idx < $current_index)
-        let active = ($idx == $current_index)
-
-        let icon = (step_icon $done $active)
-        let state = (step_state_label $done $active)
-
-        print $"  ($icon) ($name) ───── ($state) ($time)"
+        if $current == "" {
+            print $"  ○ ($name) ───── ($time)"
+        } else if $idx < $current_index {
+            print $"  🌹 ($name) ───── ✓ ($time)"
+        } else if $idx == $current_index {
+            print $"  ● ($name) ───► ($time)"
+        } else {
+            print $"  ○ ($name) ───── pending"
+        }
     }
 
     print ""
 }
+
+# =============================================================================
+# DATA
+# =============================================================================
 
 def fetch-commits-from [repo: string, n: int] {
     git -C $repo log --format="%h|%ad|%s|%an" --date=short $"-($n)"
@@ -80,7 +52,7 @@ def fetch-commits-from [repo: string, n: int] {
     | each { |line|
         let p = ($line | split row "|")
         let hash = ($p | get 0)
-        let stats = (git -C $repo show --stat $hash | lines | last | str trim)
+        let stats = (git -C $repo show --stat $hash | lines | last | default "")
 
         {
             hash: $hash
@@ -93,9 +65,7 @@ def fetch-commits-from [repo: string, n: int] {
 }
 
 def fetch-status-from [repo: string] {
-    git -C $repo status --short
-    | lines
-    | where { |l| ($l | str trim) != "" }
+    git -C $repo status --short | lines | where { |l| ($l | str trim) != "" }
 }
 
 def fetch-repo-stats-from [repo: string] {
@@ -108,6 +78,10 @@ def fetch-repo-stats-from [repo: string] {
     }
 }
 
+# =============================================================================
+# CHANGES
+# =============================================================================
+
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
 
@@ -115,51 +89,89 @@ def capture-changed [] {
         git -C $repo diff --cached --name-only --diff-filter=A
         | lines
         | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "added" file: $f } }
+        | each { |f| { type: "added", file: $f } }
     )
 
     let deleted = (
         git -C $repo diff --cached --name-only --diff-filter=D
         | lines
         | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "deleted" file: $f } }
+        | each { |f| { type: "deleted", file: $f } }
     )
 
     let modified = (
-        git -C $repo diff --cached --name-only --diff-filter=M
+        git -C $repo diff --cached --numstat --diff-filter=M
         | lines
         | where { |l| ($l | str trim) != "" }
-        | each { |f| { type: "modified" file: $f } }
+        | each { |line|
+            let p = ($line | split row "\t")
+            {
+                type: "modified"
+                file: ($p | get 2)
+                plus: ($p | get 0)
+                minus: ($p | get 1)
+            }
+        }
     )
 
     ($added | append $deleted | append $modified)
 }
 
+# =============================================================================
+# IMPACT
+# =============================================================================
+
 def summarize-impact [changed: list] {
+    let files = ($changed | length)
+    let added = ($changed | where type == "added" | length)
+    let deleted = ($changed | where type == "deleted" | length)
+    let modified = ($changed | where type == "modified" | length)
+
+    let plus = (
+        $changed | where type == "modified" | get -i plus
+        | each { |x| if $x == "" { 0 } else { $x | into int } }
+        | math sum
+    )
+
+    let minus = (
+        $changed | where type == "modified" | get -i minus
+        | each { |x| if $x == "" { 0 } else { $x | into int } }
+        | math sum
+    )
+
     {
-        files: ($changed | length)
-        added: ($changed | where type == "added" | length)
-        deleted: ($changed | where type == "deleted" | length)
-        modified: ($changed | where type == "modified" | length)
+        files: $files
+        added: $added
+        deleted: $deleted
+        modified: $modified
+        plus: $plus
+        minus: $minus
+        net: ($plus - $minus)
     }
 }
 
 def render-impact [impact] {
     print ""
-    h "IMPACT VECTOR"
-    sh "Every mutation is a structural displacement across repository memory."
+    print $"(ansi red_bold)🌹 IMPACT VECTOR 🌹(ansi reset)"
+    print $"(ansi grey)Structural mutation signature of this commit.(ansi reset)"
+    print ""
 
     print $"  Files touched : ($impact.files)"
     print $"  Added         : ($impact.added)"
     print $"  Deleted       : ($impact.deleted)"
     print $"  Modified      : ($impact.modified)"
-    print ""
+    print $"  Composition   : +($impact.plus) / -($impact.minus) net=($impact.net)"
 }
+
+# =============================================================================
+# POSITION
+# =============================================================================
 
 def render-position [stats, status] {
     print ""
-    h "POSITIONAL STATE"
-    sh "Drift measurement between local state and upstream consensus."
+    print $"(ansi red_bold)🌹 POSITIONAL STATE 🌹(ansi reset)"
+    print $"(ansi grey)Alignment between local drift and upstream truth.(ansi reset)"
+    print ""
 
     print $"  Branch : ($stats.branch)"
     print $"  Sync   : +($stats.ahead) / -($stats.behind)"
@@ -167,89 +179,42 @@ def render-position [stats, status] {
     print $"  Push   : ($stats.last_push)"
 
     if ($status | is-empty) {
-        print "  State  : equilibrium"
+        print $"  State  : ✓ clean"
     } else {
-        print "  State  : divergence"
+        print $"  State  : dirty"
     }
-
-    print ""
 }
 
-def render-history [commits, changed] {
+# =============================================================================
+# HISTORY
+# =============================================================================
+
+def render-history [commits] {
     print ""
-    h "TEMPORAL TRACE"
-    sh "Compressed causal history of repository evolution."
+    print $"(ansi red_bold)🌹 TEMPORAL TRACE 🌹(ansi reset)"
+    print $"(ansi grey)Compressed lineage of repository evolution.(ansi reset)"
+    print ""
+
+    if ($commits | is-empty) {
+        print "  (no history)"
+        return
+    }
 
     let head = ($commits | first)
 
-    if $head != null {
-        print $"  ● ($head.hash)  ($head.subject)"
-        print $"    ($head.changes)"
-        print ""
-    }
-
-    h "FILE DELTA (current snapshot)"
-    sh "Active working-tree mutations."
-
-    if ($changed | is-empty) {
-        print "  — none"
-    } else {
-        for c in $changed {
-            if $c.type == "added" {
-                print $"  + ($c.file)"
-            } else {
-                if $c.type == "deleted" {
-                    print $"  - ($c.file)"
-                } else {
-                    print $"  ~ ($c.file)"
-                }
-            }
-        }
-    }
-
+    print $"  ● ($head.hash)  ($head.subject)"
+    print $"    ($head.changes)"
     print ""
 
-    h "FILE HISTORY (past snapshots)"
-    sh "Commit-level reconstruction of file evolution."
-
-    let repo = (git rev-parse --show-toplevel | str trim)
-
-    let log = (
-        git -C $repo log --name-status --pretty=format:"%h|%ad|%s" --date=short -n 6
-        | lines
-        | where { |l| ($l | str trim) != "" }
-    )
-
-    for line in $log {
-        if ($line | str contains "|") {
-            let parts = ($line | split row "|")
-            let hash = ($parts | get 0)
-            let date = ($parts | get 1)
-            let msg = ($parts | get 2)
-
-            print $"  ● ($hash) ($date) ($msg)"
-        } else {
-            let cols = ($line | split row "\t")
-            if ($cols | length) >= 2 {
-                let type = ($cols | get 0)
-                let file = ($cols | get 1)
-
-                let sym = (
-                    if $type == "A" { "+" }
-                    else {
-                        if $type == "D" { "-" }
-                        else { "~" }
-                    }
-                )
-
-                print $"     ($sym) ($file)"
-            }
-        }
+    print $"  Past:"
+    for c in ($commits | skip 1 | take 6) {
+        print $"  ○ ($c.hash)  ($c.subject)"
     }
-
-    print ""
-    print ""
 }
+
+# =============================================================================
+# MAIN
+# =============================================================================
 
 def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let repo = (git rev-parse --show-toplevel | str trim)
@@ -262,30 +227,30 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     ]
 
     mut timings = {}
+    mut start = (date now)
 
     rh-flow $steps "Fetch" $timings
-    git -C $repo fetch
-    $timings.Fetch = (date now)
+    git -C $repo fetch out+err> /dev/null
+    $timings.Fetch = ((date now) - $start)
 
+    $start = (date now)
     rh-flow $steps "Stage" $timings
     git -C $repo add --all
-    $timings.Stage = (date now)
+    $timings.Stage = ((date now) - $start)
 
     let changed = (capture-changed)
 
+    $start = (date now)
     rh-flow $steps "Commit" $timings
     let c = (git -C $repo commit -m $msg | complete)
-    $timings.Commit = (date now)
+    $timings.Commit = ((date now) - $start)
 
-    if $c.exit_code != 0 {
-        print "Nothing to commit"
-        print ""
-        return
-    }
+    if $c.exit_code != 0 { return }
 
+    $start = (date now)
     rh-flow $steps "Push" $timings
     git -C $repo push
-    $timings.Push = (date now)
+    $timings.Push = ((date now) - $start)
 
     print -n "\e[2J\e[H"
 
@@ -297,23 +262,23 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     rh-flow $steps "" $timings
     render-impact $impact
     render-position $stats $status
-    render-history $commits $changed
+    render-history $commits
 
     print ""
     print ""
 }
 
-$env.config.keybindings = (
-    $env.config.keybindings
-    | where name != "ManifoldOS_Reshaping_History"
-    | append {
-        name: ManifoldOS_Reshaping_History
-        modifier: control
-        keycode: char_g
-        mode: emacs
-        event: {
-            send: executehostcommand
-            cmd: "ManifoldOS-Reshaping-History"
-        }
+# =============================================================================
+# KEYBINDING
+# =============================================================================
+
+$env.config.keybindings = ($env.config.keybindings | append {
+    name: ManifoldOS_Reshaping_History
+    modifier: control
+    keycode: char_g
+    mode: emacs
+    event: {
+        send: executehostcommand
+        cmd: "ManifoldOS-Reshaping-History"
     }
-)
+})
