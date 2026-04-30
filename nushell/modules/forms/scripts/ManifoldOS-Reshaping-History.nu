@@ -9,8 +9,8 @@
 def rh-flow [steps: list, current: string, timings: record] {
     print -n "\e[2J\e[H"
     print ""
-    print $"(ansi red_bold)🌹 MANIFOLD // EXECUTION FLOW 🌹(ansi reset)"
-    print $"(ansi grey)A staged collapse of repository time: actions exist as pressure before stabilizing into recorded history.(ansi reset)"
+    print $"🌹 MANIFOLD // EXECUTION FLOW 🌹"
+    print $"A staged collapse of repository time: actions exist as pressure before stabilizing into recorded history."
     print ""
 
     let indexed = ($steps | enumerate)
@@ -30,9 +30,9 @@ def rh-flow [steps: list, current: string, timings: record] {
         if $current == "" {
             print $"  ○ ($name) ───── ($time)"
         } else if $idx < $current_index {
-            print $"  🌹 ($name) ───── ✓ ($time)"
+            print $"  ● ($name) ───── ✓ ($time)"
         } else if $idx == $current_index {
-            print $"  ● ($name) ───► ($time)"
+            print $"  ○ ($name) ───► ($time)"
         } else {
             print $"  ○ ($name) ───── pending"
         }
@@ -42,7 +42,7 @@ def rh-flow [steps: list, current: string, timings: record] {
 }
 
 # =============================================================================
-# DATA
+# SECTION 2 — DATA
 # =============================================================================
 
 def fetch-commits-from [repo: string, n: int] {
@@ -65,7 +65,9 @@ def fetch-commits-from [repo: string, n: int] {
 }
 
 def fetch-status-from [repo: string] {
-    git -C $repo status --short | lines | where { |l| ($l | str trim) != "" }
+    git -C $repo status --short
+    | lines
+    | where { |l| ($l | str trim) != "" }
 }
 
 def fetch-repo-stats-from [repo: string] {
@@ -79,7 +81,7 @@ def fetch-repo-stats-from [repo: string] {
 }
 
 # =============================================================================
-# CHANGES
+# SECTION 3 — CHANGES
 # =============================================================================
 
 def capture-changed [] {
@@ -118,23 +120,28 @@ def capture-changed [] {
 }
 
 # =============================================================================
-# IMPACT
+# SECTION 4 — IMPACT
 # =============================================================================
 
 def summarize-impact [changed: list] {
     let files = ($changed | length)
+
     let added = ($changed | where type == "added" | length)
     let deleted = ($changed | where type == "deleted" | length)
     let modified = ($changed | where type == "modified" | length)
 
     let plus = (
-        $changed | where type == "modified" | get -i plus
+        $changed
+        | where type == "modified"
+        | get -i plus
         | each { |x| if $x == "" { 0 } else { $x | into int } }
         | math sum
     )
 
     let minus = (
-        $changed | where type == "modified" | get -i minus
+        $changed
+        | where type == "modified"
+        | get -i minus
         | each { |x| if $x == "" { 0 } else { $x | into int } }
         | math sum
     )
@@ -152,8 +159,8 @@ def summarize-impact [changed: list] {
 
 def render-impact [impact] {
     print ""
-    print $"(ansi red_bold)🌹 IMPACT VECTOR 🌹(ansi reset)"
-    print $"(ansi grey)Structural mutation signature of this commit.(ansi reset)"
+    print "🌹 IMPACT VECTOR 🌹"
+    print "Structural mutation signature of this commit."
     print ""
 
     print $"  Files touched : ($impact.files)"
@@ -164,13 +171,13 @@ def render-impact [impact] {
 }
 
 # =============================================================================
-# POSITION
+# SECTION 5 — POSITION
 # =============================================================================
 
 def render-position [stats, status] {
     print ""
-    print $"(ansi red_bold)🌹 POSITIONAL STATE 🌹(ansi reset)"
-    print $"(ansi grey)Alignment between local drift and upstream truth.(ansi reset)"
+    print "🌹 POSITIONAL STATE 🌹"
+    print "Alignment between local drift and upstream truth."
     print ""
 
     print $"  Branch : ($stats.branch)"
@@ -186,13 +193,13 @@ def render-position [stats, status] {
 }
 
 # =============================================================================
-# HISTORY
+# SECTION 6 — HISTORY
 # =============================================================================
 
 def render-history [commits] {
     print ""
-    print $"(ansi red_bold)🌹 TEMPORAL TRACE 🌹(ansi reset)"
-    print $"(ansi grey)Compressed lineage of repository evolution.(ansi reset)"
+    print "🌹 TEMPORAL TRACE 🌹"
+    print "Compressed lineage of repository evolution."
     print ""
 
     if ($commits | is-empty) {
@@ -206,7 +213,7 @@ def render-history [commits] {
     print $"    ($head.changes)"
     print ""
 
-    print $"  Past:"
+    print "  Past:"
     for c in ($commits | skip 1 | take 6) {
         print $"  ○ ($c.hash)  ($c.subject)"
     }
