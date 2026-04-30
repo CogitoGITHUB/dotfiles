@@ -2,30 +2,18 @@
 # ManifoldOS Reshaping History
 # =============================================================================
 # A git log interface built in the ManifoldOS style.
-# Shows recent commit history, repo stats, and current local status
-# in a single unified red table.
 #
 # ⚠️  SHARED MODULE WARNING
 # =============================================================================
 # This script is a shared data provider. The following scripts depend on it:
 #
-#   - ManifoldOS-Reshaping.nu  (uses reshaping-history-rows to build its
-#                               unified summary table)
+#   - ManifoldOS-Reshaping.nu
 #
-# The following functions are part of the public API and must not be renamed,
-# removed, or have their return shape changed without updating all consumers:
-#
-#   - reshaping-history-rows [n, left, right, repo]
-#       Returns a list of records with columns (left) and (right)
-#
+# Public API:
+#   - print-git-sections [repo, changed, push_results]
 #   - fetch-commits-from [repo, n]
 #   - fetch-status-from [repo]
 #   - fetch-repo-stats-from [repo]
-#
-# Safe to change freely:
-#   - ManifoldOS-Reshaping-History (main entry point)
-#   - rh-progress (internal progress renderer)
-#   - Visual styling inside reshaping-history-rows
 # =============================================================================
 
 
@@ -48,7 +36,23 @@ def rh-progress [results: list, current: string] {
 
 
 # =============================================================================
-# SECTION 2 — DATA COLLECTION (public API)
+# SECTION 2 — PRINT HELPERS
+# =============================================================================
+
+def print-section [label: string, subtitle: string, rows: any] {
+    print ""
+    print $"(ansi red_bold)  ($label)(ansi reset)"
+    print $"(ansi grey)  ($subtitle)(ansi reset)"
+    if ($rows | is-empty) {
+        print $"(ansi grey)  —(ansi reset)"
+    } else {
+        $rows | print
+    }
+}
+
+
+# =============================================================================
+# SECTION 3 — DATA COLLECTION (public API)
 # =============================================================================
 
 def fetch-commits [n: int] {
@@ -62,15 +66,12 @@ def fetch-commits-from [repo: string, n: int] {
     | where { |l| $l | is-not-empty }
     | each { |line|
         let parts = ($line | split row "|")
-        let hash = ($parts | get 0)
-        let date = ($parts | get 1)
+        let hash    = ($parts | get 0)
+        let date    = ($parts | get 1)
         let subject = ($parts | get 2)
-        let author = ($parts | get 3)
-        let stats = (
-            git -C $repo show --stat $hash
-            | lines | last | str trim
-        )
-        { hash: $hash date: $date subject: $subject author: $author stats: $stats }
+        let author  = ($parts | get 3)
+        let stats   = (git -C $repo show --stat $hash | lines | last | str trim)
+        { hash: $hash  date: $date  author: $author  subject: $subject  changes: $stats }
     }
 }
 
@@ -89,19 +90,19 @@ def fetch-repo-stats [] {
 }
 
 def fetch-repo-stats-from [repo: string] {
-    let total      = (git -C $repo rev-list --count HEAD | str trim)
-    let last_push  = (git -C $repo log -1 --format="%ad" --date=relative | str trim)
-    let branch     = (git -C $repo branch --show-current | str trim)
-    let remote_url = (try { git -C $repo remote get-url origin | str trim } catch { "none" })
-    let ahead      = (try { git -C $repo rev-list --count @{u}..HEAD | str trim | into int } catch { 0 })
-    let behind     = (try { git -C $repo rev-list --count HEAD..@{u} | str trim | into int } catch { 0 })
+    let total       = (git -C $repo rev-list --count HEAD | str trim)
+    let last_push   = (git -C $repo log -1 --format="%ad" --date=relative | str trim)
+    let branch      = (git -C $repo branch --show-current | str trim)
+    let remote_url  = (try { git -C $repo remote get-url origin | str trim } catch { "none" })
+    let ahead       = (try { git -C $repo rev-list --count @{u}..HEAD | str trim | into int } catch { 0 })
+    let behind      = (try { git -C $repo rev-list --count HEAD..@{u} | str trim | into int } catch { 0 })
     let stash_count = (try { git -C $repo stash list | lines | length } catch { 0 })
-    { total: $total last_push: $last_push branch: $branch remote_url: $remote_url ahead: $ahead behind: $behind stash_count: $stash_count }
+    { total: $total  last_push: $last_push  branch: $branch  remote_url: $remote_url  ahead: $ahead  behind: $behind  stash_count: $stash_count }
 }
 
 
 # =============================================================================
-# SECTION 3 — WRITE OPERATIONS
+# SECTION 4 — WRITE OPERATIONS
 # =============================================================================
 
 def stage-all [] {
@@ -121,13 +122,67 @@ def push-changes [] {
 
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
-    let added = (git -C $repo diff --cached --name-only --diff-filter=A | lines | where { |l| $l | is-not-empty } | each { |f| { status: "added"    file: $f added: "" removed: "" } })
-    let deleted = (git -C $repo diff --cached --name-only --diff-filter=D | lines | where { |l| $l | is-not-empty } | each { |f| { status: "deleted"  file: $f added: "" removed: "" } })
-    let modified = (git -C $repo diff --cached --numstat --diff-filter=M | lines | where { |l| $l | is-not-empty } | each { |line|
+    let added    = (git -C $repo diff --cached --name-only --diff-filter=A | lines | where { |l| $l | is-not-empty } | each { |f| { status: "added"    file: $f  "+": ""  "-": "" } })
+    let deleted  = (git -C $repo diff --cached --name-only --diff-filter=D | lines | where { |l| $l | is-not-empty } | each { |f| { status: "deleted"  file: $f  "+": ""  "-": "" } })
+    let modified = (git -C $repo diff --cached --numstat --diff-filter=M   | lines | where { |l| $l | is-not-empty } | each { |line|
         let parts = ($line | split row "\t")
-        { status: "modified" file: ($parts | get 2) added: ($parts | get 0) removed: ($parts | get 1) }
+        { status: "modified"  file: ($parts | get 2)  "+": ($parts | get 0)  "-": ($parts | get 1) }
     })
     $added | append $deleted | append $modified
+}
+
+
+# =============================================================================
+# SECTION 5 — RENDERING (public API)
+# =============================================================================
+
+def print-git-sections [repo: string, changed: list, push_results: list] {
+    let stats    = (fetch-repo-stats-from $repo)
+    let commits  = (fetch-commits-from $repo 10)
+    let status   = (fetch-status-from $repo)
+    let modified  = ($status | where { |l| not ($l | str starts-with "??") })
+    let untracked = ($status | where { |l| $l | str starts-with "??" })
+
+    # --- Push results ---
+    if ($push_results | is-not-empty) {
+        print-section "PUSH" "steps completed in this operation" (
+            $push_results | each { |r| { step: $r.description } }
+        )
+    }
+
+    # --- Changed files ---
+    if ($changed | is-not-empty) {
+        print-section "CHANGES" "files modified in this push" $changed
+    }
+
+    # --- Commits ---
+    print-section "COMMITS" "recent commit history" $commits
+
+    # --- Repo stats ---
+    mut stat_rows = [
+        { key: "Branch"  value: $stats.branch }
+        { key: "Remote"  value: $stats.remote_url }
+        { key: "Total"   value: $stats.total }
+        { key: "Pushed"  value: $stats.last_push }
+    ]
+    if $stats.ahead > 0 {
+        $stat_rows = ($stat_rows | append { key: "Ahead"  value: $"($stats.ahead) unpushed commit(s)" })
+    }
+    if $stats.stash_count > 0 {
+        $stat_rows = ($stat_rows | append { key: "Stash"  value: $"($stats.stash_count) stashed change(s)" })
+    }
+    print-section "REPO" "branch and remote state" $stat_rows
+
+    # --- Local status ---
+    if ($modified | is-empty) and ($untracked | is-empty) {
+        print-section "STATUS" "working tree" [{ state: "✓ clean" }]
+    } else {
+        let status_rows = (
+            ($modified  | each { |l| { kind: "modified"  file: ($l | str trim) } })
+            | append ($untracked | each { |l| { kind: "untracked"  file: ($l | str replace "?? " "" | str trim) } })
+        )
+        print-section "STATUS" "working tree" $status_rows
+    }
 }
 
 def ManifoldOS-Reshaping-History [msg: string = "update"] {
@@ -168,7 +223,7 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
         rh-progress $results "Done"
         print -n "\e[2J\e[H"
         print ""
-        print (reshaping-history-rows 5 | table --index false)
+        print-git-sections $repo [] $results
         print ""
         return
     }
@@ -193,133 +248,13 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
 
     print -n "\e[2J\e[H"
     print ""
-    print (reshaping-history-rows 5 "Reshaping History" "Details" "" $changed $results | table --index false)
+    print-git-sections $repo $changed $results
     print ""
 }
 
 
 # =============================================================================
-# SECTION 4 — RENDERING (public API)
-# =============================================================================
-
-def reshaping-history-rows [
-    n: int = 10
-    left: string = "Reshaping History"
-    right: string = "Details"
-    repo: string = ""
-    changed: list = []
-    push_results: list = []
-] {
-    let repo = if ($repo | is-empty) {
-        try { git rev-parse --show-toplevel | str trim } catch { "." }
-    } else { $repo }
-
-    let commits   = (fetch-commits-from $repo $n)
-    let stats     = (fetch-repo-stats-from $repo)
-    let status    = (fetch-status-from $repo)
-    let modified  = ($status | where { |l| not ($l | str starts-with "??") })
-    let untracked = ($status | where { |l| $l | str starts-with "??" })
-
-    mut rows = []
-
-    # --- Push results (if provided) ---
-    if ($push_results | is-not-empty) {
-        for row in $push_results {
-            $rows = ($rows | append {
-                ($left): $"(ansi red_bold)($row.description)(ansi reset)"
-                ($right): "🌹"
-            })
-        }
-        $rows = ($rows | append {
-            ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
-            ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
-        })
-    }
-
-    # --- Changed files (if provided) ---
-    if ($changed | is-not-empty) {
-        for row in $changed {
-            let status_label = if $row.status == "added" {
-                $"(ansi green)added(ansi reset)"
-            } else if $row.status == "deleted" {
-                $"(ansi red)deleted(ansi reset)"
-            } else {
-                $"(ansi yellow)modified(ansi reset)"
-            }
-            let detail = if $row.status == "modified" {
-                $"(ansi yellow)($row.file)  (ansi green)+($row.added)(ansi reset) (ansi red)-($row.removed)(ansi reset)"
-            } else {
-                $row.file
-            }
-            $rows = ($rows | append {
-                ($left): $status_label
-                ($right): $detail
-            })
-        }
-        $rows = ($rows | append {
-            ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
-            ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
-        })
-    }
-
-    # --- Commit history ---
-    for commit in $commits {
-        $rows = ($rows | append {
-            ($left): $"(ansi red_bold)($commit.hash)  ($commit.date)  ($commit.author)(ansi reset)"
-            ($right): $"(ansi red)($commit.subject)  ($commit.stats)(ansi reset)"
-        })
-    }
-
-    $rows = ($rows | append {
-        ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
-    })
-
-    # --- Repo stats ---
-    $rows = ($rows | append { ($left): $"(ansi red_bold)Branch(ansi reset)"        ($right): $"(ansi red)($stats.branch)(ansi reset)" })
-    $rows = ($rows | append { ($left): $"(ansi red_bold)Remote(ansi reset)"        ($right): $"(ansi red)($stats.remote_url)(ansi reset)" })
-    $rows = ($rows | append { ($left): $"(ansi red_bold)Total Commits(ansi reset)" ($right): $"(ansi red)($stats.total)(ansi reset)" })
-    $rows = ($rows | append { ($left): $"(ansi red_bold)Last Push(ansi reset)"     ($right): $"(ansi red)($stats.last_push)(ansi reset)" })
-
-    if $stats.ahead > 0 {
-        $rows = ($rows | append { ($left): $"(ansi red_bold)Ahead(ansi reset)" ($right): $"(ansi yellow)($stats.ahead) unpushed commit(s)(ansi reset)" })
-    }
-    if $stats.stash_count > 0 {
-        $rows = ($rows | append { ($left): $"(ansi red_bold)Stash(ansi reset)" ($right): $"(ansi yellow)($stats.stash_count) stashed change(s)(ansi reset)" })
-    }
-
-    $rows = ($rows | append {
-        ($left): $"(ansi red_bold)─────────────────────────────(ansi reset)"
-        ($right): $"(ansi red_bold)─────────────────────────────────────────────────────(ansi reset)"
-    })
-
-    # --- Local status ---
-    if ($modified | is-empty) and ($untracked | is-empty) {
-        $rows = ($rows | append {
-            ($left): $"(ansi red_bold)Local Status(ansi reset)"
-            ($right): $"(ansi red)✓ clean(ansi reset)"
-        })
-    } else {
-        for line in $modified {
-            $rows = ($rows | append {
-                ($left): $"(ansi red_bold)Modified(ansi reset)"
-                ($right): $"(ansi red)($line | str trim)(ansi reset)"
-            })
-        }
-        for line in $untracked {
-            $rows = ($rows | append {
-                ($left): $"(ansi red_bold)Untracked(ansi reset)"
-                ($right): $"(ansi yellow)($line | str trim | str replace '?? ' '')(ansi reset)"
-            })
-        }
-    }
-
-    $rows
-}
-
-
-# =============================================================================
-# SECTION 5 — KEYBINDING
+# SECTION 6 — KEYBINDING
 # =============================================================================
 
 $env.config.keybindings = ($env.config.keybindings | append {
