@@ -40,12 +40,14 @@ def rh-flow [steps: list, current: string, timings: record] {
 def fetch-commits-from [repo: string, n: int] {
     git -C $repo log --format="%h|%ad|%s|%an" --date=short $"-($n)"
     | lines
-    | where { |l| $l | is-not-empty }
+    | where { |l| ($l | str trim) != "" }
     | each { |line|
         let p = ($line | split row "|")
-        let stats = (git -C $repo show --stat ($p | get 0) | lines | last | str trim)
+        let hash = ($p | get 0)
+        let stats = (git -C $repo show --stat $hash | lines | last | str trim)
+
         {
-            hash: ($p | get 0)
+            hash: $hash
             date: ($p | get 1)
             subject: ($p | get 2)
             author: ($p | get 3)
@@ -55,7 +57,7 @@ def fetch-commits-from [repo: string, n: int] {
 }
 
 def fetch-status-from [repo: string] {
-    git -C $repo status --short | lines | where { |l| $l | is-not-empty }
+    git -C $repo status --short | lines | where { |l| ($l | str trim) != "" }
 }
 
 def fetch-repo-stats-from [repo: string] {
@@ -68,44 +70,42 @@ def fetch-repo-stats-from [repo: string] {
     }
 }
 
-def summarize-impact [changed: list] {
-    let added = ($changed | where type == "added" | length)
-    let deleted = ($changed | where type == "deleted" | length)
-    let modified = ($changed | where type == "modified" | length)
-
-    {
-        files: ($changed | length)
-        added: $added
-        deleted: $deleted
-        modified: $modified
-    }
-}
-
 def capture-changed [] {
     let repo = (git rev-parse --show-toplevel | str trim)
 
     let added = (
         git -C $repo diff --cached --name-only --diff-filter=A
         | lines
-        | where { |l| $l | is-not-empty }
+        | where { |l| ($l | str trim) != "" }
         | each { |f| { type: "added" file: $f } }
     )
 
     let deleted = (
         git -C $repo diff --cached --name-only --diff-filter=D
         | lines
-        | where { |l| $l | is-not-empty }
+        | where { |l| ($l | str trim) != "" }
         | each { |f| { type: "deleted" file: $f } }
     )
 
     let modified = (
         git -C $repo diff --cached --name-only --diff-filter=M
         | lines
-        | where { |l| $l | is-not-empty }
+        | where { |l| ($l | str trim) != "" }
         | each { |f| { type: "modified" file: $f } }
     )
 
-    $added | append $deleted | append $modified
+    let result = ($added | append $deleted | append $modified)
+
+    if ($result | is-empty) { [] } else { $result }
+}
+
+def summarize-impact [changed: list] {
+    {
+        files: ($changed | length)
+        added: ($changed | where type == "added" | length)
+        deleted: ($changed | where type == "deleted" | length)
+        modified: ($changed | where type == "modified" | length)
+    }
 }
 
 def render-impact [impact] {
@@ -123,7 +123,7 @@ def render-impact [impact] {
 def render-position [stats, status] {
     print ""
     print $"(ansi red_bold)  POSITIONAL STATE(ansi reset)"
-    print $"(ansi grey)  current alignment in relation to remote(ansi reset)"
+    print $"(ansi grey)  alignment relative to remote topology(ansi reset)"
     print ""
 
     print $"  Branch : ($stats.branch)"
@@ -141,7 +141,7 @@ def render-position [stats, status] {
 def render-history [commits, changed] {
     print ""
     print $"(ansi red_bold)  TEMPORAL TRACE(ansi reset)"
-    print $"(ansi grey)  recent state transitions(ansi reset)"
+    print $"(ansi grey)  recent commit lineage(ansi reset)"
     print ""
 
     let head = ($commits | first)
@@ -152,18 +152,44 @@ def render-history [commits, changed] {
         print ""
     }
 
-    print $"  FILE DELTA:"
+    print $"  FILE DELTA (current):"
+
     if ($changed | is-empty) {
-        print $"  — no changes"
+        print $"  — no staged mutations"
     } else {
-        $changed | each { |c|
-            if $c.type == "added" {
-                print $"  + ($c.file)"
-            } else if $c.type == "deleted" {
-                print $"  - ($c.file)"
-            } else {
-                print $"  ~ ($c.file)"
+        for c in $changed {
+            match $c.type {
+                "added" => (print $"  + ($c.file)")
+                "deleted" => (print $"  - ($c.file)")
+                "modified" => (print $"  ~ ($c.file)")
+                _ => (print $"  ? ($c.file)")
             }
+        }
+    }
+
+    print ""
+    print $"  FILE HISTORY (past commits):"
+    print $"  — last structural snapshots —"
+    print ""
+
+    let repo = (git rev-parse --show-toplevel | str trim)
+
+    git -C $repo log --name-status --pretty=format:"%h %ad %s" --date=short -n 6
+    | lines
+    | where { |l| ($l | str trim) != "" }
+    | each { |l|
+        if ($l | str starts-with " ") {
+            return
+        }
+
+        if ($l | str length) < 10 {
+            return
+        }
+
+        if ($l | str contains " ") {
+            print $"  ● ($l)"
+        } else {
+            print $"  ─ ($l)"
         }
     }
 }
@@ -179,13 +205,11 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     ]
 
     mut timings = {}
-    mut start = (date now)
 
     rh-flow $steps "Fetch" $timings
     git -C $repo fetch
     $timings.Fetch = (date now)
 
-    $start = (date now)
     rh-flow $steps "Stage" $timings
     git -C $repo add --all
     $timings.Stage = (date now)
