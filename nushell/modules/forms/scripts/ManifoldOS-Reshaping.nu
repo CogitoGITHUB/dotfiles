@@ -97,7 +97,7 @@ def render-summary [results: list, changed: list] {
     let store = (du --max-depth 0 /gnu/store | get apparent | first | into string)
     let mem_cols = (^free -h | lines | where { |l| $l =~ "^Mem:" } | first | split row " " | where { |it| $it | is-not-empty })
     let ram = $"($mem_cols | get 2) / ($mem_cols | get 1)"
-    let uptime = (^uptime -p | str trim | str replace "up " "")
+    let uptime = (^uptime | str trim | str replace -r `.*up\s+` "" | str replace -r `,\s+\d+ user.*` "" | str trim)
     let cpu = (try {
         let load = (^cat /proc/loadavg | split row " ")
         $"($load | get 0) ($load | get 1) ($load | get 2)"
@@ -203,8 +203,8 @@ def render-summary [results: list, changed: list] {
         })
     }
 
-    # --- Git history ---
-    let git_rows = (reshaping-history-rows 10 "ManifoldOS" "")
+    # --- Git history — always from /ManifoldOS ---
+    let git_rows = (reshaping-history-rows 10 "ManifoldOS" "" "/ManifoldOS")
     $rows = ($rows | append $git_rows)
 
     print ($rows | table --index false)
@@ -331,10 +331,14 @@ def run-gc [log: string] {
 def ManifoldOS-Reshaping [] {
     let manifest = "/ManifoldOS/system.scm"
     let log = $"/tmp/reshape_(date now | format date '%Y%m%d_%H%M%S').log"
+    let origin_dir = ($env.PWD)
 
     mut results = []
 
     let last_good = (capture-last-good)
+
+    # --- cd into ManifoldOS ---
+    cd /ManifoldOS
 
     # --- Step 1: Clear Guile cache ---
     render-progress $results "Clearing Guile cache"
@@ -354,6 +358,7 @@ def ManifoldOS-Reshaping [] {
         print ""
         let all_output = ($r.stdout + "\n" + $r.stderr)
         render-errors $all_output
+        # Stay in /ManifoldOS on failure so user can work on it
         revert-to-last-good $last_good
         return
     }
@@ -373,6 +378,9 @@ def ManifoldOS-Reshaping [] {
     run-gc $log
     let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Reality reshaped" })
+
+    # --- Return to original dir ---
+    cd $origin_dir
 
     # --- Done: Print unified summary table ---
     print -n "\e[2J\e[H"

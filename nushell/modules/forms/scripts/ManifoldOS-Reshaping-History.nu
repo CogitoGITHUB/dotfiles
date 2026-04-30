@@ -59,6 +59,10 @@ def rh-progress [results: list, current: string] {
 
 def fetch-commits [n: int] {
     let repo = (git rev-parse --show-toplevel | str trim)
+    fetch-commits-from $repo $n
+}
+
+def fetch-commits-from [repo: string, n: int] {
     git -C $repo log --format="%h|%ad|%s|%an" --date=short $"-($n)"
     | lines
     | where { |l| $l | is-not-empty }
@@ -86,11 +90,19 @@ def fetch-commits [n: int] {
 
 def fetch-status [] {
     let repo = (git rev-parse --show-toplevel | str trim)
+    fetch-status-from $repo
+}
+
+def fetch-status-from [repo: string] {
     git -C $repo status --short | lines | where { |l| $l | is-not-empty }
 }
 
 def fetch-repo-stats [] {
     let repo = (git rev-parse --show-toplevel | str trim)
+    fetch-repo-stats-from $repo
+}
+
+def fetch-repo-stats-from [repo: string] {
     let total = (git -C $repo rev-list --count HEAD | str trim)
     let last_push = (git -C $repo log -1 --format="%ad" --date=relative | str trim)
     let branch = (git -C $repo branch --show-current | str trim)
@@ -232,10 +244,15 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
 # SECTION 4 — RENDERING (public API — see warning above)
 # =============================================================================
 
-def reshaping-history-rows [n: int = 10, left: string = "Reshaping History", right: string = "Details"] {
-    let commits = (fetch-commits $n)
-    let stats = (fetch-repo-stats)
-    let status = (fetch-status)
+def reshaping-history-rows [n: int = 10, left: string = "Reshaping History", right: string = "Details", repo: string = ""] {
+    let repo = if ($repo | is-empty) {
+        try { git rev-parse --show-toplevel | str trim } catch { "." }
+    } else {
+        $repo
+    }
+    let commits = (fetch-commits-from $repo $n)
+    let stats = (fetch-repo-stats-from $repo)
+    let status = (fetch-status-from $repo)
 
     # separate untracked from modified
     let modified = ($status | where { |l| not ($l | str starts-with "??") })
