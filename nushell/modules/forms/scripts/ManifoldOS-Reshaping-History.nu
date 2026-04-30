@@ -69,21 +69,15 @@ def fetch-repo-stats-from [repo: string] {
 }
 
 def summarize-impact [changed: list] {
-    let added = ($changed | where status == "added" | length)
-    let deleted = ($changed | where status == "deleted" | length)
-    let modified = ($changed | where status == "modified")
-
-    let plus = ($modified | get "+" | math sum)
-    let minus = ($modified | get "-" | math sum)
+    let added = ($changed | where type == "added" | length)
+    let deleted = ($changed | where type == "deleted" | length)
+    let modified = ($changed | where type == "modified" | length)
 
     {
         files: ($changed | length)
         added: $added
         deleted: $deleted
-        modified: ($modified | length)
-        plus: $plus
-        minus: $minus
-        net: ($plus - $minus)
+        modified: $modified
     }
 }
 
@@ -93,18 +87,21 @@ def capture-changed [] {
     let added = (
         git -C $repo diff --cached --name-only --diff-filter=A
         | lines
+        | where { |l| $l | is-not-empty }
         | each { |f| { type: "added" file: $f } }
     )
 
     let deleted = (
         git -C $repo diff --cached --name-only --diff-filter=D
         | lines
+        | where { |l| $l | is-not-empty }
         | each { |f| { type: "deleted" file: $f } }
     )
 
     let modified = (
         git -C $repo diff --cached --name-only --diff-filter=M
         | lines
+        | where { |l| $l | is-not-empty }
         | each { |f| { type: "modified" file: $f } }
     )
 
@@ -118,15 +115,9 @@ def render-impact [impact] {
     print ""
 
     print $"  Files touched : ($impact.files)"
-    print $"  Composition   : +($impact.plus) / -($impact.minus)  net=($impact.net)"
-
-    if $impact.files > 20 {
-        print $"(ansi red)  ⚠ wide spread change surface(ansi reset)"
-    }
-
-    if $impact.minus > 1000 {
-        print $"(ansi red)  ⚠ large deletion anomaly(ansi reset)"
-    }
+    print $"  Added         : ($impact.added)"
+    print $"  Deleted       : ($impact.deleted)"
+    print $"  Modified      : ($impact.modified)"
 }
 
 def render-position [stats, status] {
@@ -161,17 +152,17 @@ def render-history [commits, changed] {
         print ""
     }
 
-    print $"  FILE DELTA (latest snapshot):"
+    print $"  FILE DELTA:"
     if ($changed | is-empty) {
-        print $"  — no file-level changes recorded"
+        print $"  — no changes"
     } else {
         $changed | each { |c|
             if $c.type == "added" {
-                print $"  + added   ($c.file)"
+                print $"  + ($c.file)"
             } else if $c.type == "deleted" {
-                print $"  - deleted ($c.file)"
+                print $"  - ($c.file)"
             } else {
-                print $"  ~ modified ($c.file)"
+                print $"  ~ ($c.file)"
             }
         }
     }
