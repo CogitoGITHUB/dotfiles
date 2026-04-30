@@ -30,21 +30,8 @@ def rh-flow [steps: list, current: string, timings: record] {
         let is_done = ($timings | get -i $name | is-not-empty)
         let is_active = ($name == $current)
 
-        let symbol = if $is_done and not $is_active {
-            "🌹"
-        } else if $is_active {
-            "○"
-        } else {
-            "○"
-        }
-
-        let status = if $is_done and not $is_active {
-            "✓"
-        } else if $is_active {
-            "───►"
-        } else {
-            "─────"
-        }
+        let symbol = if $is_done and not $is_active { "🌹" } else { "○" }
+        let status = if $is_active { "───►" } else if $is_done { "✓" } else { "─────" }
 
         print $"  ($symbol) ($name) ($status) ($time)"
     }
@@ -52,6 +39,7 @@ def rh-flow [steps: list, current: string, timings: record] {
     print ""
     print ""
 }
+
 
 # =============================================================================
 # SECTION 2 — DATA
@@ -90,8 +78,9 @@ def fetch-repo-stats-from [repo: string] {
     }
 }
 
+
 # =============================================================================
-# SECTION 3 — IMPACT ANALYSIS
+# SECTION 3 — IMPACT
 # =============================================================================
 
 def capture-changed [] {
@@ -122,18 +111,14 @@ def capture-changed [] {
 }
 
 def summarize-impact [changed: list] {
-    let files = ($changed | length)
-    let added = ($changed | where status == "added" | length)
-    let deleted = ($changed | where status == "deleted" | length)
-    let modified = ($changed | where status == "modified" | length)
-
     {
-        files: $files
-        added: $added
-        deleted: $deleted
-        modified: $modified
+        files: ($changed | length)
+        added: ($changed | where status == "added" | length)
+        deleted: ($changed | where status == "deleted" | length)
+        modified: ($changed | where status == "modified" | length)
     }
 }
+
 
 # =============================================================================
 # SECTION 4 — RENDERING
@@ -164,9 +149,7 @@ def render-position [stats, status] {
     print $"  Total  : ($stats.total)"
     print $"  Push   : ($stats.last_push)"
 
-    let clean = ($status | is-empty)
-
-    print $"  State  : (if $clean { '✓ clean' } else { 'dirty' })"
+    print $"  State  : (if ($status | is-empty) { '✓ clean' } else { 'dirty' })"
 
     print ""
     print ""
@@ -176,13 +159,6 @@ def render-history [commits] {
     print $"(ansi red_bold)🌹 TEMPORAL TRACE 🌹(ansi reset)"
     print $"(ansi grey)Compressed lineage of repository evolution.(ansi reset)"
     print ""
-
-    if ($commits | is-empty) {
-        print "  (no history)"
-        print ""
-        print ""
-        return
-    }
 
     let head = ($commits | first)
 
@@ -200,7 +176,7 @@ def render-history [commits] {
 }
 
 def render-file-delta [changed] {
-    print $"(ansi red_bold)🌹 FILE DELTA (current snapshot) 🌹(ansi reset)"
+    print $"(ansi red_bold)🌹 FILE DELTA 🌹(ansi reset)"
     print $"(ansi grey)What has just been altered in the system state.(ansi reset)"
     print ""
 
@@ -221,6 +197,7 @@ def render-file-delta [changed] {
     print ""
     print ""
 }
+
 
 # =============================================================================
 # SECTION 5 — MAIN
@@ -255,10 +232,7 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     let c = (git -C $repo commit -m $msg | complete)
     $timings.Commit = ((date now) - $start)
 
-    if $c.exit_code != 0 {
-        print "Nothing to commit"
-        return
-    }
+    if $c.exit_code != 0 { return }
 
     $start = (date now)
     rh-flow $steps "Push" $timings
@@ -280,17 +254,21 @@ def ManifoldOS-Reshaping-History [msg: string = "update"] {
     render-file-delta $changed
 }
 
+
 # =============================================================================
-# KEYBINDING (UNCHANGED)
+# KEYBINDING
 # =============================================================================
 
-$env.config.keybindings = ($env.config.keybindings | append {
-    name: ManifoldOS_Reshaping_History
-    modifier: control
-    keycode: char_g
-    mode: emacs
-    event: {
-        send: executehostcommand
-        cmd: "ManifoldOS-Reshaping-History"
+$env.config.keybindings = (
+    $env.config.keybindings
+    | append {
+        name: ManifoldOS_Reshaping_History
+        modifier: control
+        keycode: char_g
+        mode: emacs
+        event: {
+            send: executehostcommand
+            cmd: "ManifoldOS-Reshaping-History"
+        }
     }
-})
+)
