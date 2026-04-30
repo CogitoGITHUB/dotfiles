@@ -10,7 +10,7 @@
 # This script sources ManifoldOS-Reshaping-History.nu directly.
 # The following functions are available after sourcing:
 #
-#   - reshaping-history-rows [n: int = 10]
+#   - reshaping-history-rows [n: int = 10, left: string, right: string]
 #
 # =============================================================================
 #
@@ -72,17 +72,13 @@ def render-summary [results: list, changed: list] {
         "": ""
     })
 
-    # --- 🌹 EMACS — Control Center ---
-    let emacs_status = (try {
-        herd status emacs-daemon | str trim
-    } catch { "" })
-
+    # --- Emacs ---
+    let emacs_status = (try { herd status emacs-daemon | str trim } catch { "" })
     let emacs_icon = if ($emacs_status =~ "running") {
         $"(ansi red_bold)🌹 running(ansi reset)"
     } else {
         $"(ansi red)🥀 stopped(ansi reset)"
     }
-
     $rows = ($rows | append {
         "ManifoldOS": $"(ansi red_bold)🌹 Emacs — Control Center(ansi reset)"
         "": $emacs_icon
@@ -96,22 +92,32 @@ def render-summary [results: list, changed: list] {
 
     # --- System info ---
     let kernel = (^uname -r | str trim)
-
     let disk_cols = (^df -h / | lines | last | split row " " | where { |it| $it | is-not-empty })
     let disk = $"($disk_cols | get 2) / ($disk_cols | get 1)"
-
     let store = (du --max-depth 0 /gnu/store | get apparent | first | into string)
-
     let mem_cols = (^free -h | lines | where { |l| $l =~ "^Mem:" } | first | split row " " | where { |it| $it | is-not-empty })
     let ram = $"($mem_cols | get 2) / ($mem_cols | get 1)"
+    let uptime = (^uptime -p | str trim | str replace "up " "")
+    let cpu = (try {
+        let load = (^cat /proc/loadavg | split row " ")
+        $"($load | get 0) ($load | get 1) ($load | get 2)"
+    } catch { "unavailable" })
+    let temp = (try {
+        let t = (^cat /sys/class/thermal/thermal_zone0/temp | str trim | into int)
+        $"($t / 1000)°C"
+    } catch { "unavailable" })
+    let generations = (try {
+        guix system list-generations | lines | where { |l| $l =~ "^Generation" } | length | into string
+    } catch { "unavailable" })
 
-    let uptime = (^uptime | str trim | str replace -r `.*up\s+` "" | str replace -r `,\s+\d+ user.*` "" | str trim)
-
-    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Kernel(ansi reset)"  "": $"(ansi red)($kernel)(ansi reset)" })
-    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Disk /(ansi reset)"  "": $"(ansi red)($disk)(ansi reset)" })
-    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Store(ansi reset)"   "": $"(ansi red)($store)(ansi reset)" })
-    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)RAM(ansi reset)"     "": $"(ansi red)($ram)(ansi reset)" })
-    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Uptime(ansi reset)"  "": $"(ansi red)($uptime)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Kernel(ansi reset)"      "": $"(ansi red)($kernel)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Disk /(ansi reset)"      "": $"(ansi red)($disk)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Store(ansi reset)"       "": $"(ansi red)($store)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)RAM(ansi reset)"         "": $"(ansi red)($ram)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)CPU Load(ansi reset)"    "": $"(ansi red)($cpu)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Temp(ansi reset)"        "": $"(ansi red)($temp)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Uptime(ansi reset)"      "": $"(ansi red)($uptime)(ansi reset)" })
+    $rows = ($rows | append { "ManifoldOS": $"(ansi red_bold)Generations(ansi reset)" "": $"(ansi red)($generations)(ansi reset)" })
 
     # --- Divider ---
     $rows = ($rows | append {
@@ -141,45 +147,63 @@ def render-summary [results: list, changed: list] {
 
     for line in $lines {
         if ($line =~ "^Started:") {
-            $current_status = "🌹"
+            $current_status = "running"
         } else if ($line =~ "^Stopped:") {
-            $current_status = "🥀"
-        } else if ($line =~ "^Running timers:") {
-            $current_status = ""
+            $current_status = "stopped"
         } else if ($line =~ "^One-shot:") {
+            $current_status = ""
+        } else if ($line =~ "^Running timers:") {
             $current_status = ""
         } else if ($line =~ "^\\s*[+\\-]\\s+\\S" and $current_status != "") {
             let name = ($line | str replace -r "^\\s*[+\\-]\\s+" "" | str trim)
             let should_skip = ($skip_patterns | any { |p| $name | str starts-with $p })
             if (not $should_skip) and ($name | is-not-empty) {
-                let status = if $current_status == "🌹" {
+                let icon = if $current_status == "running" {
                     $"(ansi red)🌹 running(ansi reset)"
                 } else {
                     $"(ansi red)🥀 stopped(ansi reset)"
                 }
                 $rows = ($rows | append {
                     "ManifoldOS": $"(ansi red_bold)($name)(ansi reset)"
-                    "": $status
+                    "": $icon
                 })
             }
         }
     }
 
+    # --- Divider ---
+    $rows = ($rows | append {
+        "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
+        "": ""
+    })
+
     # --- Changed files ---
     if ($changed | is-not-empty) {
+        for row in $changed {
+            let status_label = if $row.status == "added" {
+                $"(ansi green)added(ansi reset)"
+            } else if $row.status == "deleted" {
+                $"(ansi red)deleted(ansi reset)"
+            } else {
+                $"(ansi yellow)modified(ansi reset)"
+            }
+            let detail = if $row.status == "modified" {
+                $"(ansi yellow)($row.file)  (ansi green)+($row.added)(ansi reset) (ansi red)-($row.removed)(ansi reset)"
+            } else {
+                $"($row.file)"
+            }
+            $rows = ($rows | append {
+                "ManifoldOS": $status_label
+                "": $detail
+            })
+        }
         $rows = ($rows | append {
             "ManifoldOS": $"(ansi red_bold)─────────────────────────────(ansi reset)"
             "": ""
         })
-        for row in $changed {
-            $rows = ($rows | append {
-                "ManifoldOS": $"(ansi red_bold)($row.File)(ansi reset)"
-                "": $"(ansi red)+($row."+")  -($row."-")(ansi reset)"
-            })
-        }
     }
 
-    # --- Git history (from ManifoldOS-Reshaping-History.nu) ---
+    # --- Git history ---
     let git_rows = (reshaping-history-rows 10 "ManifoldOS" "")
     $rows = ($rows | append $git_rows)
 
@@ -244,17 +268,20 @@ def capture-last-good [] {
 }
 
 def git-sync [] {
-    # Capture changes before committing
     git -C /ManifoldOS add --all
-    let changed = (git -C /ManifoldOS diff --cached --numstat | lines | where { |l| $l | is-not-empty } | each { |line|
+
+    # Capture changes before committing
+    let added = (git -C /ManifoldOS diff --cached --name-only --diff-filter=A | lines | where { |l| $l | is-not-empty } | each { |f| { status: "added" file: $f added: "" removed: "" } })
+    let deleted = (git -C /ManifoldOS diff --cached --name-only --diff-filter=D | lines | where { |l| $l | is-not-empty } | each { |f| { status: "deleted" file: $f added: "" removed: "" } })
+    let modified = (git -C /ManifoldOS diff --cached --numstat --diff-filter=M | lines | where { |l| $l | is-not-empty } | each { |line|
         let parts = ($line | split row "\t")
-        {
-            "File": ($parts | get 2)
-            "+": ($parts | get 0)
-            "-": ($parts | get 1)
-        }
+        { status: "modified" file: ($parts | get 2) added: ($parts | get 0) removed: ($parts | get 1) }
     })
+    let changed = ($added | append $deleted | append $modified)
+
+    # Delegates commit/push to ManifoldOS-Reshaping-History.nu
     ManifoldOS-Reshaping-History "update"
+
     $changed
 }
 
@@ -340,7 +367,7 @@ def ManifoldOS-Reshaping [] {
     let elapsed = (reshape-step-time $t)
     $results = ($results | append { description: "Working state committed & pushed" })
 
-    # --- Step 4: Garbage collection + optimization ---
+    # --- Step 4: Garbage collection ---
     render-progress $results "Reshaping reality"
     let t = (date now)
     run-gc $log
