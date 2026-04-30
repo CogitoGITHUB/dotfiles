@@ -161,7 +161,7 @@ def render-history [commits, changed] {
         print ""
     }
 
-    print "  FILE DELTA (current snapshot):"
+    h "FILE DELTA (current snapshot)"
 
     if ($changed | is-empty) {
         print "  — no staged mutations"
@@ -178,7 +178,8 @@ def render-history [commits, changed] {
     }
 
     print ""
-    print "  FILE HISTORY (past snapshots):"
+
+    h "FILE HISTORY (past snapshots)"
     print "  — structural evolution trace —"
     print ""
 
