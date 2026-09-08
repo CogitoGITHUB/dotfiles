@@ -416,40 +416,72 @@ and reports which ids were removed for later cleanup.
 *** Transclude insertion
 #+begin_src emacs-lisp :lexical t
 (defun my/manifolding-atlas--insert-property-transclude (property-type drawer-value ref-id)
-  "Insert the :property transclude line for REF-ID if absent."
+  "Insert the :property transclude line for REF-ID INSIDE the current
+heading's :PROPERTIES: drawer, right before :END:, if absent."
   (unless (my/manifolding-atlas--transclude-exists-p ref-id)
-    (goto-char (point-min))
-    (org-back-to-heading t)
-    (end-of-line)
-    (forward-line 1)
-    (when (looking-at "^:PROPERTIES:")
-      (forward-line 1)
-      (re-search-forward "^:END:" nil t)
-      (forward-line 1))
-    (beginning-of-line)
-    (unless (bolp) (insert "\n"))
-    (insert (format "#+transclude: [[id:%s][%s: %s]] :property\n"
-                    ref-id
-                    (my/manifolding-atlas--property-display-name property-type)
-                    drawer-value))))
+    (let ((pt (my/manifolding-atlas--drawer-insert-point)))
+      (if pt
+          (progn
+            (goto-char pt)
+            (beginning-of-line)
+            (insert (format "#+transclude: [[id:%s][%s: %s]] :property\n"
+                            ref-id
+                            (my/manifolding-atlas--property-display-name property-type)
+                            drawer-value)))
+        (org-back-to-heading t)
+        (end-of-line)
+        (forward-line 1)
+        (unless (bolp) (insert "\n"))
+        (insert (format ":PROPERTIES:\n#+transclude: [[id:%s][%s: %s]] :property\n:END:\n"
+                        ref-id
+                        (my/manifolding-atlas--property-display-name property-type)
+                        drawer-value))))))
 #+end_src
 
 *** Refresh orchestration
 #+begin_src emacs-lisp :lexical t
 (defun my/manifolding-atlas--refresh-property-transclude (property-type drawer-value ref-id)
-  (let (removed)
+  "Replace PROPERTY-TYPE's current entry IN PLACE -- at whatever
+position it already occupies in the drawer, whether a plain value
+line or an existing transclude -- instead of always appending at
+the bottom of the drawer."
+  (let (removed insert-marker)
     (save-excursion
       (org-back-to-heading t)
-      (my/manifolding-atlas--drawer-delete (my/manifolding-atlas--property-key-from-type property-type))
-      (let ((marker (let ((pt (my/manifolding-atlas--drawer-insert-point)))
-                      (when pt (copy-marker pt)))))
+      (let* ((key (my/manifolding-atlas--property-key-from-type property-type))
+             (r (my/manifolding-atlas--drawer-region)))
+        (when r
+          (goto-char (car r))
+          (if (re-search-forward
+               (format "^:%s:[[:blank:]]*\\(.*\\)$" (regexp-quote key))
+               (cdr r) t)
+              (progn
+                (beginning-of-line)
+                (setq insert-marker (copy-marker (point)))
+                (delete-region (point) (1+ (line-end-position))))
+            (goto-char (car r))
+            (let (found)
+              (while (and (not found)
+                          (re-search-forward
+                           "^#\\+transclude: \\[\\[id:\\([^]]+\\)\\]\\[\\([^]]*\\)\\]\\]"
+                           (cdr r) t))
+                (let ((label (match-string-no-properties 2)))
+                  (when (string-equal key (my/manifolding-atlas--key-from-label label))
+                    (setq found t)
+                    (beginning-of-line)
+                    (setq insert-marker (copy-marker (point)))
+                    (delete-region (point) (1+ (line-end-position)))))))))
         (setq removed (my/manifolding-atlas--remove-other-type-transcludes
                        property-type ref-id))
-        (goto-char (or (and (marker-position marker) marker)
-                       (point-min)))
-        (my/manifolding-atlas--insert-property-transclude
-         property-type drawer-value ref-id)
-        (when marker (set-marker marker nil)))
+        (goto-char (or (and insert-marker (marker-position insert-marker))
+                       (my/manifolding-atlas--drawer-insert-point)
+                       (point-max)))
+        (beginning-of-line)
+        (insert (format "#+transclude: [[id:%s][%s: %s]] :property\n"
+                        ref-id
+                        (my/manifolding-atlas--property-display-name property-type)
+                        drawer-value))
+        (when insert-marker (set-marker insert-marker nil)))
       (save-buffer))
     removed))
 #+end_src
@@ -618,7 +650,8 @@ replacing it.
              "%?"
              :kill-buffer t
              :unnarrowed t)))
-         (org-capture-use-indirect-buffer nil))
+         (org-capture-use-indirect-buffer nil)
+         (org-capture-window-setup (quote other-window)))
     (when-let ((buf (get-file-buffer file)))
       (when (eq buf (current-buffer))
         (switch-to-buffer (other-buffer))))
@@ -780,18 +813,13 @@ PROPERTY-TYPE blueprint file, excluding the WARNING sentinel."
     m))
 
 (defun my/manifolding-atlas--open-picker (property-type on-select)
-  "Open the PROPERTY-TYPE blueprint file in an org-capture buffer and
-immediately arm a key-selection jump restricted to level-2 (**)
-option headings. Pressing an option's letter selects it, closes this
-capture buffer, and calls ON-SELECT with its title -- one keypress,
-no separate mark/accept step."
-  (let* ((file (my/manifolding-atlas--property-blueprint-file property-type))
-         (org-capture-templates
-          `(("p" "Pick property option" plain (file ,file) ""
-             :unnarrowed t :empty-lines 1))))
-    (message "TRACE picker: BEFORE org-capture, current-buffer=%s" (current-buffer))
-    (org-capture nil "p")
-    (message "TRACE picker: AFTER org-capture, current-buffer=%s" (current-buffer))
+  "Open the PROPERTY-TYPE blueprint file using the vault's own proven
+capture-style editor (same one ref-notes use), then arm a
+key-selection jump restricted to level-2 (**) option headings.
+Pressing an option's letter selects it, aborts this capture (no
+edits are saved from picking), and calls ON-SELECT with its title."
+  (let ((file (my/manifolding-atlas--property-blueprint-file property-type)))
+    (my/manifolding-atlas--edit-file-in-capture file)
     (goto-char (point-min))
     (let ((ks-all-windows nil))
       (ks-jump "^\\*\\* .+$"
@@ -802,21 +830,17 @@ no separate mark/accept step."
                  (goto-char pt)
                  (org-back-to-heading t)
                  (let ((title (string-trim (org-get-heading t t t t))))
-                   (message "TRACE picker: selected title=%s, current-buffer=%s BEFORE org-capture-kill" title (current-buffer))
                    (org-capture-kill)
-                   (message "TRACE picker: current-buffer=%s AFTER org-capture-kill" (current-buffer))
                    (funcall on-select title)))))))
 
 (defun my/manifolding-atlas--open-ref-file-capture (ref-id)
-  "Open REF-ID's file in a plain org-capture buffer for editing."
+  "Open REF-ID's file using the vault's own capture-style editor,
+which already sets :kill-buffer and org-capture-use-indirect-buffer
+correctly so C-c C-c restores the original window."
   (let ((file (ignore-errors (org-id-find-id-file ref-id))))
     (unless (and file (file-exists-p file))
       (user-error "Could not find the reference file for %s" ref-id))
-    (message "TRACE ref-capture: BEFORE org-capture file=%s current-buffer=%s" file (current-buffer))
-    (let ((org-capture-templates
-           `(("n" "Edit ref" plain (file ,file) "" :unnarrowed t :empty-lines 1))))
-      (org-capture nil "n"))
-    (message "TRACE ref-capture: AFTER org-capture current-buffer=%s" (current-buffer))))
+    (my/manifolding-atlas--edit-file-in-capture file)))
 
 (defun my/manifolding-atlas--property-choose-and-link (property-type key)
   "Open the PROPERTY-TYPE blueprint file so the user can pick an
@@ -834,11 +858,16 @@ separate transcluded block -- then open the ref note for editing."
               (ref-id (my/manifolding-atlas--id-from-link link)))
          (unless ref-id
            (user-error "Could not create a reference note for %s" final-title))
-         (with-current-buffer (marker-buffer marker)
-           (save-excursion
-             (goto-char marker)
-             (org-entry-put nil key link)
-             (save-buffer)))
+          (save-window-excursion
+            (with-current-buffer (marker-buffer marker)
+              (save-excursion
+                (goto-char marker)
+                (let ((re-render (bound-and-true-p org-transclusion-mode)))
+                  (when re-render (org-transclusion-remove-all))
+                  (unwind-protect
+                      (my/manifolding-atlas--refresh-property-transclude property-type final-title ref-id)
+                    (when re-render (org-transclusion-add-all)))))
+              (save-buffer)))
          (message "TRACE choose-link: about to open ref-file-capture ref-id=%s current-buffer=%s" ref-id (current-buffer))
          (my/manifolding-atlas--open-ref-file-capture ref-id))))))
 

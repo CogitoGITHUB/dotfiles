@@ -3287,7 +3287,8 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--capture-ref-content~.
             (file+function ,ref-path
                            (lambda () (goto-char (point-max))))
             "\n%?\n" :kill-buffer t :unnarrowed t)))
-        (org-capture-use-indirect-buffer nil))
+        (org-capture-use-indirect-buffer nil)
+        (org-capture-window-setup 'other-window))
     (org-capture nil "l")))
 #+end_src
 *** Upgrade command
@@ -3584,21 +3585,23 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--sweep-pickers~.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--sweep-pickers ()
   "Kill every leftover picker buffer from this or an interrupted session."
-  (let ((note-buf (when-let ((note (plist-get my/manifolding-atlas-org-prompt--session :note))
-                             (path (and note (manifolding-atlas-note-path note))))
-                    (get-file-buffer path))))
+  (let* ((note (plist-get my/manifolding-atlas-org-prompt--session :note))
+         (path (and note (manifolding-atlas-note-path note)))
+         (note-buf (and path
+                        (condition-case err
+                            (find-file-noselect path)
+                          (error (warn "atlas-sweep-pickers note-buf: %s" (error-message-string err)) nil)))))
     (dolist (buf (buffer-list))
       (when (and (buffer-live-p buf)
                  (buffer-local-value
                   'my/manifolding-atlas-org-prompt--session-p buf))
-        (let ((placed nil))
-          (dolist (win (get-buffer-window-list buf nil t))
-            (when (window-live-p win)
-              (if (and (not placed)
-                       (= 1 (length (window-list (window-frame win) 'no-minibuf)))
-                       note-buf (buffer-live-p note-buf))
-                  (progn (set-window-buffer win note-buf) (setq placed t))
-                (ignore-errors (delete-window win))))))
+        (dolist (win (get-buffer-window-list buf nil t))
+          (when (window-live-p win)
+            (cond
+             ((and note-buf (buffer-live-p note-buf))
+              (set-window-buffer win note-buf))
+             ((> (length (window-list (window-frame win) 'no-minibuf)) 1)
+              (ignore-errors (delete-window win))))))
         (condition-case nil (kill-buffer buf) (error nil))))))
 
 #+end_src
@@ -3851,14 +3854,7 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--session-display~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--session-display (buf)
-  (let* ((note (plist-get my/manifolding-atlas-org-prompt--session :note))
-         (note-buf (and note (manifolding-atlas-note-path note)
-                        (condition-case err
-                            (find-file-noselect (manifolding-atlas-note-path note))
-                          (error (warn "atlas-prompt note-buf: %s" (error-message-string err)) nil)))))
-    (when (buffer-live-p note-buf)
-      (set-window-buffer (selected-window) note-buf))
-    (my/manifolding-atlas--display-buffer-responsive buf)))
+  (my/manifolding-atlas--display-buffer-responsive buf))
 #+end_src
 ** Picker buffer resolution
 Both session and standalone pickers need the same visit-or-create
@@ -4042,8 +4038,6 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--apply-to-note~.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--apply-to-note
     (note props tags todo &optional remove-props)
-  "Write PROPS, TAGS and TODO at NOTE's heading in its buffer, save,
-then park the note window centered on the heading."
   (let* ((file (manifolding-atlas-note-path note))
          (buf (find-file-noselect file))
          view-target)
@@ -4054,12 +4048,9 @@ then park the note window centered on the heading."
              (manifolding-atlas-note-level note)
              props tags todo remove-props))
       (save-buffer))
-    ;; Park the note window on the heading WITHOUT selecting it: selecting
-    ;; the note window here steals focus out of the picker's read-key
-    ;; loop, re-entrantly destabilizing it (double toggles, buffer churn).
     (when-let ((win (get-buffer-window buf t)))
       (set-window-point win (or view-target (point-min)))
-      (with-selected-window win (recenter nil)))))
+      (set-window-start win (max (point-min) (- (or view-target (point-min)) 200)) t))))
 #+end_src
 ** Session remove
 Inverse of a pick: delete property / clear tags / drop TODO.
@@ -4138,25 +4129,27 @@ Saves edits, kills the picker buffer.
 Why: Implementation of ~my/manifolding-atlas-org-prompt--buffer-finish~.
 
 #+begin_src emacs-lisp
- (defun my/manifolding-atlas-org-prompt--buffer-finish ()
-   "Persist option edits, then kill the picker buffer and manage its window."
-   (when (and buffer-file-name (buffer-modified-p))
-     (save-buffer))
-   (when (fboundp 'my/smart-escape)
-     (my/smart-escape))
-    (let ((buf (current-buffer))
-          (note-buf (when-let ((note (plist-get my/manifolding-atlas-org-prompt--session :note))
-                               (path (and note (manifolding-atlas-note-path note))))
-                      (get-file-buffer path))))
-      (let ((placed nil))
-        (dolist (win (get-buffer-window-list buf nil t))
-          (when (window-live-p win)
-            (if (and (not placed)
-                     (= 1 (length (window-list (window-frame win) 'no-minibuf)))
-                     note-buf (buffer-live-p note-buf))
-                (progn (set-window-buffer win note-buf) (setq placed t))
-              (ignore-errors (delete-window win))))))
-      (kill-buffer buf)))
+(defun my/manifolding-atlas-org-prompt--buffer-finish ()
+  "Persist option edits, then kill the picker buffer and manage its window."
+  (when (and buffer-file-name (buffer-modified-p))
+    (save-buffer))
+  (when (fboundp 'my/smart-escape)
+    (my/smart-escape))
+  (let* ((buf (current-buffer))
+         (note (plist-get my/manifolding-atlas-org-prompt--session :note))
+         (path (and note (manifolding-atlas-note-path note)))
+         (note-buf (and path
+                        (condition-case err
+                            (find-file-noselect path)
+                          (error (warn "atlas-buffer-finish note-buf: %s" (error-message-string err)) nil)))))
+    (dolist (win (get-buffer-window-list buf nil t))
+      (when (window-live-p win)
+        (cond
+         ((and note-buf (buffer-live-p note-buf))
+          (set-window-buffer win note-buf))
+         ((> (length (window-list (window-frame win) 'no-minibuf)) 1)
+          (ignore-errors (delete-window win))))))
+    (kill-buffer buf)))
 #+end_src
 
 ** Standalone picker setup
