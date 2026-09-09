@@ -1,0 +1,14 @@
+#+title:      Philosophy Prompt
+#+priority:   28
+
+* PHILOSOPHY
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Philosophy
+:END:
+** WARNING
+** DEFINED
+** STABLE
+** REVISED
+** ABANDONED

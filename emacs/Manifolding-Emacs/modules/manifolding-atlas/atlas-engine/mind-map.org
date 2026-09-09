@@ -11,7 +11,7 @@ Model:
 Edges (three distinct layers):
 - structural — file parent-child (drives layout, deterministic)
 - semantic — id: links (intellectual connections, overlay)
-- presentational — transclusion links (content embedding, overlay)
+- presentational — wormhole links (content embedding, overlay)
 
 Ordering: ORDER_KEY real float per node → O(1) insert-between, zero cascade.
 =mm/repack= normalises floats → clean integers when gaps < mm/epsilon.
@@ -19,7 +19,7 @@ Ordering: ORDER_KEY real float per node → O(1) insert-between, zero cascade.
 Scale: All queries hit =mm_nodes= via indexed SQL. No Elisp-side sorting.
 ON DELETE CASCADE auto-removes map entries when notes are deleted.
 
-Status (=MM_STATUS= property): =active= | =deprecated= | =archived=.
+Status (=MM_STATUS= unfolding): =active= | =deprecated= | =archived=.
 
 JSON export writes =manifold-map.json= — API contract for a future UI.
 
@@ -223,11 +223,11 @@ Three distinct connection layers queried independently.
           (manifolding-atlas-db-query-links-from note-id)))
 
 (defun mm/presentational-links-from (note-id)
-  "Return list of dest note-ids transcluded from NOTE-ID."
+  "Return list of dest note-ids wormholed from NOTE-ID."
   (condition-case nil
       (mapcar #'car
               (emacsql (manifolding-atlas-db)
-                       [:select [dest] :from transclude-links
+                       [:select [dest] :from wormhole-links
                         :where (= source $s1)]
                        note-id))
     (error nil)))
@@ -257,7 +257,7 @@ Three distinct connection layers queried independently.
               (mapcar (lambda (row) (cons (car row) (cadr row)))
                       (emacsql (manifolding-atlas-db)
                                [:select [source dest]
-                                :from transclude-links]))
+                                :from wormhole-links]))
             (error nil))))
     (list :structural    structural
           :semantic      semantic
@@ -435,14 +435,14 @@ Assigns 1.0, 2.0, 3.0, ... in current sorted order."
 #+end_src
 
 *** Status Management
-=MM_STATUS= property: =active= (default), =deprecated=, =archived=.
+=MM_STATUS= unfolding: =active= (default), =deprecated=, =archived=.
 
 #+begin_src emacs-lisp
 (defun mm/status-of (note-id)
   "Return MM_STATUS of NOTE-ID: active | deprecated | archived."
   (or (alist-get "MM_STATUS"
                  (when-let ((n (manifolding-atlas-db-get-by-id note-id)))
-                   (manifolding-atlas-note-properties n))
+                   (manifolding-atlas-note-unfoldings n))
                  nil nil #'string=)
       "active"))
 
@@ -450,7 +450,7 @@ Assigns 1.0, 2.0, 3.0, ... in current sorted order."
   "Set MM_STATUS on NOTE to STATUS."
   (unless (member status '("active" "deprecated" "archived"))
     (user-error "MM_STATUS must be active, deprecated, or archived"))
-  (my/manifolding-atlas--property-put note "MM_STATUS" status)
+  (my/manifolding-atlas--unfolding-put note "MM_STATUS" status)
   (message "✓ MM_STATUS → %s on %s" status (manifolding-atlas-note-title note)))
 #+end_src
 

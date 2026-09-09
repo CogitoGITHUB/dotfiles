@@ -166,7 +166,7 @@ killing the whole poll cycle.
 
 ** Sync override: parse method
 Manifolding Atlas forces non-'.org' files (extensionless vault notes) through
-`find-file', which trips over org-transclusion's read-only buffers.
+`find-file', which trips over atlas-wormholes's read-only buffers.
 Always use the configured method instead.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-db--parse-file (path)

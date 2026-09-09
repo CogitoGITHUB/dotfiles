@@ -1,7 +1,7 @@
 #+title: Manifolding Atlas Mastering Plugin
 #+priority: 10
 
-Spaced-repetition review for manifolding-atlas notes. Each note is a reviewable card; its schedule state lives in org properties (`MASTERING_*`) and is indexed into a `mastering_schedule` table by a DB extractor for fast due-queries.
+Spaced-repetition review for manifolding-atlas notes. Each note is a reviewable card; its schedule state lives in org unfoldings (`MASTERING_*`) and is indexed into a `mastering_schedule` table by a DB extractor for fast due-queries.
 
 *** Require
 #+begin_src emacs-lisp
@@ -190,22 +190,22 @@ scores, and a suspend flag.
 #+end_src
 
 *** DB Extractor
-Indexes MASTERING_* properties from NOTE-DATA into mastering_schedule.
+Indexes MASTERING_* unfoldings from NOTE-DATA into mastering_schedule.
 Initializes a default schedule when MASTERING is set but schedule
-properties are missing, so REVIEW/SUSPEND notes are never dropped.
+unfoldings are missing, so REVIEW/SUSPEND notes are never dropped.
 
 **** Extractor
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-mastering--extract (ctx note-data)
-  "Extract MASTERING_* properties from NOTE-DATA into mastering_schedule.
+  "Extract MASTERING_* unfoldings from NOTE-DATA into mastering_schedule.
 Initializes a default schedule when MASTERING is set but schedule
-properties are missing, so REVIEW/SUSPEND notes are never dropped."
+unfoldings are missing, so REVIEW/SUSPEND notes are never dropped."
   (let* ((note-id (plist-get note-data :id))
-         (props (plist-get note-data :properties))
-         (mastering (cdr (assoc "MASTERING" props)))
-         (next-rev (cdr (assoc "MASTERING_NEXT_REV" props)))
+         (unfoldings (plist-get note-data :unfoldings))
+         (mastering (cdr (assoc "MASTERING" unfoldings)))
+         (next-rev (cdr (assoc "MASTERING_NEXT_REV" unfoldings)))
          (today (my/manifolding-atlas-mastering--today-int))
-         (to-int (lambda (k) (string-to-number (or (cdr (assoc k props)) "0")))))
+         (to-int (lambda (k) (string-to-number (or (cdr (assoc k unfoldings)) "0")))))
     (emacsql (manifolding-atlas-db)
       [:delete :from mastering_schedule :where (= note-id $s1)]
       note-id)
@@ -214,7 +214,7 @@ properties are missing, so REVIEW/SUSPEND notes are never dropped."
         [:insert :into mastering_schedule :values $v1]
         (vector note-id
                 (if next-rev (funcall to-int "MASTERING_NEXT_REV") today)
-                (if (cdr (assoc "MASTERING_LAST_REV" props)) (funcall to-int "MASTERING_LAST_REV") today)
+                (if (cdr (assoc "MASTERING_LAST_REV" unfoldings)) (funcall to-int "MASTERING_LAST_REV") today)
                 (funcall to-int "MASTERING_N")
                 (funcall to-int "MASTERING_C_SUCCESS")
                 (funcall to-int "MASTERING_C_FAILS")
@@ -239,15 +239,15 @@ properties are missing, so REVIEW/SUSPEND notes are never dropped."
     :extract-fn #'my/manifolding-atlas-mastering--extract)))
 #+end_src
 
-*** Schedule Property Write
-Writes schedule properties for NOTE-ID back to its org drawer after
+*** Schedule Unfolding Write
+Writes schedule unfoldings for NOTE-ID back to its org drawer after
 each review, keeping the file-level state in sync with the DB.
 
 **** Drawer writer
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-mastering--write-schedule-props
+(defun my/manifolding-atlas-mastering--write-schedule-unfoldings
     (note-id next-rev-int n success c-succ c-fails t-succ t-fails score)
-  "Write schedule properties for NOTE-ID back to its org drawer."
+  "Write schedule unfoldings for NOTE-ID back to its org drawer."
   (let ((note (manifolding-atlas-db-get-by-id note-id)))
     (when note
       (let ((file (manifolding-atlas-note-path note))
@@ -274,20 +274,20 @@ each review, keeping the file-level state in sync with the DB.
             (save-buffer)))))))
 
 (defun my/manifolding-atlas-mastering--init-schedule (suspend note)
-  "Initialize schedule properties for fresh note participating in REVIEW."
+  "Initialize schedule unfoldings for fresh note participating in REVIEW."
   (when (manifolding-atlas-note-p note)
     (let* ((id (manifolding-atlas-note-id note))
            (today (my/manifolding-atlas-mastering--today-int)))
-      (my/manifolding-atlas--property-put note "MASTERING_NEXT_REV" (number-to-string today))
-      (my/manifolding-atlas--property-put note "MASTERING_LAST_REV" (number-to-string today))
-      (my/manifolding-atlas--property-put note "MASTERING_N" "0")
-      (my/manifolding-atlas--property-put note "MASTERING_C_SUCCESS" "0")
-      (my/manifolding-atlas--property-put note "MASTERING_C_FAILS" "0")
-      (my/manifolding-atlas--property-put note "MASTERING_T_SUCCESS" "0")
-      (my/manifolding-atlas--property-put note "MASTERING_T_FAILS" "0")
-      (my/manifolding-atlas--property-put note "MASTERING_PLUS" "0.35")
-      (my/manifolding-atlas--property-put note "MASTERING_MINUS" "0.30")
-      (my/manifolding-atlas--property-put note "MASTERING_SYNOLON" "1.3")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_NEXT_REV" (number-to-string today))
+      (my/manifolding-atlas--unfolding-put note "MASTERING_LAST_REV" (number-to-string today))
+      (my/manifolding-atlas--unfolding-put note "MASTERING_N" "0")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_C_SUCCESS" "0")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_C_FAILS" "0")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_T_SUCCESS" "0")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_T_FAILS" "0")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_PLUS" "0.35")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_MINUS" "0.30")
+      (my/manifolding-atlas--unfolding-put note "MASTERING_SYNOLON" "1.3")
       (unless (car (emacsql (manifolding-atlas-db)
                     [:select [note-id] :from mastering_schedule
                      :where (= note-id $s1)] id))
@@ -348,7 +348,7 @@ each review, keeping the file-level state in sync with the DB.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-mastering--update (note-id success result)
-  "Update mastering_schedule and note properties for NOTE-ID review."
+  "Update mastering_schedule and note unfoldings for NOTE-ID review."
   (let* ((next-rev (nth 0 result))
          (score (nth 1 result))
          (log (nth 2 result))
@@ -370,7 +370,7 @@ each review, keeping the file-level state in sync with the DB.
       (if success (1+ t-succ) t-succ)
       (if success t-fails (1+ t-fails))
       (nth 0 score) (nth 1 score) (nth 2 score))
-    (my/manifolding-atlas-mastering--write-schedule-props
+    (my/manifolding-atlas-mastering--write-schedule-unfoldings
      note-id (my/manifolding-atlas-mastering--date-to-int next-rev) (1+ n)
      success c-succ c-fails t-succ t-fails score)
     next-rev))
@@ -440,7 +440,7 @@ schedule table and org drawer.
       note-id v)
     (let ((note (manifolding-atlas-db-get-by-id note-id)))
       (when note
-        (my/manifolding-atlas--property-put note "MASTERING" (if value "SUSPEND" "REVIEW"))))
+        (my/manifolding-atlas--unfolding-put note "MASTERING" (if value "SUSPEND" "REVIEW"))))
     (message "Suspended")))
 #+end_src
 
@@ -546,11 +546,11 @@ reviewed/failed, and toggle participation in the review pool.
            (active (and mastering (not (string-equal mastering "WARNING")))))
       (if active
           (progn
-            (my/manifolding-atlas--property-put note "MASTERING" "WARNING")
+            (my/manifolding-atlas--unfolding-put note "MASTERING" "WARNING")
             (emacsql (manifolding-atlas-db)
               [:delete :from mastering_schedule :where (= note-id $s1)] id)
             (message "Removed from review pool."))
-        (my/manifolding-atlas--property-put note "MASTERING" "REVIEW")
+        (my/manifolding-atlas--unfolding-put note "MASTERING" "REVIEW")
         (my/manifolding-atlas-mastering--init-schedule nil note)
         (message "Added to review pool.")))))
 #+end_src

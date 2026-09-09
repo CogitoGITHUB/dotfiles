@@ -1,0 +1,14 @@
+#+title:      Priority Prompt
+#+priority:   1
+
+* PRIORITY
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Priority
+:TASK-DEFAULT: B
+:END:
+** WARNING
+** A
+** B
+** C

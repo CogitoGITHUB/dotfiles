@@ -1,0 +1,16 @@
+#+title:      State Intelligence Prompt
+#+priority:   5
+
+* STATE_INTELLIGENCE
+:PROPERTIES:
+:CONTEXTS: file heading task
+:REQUIRED: t
+:KIND: unfolding
+:UNFOLDING: state-intelligence
+:LABEL: State: Intelligence
+:END:
+** WARNING
+** UNVERIFIED
+** CONFIRMED
+** CONTESTED
+** OBSOLETE

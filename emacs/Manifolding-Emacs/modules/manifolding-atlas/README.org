@@ -54,7 +54,7 @@ Atlas is not trying to preserve a particular map of reality.
 It is trying to preserve the ability to produce new maps from surviving material.
 
 Manifolding Atlas is the knowledge engine inside this configuration.
-It takes something deliberately primitive — plain Org files in =~/test/= — and forces them into a queryable system of notes, properties, relationships, schemas, prompts, routines, protocols, maps, references, and memory.
+It takes something deliberately primitive — plain Org files in =~/test/= — and forces them into a queryable system of notes, unfoldings, relationships, schemas, prompts, routines, protocols, maps, references, and memory.
 
 No org-roam.
 No proprietary database format.
@@ -69,7 +69,7 @@ Atlas treats knowledge as something that can be manifolded — folded, inverted,
 It describes the actual mechanism: recursive transformation of representations.
 
 A note is not merely a document.  
-A property is not merely metadata.  
+An unfolding is not merely metadata.  
 A schema is not merely validation.  
 A prompt is not merely a question.  
 A link is not merely navigation.
@@ -136,7 +136,7 @@ It is a structural consequence of the core principle: no current representation 
 | Layer     | Location     | Purpose                              |
 |-----------+--------------+--------------------------------------|
 | engine    | atlas-engine/        | vendored engine — the transformation machinery |
-| blueprints    | blueprints/       | executable knowledge structures — properties, templates |
+| blueprints    | blueprints/       | executable knowledge structures — unfoldings, templates |
 | workflows | workflows/ | recurring practices — mastering, protocols, routines |
 | UI        | sidebar.org | viewport into the current representation        |
 
@@ -255,7 +255,7 @@ There are several entry points:
 The capture engine has one speed now: the grid.
 
 #+begin_example
-*Atlas Grid* opens immediately — every property starts selected.
+*Atlas Grid* opens immediately — every unfolding starts selected.
 
 <code>     toggle that row (red, per row)
            first pick is solo: it drops every other ✓
@@ -291,7 +291,7 @@ capture
 │
 └── async prompt queue
     │
-    ├── property
+    ├── unfolding
     ├── state
     ├── tags
     ├── template
@@ -356,14 +356,14 @@ to:
 
 if the traditional completing-read interface is preferred.
 
-* The property picker
+* The unfolding picker
 
-Every prompt is a live editor, not a question.
+Every prompt is a interactive editor, not a question.
 
 | Key     | Action                                                        |
 |---------+---------------------------------------------------------------|
 | m       | apply the option under cursor — again removes it from the note |
-| l       | make it live: create the ref-note and edit its content         |
+| l       | make it unfolding: create the unfolding-note and edit its content         |
 | a       | key-selection-jump straight to any option line             |
 | RET     | next prompt — refused until something was applied              |
 | q       | skip this prompt (WARNING default)                             |
@@ -376,11 +376,11 @@ Going back never repeats what you already answered.
 Aborting deletes the draft so nothing half-made survives.
 
 Multi-choice prompts accumulate marks; clearing them all removes the
-property.  Reopened prompts restore their applied value, highlighted
+unfolding.  Reopened prompts restore their applied value, highlighted
 in bold, so changes are always visible before they become real.
 
 Session pickers open with a key-selection loop already armed: typing
-letters of an option jumps there and applies it live; pausing surfaces
+letters of an option jumps there and applies it immediately; pausing surfaces
 the key hints instead.
 
 * Schema is data
@@ -388,7 +388,7 @@ the key hints instead.
 Schema is one of the central ideas of Atlas.
 It is an executable knowledge structure — not code, not a configuration file, but an Org outline that compiles into prompts, validators, and registries.
 
-A schema does not live in a special programming language.  
+A schema does not reside in a special programming language.  
 It is an Org outline.
 
 A file such as:
@@ -411,11 +411,11 @@ is simultaneously:
 6. prompt definition.
 
 Add a file.  
-A property appears.  
+An unfolding appears.  
 Edit a heading.  
 The prompt changes.  
 Delete the file.  
-The property disappears.
+The unfolding disappears.
 
 The system reads the tree and constructs the machinery.
 
@@ -430,9 +430,9 @@ Atlas currently understands multiple kinds of semantic fields:
 
 | Kind        | Meaning                 |
 |-------------+-------------------------|
-| ~property~  | ordinary property       |
-| ~live~      | reference-note link     |
-| ~scoped~    | entity-specific ref     |
+| ~inline~    | ordinary unfolding      |
+| ~unfolding~ | unfolding link          |
+| ~scoped~    | entity-specific unfolding |
 | ~free~      | free text               |
 | ~todo~      | TODO fragment           |
 | ~multi~     | multiple choice         |
@@ -458,7 +458,7 @@ There are no surprise minibuffers announcing that your note has committed some t
 Validation happens at index time.  
 Violations accumulate here:
 
-: admin/MISSING PROMPTS
+: admin/Broken Blueprints
 
 Every problematic note becomes a TODO carrying:
 
@@ -496,7 +496,7 @@ It is a collection of transformations operating over the same substrate.
 
 #+begin_example
 atlas-engine/
-  file-formats/
+  plugins/
     citation
     contacts
     dictionary
@@ -513,11 +513,14 @@ atlas-engine/
   restoration.org
   search.org
   sidebar.org
-  transclusion.org
+  atlas-wormholes.org
 blueprints/
-  file-formats/
-  properties/
-  templates/
+  heading-unfoldings/
+    body-unfoldings/
+      files/
+      snippets/
+    context-prompts/
+    tags.org, todo.org, … (drawer prompts)
 workflows/
   mastering.org
   protocols.org
@@ -571,7 +574,7 @@ And then the mastery itself will eventually be declared insufficient.
 * Protocols
 
 Protocols turn headings into executable sequences.  
-A protocol can be assembled through transclusion.  
+A protocol can be assembled through wormhole.  
 The note describes the structure.  
 The build machinery assembles it.
 
@@ -605,7 +608,7 @@ A heading marked:
 
 : :RULE:
 
-can be routed into topic files through transclusion.  
+can be routed into topic files through wormhole.  
 The rule exists once.  
 Its appearances can exist many times.
 
@@ -619,9 +622,9 @@ All of them temporary.
 
 * Templates
 
-Templates live under:
+Templates reside under:
 
-: templates/files/
+: heading-unfoldings/body-unfoldings/files/
 
 Current families include:
 
@@ -659,7 +662,7 @@ H       heading → note
 z       quick captures
 
 f       fix violations
-P       update properties
+P       update unfoldings
 u       sidebar
 
 E       reinforcement sweep
@@ -679,7 +682,7 @@ n/e/f   recipes
 N/J/F/B/X/!/S/T
 routines
 
-y       transclusion
+y       wormhole
 #+end_example
 
 Org state also provides:
@@ -717,14 +720,14 @@ Refresh is automatic.
 
 * Extending Atlas
 
-Adding a property should be boring.  
+Adding an unfolding should be boring.  
 That is a feature.
 
 Create:
 
 : blueprints/<anything>.org
 
-Give it a level-one property heading.  
+Give it a level-one unfolding heading.  
 Done.
 
 Registration happens automatically.  
@@ -739,7 +742,7 @@ Adding a behavioral prompt requires explicit registration through:
 Adding a domain means:
 
 #+begin_example
-atlas-engine/file-formats/
+atlas-engine/plugins/
 └── new-domain/
     └── new-domain.org
 #+end_example
@@ -748,7 +751,7 @@ with an appropriate priority.
 
 Adding a template means:
 
-: templates/files/<name>.org
+: heading-unfoldings/body-unfoldings/files/<name>.org
 
 No giant configuration file.
 No central switch statement.
@@ -840,7 +843,7 @@ It is closer to a small knowledge operating system:
 - Prompts are the interface compiler
 - Domains are applications
 - Templates are generators
-- Transclusion is composition
+- Wormhole is composition
 - Validation is the type checker
 - Mastering is the memory scheduler
 - Routines are the execution layer

@@ -1,0 +1,15 @@
+#+title:      State General Prompt
+#+priority:   5
+
+* STATE_GENERAL
+:PROPERTIES:
+:CONTEXTS: file heading task
+:REQUIRED: t
+:KIND: unfolding
+:UNFOLDING: state-general
+:LABEL: State: General
+:END:
+** WARNING
+** EVERGREEN
+** DRAFT
+** SETTLED

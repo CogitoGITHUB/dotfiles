@@ -1,0 +1,15 @@
+#+title:      Scope Prompt
+#+priority:   23
+
+* SCOPE
+:PROPERTIES:
+:ID: rule-scope
+:CONTEXTS: rule
+:KIND: tagopt
+:DEFAULT: auto
+:UNFOLDING: scope
+:LABEL: Scope
+:END:
+** universal
+** general
+** focused

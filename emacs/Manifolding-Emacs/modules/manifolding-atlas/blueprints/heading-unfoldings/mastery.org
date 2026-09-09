@@ -1,0 +1,14 @@
+#+title:      Mastery Prompt
+#+priority:   41
+
+* MASTERY
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Mastery
+:END:
+** WARNING
+** INTERNALIZED
+** INTERNALIZING
+** FAMILIAR
+** UNKNOWN

@@ -1,0 +1,16 @@
+#+title:      POS (Part of Speech) Prompt
+#+priority:   17
+
+* POS
+:PROPERTIES:
+:CONTEXTS: dictionary
+:KIND: unfolding
+:UNFOLDING: pos
+:LABEL: POS
+:END:
+** noun
+** verb
+** adjective
+** adverb
+** phrase
+** other

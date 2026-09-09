@@ -1,0 +1,13 @@
+#+title:      Traps External Prompt
+#+priority:   36
+
+* TRAPS_EXTERNAL
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Traps External
+:END:
+** WARNING
+** DESIGNED
+** SPRUNG
+** RETIRED

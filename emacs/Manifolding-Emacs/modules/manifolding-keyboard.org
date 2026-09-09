@@ -2539,8 +2539,8 @@ armed.
     ("C-c C-c" . my/manifolding-atlas-org-prompt--buffer-accept)
     ("a"       . my/manifolding-atlas-org-prompt--ks-to-option)
     ("m"       . my/manifolding-atlas-org-prompt--buffer-mark)
-    ("C-l"     . my/manifolding-atlas-org-prompt--make-live)
-    ("C-e"     . my/manifolding-atlas-org-prompt--edit-property-file)
+    ("C-l"     . my/manifolding-atlas-org-prompt--make-unfolding)
+    ("C-e"     . my/manifolding-atlas-org-prompt--edit-unfolding-file)
     ;; Session navigation
     ("SPC"     . my/manifolding-atlas-org-prompt--session-back)
     ("b"       . my/manifolding-atlas-org-prompt--session-back)
@@ -2923,27 +2923,27 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
    ("!" my/manifolding-atlas-routines-validate "validate" :exit t)
    ("S" my/manifolding-atlas-routines-report "report" :exit t)
    ("T" my/manifolding-atlas-routines-menu "menu" :exit t))
-  "Transclude"
-  (("y" my/transclusion-hydra/body "transclude" :exit t)))
+  "Wormhole"
+  (("y" my/wormhole-hydra/body "wormhole" :exit t)))
 #+end_src
 
-** SPC y — Transclusion
+** SPC y — Wormhole
 #+begin_src emacs-lisp
-(my/defhydra-state my/transclusion-hydra nil "Transclusion" (my/main-hydra/body "main menu")
+(my/defhydra-state my/wormhole-hydra nil "Wormhole" (my/main-hydra/body "main menu")
   "Add"
-  (("a" my/manifolding-atlas-transclusion-add       "add"         :exit t)
-   ("b" (my/manifolding-atlas-transclusion-add t)   "body only"   :exit t)
-   ("A" org-transclusion-add-all         "add all"     :exit t))
+  (("a" my/atlas-wormholes-add       "add"         :exit t)
+   ("b" (my/atlas-wormholes-add t)   "body only"   :exit t)
+   ("A" atlas-wormholes-add-all         "add all"     :exit t))
   "Manage"
-  (("r" org-transclusion-remove          "remove"      :exit t)
-   ("R" org-transclusion-remove-all      "remove all"  :exit t)
-   ("d" org-transclusion-detach          "detach"      :exit t)
-   ("f" org-transclusion-refresh         "refresh"     :exit t))
+  (("r" atlas-wormholes-remove          "remove"      :exit t)
+   ("R" atlas-wormholes-remove-all      "remove all"  :exit t)
+   ("d" atlas-wormholes-detach          "detach"      :exit t)
+   ("f" atlas-wormholes-refresh         "refresh"     :exit t))
   "Edit"
-  (("o" org-transclusion-open-source     "open source" :exit t)
-   ("m" org-transclusion-move-to-source  "move source" :exit t)
-   ("s" org-transclusion-live-sync-start "live sync"   :exit nil)
-   ("x" org-transclusion-live-sync-exit  "exit sync"   :exit t)))
+  (("o" atlas-wormholes-open-source     "open source" :exit t)
+   ("m" atlas-wormholes-move-to-source  "move source" :exit t)
+   ("s" atlas-wormholes-live-sync-start "live sync"   :exit nil)
+   ("x" atlas-wormholes-live-sync-exit  "exit sync"   :exit t)))
 #+end_src
 
 ** SPC m — Mind Map

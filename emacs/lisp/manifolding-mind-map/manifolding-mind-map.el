@@ -597,8 +597,8 @@ unchanged."
                           'list
                           (manifolding-mind-map--separate-ref-links
                            (manifolding-mind-map--get-cites))
-                          (manifolding-mind-map--get-links)
-                          (manifolding-mind-map--get-transclude-links)))
+                           (manifolding-mind-map--get-links)
+                           (manifolding-mind-map--get-wormhole-links)))
          (links-with-empty-refs (manifolding-mind-map--filter-citations links-db-rows))
          (empty-refs (delete-dups (seq-map
                                    (lambda (link)
@@ -654,7 +654,7 @@ Row format: (id path title level pos olp-string properties tags)"
    (manifolding-atlas-note-level note)
    (manifolding-atlas-note-pos note)
    (string-join (manifolding-atlas-note-outline-path note) " / ")
-   (manifolding-atlas-note-properties note)
+   (manifolding-atlas-note-unfoldings note)
    (or (manifolding-atlas-note-tags note) '())))
 
 (defun manifolding-mind-map--get-links ()
@@ -666,17 +666,17 @@ Row format: (source dest type)"
     (lambda (l) (string= (plist-get l :type) "id"))
     (manifolding-atlas-db-query-links))))
 
-(defun manifolding-mind-map--get-transclude-links ()
-  "Get transclusion links from the transclude_links table.
+(defun manifolding-mind-map--get-wormhole-links ()
+  "Get wormhole links from the wormhole_links table.
 Row format: (source dest type)"
   (ignore-errors
     (let* ((rows (emacsql (manifolding-atlas-db)
-                          [:select [source dest] :from transclude_links]))
+                          [:select [source dest] :from wormhole_links]))
            (result (mapcar
                     (lambda (row)
-                      (list (car row) (cadr row) "transclude"))
+                      (list (car row) (cadr row) "wormhole"))
                     rows)))
-      (message "transclude-links: %d rows" (length result))
+      (message "wormhole-links: %d rows" (length result))
       result)))
 
 (defun manifolding-mind-map--get-cites ()

@@ -205,16 +205,16 @@ FILE defaults to `buffer-file-name'."
     (= 0 (magit-call-git "checkout" commit "--" file-path))))
 #+end_src
 
-*** Ref restoration
-Falls back to COMMIT's parent if a ref is absent at COMMIT.
+*** Unfolding restoration
+Falls back to COMMIT's parent if an unfolding is absent at COMMIT.
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-links--restore-refs (refs commit)
-  "Restore each relative path in REFS from COMMIT using git checkout.
-REFS is a space-separated string of relative paths (as stored in the
-:DELETED_REFS: property) or a list. Returns count of refs restored."
-  (let ((rel-list (if (listp refs) refs
-                    (when (and refs (not (string-empty-p refs)))
-                      (split-string refs "[ \t]+" t))))
+(defun my/manifolding-atlas-links--restore-unfoldings (unfoldings commit)
+  "Restore each relative path in UNFOLDINGS from COMMIT using git checkout.
+UNFOLDINGS is a space-separated string of relative paths (as stored in the
+:DELETED_UNFOLDINGS: unfolding) or a list. Returns count of unfoldings restored."
+  (let ((rel-list (if (listp unfoldings) unfoldings
+                    (when (and unfoldings (not (string-empty-p unfoldings)))
+                      (split-string unfoldings "[ \t]+" t))))
         (count 0))
     (dolist (rel rel-list count)
       (let ((revs (list commit (format "%s^" commit))))
@@ -222,8 +222,8 @@ REFS is a space-separated string of relative paths (as stored in the
                   (my/manifolding-atlas-links--git-restore-file (cadr revs) rel))
           (setq count (1+ count)))))))
 
-(defun my/manifolding-atlas-links--deleted-refs-for-id (deleted-id)
-  "Return the DELETED_REFS property from the deleted-files entry for
+(defun my/manifolding-atlas-links--deleted-unfoldings-for-id (deleted-id)
+  "Return the DELETED_UNFOLDINGS unfolding from the ReManifold entry for
 DELETED-ID, or nil."
   (let ((path (my/manifolding-atlas-links--deleted-files-path)))
     (when (file-exists-p path)
@@ -235,7 +235,7 @@ DELETED-ID, or nil."
                (format "^[ \t]*:DELETED_ID:[ \t]+%s$" (regexp-quote deleted-id))
                nil t)
           (org-back-to-heading)
-          (org-entry-get (point) "DELETED_REFS"))))))
+          (org-entry-get (point) "DELETED_UNFOLDINGS"))))))
 
 (defun my/manifolding-atlas-links--git-commit (path &optional msg)
   "Git add and commit PATH with MSG for admin file changes."
@@ -254,7 +254,7 @@ DELETED-ID, or nil."
 Removes both the file-match and id-match entries after a successful restore.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--remove-deleted-entry (target-file deleted-id)
-  "Delete deleted-files headings matching TARGET-FILE or DELETED-ID."
+  "Delete ReManifold headings matching TARGET-FILE or DELETED-ID."
   (let ((deleted-path (my/manifolding-atlas-links--deleted-files-path)))
     (when (file-exists-p deleted-path)
       (with-current-buffer (find-file-noselect deleted-path)
@@ -284,7 +284,7 @@ Removes both the file-match and id-match entries after a successful restore.
 
 *** Restore command
 Searches history for the commit carrying the note's :ID:, restores
-it plus its orphaned refs, then cleans up the queue entries.
+it plus its orphaned unfoldings, then cleans up the queue entries.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links-restore ()
   "Restore a deleted note from Git history."
@@ -317,9 +317,9 @@ it plus its orphaned refs, then cleans up the queue entries.
               (restore-rev (cdr restore-info)))
           (if (my/manifolding-atlas-links--git-restore-file restore-rev target-file)
               (progn
-                (let ((refs (my/manifolding-atlas-links--deleted-refs-for-id deleted-id)))
-                  (when refs
-                    (my/manifolding-atlas-links--restore-refs refs restore-rev)))
+                (let ((unfoldings (my/manifolding-atlas-links--deleted-unfoldings-for-id deleted-id)))
+                  (when unfoldings
+                    (my/manifolding-atlas-links--restore-unfoldings unfoldings restore-rev)))
                 (org-mark-subtree)
                 (delete-region (region-beginning) (region-end))
                 (my/manifolding-atlas-links--remove-deleted-entry target-file deleted-id)
@@ -333,13 +333,13 @@ it plus its orphaned refs, then cleans up the queue entries.
             (user-error "Git restore failed for %s" target-file)))))))
 #+end_src
 
-*** Restore From Deleted Files
+*** Restore From ReManifold
 
 **** Broken-links entry cleanup
 Removes TODO entries whose DELETED_ID matches after restore.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--remove-broken-entry (id)
-  "Delete broken-links TODO headings carrying DELETED_ID ID."
+  "Delete Missing Links TODO headings carrying DELETED_ID ID."
   (let ((broken-path (my/manifolding-atlas-links--ensure-broken-links-file)))
     (when (file-exists-p broken-path)
       (with-current-buffer (find-file-noselect broken-path)
@@ -378,9 +378,9 @@ Removes TODO entries whose DELETED_ID matches after restore.
     (unless (or (my/manifolding-atlas-links--git-restore-file commit file)
                 (my/manifolding-atlas-links--git-restore-file (format "%s^" commit) file))
       (user-error "Git restore failed for %s" file))
-    (let ((refs (org-entry-get (point) "DELETED_REFS")))
-      (when refs
-        (my/manifolding-atlas-links--restore-refs refs commit)))
+    (let ((unfoldings (org-entry-get (point) "DELETED_UNFOLDINGS")))
+      (when unfoldings
+        (my/manifolding-atlas-links--restore-unfoldings unfoldings commit)))
     (let ((restored-file file)
           (deleted-files-path (buffer-file-name)))
       (org-mark-subtree)
@@ -390,7 +390,7 @@ Removes TODO entries whose DELETED_ID matches after restore.
       (when (and (file-exists-p deleted-files-path)
                  (> (file-attribute-size (file-attributes deleted-files-path)) 0))
         (my/manifolding-atlas-links--git-commit deleted-files-path
-          (format "auto: remove restore entry from deleted-files [%s]"
+          (format "auto: remove restore entry from ReManifold [%s]"
                   (format-time-string "%H:%M:%S"))))
       (when id
         (my/manifolding-atlas-links--remove-broken-entry id)
@@ -398,10 +398,10 @@ Removes TODO entries whose DELETED_ID matches after restore.
           (when (and (file-exists-p broken-path)
                      (> (file-attribute-size (file-attributes broken-path)) 0))
             (my/manifolding-atlas-links--git-commit broken-path
-              (format "auto: remove broken link entry from broken-links [%s]"
+              (format "auto: remove missing link entry from Missing Links [%s]"
                       (format-time-string "%H:%M:%S"))))))
       (my/manifolding-atlas-links--cleanup-empty-admin-files)
-      (message "Restored %s. Entry removed from deleted-files." restored-file)
+      (message "Restored %s. Entry removed from ReManifold." restored-file)
       (when (y-or-n-p (format "Open restored file %s? " restored-file))
         (find-file (expand-file-name restored-file (my/manifolding-atlas-root-dir)))))))
 #+end_src

@@ -1,0 +1,14 @@
+#+title:      Hypotheses Prompt
+#+priority:   39
+
+* HYPOTHESES
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Hypotheses
+:END:
+** WARNING
+** OPEN
+** TESTING
+** SUPPORTED
+** REJECTED

@@ -1,0 +1,22 @@
+#+title:      Level Prompt
+#+priority:   22
+
+* LEVEL
+:PROPERTIES:
+:ID: rule-level
+:CONTEXTS: rule
+:KIND: tagopt
+:DEFAULT: none
+:UNFOLDING: level
+:LABEL: Level
+:END:
+** L1
+** L2
+** L3
+** L4
+** L5
+** L6
+** L7
+** L8
+** L9
+** L10

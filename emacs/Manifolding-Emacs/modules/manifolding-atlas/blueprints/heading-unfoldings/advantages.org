@@ -1,0 +1,13 @@
+#+title:      Advantages Prompt
+#+priority:   30
+
+* ADVANTAGES
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Advantages
+:END:
+** WARNING
+** VERIFIED
+** ASSUMED
+** EXPIRED

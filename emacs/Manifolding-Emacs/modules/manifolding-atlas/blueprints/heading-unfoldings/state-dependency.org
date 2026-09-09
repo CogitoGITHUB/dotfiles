@@ -1,0 +1,13 @@
+#+title:      State Dependency Prompt
+#+priority:   5
+
+* STATE_DEPENDENCY
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: unfolding
+:UNFOLDING: state-dependency
+:LABEL: State: Dependency
+:END:
+** WARNING
+** WAITING
+** DELEGATED

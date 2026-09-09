@@ -1,0 +1,17 @@
+#+title:      Register Prompt
+#+priority:   14
+
+* REGISTER
+:PROPERTIES:
+:CONTEXTS: dictionary
+:KIND: unfolding
+:UNFOLDING: register
+:LABEL: Register
+:END:
+** formal
+** informal
+** slang
+** technical
+** archaic
+** literary
+** colloquial

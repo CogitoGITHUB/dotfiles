@@ -1,0 +1,11 @@
+#+title:      Example Sentence Prompt
+#+priority:   11
+
+* EXAMPLE
+:PROPERTIES:
+:ID: examples
+:CONTEXTS: dictionary
+:KIND: scoped
+:UNFOLDING: examples
+:LABEL: Example
+:END:

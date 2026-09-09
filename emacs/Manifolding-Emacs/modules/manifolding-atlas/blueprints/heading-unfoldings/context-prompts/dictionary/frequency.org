@@ -1,0 +1,14 @@
+#+title:      Frequency Prompt
+#+priority:   13
+
+* FREQUENCY
+:PROPERTIES:
+:CONTEXTS: dictionary
+:KIND: unfolding
+:UNFOLDING: frequency
+:LABEL: Frequency
+:END:
+** common
+** frequent
+** rare
+** obscure

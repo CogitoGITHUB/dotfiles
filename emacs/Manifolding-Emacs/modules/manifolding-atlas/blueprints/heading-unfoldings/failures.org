@@ -1,0 +1,13 @@
+#+title:      Failures Prompt
+#+priority:   37
+
+* FAILURES
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Failures
+:END:
+** WARNING
+** RECORDED
+** ANALYZED
+** ACTIVE

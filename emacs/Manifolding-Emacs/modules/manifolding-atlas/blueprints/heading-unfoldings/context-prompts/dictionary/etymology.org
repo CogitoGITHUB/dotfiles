@@ -1,0 +1,19 @@
+#+title:      Etymology Prompt
+#+priority:   15
+
+* ETYMOLOGY
+:PROPERTIES:
+:CONTEXTS: dictionary
+:KIND: unfolding
+:UNFOLDING: etymology
+:LABEL: Etymology
+:END:
+** Latin
+** Greek
+** Old English
+** French
+** German
+** Arabic
+** Hindi
+** Japanese
+** Other

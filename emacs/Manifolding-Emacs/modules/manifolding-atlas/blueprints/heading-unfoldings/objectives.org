@@ -1,0 +1,15 @@
+#+title:      Objectives Prompt
+#+priority:   21
+
+* OBJECTIVES
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Objectives
+:END:
+** WARNING
+** DRAFT
+** DIRECTING
+** ACHIEVED
+** REVISED
+** DROPPED

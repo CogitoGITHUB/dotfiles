@@ -3,7 +3,7 @@
 
 Turns any heading into a protocol step. Steps are assembled into protocol
 documents via the BUILD command, which uses key selection for
-multi-select and writes live transclusion pointers into topic-indexed
+multi-select and writes live wormhole pointers into topic-indexed
 protocol files.
 
 Protocol steps share a heading's RULE status (dual-mark) — a heading can
@@ -53,24 +53,24 @@ level, and routed-files for fast protocol queries.
 
 *** DB Extractor
 Records protocol bookkeeping (topics, order, level, routed files) for
-notes carrying a PROTOCOL property.
+notes carrying a PROTOCOL unfolding.
 
 **** Extractor
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols--extract (_ctx note-data)
   "Record protocol bookkeeping for NOTE-DATA if it is a protocol step."
   (let* ((note-id (plist-get note-data :id))
-         (props   (plist-get note-data :properties))
-         (is-proto (cdr (assoc "PROTOCOL" props))))
+         (unfoldings   (plist-get note-data :unfoldings))
+         (is-proto (cdr (assoc "PROTOCOL" unfoldings))))
     (emacsql (manifolding-atlas-db)
       [:delete :from protocols :where (= note-id $s1)]
       note-id)
     (when (equal is-proto "t")
-      (let* ((topics-str (or (cdr (assoc "PROTOCOL_TOPICS" props)) ""))
+      (let* ((topics-str (or (cdr (assoc "PROTOCOL_TOPICS" unfoldings)) ""))
              (topics     (split-string topics-str " " t))
              (primary    (car topics))
-             (order      (string-to-number (or (cdr (assoc "PROTOCOL_ORDER" props)) "0")))
-             (level      (or (cdr (assoc "PROTOCOL_LEVEL" props)) "L1")))
+             (order      (string-to-number (or (cdr (assoc "PROTOCOL_ORDER" unfoldings)) "0")))
+             (level      (or (cdr (assoc "PROTOCOL_LEVEL" unfoldings)) "L1")))
         (emacsql (manifolding-atlas-db)
           [:insert :into protocols :values $v1]
           (vector note-id topics-str primary order level ""))))
@@ -91,7 +91,7 @@ notes carrying a PROTOCOL property.
 
 *** Schema
 Requires PROTOCOL_TOPICS, PROTOCOL_ORDER and PROTOCOL_LEVEL on notes
-with a PROTOCOL property.
+with a PROTOCOL unfolding.
 #+begin_src emacs-lisp
 (manifolding-atlas-blueprint-define
  'protocol
@@ -139,7 +139,7 @@ Priority: OVERRIDE > topic-file-map > default."
 **** Write a pointer in a target file
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols--pointer-exists-p (file note-id)
-  "Return t if FILE already contains a transclusion pointer to NOTE-ID."
+  "Return t if FILE already contains a wormhole pointer to NOTE-ID."
   (and (file-exists-p file)
        (with-temp-buffer
          (insert-file-contents file)
@@ -147,13 +147,13 @@ Priority: OVERRIDE > topic-file-map > default."
          (re-search-forward (format "\\[\\[id:%s\\]\\[" (regexp-quote note-id)) nil t))))
 
 (defun my/manifolding-atlas-protocols--write-pointer (file note-id heading-title level-str)
-  "Append a #+transclude: directive for NOTE-ID at LEVEL-STR into FILE, unless present."
+  "Append a #+wormhole: directive for NOTE-ID at LEVEL-STR into FILE, unless present."
   (unless (my/manifolding-atlas-protocols--pointer-exists-p file note-id)
     (make-directory (file-name-directory file) t)
     (with-current-buffer (find-file-noselect file)
       (goto-char (point-max))
       (unless (bolp) (insert "\n"))
-      (insert (format "#+transclude: [[id:%s][%s]] :level %s\n"
+      (insert (format "#+wormhole: [[id:%s][%s]] :level %s\n"
                       note-id heading-title (substring level-str 1)))
       (save-buffer))))
 #+end_src
@@ -174,9 +174,9 @@ Priority: OVERRIDE > topic-file-map > default."
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols--route-note (note)
   "Route NOTE (a manifolding-atlas-note already marked PROTOCOL: t) to its protocol file."
-  (let* ((props    (manifolding-atlas-note-properties note))
-         (topics   (split-string (or (cdr (assoc "PROTOCOL_TOPICS" props)) "") " " t))
-         (level    (or (cdr (assoc "PROTOCOL_LEVEL" props)) "L1"))
+  (let* ((unfoldings    (manifolding-atlas-note-unfoldings note))
+         (topics   (split-string (or (cdr (assoc "PROTOCOL_TOPICS" unfoldings)) "") " " t))
+         (level    (or (cdr (assoc "PROTOCOL_LEVEL" unfoldings)) "L1"))
          (title    (manifolding-atlas-note-title note))
          (note-id  (manifolding-atlas-note-id note))
          (routed   nil))
@@ -197,7 +197,7 @@ Priority: OVERRIDE > topic-file-map > default."
 (defun my/manifolding-atlas-protocols-route-all ()
   "Re-route every note marked PROTOCOL: t. Run manually after bulk edits."
   (interactive)
-  (let ((notes (manifolding-atlas-db-query-by-property "PROTOCOL" "t")))
+  (let ((notes (manifolding-atlas-db-query-by-unfolding "PROTOCOL" "t")))
     (dolist (note notes)
       (my/manifolding-atlas-protocols--route-note note))
     (message "Routed %d protocol steps." (length notes))))
@@ -248,7 +248,7 @@ Preserves existing :RULE: t if set (dual-mark)."
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols-unmark-step ()
   "Remove PROTOCOL status from the heading at point.
-Only strips protocol-specific properties; preserves :RULE: t if set."
+Only strips protocol-specific unfoldings; preserves :RULE: t if set."
   (interactive)
   (unless (org-at-heading-p) (org-back-to-heading t))
   (let* ((note-id (org-id-get))
@@ -260,7 +260,7 @@ Only strips protocol-specific properties; preserves :RULE: t if set."
       (org-entry-delete nil key))
     (save-buffer)
     (when routed
-      (message "Unmarked. Pointers in %s are orphaned — see broken-links."
+      (message "Unmarked. Pointers in %s are orphaned — see Missing Links."
                routed))))
 #+end_src
 
@@ -321,12 +321,12 @@ Only strips protocol-specific properties; preserves :RULE: t if set."
     (goto-char (point-max))
     (unless (bolp) (insert "\n"))
     (insert "* TODO " title "\n")
-    (org-set-property "ID" (org-id-uuid))
-    (org-set-property "PROTOCOL" "t")
-    (org-set-property "PROTOCOL_ORDER" "0")
-    (org-set-property "PROTOCOL_LEVEL" "L1")
+    (org-set-unfolding "ID" (org-id-uuid))
+    (org-set-unfolding "PROTOCOL" "t")
+    (org-set-unfolding "PROTOCOL_ORDER" "0")
+    (org-set-unfolding "PROTOCOL_LEVEL" "L1")
     (when topics-str
-      (org-set-property "PROTOCOL_TOPICS" topics-str))
+      (org-set-unfolding "PROTOCOL_TOPICS" topics-str))
     (save-buffer))
   (with-current-buffer (find-file-noselect file)
     (goto-char (point-max))
@@ -335,12 +335,12 @@ Only strips protocol-specific properties; preserves :RULE: t if set."
 #+end_src
 
 **** Step installation
-Tags the source heading with its protocol properties and writes the
-transclusion pointer under the parent in the protocol file.
+Tags the source heading with its protocol unfoldings and writes the
+wormhole pointer under the parent in the protocol file.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols--install-step
     (id heading-title order level topics-str parent-id file)
-  "Mark source heading ID as step ORDER/LEVEL and transclude it under PARENT-ID."
+  "Mark source heading ID as step ORDER/LEVEL and wormhole it under PARENT-ID."
   (when-let ((marker (org-id-find id t)))
     (with-current-buffer (marker-buffer marker)
       (goto-char marker)
@@ -350,7 +350,7 @@ transclusion pointer under the parent in the protocol file.
       (when topics-str
         (org-entry-put nil "PROTOCOL_TOPICS" topics-str))
       (save-buffer)))
-  ;; Write transclusion pointer under parent heading in protocol file
+  ;; Write wormhole pointer under parent heading in protocol file
   (with-current-buffer (find-file-noselect file)
     (goto-char (point-min))
     (when (re-search-forward
@@ -358,7 +358,7 @@ transclusion pointer under the parent in the protocol file.
            nil t)
       (org-end-of-subtree t t)
       (unless (bolp) (insert "\n"))
-      (insert (format "#+transclude: [[id:%s][%s]] :level %s\n"
+      (insert (format "#+wormhole: [[id:%s][%s]] :level %s\n"
                       id heading-title (substring level 1)))
       (save-buffer))))
 #+end_src
@@ -367,7 +367,7 @@ transclusion pointer under the parent in the protocol file.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols-build ()
   "Assemble a new protocol document from multiple source headings.
-Creates a parent heading in the protocol file and writes transclusion
+Creates a parent heading in the protocol file and writes wormhole
 pointers for each selected step."
   (interactive)
   (let* ((title (read-string "Protocol title: "))

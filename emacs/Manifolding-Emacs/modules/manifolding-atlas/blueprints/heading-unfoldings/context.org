@@ -1,0 +1,13 @@
+#+title:      Context Prompt
+#+priority:   25
+
+* CONTEXT
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Context
+:END:
+** WARNING
+** CAPTURED
+** REFRESHED
+** STALE

@@ -1,0 +1,14 @@
+#+title:      Traps Internal Prompt
+#+priority:   35
+
+* TRAPS_INTERNAL
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Traps Internal
+:END:
+** WARNING
+** MAPPED
+** ACTIVE
+** TAMED
+** UNKNOWN

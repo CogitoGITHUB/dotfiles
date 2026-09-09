@@ -1,9 +1,0 @@
-#+title:      Template Prompt
-#+priority:   1
-
-* TEMPLATE
-:PROPERTIES:
-:CONTEXTS: file heading
-:KIND: template
-:LABEL: Template: Body template
-:END:

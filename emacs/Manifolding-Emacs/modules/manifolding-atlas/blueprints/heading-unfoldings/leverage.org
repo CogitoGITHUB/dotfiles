@@ -1,0 +1,14 @@
+#+title:      Leverage Prompt
+#+priority:   31
+
+* LEVERAGE
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Leverage
+:END:
+** WARNING
+** TRACKED
+** USED
+** EXPIRED
+** SQUANDERED

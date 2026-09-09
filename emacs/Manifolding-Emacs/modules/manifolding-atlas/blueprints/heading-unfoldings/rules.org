@@ -1,0 +1,14 @@
+#+title:      Rules Prompt
+#+priority:   23
+
+* RULES
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Rules
+:END:
+** WARNING
+** DRAFT
+** RATIFIED
+** AMENDED
+** REVOKED

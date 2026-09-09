@@ -697,7 +697,7 @@ BOUND scopes the lookup to a heading subtree (see `manifolding-atlas-buffer-meta
 and is nil for file-level metadata."
   (when-let* ((meta (manifolding-atlas-buffer-meta--get (manifolding-atlas-buffer-meta bound) field))
               (item (car (plist-get meta :items)))
-              (beg (org-element-property :begin item)))
+              (beg (org-element-unfolding :begin item)))
     (cons beg (save-excursion (goto-char beg) (line-end-position)))))
 
 (defun manifolding-atlas-blueprint-flymake--violation-region (violation data level)
@@ -744,7 +744,7 @@ A flymake backend; see `flymake-diagnostic-functions'."
 
 ;;;###autoload
 (define-minor-mode manifolding-atlas-blueprint-flymake-mode
-  "Toggle live schema-violation linting in the current buffer.
+  "Toggle real-time schema-violation linting in the current buffer.
 When enabled, register `manifolding-atlas-blueprint-flymake' as a flymake backend and
 turn on `flymake-mode', so violations of any schema applicable to a note
 in the buffer are flagged as you edit."
@@ -819,7 +819,7 @@ elisp lists (WARNING excluded)."
                         choices)))
       (my/manifolding-atlas-blueprint--legacy-choices prompt-name)))
 
-(defun my/manifolding-atlas-blueprint--extract-prop-key (prompt-name)
+(defun my/manifolding-atlas-blueprint--extract-unfolding-key (prompt-name)
   "Extract the property drawer key for PROMPT-NAME: level-1 heading of a
 declarative file, else legacy regex over the elisp source."
   (or (car (my/manifolding-atlas-blueprint--outline-spec prompt-name))
@@ -846,7 +846,7 @@ Extracts label from Org link format if present."
 (defun my/manifolding-atlas-blueprint--field-from-prompt (prompt-name &optional required)
   "Generate a manifolding-atlas-blueprint field plist from prompt file PROMPT-NAME.
 When REQUIRED is non-nil, the field is mandatory."
-  (let* ((key (or (my/manifolding-atlas-blueprint--extract-prop-key prompt-name)
+  (let* ((key (or (my/manifolding-atlas-blueprint--extract-unfolding-key prompt-name)
                   (upcase (replace-regexp-in-string
                            "-" "_" (symbol-name prompt-name)))))
          (choices (my/manifolding-atlas-blueprint--extract-choices prompt-name)))
@@ -857,7 +857,7 @@ When REQUIRED is non-nil, the field is mandatory."
       :validate ,(apply-partially #'my/manifolding-atlas-blueprint--validate choices))))
 
 (defun my/manifolding-atlas-blueprint--drawer-keys-in-file (file)
-  "Return property keys declared in FILE's drawer template."
+  "Return unfolding keys declared in FILE's drawer template."
   (let (keys)
     (with-temp-buffer
       (insert-file-contents file)
@@ -870,8 +870,8 @@ When REQUIRED is non-nil, the field is mandatory."
           (forward-line))))
     keys))
 
-(defun my/manifolding-atlas-blueprint--template-prop-keys ()
-  "Return list of property keys defined in capture template files."
+(defun my/manifolding-atlas-blueprint--template-unfolding-keys ()
+  "Return list of unfolding keys defined in capture template files."
   (let ((template-dir (my/manifolding-atlas-blueprint--template-dir))
         keys)
     (when (file-directory-p template-dir)
@@ -880,8 +880,8 @@ When REQUIRED is non-nil, the field is mandatory."
                            keys))))
     (delete-dups keys)))
 
-(defun my/manifolding-atlas-blueprint--template-props ()
-  "Return alist of (template-name . (prop-key ...)) from capture template files."
+(defun my/manifolding-atlas-blueprint--template-unfoldings ()
+  "Return alist of (template-name . (unfolding-key ...)) from capture template files."
   (let ((template-dir (my/manifolding-atlas-blueprint--template-dir))
         result)
     (when (file-directory-p template-dir)
@@ -919,7 +919,7 @@ When REQUIRED is non-nil, the field is mandatory."
     (let* ((name (or (car (manifolding-atlas-note-meta-get-list
                            note 'TEMPLATE 'string))
                      (cdr (assoc "TEMPLATE"
-                                 (manifolding-atlas-note-properties note)))))
+                                 (manifolding-atlas-note-unfoldings note)))))
            (current (if name
                         (my/manifolding-atlas--capture-file-hash name)
                       nil)))
@@ -927,7 +927,7 @@ When REQUIRED is non-nil, the field is mandatory."
              "template-outdated")
             ((null val) "missing-required")
             (t t)))))
-(cl-loop for (template-name . keys) in (my/manifolding-atlas-blueprint--template-props)
+(cl-loop for (template-name . keys) in (my/manifolding-atlas-blueprint--template-unfoldings)
          for schema-name = (intern (concat "template-" template-name))
          do (manifolding-atlas-blueprint-define
              schema-name
@@ -937,7 +937,7 @@ When REQUIRED is non-nil, the field is mandatory."
                             (manifolding-atlas-note-meta-get-list note 'TEMPLATE 'string))
                     (equal ,template-name
                            (cdr (assoc "TEMPLATE"
-                                       (manifolding-atlas-note-properties note))))))
+                                       (manifolding-atlas-note-unfoldings note))))))
              :include 'base
              :fields
              `((:key "TEMPLATE_HASH"
@@ -964,12 +964,12 @@ When REQUIRED is non-nil, the field is mandatory."
     (when (and level (> level 0) pos)
       (goto-char pos)
       (org-back-to-heading t))
-    (dolist (prop '("STATE_WORK" "STATE_GENERAL" "STATE_INTELLIGENCE"
+    (dolist (unfolding '("STATE_WORK" "STATE_GENERAL" "STATE_INTELLIGENCE"
                     "STATE_OPERATIONAL" "STATE_VALIDATION" "STATE_SOURCE"
                     "STATE_DEPENDENCY" "STATE_CHECKLIST" "PRIORITY" "TAG"))
-      (let ((val (org-entry-get nil prop)))
+      (let ((val (org-entry-get nil unfolding)))
         (when (and val (string-match-p "WARNING" val))
-          (org-entry-delete nil prop)
+          (org-entry-delete nil unfolding)
           (setq count (1+ count)))))
     (when (and (org-at-heading-p)
                (equal (org-get-todo-state) "WARNING"))
@@ -978,7 +978,7 @@ When REQUIRED is non-nil, the field is mandatory."
     count))
 
 (defun my/manifolding-atlas-blueprint--migrate-file-warnings (file notes)
-  "Delete WARNING-valued properties for NOTES in FILE; return count."
+  "Delete WARNING-valued unfoldings for NOTES in FILE; return count."
   (let ((count 0))
     (with-current-buffer (find-file-noselect file)
       (dolist (info notes)
@@ -991,17 +991,17 @@ When REQUIRED is non-nil, the field is mandatory."
       (kill-buffer))
     count))
 (defun my/manifolding-atlas-blueprint-migrate-warnings ()
-  "Delete all properties with value \"WARNING\" throughout the vault.
+  "Delete all unfoldings with value \"WARNING\" throughout the vault.
 
 Under the old prompt system, skipping a prompt stored \"WARNING\" as
-the property value to track it in MISSING PROMPTS.  Now schema
+the unfolding value to track it in Broken Blueprints.  Now schema
 validation flags notes that are *missing* the metadata entirely as
 `missing-required` violations, so the sentinel is no longer needed.
 Deleting the WARNING sentinel lets the description-list metadata
 (eg - STATE_WORK :: ACTIVE) become the canonical value."
   (interactive)
   (unless (yes-or-no-p
-           "Delete all \"WARNING\" property values throughout the vault? ")
+           "Delete all \"WARNING\" unfolding values throughout the vault? ")
     (user-error "Aborted"))
   (let ((count 0)
         (files (make-hash-table :test #'equal)))
@@ -1018,7 +1018,7 @@ Deleting the WARNING sentinel lets the description-list metadata
              (+ count (my/manifolding-atlas-blueprint--migrate-file-warnings
                        file notes))))
      files)
-     (message "Migration complete: deleted %d WARNING property values (existing metadata preserved)." count)))
+     (message "Migration complete: deleted %d WARNING unfolding values (existing metadata preserved)." count)))
 (require 'manifolding-atlas nil t)
 (require 'manifolding-atlas-db nil t)
 (require 'manifolding-atlas-blueprint nil t)
@@ -1038,9 +1038,9 @@ Deleting the WARNING sentinel lets the description-list metadata
   '("FILE_NAME" "SUBDIR" "POSITION" "TAG" "THINKING_TYPES"
     "MASTERING" "MIND_MAP" "POS" "ETYMOLOGY" "EXAMPLE" "FREQUENCY"
     "PRONUNCIATION" "REGISTER" "SYNONYMS" "TEMPLATE")
-  "Property keys managed outside schemas; excluded from the audit.")
+  "Unfolding keys managed outside schemas; excluded from the audit.")
 (defun my/manifolding-atlas-reinforce-sweep ()
-  "Run a full-vault schema sweep and rebuild MISSING PROMPTS."
+  "Run a full-vault schema sweep and rebuild Broken Blueprints."
   (interactive)
   ;; Sweeps can fire at arbitrary ambient stack depth (idle inside
   ;; recursive-edits etc). Carry an independent deep budget so ambient
@@ -1080,7 +1080,7 @@ Deleting the WARNING sentinel lets the description-list metadata
 (defun my/manifolding-atlas-reinforce--validate-buffer-note ()
   "Validate the current buffer's note from freshly synced DB data.
 Violations are intentionally silent here — they surface in
-admin/MISSING PROMPTS via the reinforcement sweeps."
+admin/Broken Blueprints via the reinforcement sweeps."
   (setq my/manifolding-atlas-reinforce--guard-timer nil)
   (unless (active-minibuffer-window)
     (when-let ((id (my/manifolding-atlas-links--current-note-id))
@@ -1118,7 +1118,7 @@ the DB and we grade fresh data, not pre-save state."
 
 (add-hook 'org-mode-hook #'my/manifolding-atlas-reinforce--enable-in-vault)
 (defun my/manifolding-atlas-reinforce--schema-field-keys ()
-  "Return all property keys covered by registered schemas."
+  "Return all unfolding keys covered by registered schemas."
   (let ((keys nil))
     (dolist (name (manifolding-atlas-blueprint-list))
       (dolist (field (manifolding-atlas-blueprint-fields
@@ -1136,10 +1136,10 @@ the DB and we grade fresh data, not pre-save state."
                           (format "^%s\\.org$" name))))
              (file (car files))
              (key (condition-case nil
-                      (my/manifolding-atlas-blueprint--extract-prop-key name)
+                      (my/manifolding-atlas-blueprint--extract-unfolding-key name)
                     (error nil))))
         (unless (or (memq name '(position subdir file-name tags todo
-                                        schedule deadline properties))
+                                        schedule deadline unfoldings))
                     (and file (string-match-p "/prompts/" file))
                     (null key)
                     (member key covered))
@@ -1148,7 +1148,7 @@ the DB and we grade fresh data, not pre-save state."
 (defun my/manifolding-atlas-reinforce--audit-templates ()
   "Return issue strings for missing/drifted template schemas."
   (let ((template-issues nil))
-    (dolist (name (mapcar #'car (my/manifolding-atlas-blueprint--template-props)))
+    (dolist (name (mapcar #'car (my/manifolding-atlas-blueprint--template-unfoldings)))
       (let* ((schema-name (intern (concat "template-" name)))
              (schema (manifolding-atlas-blueprint-get schema-name)))
         (if (null schema)
@@ -1157,7 +1157,7 @@ the DB and we grade fresh data, not pre-save state."
                                      (manifolding-atlas-blueprint-fields schema)))
                  (expected (cons "TEMPLATE_HASH"
                                  (cdr (assoc name
-                                             (my/manifolding-atlas-blueprint--template-props))))))
+                                             (my/manifolding-atlas-blueprint--template-unfoldings))))))
             (dolist (want expected)
               (unless (member want field-keys)
                 (push (format "%s: schema missing field %s" name want)
@@ -1170,10 +1170,6 @@ generated schema is missing or drifted. Silent when clean."
                           (my/manifolding-atlas-reinforce--schema-field-keys)))
          (uncovered (my/manifolding-atlas-reinforce--audit-prompts covered))
          (template-issues (my/manifolding-atlas-reinforce--audit-templates)))
-    (when uncovered
-      (lwarn 'manifolding-atlas-reinforce :warning
-             "Prompts without schema coverage: %s"
-             (string-join uncovered ", ")))
     (when template-issues
       (lwarn 'manifolding-atlas-reinforce :warning
              "Template schema issues: %s"

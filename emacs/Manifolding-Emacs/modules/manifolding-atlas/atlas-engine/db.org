@@ -15,20 +15,197 @@
 (defun manifolding-atlas-db (&optional _args)
   "Return DB connection, opening it if needed."
   (require 'emacsql)
-  (require 'emacsql-sqlite)
+  (require 'emacsql-sqlite-builtin)
   (unless (and manifolding-atlas-db--connection
                (ignore-errors (emacsql-live-p manifolding-atlas-db--connection)))
     (setq manifolding-atlas-db--connection
-          (ignore-errors (emacsql-sqlite manifolding-atlas-db-location))))
+          (emacsql-sqlite-builtin manifolding-atlas-db-location)))
+  (when (and manifolding-atlas-db--connection
+             (not (bound-and-true-p my/manifolding-atlas--notes-table-ready)))
+    ;; Guarantee `notes' exists for every caller (find/query/create),
+    ;; not just update-file path. Direct emacsql on connection avoids
+    ;; recursing via ensure-notes-table -> (manifolding-atlas-db).
+    (ignore-errors
+      (emacsql manifolding-atlas-db--connection
+               [:create :table :if :not :exists notes
+                ([(id :text :primary-key :not-null)
+                  (title :text)
+                  (path :text :not-null)
+                  (level :integer)
+                  (pos :integer)
+                  (unfoldings :text)
+                  (tags :text)])]))
+    (setq my/manifolding-atlas--notes-table-ready t))
+  (when (and manifolding-atlas-db--connection
+             (not (bound-and-true-p my/manifolding-atlas--links-table-ready)))
+    (ignore-errors
+      (emacsql manifolding-atlas-db--connection
+               [:create :table :if :not :exists links
+                ([(source :text :not-null)
+                  (dest :text :not-null)]
+                 (:primary-key [source dest]))]))
+    (setq my/manifolding-atlas--links-table-ready t))
+  (when (and manifolding-atlas-db--connection
+             (fboundp 'my/wormhole-links-ensure-table)
+             (not (bound-and-true-p my/manifolding-atlas--wormhole-links-table-ready)))
+    ;; atlas-wormholes.org loads after db.org, so guard with fboundp —
+    ;; symmetric with restoration.org's (when (fboundp ...)) call guard.
+    (ignore-errors (my/wormhole-links-ensure-table))
+    (setq my/manifolding-atlas--wormhole-links-table-ready t))
   manifolding-atlas-db--connection)
+
+;; Missing core shims — extractor/parse-ctx structs, notes table, and workers
+;; These are normally provided by the external `manifolding-atlas' package;
+;; when that package is absent (as in this Termux checkout) we provide
+;; minimal compatible implementations so `notes' actually populates.
+
+(unless (fboundp 'make-manifolding-atlas-parse-ctx)
+  (cl-defstruct (manifolding-atlas-parse-ctx (:constructor make-manifolding-atlas-parse-ctx))
+    path ast file-node heading-nodes hash mtime size))
+
+(unless (fboundp 'make-manifolding-atlas-extractor)
+  (cl-defstruct (manifolding-atlas-extractor (:constructor make-manifolding-atlas-extractor))
+    name version priority extract-fn requires-ast))
+
+(defvar manifolding-atlas-db--extractors nil
+  "List of registered `manifolding-atlas-extractor' structs, sorted by priority.")
+
+(defun manifolding-atlas--register-extractor (extractor)
+  "Register EXTRACTOR and keep `manifolding-atlas-db--extractors' sorted by :priority."
+  (setq manifolding-atlas-db--extractors
+        (sort (cons extractor
+                    (cl-remove (plist-get (list :name (manifolding-atlas-extractor-name extractor)) :name)
+                               manifolding-atlas-db--extractors
+                               :key #'manifolding-atlas-extractor-name :test #'eq))
+              (lambda (a b) (< (or (manifolding-atlas-extractor-priority a) 100)
+                               (or (manifolding-atlas-extractor-priority b) 100)))))
+  ;; de-duplicate by name keep highest priority (last wins, sort stable)
+  (setq manifolding-atlas-db--extractors
+        (cl-remove-duplicates manifolding-atlas-db--extractors :key #'manifolding-atlas-extractor-name :test #'eq :from-end t)))
+
+(defun my/manifolding-atlas--ensure-notes-table ()
+  "Create `notes' table if absent — mirrors `citation.org' pattern."
+  (emacsql (manifolding-atlas-db)
+           [:create :table :if :not :exists notes
+            ([(id :text :primary-key :not-null)
+              (title :text)
+              (path :text :not-null)
+              (level :integer)
+              (pos :integer)
+              (unfoldings :text)
+              (tags :text)])]))
+
+(defun my/manifolding-atlas--row-to-note (row)
+  "Normalize DB ROW (vector or list) to plist note; tolerate nil/malformed `unfoldings'/`tags' via `ignore-errors' + `read'."
+  (if (and (listp row) (plist-get row :id))
+      row
+    (let ((v (if (vectorp row) (append row nil) row)))
+      (list :id (nth 0 v) :title (nth 1 v) :path (nth 2 v)
+            :level (or (nth 3 v) 0) :pos (or (nth 4 v) 1)
+            :unfoldings (ignore-errors (read (nth 5 v))) :tags (ignore-errors (read (nth 6 v)))
+            :aliases nil :primary-title nil :meta nil))))
+
+(defun my/manifolding-atlas--ensure-links-table ()
+  "Create `links' table if absent — queried by guard, may not be created by extractors."
+  (ignore-errors
+    (emacsql (manifolding-atlas-db)
+             [:create :table :if :not :exists links
+              ([(source :text :not-null)
+                (dest :text :not-null)]
+               (:primary-key [source dest]))])))
+
+(with-eval-after-load 'manifolding-atlas
+  (my/manifolding-atlas--ensure-notes-table)
+  (my/manifolding-atlas--ensure-links-table)
+  (add-hook 'manifolding-atlas-db-autosync-mode-hook #'my/manifolding-atlas--ensure-notes-table)
+  (add-hook 'manifolding-atlas-db-autosync-mode-hook #'my/manifolding-atlas--ensure-links-table))
+
+(cl-defun manifolding-atlas-db--update-file (path)
+  "Parse PATH, upsert its `notes' row, and run all registered extractors.
+Returns 1 if a note was indexed, 0 otherwise. Handles deletion when file missing."
+  (my/manifolding-atlas--ensure-notes-table)
+  (if (not (file-exists-p path))
+      (progn
+        (ignore-errors (emacsql (manifolding-atlas-db) [:delete :from notes :where (= path $s1)] path))
+        ;; also purge dependent tables via cascade or explicit
+        (dolist (extractor manifolding-atlas-db--extractors)
+          (ignore-errors (funcall (manifolding-atlas-extractor-extract-fn extractor)
+                                  (make-manifolding-atlas-parse-ctx :path path :ast nil) nil)))
+        0)
+    ;; Build parse-ctx via existing override if available, else minimal
+    (let* ((ctx (if (fboundp 'manifolding-atlas-db--parse-file)
+                    (ignore-errors (manifolding-atlas-db--parse-file path))
+                  (with-temp-buffer
+                    (insert-file-contents path)
+                    (let ((ast (ignore-errors (org-element-parse-buffer))))
+                      (make-manifolding-atlas-parse-ctx :path path :ast ast)))))
+           (ast (and ctx (manifolding-atlas-parse-ctx-ast ctx)))
+            (id (with-temp-buffer
+                  (insert-file-contents path)
+                  (when (re-search-forward "^:ID:[ \t]+\\(.+\\)" nil t)
+                    (string-trim (match-string 1)))))
+           (title (with-temp-buffer
+                    (insert-file-contents path)
+                    (when (re-search-forward "^\\*+[ \t]+\\(.*\\)" nil t)
+                      (string-trim (match-string 1))))))
+      (unless id
+        (ignore-errors (emacsql (manifolding-atlas-db) [:delete :from notes :where (= path $s1)] path))
+        (cl-return-from manifolding-atlas-db--update-file 0))
+      (let ((unfoldings (with-temp-buffer
+                     (insert-file-contents path)
+                     (when (re-search-forward "^:PROPERTIES:" nil t)
+                       (let (alist)
+                         (while (re-search-forward "^:\\([^:]+\\):[ \t]*\\(.*\\)" nil t)
+                           (let ((k (match-string 1)))
+                             (if (string= k "END") (goto-char (point-max))
+                               (push (cons k (match-string 2)) alist))))
+                         (nreverse alist)))))
+            (tags (with-temp-buffer
+                    (insert-file-contents path)
+                    (when (re-search-forward "^\\*+[ \t]+.*:\\([^:\n]+\\):[ \t]*$" nil t)
+                      (split-string (match-string 1) ":" t)))))
+        ;; upsert notes row
+        (ignore-errors (emacsql (manifolding-atlas-db) [:delete :from notes :where (= id $s1)] id))
+        (emacsql (manifolding-atlas-db)
+                 [:insert :into notes :values $v1]
+                 (vector id (or title (file-name-nondirectory path)) path 0 1
+                         (prin1-to-string unfoldings) (prin1-to-string tags)))
+        ;; run extractors
+        (let ((note-data (list :id id :title title :path path)))
+          (dolist (extractor (sort (copy-sequence manifolding-atlas-db--extractors)
+                                   (lambda (a b) (< (or (manifolding-atlas-extractor-priority a) 100)
+                                                    (or (manifolding-atlas-extractor-priority b) 100)))))
+            (let ((fn (manifolding-atlas-extractor-extract-fn extractor)))
+              (when fn
+                (ignore-errors
+                  (let ((result (funcall fn ctx note-data)))
+                    (when result (setq note-data result))))))))
+        (if (car (emacsql (manifolding-atlas-db) [:select * :from notes :where (= id $s1)] id)) 1 0)))))
+
+(defvar manifolding-atlas--autosync-mode nil)
+
+(defun manifolding-atlas--autosync-mode (&optional arg)
+  "Toggle autosync: on save under `manifolding-atlas-db-sync-directories', call `manifolding-atlas-db--update-file'."
+  (setq manifolding-atlas--autosync-mode
+        (if (null arg) (not manifolding-atlas--autosync-mode)
+          (> (prefix-numeric-value arg) 0)))
+  (if manifolding-atlas--autosync-mode
+      (add-hook 'after-save-hook #'manifolding-atlas--autosync-after-save nil t)
+    (remove-hook 'after-save-hook #'manifolding-atlas--autosync-after-save t)))
+
+(defun manifolding-atlas--autosync-after-save ()
+  (when (and buffer-file-name
+             (cl-some (lambda (dir) (string-prefix-p (expand-file-name dir) (expand-file-name buffer-file-name)))
+                      manifolding-atlas-db-sync-directories))
+    (manifolding-atlas-db--update-file buffer-file-name)))
 
 (defun manifolding-atlas-db-query (&optional filter)
   "Query notes, filtered by FILTER if given."
   (let* ((db (ignore-errors (manifolding-atlas-db)))
          (db-result (when db
                       (if filter
-                          (seq-filter filter (ignore-errors (emacsql db [:select * :from notes])))
-                        (ignore-errors (emacsql db [:select * :from notes]))))))
+                          (seq-filter filter (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes])))
+                        (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes]))))))
     (if (and db-result (consp db-result))
         db-result
       ;; Fallback: scan vault directly when DB not available or empty (same fallback as elsewhere tonight)
@@ -55,41 +232,41 @@
                                        raw)))))))
                   (push (list :id id :title (or title (file-name-nondirectory file))
                               :path file :level 0 :pos 1
-                              :tags nil :properties nil :aliases nil :primary-title nil :meta nil)
+                              :tags nil :unfoldings nil :aliases nil :primary-title nil :meta nil)
                         notes))))))
         (if filter
             (seq-filter filter notes)
           notes)))))
 
-(defun manifolding-atlas-db-query-by-property (prop val)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+(defun manifolding-atlas-db-query-by-unfolding (unfolding val)
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (emacsql db [:select * :from notes :where (= properties $s1)] (format "\"%s\":\"%s\"" prop val)))
-      ;; Fallback: scan vault and filter by property (uses same vault-scan as db-query)
+        (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes :where (= unfoldings $s1)] (format "\"%s\":\"%s\"" unfolding val)))
+      ;; Fallback: scan vault and filter by unfolding (uses same vault-scan as db-query)
       (seq-filter (lambda (n)
-                    (let ((props (manifolding-atlas-note-properties n)))
-                      (equal (cdr (assoc (upcase prop) props)) val)))
+                    (let ((unfoldings (manifolding-atlas-note-unfoldings n)))
+                      (equal (cdr (assoc (upcase unfolding) unfoldings)) val)))
                   (ignore-errors (manifolding-atlas-db-query))))))
 
 (defun manifolding-atlas-db-query-by-ids (ids)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if (and db ids)
-        (ignore-errors (emacsql db [:select * :from notes :where (in id $v1)] (vconcat ids)))
+        (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes :where (in id $v1)] (vconcat ids)))
       ;; Fallback: scan vault and filter by ids
       (when ids
         (seq-filter (lambda (n) (member (manifolding-atlas-note-id n) ids))
                     (ignore-errors (manifolding-atlas-db-query)))))))
 
 (defun manifolding-atlas-db-query-by-file-path (path)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (emacsql db [:select * :from notes :where (= path $s1)] path))
+        (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes :where (= path $s1)] path))
       ;; Fallback: scan vault and filter by path
       (seq-filter (lambda (n) (string-equal (manifolding-atlas-note-path n) path))
                   (ignore-errors (manifolding-atlas-db-query))))))
 
 (defun manifolding-atlas-db-query-by-tags-some (tags)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
         (seq-filter (lambda (n) (seq-intersection tags (manifolding-atlas-note-tags n)))
                     (ignore-errors (manifolding-atlas-db-query)))
@@ -98,34 +275,34 @@
                   (ignore-errors (manifolding-atlas-db-query))))))
 
 (defun manifolding-atlas-db-query-by-links-some (links)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (emacsql db [:select * :from links :where (in source $v1)] (vconcat (mapcar #'car links))))
+        (emacsql db [:select * :from links :where (in source $v1)] (vconcat (mapcar #'car links)))
       ;; Fallback: links require DB, vault scan has no link index
       (progn
         (message "manifolding-atlas-db-query-by-links-some: DB unavailable, links not indexed")
         nil))))
 
 (defun manifolding-atlas-db-query-links-to (id)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (emacsql db [:select * :from links :where (= dest $s1)] id))
+        (emacsql db [:select * :from links :where (= dest $s1)] id)
       (progn
         (message "manifolding-atlas-db-query-links-to: DB unavailable")
         nil))))
 
 (defun manifolding-atlas-db-query-links-from (id)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (emacsql db [:select * :from links :where (= source $s1)] id))
+        (emacsql db [:select * :from links :where (= source $s1)] id)
       (progn
         (message "manifolding-atlas-db-query-links-from: DB unavailable")
         nil))))
 
 (defun manifolding-atlas-db-get-by-id (id)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (or (car (ignore-errors (emacsql db [:select * :from notes :where (= id $s1)] id)))
+        (or (car (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes :where (= id $s1)] id)))
             (user-error "manifolding-atlas-db-get-by-id: ID %s not found" id))
       (let ((file (condition-case nil (org-id-find-id-file id) (error nil))))
         (if (and file (file-exists-p file))
@@ -140,21 +317,21 @@
                       :title (or title (file-name-nondirectory file))
                       :path file
                       :level 0 :pos 1
-                      :tags nil :properties nil
+                      :tags nil :unfoldings nil
                       :aliases nil :primary-title nil
                       :meta nil)))
           (user-error "manifolding-atlas-db-get-by-id: ID %s not found" id))))))
 
 (defun manifolding-atlas-db-update-file (path)
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (ignore-errors (manifolding-atlas-db--update-file path))
+        (or (ignore-errors (manifolding-atlas-db--update-file path)) 0)
       1)))
 
 (defun manifolding-atlas-db-count-notes ()
-  (let ((db (ignore-errors (manifolding-atlas-db))))
+  (let ((db (manifolding-atlas-db)))
     (if db
-        (or (caar (ignore-errors (emacsql db [:select (funcall count *) :from notes])))
+        (or (caar (emacsql db [:select (funcall count *) :from notes]))
             (length (ignore-errors (manifolding-atlas-db-query))))
       ;; Fallback: count vault files via same scan as db-query
       (length (ignore-errors (manifolding-atlas-db-query))))))
@@ -170,7 +347,7 @@
          (found (seq-find (lambda (n) (string= (or (manifolding-atlas-note-title n) (plist-get n :title) "") choice)) candidates)))
     (if found
         found
-      (list :id nil :title choice :path nil :properties nil :tags nil))))
+      (list :id nil :title choice :path nil :unfoldings nil :tags nil))))
 
 (cl-defun manifolding-atlas-select (prompt &key require-match filter-fn candidates)
   "Select a note with PROMPT via completing-read.
@@ -217,10 +394,10 @@ passed through to the underlying prompt."
   (or (plist-get note :path)
       (when (and note my--orig-note-path) (ignore-errors (funcall my--orig-note-path note)))))
 
-(defvar my--orig-note-properties (when (fboundp 'manifolding-atlas-note-properties) (symbol-function 'manifolding-atlas-note-properties)))
-(defun manifolding-atlas-note-properties (note)
-  (or (plist-get note :properties)
-      (when (and note my--orig-note-properties) (ignore-errors (funcall my--orig-note-properties note)))))
+(defvar my--orig-note-unfoldings (when (fboundp 'manifolding-atlas-note-unfoldings) (symbol-function 'manifolding-atlas-note-unfoldings)))
+(defun manifolding-atlas-note-unfoldings (note)
+  (or (plist-get note :unfoldings)
+      (when (and note my--orig-note-unfoldings) (ignore-errors (funcall my--orig-note-unfoldings note)))))
 
 (defvar my--orig-note-tags (when (fboundp 'manifolding-atlas-note-tags) (symbol-function 'manifolding-atlas-note-tags)))
 (defun manifolding-atlas-note-tags (note)
@@ -499,18 +676,18 @@ passed through to the underlying prompt."
 #+end_src
 
 #+begin_src emacs-lisp
-(defun manifolding-atlas-db--extract-aliases (properties)
-  "Extract aliases from PROPERTIES alist.
+(defun manifolding-atlas-db--extract-aliases (unfoldings)
+  "Extract aliases from UNFOLDINGS alist.
 
-Looks for property defined by `manifolding-atlas-buffer-alias-property'.
+Looks for unfolding defined by `manifolding-atlas-buffer-alias-unfolding'.
 Handles both quoted aliases (with spaces) and unquoted aliases properly.
 Strips org links and emphasis markers from each alias.
 
-The property name is upcased before lookup because PROPERTIES keys
+The unfolding name is upcased before lookup because UNFOLDINGS keys
 are stored upcased, so a lowercase or mixed-case
-`manifolding-atlas-buffer-alias-property' still matches."
-  (when-let* ((aliases-str (cdr (assoc (upcase manifolding-atlas-buffer-alias-property)
-                                       properties))))
+`manifolding-atlas-buffer-alias-unfolding' still matches."
+  (when-let* ((aliases-str (cdr (assoc (upcase manifolding-atlas-buffer-alias-unfolding)
+                                       unfoldings))))
     (setq aliases-str (string-trim aliases-str))
     (let ((result nil)
           (pos 0))
@@ -532,7 +709,7 @@ are stored upcased, so a lowercase or mixed-case
                               (substring aliases-str (1+ pos) end)))
                             result)
                       (setq pos (1+ end)))
-                  (error "Unmatched quote in %s" manifolding-atlas-buffer-alias-property))))
+                  (error "Unmatched quote in %s" manifolding-atlas-buffer-alias-unfolding))))
              ;; Unquoted alias - find next space or end of string
              (t
               (let ((end (or (string-match " " aliases-str pos)

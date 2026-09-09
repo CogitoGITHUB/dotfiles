@@ -1,0 +1,13 @@
+#+title:      Decisions Prompt
+#+priority:   29
+
+* DECISIONS
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Decisions
+:END:
+** WARNING
+** RECORDED
+** RETAINED
+** OVERTURNED

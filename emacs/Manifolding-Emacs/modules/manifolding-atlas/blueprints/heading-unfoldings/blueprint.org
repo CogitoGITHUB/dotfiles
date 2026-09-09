@@ -1,0 +1,14 @@
+#+title:      Blueprint Prompt
+#+priority:   22
+
+* BLUEPRINT
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: inline
+:LABEL: Blueprint
+:END:
+** WARNING
+** DRAFT
+** STABLE
+** CHANGED
+** SUPERSEDED

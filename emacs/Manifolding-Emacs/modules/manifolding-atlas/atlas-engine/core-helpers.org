@@ -70,7 +70,7 @@ Finds the property drawer of the heading at point without org's own strict parsi
           (progn
             (goto-char (car r))
             (when (re-search-forward
-                   "^#\\+transclude: \\[\\[id:\\([^]]+\\)\\]\\[\\([^]]*\\)\\]\\]"
+                   "^#\\+wormhole: \\[\\[id:\\([^]]+\\)\\]\\[\\([^]]*\\)\\]\\]"
                    (cdr r) t)
               (let ((label (match-string-no-properties 2)))
                 (when (string-equal key (my/manifolding-atlas--key-from-label label))
@@ -119,11 +119,11 @@ Finds the property drawer of the heading at point without org's own strict parsi
 
 ** Key conversions
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas--property-key-from-type (property-type)
+(defun my/manifolding-atlas--unfolding-key-from-type (unfolding-type)
   (upcase (string-replace "-" "_"
-                          (if (symbolp property-type)
-                              (symbol-name property-type)
-                            property-type))))
+                          (if (symbolp unfolding-type)
+                              (symbol-name unfolding-type)
+                            unfolding-type))))
 
 (defun my/manifolding-atlas--key-from-label (label)
   (when (string-match "^\\([A-Z][A-Z ]*\\): " label)
@@ -136,26 +136,26 @@ Finds the property drawer of the heading at point without org's own strict parsi
 
 ** org-entry fallbacks
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas--org-entry-get-fallback (orig-fn pom property &optional inherit literal-nil)
-  (or (funcall orig-fn pom property inherit literal-nil)
-      (when (and property
+(defun my/manifolding-atlas--org-entry-get-fallback (orig-fn pom unfolding &optional inherit literal-nil)
+  (or (funcall orig-fn pom unfolding inherit literal-nil)
+      (when (and unfolding
                  (or (null pom)
                      (and (integerp pom)
                           (<= (point-min) pom) (<= pom (point-max)))))
         (save-excursion
           (when (integerp pom) (goto-char pom))
           (my/manifolding-atlas--drawer-get
-           (if (symbolp property) (symbol-name property) property))))))
+           (if (symbolp unfolding) (symbol-name unfolding) unfolding))))))
 
-(defun my/manifolding-atlas--org-entry-put-fallback (orig-fn pom property value)
+(defun my/manifolding-atlas--org-entry-put-fallback (orig-fn pom unfolding value)
   (if (or (null pom)
           (and (integerp pom)
                (<= (point-min) pom) (<= pom (point-max))))
       (when (my/manifolding-atlas--drawer-region)
         (my/manifolding-atlas--drawer-put
-         (if (symbolp property) (symbol-name property) property)
+         (if (symbolp unfolding) (symbol-name unfolding) unfolding)
          value))
-    (funcall orig-fn pom property value)))
+    (funcall orig-fn pom unfolding value)))
 
 (advice-add 'org-entry-get :around #'my/manifolding-atlas--org-entry-get-fallback)
 (advice-add 'org-entry-put :around #'my/manifolding-atlas--org-entry-put-fallback)

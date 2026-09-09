@@ -1,0 +1,29 @@
+#+title:      Routines Temporal Prompt
+#+priority:   5
+
+* ROUTINE_TEMPORAL
+:PROPERTIES:
+:CONTEXTS: routine
+:KIND: inline
+:LABEL: Routines: Temporal
+:END:
+** HOUR
+** DAY-PART
+** DAY
+** DAILY
+** NIGHTLY
+** WEEKLY
+** MONTHLY
+** QUARTERLY
+** SEASONAL
+** YEARLY
+** WAKE
+** MORNING
+** MIDDAY
+** AFTERNOON
+** EVENING
+** NIGHT
+** SPRING
+** SUMMER
+** AUTUMN
+** WINTER

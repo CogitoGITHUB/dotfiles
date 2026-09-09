@@ -1,0 +1,14 @@
+#+title:      State Checklist Prompt
+#+priority:   5
+
+* STATE_CHECKLIST
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: unfolding
+:UNFOLDING: state-checklist
+:LABEL: State: Checklist
+:END:
+** WARNING
+** CHECKLIST
+** REVIEWING
+** MASTERED
