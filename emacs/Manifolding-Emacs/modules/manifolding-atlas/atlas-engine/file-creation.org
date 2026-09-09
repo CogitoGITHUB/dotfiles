@@ -23,6 +23,259 @@ Why: Implementation of ~my/manifolding-atlas-templates-dir~.
   (my/manifolding-atlas-templates-dir))
 #+end_src
 
+*** Drawer Key Order
+Display order for drawer entries. Unlisted keys keep file order after
+these. The order file below wins over the default whenever present;
+edit its level-2 headings directly — save + reload applies.
+#+begin_src emacs-lisp
+(defcustom my/manifolding-atlas-drawer-key-order '("TODO_STATE" "ID")
+  "Drawer keys in display order. Unlisted keys keep file order after these."
+  :type '(repeat string)
+  :group 'manifolding-atlas)
+
+(defun my/manifolding-atlas-drawer-order-file ()
+  "Return the drawer-order blueprint file."
+  (expand-file-name "Manifolding-Emacs/modules/manifolding-atlas/blueprints/blueprint-reinforcements/drawer-order.org"
+                    user-emacs-directory))
+
+(defun my/manifolding-atlas-drawer-order-from-file (&optional file)
+  "Read drawer key order from FILE (default the order file).
+Returns level-2 heading titles top-down, duplicates removed.
+Returns nil when unreadable or empty."
+  (let ((f (or file (my/manifolding-atlas-drawer-order-file))))
+    (when (file-exists-p f)
+      (with-temp-buffer
+        (insert-file-contents f)
+        (let (keys)
+          (goto-char (point-min))
+          (while (re-search-forward "^\\*\\*+ [. ]*\\(.*?\\)[ \t]*$" nil t)
+            (let ((k (string-trim (match-string 1))))
+              (unless (string-empty-p k)
+                (push k keys))))
+          (cl-delete-duplicates (nreverse keys) :test #'string=))))))
+
+(let ((order (my/manifolding-atlas-drawer-order-from-file)))
+  (when order
+    (setq my/manifolding-atlas-drawer-key-order (copy-sequence order))))
+#+end_src
+
+* Atlas Config Menu
+Drawer-key order lives in a blueprint file you edit directly;
+blueprint files are managed by plain commands. No transient menu.
+
+** Drawer order file
+`drawer-order.org` holds one level-2 heading per key, top to bottom.
+Move the headings, save, and the vault follows the new order.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-open-drawer-order ()
+  "Open the drawer-order file for editing; saving applies + sweeps."
+  (interactive)
+  (let ((f (my/manifolding-atlas-drawer-order-file)))
+    (find-file-other-window f)
+    (widen)
+    (goto-char (point-min))
+    (when (re-search-forward "^\\*\\*+ " nil t)
+      (beginning-of-line))
+    (my/manifolding-atlas--install-drawer-order-save-hook)
+    (message "Reorder the ** headings, save to apply to the whole vault.")))
+
+(defun my/manifolding-atlas--apply-drawer-order-file ()
+  "Apply the order file: set var + sweep vault. Loud when empty."
+  (let ((order (my/manifolding-atlas-drawer-order-from-file)))
+    (unless order
+      (user-error "Drawer order file has no keys — check %s"
+                  (my/manifolding-atlas-drawer-order-file)))
+    (setq my/manifolding-atlas-drawer-key-order (copy-sequence order))
+    (my/manifolding-atlas--sweep-drawer-order order)))
+
+(defun my/manifolding-atlas--drawer-order-after-save ()
+  "After saving the order file: apply + sweep."
+  (when (and buffer-file-name
+             (string= (expand-file-name buffer-file-name)
+                      (expand-file-name
+                       (my/manifolding-atlas-drawer-order-file))))
+    (my/manifolding-atlas--apply-drawer-order-file)))
+
+(defun my/manifolding-atlas--install-drawer-order-save-hook ()
+  "Install buffer-local save hook for the order file."
+  (add-hook 'after-save-hook
+            #'my/manifolding-atlas--drawer-order-after-save nil t))
+(add-hook 'find-file-hook
+          (lambda ()
+            (when (and buffer-file-name
+                       (string= (expand-file-name buffer-file-name)
+                                (expand-file-name
+                                 (my/manifolding-atlas-drawer-order-file))))
+              (my/manifolding-atlas--install-drawer-order-save-hook))))
+#+end_src
+
+** Vault sweep
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas--sweep-drawer-order (&optional order)
+  "Arrange drawers in all vault note files per ORDER (default saved).
+Skips .git and non-note files. Files already ordered are not saved.
+Returns count of files changed; saves trigger auto-commit."
+  (let* ((root (my/manifolding-atlas-root-dir))
+         (gitdir (expand-file-name ".git" root))
+         (order (or order my/manifolding-atlas-drawer-key-order))
+         (files (append (directory-files-recursively root "\\.org\\'")
+                        (directory-files-recursively root "[^./]+\\'")))
+         (n 0))
+    (dolist (f files)
+      (unless (file-in-directory-p f gitdir)
+        (when (my/manifolding-atlas--arrange-drawer-per-order f order)
+          (setq n (1+ n)))))
+    (message "Drawer order: %d file(s) updated." n)
+    n))
+#+end_src
+
+** Blueprint file management
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-blueprints-dir ()
+  "Return the blueprints directory."
+  (expand-file-name "Manifolding-Emacs/modules/manifolding-atlas/blueprints/"
+                    user-emacs-directory))
+
+(defun my/manifolding-atlas-blueprint-dirs ()
+  "Candidate subdirectories for new prompt blueprints, relative."
+  (let ((base (my/manifolding-atlas-blueprints-dir)))
+    (mapcar (lambda (d) (file-relative-name d base))
+            (seq-remove
+             (lambda (d)
+               (let ((rel (file-relative-name d base)))
+                 (or (string-prefix-p "blueprint-reinforcements" rel)
+                     (string-prefix-p "heading-unfoldings/body-unfoldings" rel))))
+             (seq-filter #'file-directory-p
+                         (directory-files-recursively base "" t))))))
+
+(defun my/manifolding-atlas-blueprint-files ()
+  "All blueprint .org files, absolute."
+  (directory-files-recursively
+   (my/manifolding-atlas-blueprints-dir) "\\.org\\'"))
+
+(defvar my/manifolding-atlas--pending-blueprint-register nil
+  "Blueprint path to register when the current capture finalizes.")
+
+(defun my/manifolding-atlas-blueprint-add (title subdir)
+  "Create a new prompt blueprint for TITLE in SUBDIR via capture.
+Derives KEY (upper, underscores), errors loudly on empty KEY or
+existing file. Registers the prompt when the capture finalizes."
+  (interactive
+   (list (read-string "Blueprint title: ")
+         (completing-read "Subdirectory: "
+                          (my/manifolding-atlas-blueprint-dirs)
+                          nil t nil nil "heading-unfoldings/")))
+  (let* ((key (replace-regexp-in-string
+               "_+$" ""
+               (replace-regexp-in-string "[^A-Z0-9]+" "_" (upcase title)))))
+    (when (string-empty-p key)
+      (user-error "Title yields empty KEY — use letters/digits"))
+    (let* ((dir (expand-file-name subdir (my/manifolding-atlas-blueprints-dir)))
+           (path (expand-file-name (concat (downcase key) ".org") dir)))
+      (when (file-exists-p path)
+        (user-error "Blueprint exists: %s" path))
+      (make-directory dir t)
+      (let ((id (org-id-new))
+            (org-capture-templates
+             `(("b" "Blueprint prompt" plain (file ,path)
+                ,(format "* %s\n:PROPERTIES:\n:ID: %s\n:CONTEXTS: file heading\n:KIND: unfolding\n:LABEL: %s\n:END:\n** First option\n%%?"
+                         key id title)
+                :unnarrowed t :empty-lines 1 :kill-buffer t)))
+            (org-capture-use-indirect-buffer nil)
+            (org-capture-window-setup 'other-window))
+        (setq my/manifolding-atlas--pending-blueprint-register path)
+        (org-capture nil "b")))))
+
+(defun my/manifolding-atlas--register-pending-blueprint ()
+  "Register the pending new blueprint file, if it was saved."
+  (when-let ((p my/manifolding-atlas--pending-blueprint-register))
+    (setq my/manifolding-atlas--pending-blueprint-register nil)
+    (when (file-exists-p p)
+      (my/manifolding-atlas-org-prompt--register-file p nil)
+      (message "Blueprint registered: %s" (file-name-nondirectory p)))))
+
+(add-hook 'org-capture-after-finalize-hook
+          #'my/manifolding-atlas--register-pending-blueprint)
+
+(defun my/manifolding-atlas-blueprint-edit (file)
+  "Open blueprint FILE for free editing."
+  (interactive
+   (list (completing-read "Edit blueprint: "
+                          (my/manifolding-atlas-blueprint-files) nil t)))
+  (find-file file))
+
+(defun my/manifolding-atlas-blueprint--key-references (key file)
+  "Return report lines for references to blueprint KEY (defined in FILE)."
+  (let* ((key-sym (intern (downcase key)))
+         (report nil))
+    (when (gethash key-sym my/manifolding-atlas-org-prompt--specs)
+      (push (format "registered prompt: %s" key-sym) report))
+    (when (member key-sym (mapcar (lambda (e) (plist-get e :name))
+                                  my/manifolding-atlas-prompt-registry))
+      (push "prompt-registry entry" report))
+    (let ((found (if (executable-find "rg")
+                     (ignore-errors
+                       (split-string
+                        (shell-command-to-string
+                         (format "rg -l --glob '*.org' -F %s %s 2>/dev/null"
+                                 (shell-quote-argument key)
+                                 (shell-quote-argument
+                                  (expand-file-name "Manifolding-Emacs/modules/"
+                                                    user-emacs-directory))))
+                        "\n" t))
+                   nil)))
+      (dolist (f (seq-remove (lambda (p) (string= (expand-file-name p) (expand-file-name file)))
+                             (or found nil)))
+        (push (format "code ref: %s" (file-relative-name f user-emacs-directory)) report)))
+    (let ((famdir (expand-file-name (concat "admin/unfoldings/" (downcase key) "/")
+                                    (my/manifolding-atlas-root-dir))))
+      (when (file-directory-p famdir)
+        (push (format "vault data: %s (%d notes)"
+                      famdir (length (directory-files famdir nil "^[^.]")))
+              report)))
+    (nreverse report)))
+
+(defun my/manifolding-atlas-blueprint-remove (file)
+  "Delete blueprint FILE after a reference check + single confirm.
+Also deletes orphaned vault data dir on the same confirm."
+  (interactive
+   (list (completing-read "Remove blueprint: "
+                          (my/manifolding-atlas-blueprint-files) nil t)))
+  (let* ((key (with-temp-buffer
+                (insert-file-contents file)
+                (goto-char (point-min))
+                (if (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
+                    (match-string 1)
+                  (user-error "No KEY heading in %s" file))))
+         (key-sym (intern (downcase key)))
+         (report (my/manifolding-atlas-blueprint--key-references key file))
+         (famdir (expand-file-name (concat "admin/unfoldings/" (downcase key) "/")
+                                   (my/manifolding-atlas-root-dir)))
+         (famcount (if (file-directory-p famdir)
+                       (length (directory-files famdir nil "^[^.]"))
+                     0)))
+    (when (y-or-n-p
+           (format "Delete %s?%s%s "
+                   (file-name-nondirectory file)
+                   (if report (format "\nRefs:\n- %s" (string-join report "\n- ")) "")
+                   (if (> famcount 0)
+                       (format "\nPlus %d vault note(s) in %s" famcount famdir)
+                     "")))
+      (when (and (> famcount 0) (file-directory-p famdir))
+        (delete-directory famdir t))
+      (delete-file file)
+      (remhash key-sym my/manifolding-atlas-org-prompt--specs)
+      (setq my/manifolding-atlas-prompt-registry
+            (cl-remove-if (lambda (e) (eq (plist-get e :name) key-sym))
+                          my/manifolding-atlas-prompt-registry))
+      (when (boundp 'my/manifolding-atlas-org-prompt--declarative)
+        (remhash key-sym my/manifolding-atlas-org-prompt--declarative))
+      (let ((alias (intern (concat "my/manifolding-atlas-prompt-"
+                                   (symbol-name key-sym)))))
+        (when (fboundp alias) (fmakunbound alias)))
+      (message "Blueprint removed: %s" (file-name-nondirectory file)))))
+#+end_src
+
 *** Template Infrastructure (doct, yasnippet)
 Moved verbatim from blueprints/templates/templates.org so the
 templates directory is wired by the same file that defines its path.
@@ -1084,19 +1337,23 @@ UNFOLDINGS (alist)."
 
 #+end_src
 
-** my/manifolding-atlas--all-warning-defaults
-Why: Implementation of ~my/manifolding-atlas--all-warning-defaults~.
+ ** my/manifolding-atlas--first-option-defaults
+Why: Implementation of ~my/manifolding-atlas--first-option-defaults~.
 
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas--all-warning-defaults (context)
-  "Return a :unfoldings alist WARNING-defaulting every registered
-prompt whose :contexts include CONTEXT (a symbol like 'file).
-Reuses the existing per-kind fragment logic so each unfolding is
-built the same way the normal picker would build it -- just with
-WARNING as the value instead of an interactive answer."
+(defun my/manifolding-atlas--first-option-defaults (context)
+  "Return a :unfoldings alist defaulting every registered prompt
+whose :contexts include CONTEXT (a symbol like 'file) to its first
+option. Reuses the existing per-kind fragment logic so each unfolding
+is built the same way the normal picker would build it -- just with
+the first option as the value instead of an interactive answer.
+Signals loudly when a spec has no options."
   (when (zerop (hash-table-count my/manifolding-atlas-org-prompt--specs))
     (my/manifolding-atlas-org-prompt--register-all))
-  (let ((acc (list (cons "TODO_STATE" "WARNING"))))
+  (let* ((todo-spec (gethash 'todo my/manifolding-atlas-org-prompt--specs))
+         (acc (list (cons "TODO_STATE"
+                          (my/manifolding-atlas-org-prompt--first-option
+                           todo-spec)))))
     (dolist (entry my/manifolding-atlas-prompt-registry)
       (let ((key-sym (plist-get entry :name))
             (contexts (plist-get entry :contexts)))
@@ -1105,10 +1362,12 @@ WARNING as the value instead of an interactive answer."
             (when (and spec (not (eq (plist-get spec :kind) 'todo)))
               (let* ((key (plist-get spec :key))
                      (kind (plist-get spec :kind))
-                     (plist (plist-get spec :plist)))
+                     (plist (plist-get spec :plist))
+                     (default (my/manifolding-atlas-org-prompt--default-for-spec
+                               spec)))
                 (condition-case nil
                     (let ((frag (my/manifolding-atlas-org-prompt--fragment
-                                 key kind plist "WARNING")))
+                                 key kind plist default)))
                       (when frag
                         (setq acc (append acc (plist-get frag :unfoldings)))))
                   (error nil))))))))
@@ -1155,39 +1414,108 @@ argument of `manifolding-atlas-insert' CREATE-FN and is currently unused.
 This is the default value of `manifolding-atlas-find-default-create-fn'."
   (let* ((fname (my/manifolding-atlas-prompt-file-name title nil))
          (subdir (my/manifolding-atlas-prompt-subdir))
-         (default-unfoldings (my/manifolding-atlas--all-warning-defaults 'file))
+         (default-unfoldings (my/manifolding-atlas--first-option-defaults 'file))
          (note (manifolding-atlas-create title (concat subdir fname)
                            :unfoldings default-unfoldings))
          (file-path (manifolding-atlas-note-path note)))
-    ;; 3. org-capture opens THE CAPTURE BUFFER — visible, title + WARNING already in it
-    ;; Arm the re-open offer for when this capture finalizes (C-c C-c).
-    (setq my/manifolding-atlas--pending-open-after-capture file-path)
-    (let ((org-capture-templates
-           `(("n" "New Note" plain (file ,file-path) "" :unnarrowed t :empty-lines 1 :kill-buffer t))))
-      (org-capture nil "n")
-      (delete-other-windows)
-      (my/manifolding-atlas-org-prompt--write-at-heading
-       (point-min) 0 nil '("WARNING") "WARNING" nil)
+     ;; 3. org-capture opens THE CAPTURE BUFFER — visible, title already in it.
+     ;; Stamp the heading keyword from the same TODO default that went
+     ;; into the drawer, so heading and option stay synchronized.
+     ;; Arm the re-open offer for when this capture finalizes (C-c C-c).
+     (setq my/manifolding-atlas--pending-open-after-capture file-path)
+     (let ((org-capture-templates
+            `(("n" "New Note" plain (file ,file-path) "" :unnarrowed t :empty-lines 1 :kill-buffer t))))
+       (org-capture nil "n")
+       (delete-other-windows)
+       (my/manifolding-atlas-org-prompt--write-at-heading
+        (point-min) 0 nil '("WARNING")
+        (cdr (assoc "TODO_STATE" default-unfoldings)) nil)
       (let* ((capture-buf (current-buffer))
              (preview-start (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
              (preview-end (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
               (template (my/manifolding-atlas-prompt-template--choose-with-realtime-capture-preview capture-buf preview-start preview-end)))
         ))
     note))
+#+end_src
 
 ** Re-open offer after new-note capture
-After C-c C-c finalizes a new note ("n" template), offer to visit the
-file so it doesn't have to be searched for: RET opens it, SPC skips.
-One-shot per creation; aborted captures clear the pending path.
+After C-c C-c finalizes a new note ("n" template), arrange its drawer
+per `my/manifolding-atlas-drawer-key-order' so the state reads directly,
+then offer to visit the file so it doesn't have to be searched for:
+RET opens it, SPC skips. One-shot per creation; aborted captures clear
+the pending path.
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas--pending-open-after-capture nil
   "File to offer opening after the next atlas capture finalizes.")
+
+(defun my/manifolding-atlas--arrange-drawer-per-order (file &optional order)
+  "Arrange the first level-1 drawer in FILE per ORDER list.
+Configured keys come first (in list order); everything else keeps
+file order. No-op (no save) when already ordered, missing keys are
+skipped, files without drawers untouched. Saves when changed.
+Returns t when changed. ORDER defaults to
+`my/manifolding-atlas-drawer-key-order'."
+  (setq order (or order my/manifolding-atlas-drawer-key-order))
+  (when (and file (file-exists-p file))
+    (with-current-buffer (find-file-noselect file)
+      (save-restriction
+        (widen)
+        (save-excursion
+          (goto-char (point-min))
+          (when (re-search-forward "^\\* " nil t)
+            (org-back-to-heading t)
+            (let ((sub-end (save-excursion
+                             (org-end-of-subtree t t)
+                             (point))))
+              (when (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$"
+                                       sub-end t)
+                (forward-line 1)
+                (let ((props-beg (point))
+                      (drawer-end
+                       (save-excursion
+                         (when (re-search-forward "^[ \t]*:END:[ \t]*$"
+                                                  sub-end t)
+                           (line-beginning-position)))))
+                  (when drawer-end
+                    (goto-char props-beg)
+                    (let (entries)
+                      (while (re-search-forward
+                              "^[ \t]*:\\([^ :\n]+\\):[ \t]*.*$"
+                              drawer-end t)
+                        (push (cons (match-string 1)
+                                    (buffer-substring-no-properties
+                                     (line-beginning-position)
+                                     (min (1+ (line-end-position))
+                                          (point-max))))
+                              entries))
+                      (setq entries (nreverse entries))
+                      (let ((ordered
+                             (append
+                              (mapcan
+                               (lambda (k)
+                                 (seq-filter
+                                  (lambda (e) (string= (car e) k))
+                                   entries))
+                                order)
+                               (seq-remove
+                                (lambda (e)
+                                  (member (car e)
+                                          order))
+                                entries))))
+                        (unless (equal ordered entries)
+                          (delete-region props-beg drawer-end)
+                          (goto-char props-beg)
+                          (dolist (e ordered)
+                            (insert (cdr e)))
+                          (save-buffer)
+                          t))))))))))))))
 
 (defun my/manifolding-atlas--maybe-open-after-capture ()
   "Offer to visit the pending new-note file after capture finalize.
 RET opens it, SPC (or any other key) skips. Clears the pending path first."
   (when-let ((f my/manifolding-atlas--pending-open-after-capture))
     (setq my/manifolding-atlas--pending-open-after-capture nil)
+    (my/manifolding-atlas--arrange-drawer-per-order f)
     (when (file-exists-p f)
       (let ((k (read-key (format "Open %s?  RET open · SPC skip  " (file-name-nondirectory f)))))
         (when (eq k 13)
@@ -1195,10 +1523,11 @@ RET opens it, SPC (or any other key) skips. Clears the pending path first."
 
 (add-hook 'org-capture-after-finalize-hook #'my/manifolding-atlas--maybe-open-after-capture)
 
-;; Aborted captures never finalize — clear a stale pending path.
+;; Aborted captures never finalize — clear stale pending paths.
 (advice-add 'org-capture-kill :before
             (lambda (&rest _)
-              (setq my/manifolding-atlas--pending-open-after-capture nil)))
+              (setq my/manifolding-atlas--pending-open-after-capture nil)
+              (setq my/manifolding-atlas--pending-blueprint-register nil)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2584,8 +2913,8 @@ contain src blocks are treated as legacy elisp prompts and skipped.
 Optional drawer metadata under the level-1 heading:
 :CONTEXTS: file heading task …   (default: file heading)
 :REQUIRED: t                     (feeds base-schema tracking)
-:KIND: inline|live|todo|multi|tags|template   (default unfolding)
-:UNFOLDING:     <family>              (for KIND live — unfolding-note linking family)
+:KIND: unfolding|inline|todo|multi|tags|tagopt|template|free|scoped|mastering|mindmap   (default unfolding)
+:UNFOLDING:     <family>              (for note-linking kinds — scoped-note family override)
 :LABEL:    <display label>       (default: the KEY)
 :TASK-DEFAULT: <value>           (extra task-context registration default)
 
@@ -3577,7 +3906,7 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--session-skip~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--session-skip (req prev-applied)
-  "Settle REQ's answer to PREV-APPLIED (or WARNING) and advance.
+  "Settle REQ's answer to PREV-APPLIED (or the first option) and advance.
 Must run while the picker buffer is still current."
   (if prev-applied
       (progn
@@ -3587,7 +3916,9 @@ Must run while the picker buffer is still current."
         (my/manifolding-atlas-org-prompt--session-next))
     (let ((my/manifolding-atlas--quiet t))
       (my/manifolding-atlas-org-prompt--session-apply
-       (or (plist-get req :default) "WARNING")))
+       (or (plist-get req :default)
+           (my/manifolding-atlas-org-prompt--default-for-spec
+            (plist-get req :spec)))))
     (my/manifolding-atlas-org-prompt--buffer-finish)
     (my/manifolding-atlas-org-prompt--session-next)))
 #+end_src
@@ -3899,33 +4230,6 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--session-finish~.
      (when finalize (funcall finalize))))
 
 #+end_src
-** WARNING self-heal
-** my/manifolding-atlas-org-prompt--ensure-warning-option
-Why: Implementation of ~my/manifolding-atlas-org-prompt--ensure-warning-option~.
-
-#+begin_src emacs-lisp
-(defun my/manifolding-atlas-org-prompt--ensure-warning-option ()
-  "Ensure a first `** WARNING' option exists under the prompt key.
-Inserts it right after the level-1 key heading (past its unfolding
-drawer) when missing, leaving point on that heading.  The buffer is
-persisted by `my/manifolding-atlas-org-prompt--buffer-finish', so each
-prompt file self-heals permanently on first visit."
-  (goto-char (point-min))
-  (if (re-search-forward "^\\*\\*+ WARNING[ \t]*$" nil t)
-      (beginning-of-line)
-    (goto-char (point-min))
-    (when (re-search-forward "^\\* \\([^ \t\n][^\n]*\\)[ \t]*$" nil t)
-      (beginning-of-line)
-      (forward-line 1)
-      (when (looking-at "^[ \t]*:PROPERTIES:[ \t]*$")
-        (while (and (not (eobp))
-                    (not (looking-at "^[ \t]*:END:[ \t]*$")))
-          (forward-line 1))
-        (forward-line 1))
-      (insert "** WARNING\n")
-      (forward-line -1))))
-
-#+end_src
 *** Shared display helper
 ** my/manifolding-atlas--display-buffer-responsive
 Why: Implementation of ~my/manifolding-atlas--display-buffer-responsive~.
@@ -3973,23 +4277,59 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--picker-buffer~.
 ** Default/WARNING jump
 Opening a picker lands point on the request's default option when it
 has one, otherwise on the self-healed WARNING sentinel.
+** First-option default
+The default is whatever first ** heading the blueprint file lists —
+reorder the file and the system follows, no code edits.
+** my/manifolding-atlas-org-prompt--first-option
+Why: Implementation of ~my/manifolding-atlas-org-prompt--first-option~.
+
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-org-prompt--first-option (spec)
+  "Return SPEC's first option — the default.
+Signals loudly when SPEC has no options instead of inventing one."
+  (let ((opts (plist-get spec :options)))
+    (unless (and (listp opts) (car opts)
+                 (stringp (car opts))
+                 (not (string-empty-p (car opts))))
+      (error "No options found for %s — check its blueprint file"
+             (or (plist-get spec :key) spec)))
+    (car opts)))
+#+end_src
+** my/manifolding-atlas-org-prompt--default-for-spec
+Why: Implementation of ~my/manifolding-atlas-org-prompt--default-for-spec~.
+
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-org-prompt--default-for-spec (spec)
+  "Default value for SPEC: first option, TODO when option-less.
+Specs with options default to their first one; specs whose values
+never come from blueprint options fall back to TODO, the universal
+fresh-marker — one search finds everything unset."
+  (let ((opts (plist-get spec :options)))
+    (if (and (listp opts) (car opts)
+             (stringp (car opts))
+             (not (string-empty-p (car opts))))
+        (car opts)
+      "TODO")))
+#+end_src
 ** my/manifolding-atlas-org-prompt--jump-default
 Why: Implementation of ~my/manifolding-atlas-org-prompt--jump-default~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--jump-default (default)
-  "Land point on DEFAULT's option heading, else on WARNING."
+  "Land point on DEFAULT's option heading, else on the first option.
+Signals loudly when the picker has no options at all."
   (goto-char (point-min))
   (if (and default (not (string-empty-p default)))
       (when (re-search-forward
-             (format "^\\*\\*+ %s[ \t]*$" (regexp-quote default))
-             nil t)
+              (format "^\\*\\*+ %s[ \t]*$" (regexp-quote default))
+              nil t)
         (beginning-of-line))
-    (when (re-search-forward "^\\*\\*+ WARNING[ \t]*$" nil t)
-      (beginning-of-line))))
+    (unless (re-search-forward "^\\*\\*+ \\(.*?\\)[ \t]*$" nil t)
+      (error "No options found in picker — check the blueprint file"))
+    (beginning-of-line)))
 #+end_src
 ** Session open
-Arms the picker: atlas-pick state on, point at WARNING/default,
+Arms the picker: atlas-pick state on, point at default/first option,
 highlight applied.
 
 *** Buffer arming
@@ -4006,7 +4346,6 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--session-arm~.
       (org-tree-slide-mode -1))
     (widen)
     (outline-show-all)
-    (my/manifolding-atlas-org-prompt--ensure-warning-option)
     (my/manifolding-atlas-org-prompt--jump-default
      (plist-get req :default))
     (setq my/manifolding-atlas-org-prompt--buffer-result nil)
@@ -4068,8 +4407,9 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--session-value~.
        (mapcar #'my/manifolding-atlas-org-prompt--normalize-choice
                (reverse my/manifolding-atlas-org-prompt--buffer-marks))
        " "))
-     ((null title)
-       (or default "WARNING"))
+      ((null title)
+        (or default
+            (my/manifolding-atlas-org-prompt--default-for-spec spec)))
       (t title))))
 #+end_src
 ** Apply to note
@@ -4166,7 +4506,8 @@ cleared, TODO keywords are removed from the heading."
       (let ((my/manifolding-atlas--quiet t))
         (cond
          ((eq kind 'todo)
-          (my/manifolding-atlas-org-prompt--apply-to-note note nil nil 'none))
+           (my/manifolding-atlas-org-prompt--apply-to-note
+            note '(("TODO_STATE" . "WARNING")) nil 'none))
          ((memq kind '(tags tagopt))
           (my/manifolding-atlas-org-prompt--apply-to-note note nil nil nil))
           (t
@@ -4477,9 +4818,52 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment-todo~.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--fragment-todo (val)
   `(:todo ,val
+    :unfoldings (("TODO_STATE" . ,val))
     :post-apply (,(apply-partially
                    #'my/manifolding-atlas--post-sync "TODO" val))))
+#+end_src
 
+** Heading-to-drawer TODO mirror
+The prompt→heading direction lands via `:todo'; this closes the loop
+the other way: cycling the heading keyword (with `t' etc.) mirrors
+into the TODO_STATE drawer entry on any :ID: heading in the vault.
+Clearing the keyword resets TODO_STATE to WARNING (the creation
+default).  Drawer-only by design — it never creates unfolding-notes;
+loop-safe by construction (drawer writes fire no todo hooks) with a
+dynamic guard for paranoia.
+** my/manifolding-atlas--mirror-heading-todo-to-drawer
+Why: Implementation of ~my/manifolding-atlas--mirror-heading-todo-to-drawer~.
+
+#+begin_src emacs-lisp
+(defvar my/manifolding-atlas--todo-syncing nil
+  "Non-nil while TODO sync writes, to prevent reentrant mirroring.")
+
+(defun my/manifolding-atlas--mirror-heading-todo-to-drawer ()
+  "Mirror current heading keyword to TODO_STATE drawer on Atlas :ID: headings.
+Clearing the keyword resets to the first TODO option."
+  (when (and (not my/manifolding-atlas--todo-syncing)
+             (org-at-heading-p)
+             (org-entry-get nil "ID"))
+    (let ((my/manifolding-atlas--todo-syncing t))
+      (org-entry-put nil "TODO_STATE"
+                     (or (org-get-todo-state)
+                         (my/manifolding-atlas-org-prompt--first-option
+                          (gethash 'todo
+                                   my/manifolding-atlas-org-prompt--specs)))))))
+
+(defun my/manifolding-atlas--enable-todo-sync-in-vault ()
+  "Install buffer-local heading-to-drawer TODO mirror in vault buffers."
+  (when (and buffer-file-name
+             (string-prefix-p (expand-file-name
+                               (my/manifolding-atlas-root-dir))
+                              buffer-file-name))
+    (add-hook 'org-after-todo-state-change-hook
+              #'my/manifolding-atlas--mirror-heading-todo-to-drawer nil t)))
+
+(add-hook 'org-mode-hook #'my/manifolding-atlas--enable-todo-sync-in-vault)
+#+end_src
+
+#+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--fragment-tags (val)
   (when val
     `(:tags ,val

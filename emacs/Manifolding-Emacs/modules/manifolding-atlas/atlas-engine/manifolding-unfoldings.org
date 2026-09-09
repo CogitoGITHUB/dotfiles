@@ -171,12 +171,6 @@ the tolerant primitives when the standard paths find nothing.
 ** Ensure Unfolding Note (closed vocab)
 
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas--property-display-name (property-type)
-  (upcase (string-replace "-" " "
-                          (if (symbolp property-type)
-                              (symbol-name property-type)
-                            property-type))))
-
 (defun my/manifolding-atlas--ensure-unfolding-note (property-type value &optional _note)
   "Create or reuse an unfolding note for UNFOLDING-TYPE=VALUE.
 When a parent note can be determined (via _NOTE, session, or point),
@@ -202,7 +196,7 @@ unique per parent so per-file notes don't leak."
                (root (expand-file-name (format "admin/unfoldings/%s/" property-type) (my/manifolding-atlas-root-dir)))
                (path (expand-file-name slug root))
                (id (my/manifolding-atlas--note-id-by-path path))
-               (title (format "%s: %s" (my/manifolding-atlas--property-display-name property-type) value)))
+               (title value))
           (if id
               (my/manifolding-atlas--make-id-link id title)
             (make-directory root t)
@@ -286,14 +280,7 @@ Uses drawer-put directly for unfoldings domain's wormhole handling.
   (when (and (stringp value)
              (string-match "\\[\\[id:\\([^]]+\\)\\]\\[\\([^]]*\\)\\]\\]" value))
     (cons (match-string-no-properties 1 value)
-          (match-string-no-properties 2 value))))
-
-(defun my/manifolding-atlas--unfolding-wormhole-p (id)
-  (save-excursion
-    (goto-char (point-min))
-    (re-search-forward (format "#\\+wormhole:.*\\[\\[id:%s\\]\\["
-                               (regexp-quote id))
-                       nil t)))
+          (match-string-no-properties 2))))
 
 (defun my/manifolding-atlas--body-anchor ()
   (if (condition-case nil (progn (org-back-to-heading t) t) (error nil))
@@ -356,41 +343,10 @@ uniform (KEY . VALUE) pairs.
     props))
 #+end_src
 
-*** Unfolding wormhole insertion
-#+begin_src emacs-lisp
-(defun my/manifolding-atlas--add-unfolding-wormholes (note)
-  (let* ((file (manifolding-atlas-note-path note))
-         (level (manifolding-atlas-note-level note))
-         (pos   (manifolding-atlas-note-pos note)))
-    (when file
-      (with-current-buffer (find-file-noselect file)
-        (save-excursion
-          (cond ((and level (> level 0) pos)
-                 (goto-char pos)
-                 (org-back-to-heading t))
-                (t (goto-char (point-min))))
-          (let ((props (my/manifolding-atlas--heading-properties))
-                (anchor (or (my/manifolding-atlas--drawer-insert-point)
-                            (my/manifolding-atlas--body-anchor))))
-            (dolist (pair props)
-              (when-let ((m (my/manifolding-atlas--unfolding-link-value (cdr pair))))
-                (let ((id (car m)) (label (cdr m)))
-                  (unless (my/manifolding-atlas--unfolding-wormhole-p id)
-                    (goto-char anchor)
-                    (beginning-of-line)
-                    (unless (bolp) (insert "\n"))
-                    (insert (format "#+wormhole: [[id:%s][%s]] :property\n"
-                                    id label))))))))
-        (save-buffer)))))
-
-(defun my/manifolding-atlas--unfolding-wormholes-after-create (note)
-  (when (manifolding-atlas-note-p note)
-    (my/manifolding-atlas--add-unfolding-wormholes note))
-  note)
-(advice-add 'manifolding-atlas-create :filter-return #'my/manifolding-atlas--unfolding-wormholes-after-create)
-#+end_src
-
-** State Property Factory (plain value + wormhole)
+** State Property Factory (plain value, no automatic wormholes)
+Nothing is a wormhole by default: the create-time advice that
+wormholed every id-link was removed, and session applies below write
+plain id-link drawer entries. Wormholes are created explicitly only.
 
 *** Link and type predicates
 #+begin_src emacs-lisp :lexical t
@@ -403,14 +359,7 @@ uniform (KEY . VALUE) pairs.
     (string-prefix-p
      (expand-file-name (format "admin/unfoldings/%s/" property-type)
                        (my/manifolding-atlas-root-dir))
-     (expand-file-name file))))
-
-(defun my/manifolding-atlas--wormhole-exists-p (id)
-  (save-excursion
-    (goto-char (point-min))
-    (re-search-forward
-     (format "^#\\+wormhole:.*\\[\\[id:%s\\]\\[" (regexp-quote id))
-     nil t)))
+      (expand-file-name file))))
 #+end_src
 
 *** Wormhole removal sweep
@@ -428,33 +377,8 @@ and reports which ids were removed for later cleanup.
                    (not (string-equal lid unfolding-id)))
           (push lid removed)
           (delete-region (line-beginning-position)
-                         (1+ (line-end-position))))))
+                          (1+ (line-end-position))))))
     removed))
-#+end_src
-
-*** Wormhole insertion
-#+begin_src emacs-lisp :lexical t
-(defun my/manifolding-atlas--insert-property-wormhole (property-type drawer-value unfolding-id)
-  "Insert the :property wormhole line for UNFOLDING-ID INSIDE the current
-heading's :PROPERTIES: drawer, right before :END:, if absent."
-  (unless (my/manifolding-atlas--wormhole-exists-p unfolding-id)
-    (let ((pt (my/manifolding-atlas--drawer-insert-point)))
-      (if pt
-          (progn
-            (goto-char pt)
-            (beginning-of-line)
-            (insert (format "#+wormhole: [[id:%s][%s: %s]] :property\n"
-                            unfolding-id
-                            (my/manifolding-atlas--property-display-name property-type)
-                            drawer-value)))
-        (org-back-to-heading t)
-        (end-of-line)
-        (forward-line 1)
-        (unless (bolp) (insert "\n"))
-        (insert (format ":PROPERTIES:\n#+wormhole: [[id:%s][%s: %s]] :property\n:END:\n"
-                        unfolding-id
-                        (my/manifolding-atlas--property-display-name property-type)
-                        drawer-value))))))
 #+end_src
 
 *** Refresh orchestration
@@ -462,8 +386,9 @@ heading's :PROPERTIES: drawer, right before :END:, if absent."
 (defun my/manifolding-atlas--refresh-property-wormhole (property-type drawer-value unfolding-id)
   "Replace UNFOLDING-TYPE's current entry IN PLACE -- at whatever
 position it already occupies in the drawer, whether a plain value
-line or an existing wormhole -- instead of always appending at
-the bottom of the drawer."
+line or a legacy wormhole -- instead of always appending at
+the bottom of the drawer. Writes a plain id-link entry; never
+creates wormhole lines (re-picking also clears legacy ones)."
   (let (removed insert-marker)
     (save-excursion
       (org-back-to-heading t)
@@ -496,10 +421,8 @@ the bottom of the drawer."
                        (my/manifolding-atlas--drawer-insert-point)
                        (point-max)))
         (beginning-of-line)
-        (insert (format "#+wormhole: [[id:%s][%s: %s]] :property\n"
-                        unfolding-id
-                        (my/manifolding-atlas--property-display-name property-type)
-                        drawer-value))
+        (insert (format ":%s: [[id:%s][%s]]\n"
+                        key unfolding-id drawer-value))
         (when insert-marker (set-marker insert-marker nil)))
       (save-buffer))
     removed))
@@ -868,12 +791,10 @@ option with a single keypress. On selection, create/reuse the unfolding
 note for that value and write its id-link as KEY's plain property
 VALUE inside the note's existing :PROPERTIES: drawer -- never as a
 separate wormholed block -- then open the unfolding note for editing."
-  (message "TRACE choose-link: START property-type=%s key=%s current-buffer=%s" property-type key (current-buffer))
   (let ((marker (point-marker)))
     (my/manifolding-atlas--open-picker
      property-type
       (lambda (final-title)
-        (message "TRACE choose-link: on-select fired final-title=%s current-buffer=%s marker-buffer=%s" final-title (current-buffer) (marker-buffer marker))
         (let* ((parent-note (with-current-buffer (marker-buffer marker)
                               (save-excursion
                                 (goto-char marker)
@@ -892,7 +813,6 @@ separate wormholed block -- then open the unfolding note for editing."
                       (my/manifolding-atlas--refresh-property-wormhole property-type final-title unfolding-id)
                     (when re-render (atlas-wormholes-add-all)))))
               (save-buffer)))
-         (message "TRACE choose-link: about to open unfolding-file-capture unfolding-id=%s current-buffer=%s" unfolding-id (current-buffer))
          (my/manifolding-atlas--open-unfolding-file-capture unfolding-id))))))
 
 (defun my/manifolding-atlas--property-pick-via-session (property-type key)

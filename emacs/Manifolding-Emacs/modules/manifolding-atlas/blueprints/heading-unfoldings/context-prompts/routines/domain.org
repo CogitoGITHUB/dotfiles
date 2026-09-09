@@ -8,6 +8,7 @@
 :KIND: inline
 :LABEL: Routines: Domain
 :END:
+** TODO
 ** SELF-CARE
 ** TRAINING
 ** NUTRITION

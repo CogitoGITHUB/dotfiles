@@ -8,6 +8,7 @@
 :LABEL: Priority
 :TASK-DEFAULT: B
 :END:
+** TODO
 ** WARNING
 ** A
 ** B

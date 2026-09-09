@@ -7,6 +7,7 @@
 :KIND: inline
 :LABEL: Journal
 :END:
+** TODO
 ** WARNING
 ** OPEN
 ** CLOSED

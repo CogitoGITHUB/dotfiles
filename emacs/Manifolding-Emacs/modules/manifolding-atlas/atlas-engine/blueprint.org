@@ -1163,15 +1163,45 @@ the DB and we grade fresh data, not pre-save state."
                 (push (format "%s: schema missing field %s" name want)
                       template-issues)))))))
     template-issues))
+(defvar my/manifolding-atlas-reinforce--drawer-order-extra-keys '("ID")
+  "Drawer keys allowed in drawer-order.org without a prompt blueprint.
+Org-native keys live here; everything else must match a spec :key.")
+(defun my/manifolding-atlas-reinforce--audit-drawer-order ()
+  "Return issue strings for drawer-order.org headings with no prompt.
+Compares against spec :key strings (drawer keys, e.g. TODO_STATE),
+not prompt names. Passive check only — never touches the order file
+or the drawer sweep; silent when clean or engine unavailable."
+  (let ((issues nil))
+    (when (fboundp 'my/manifolding-atlas-drawer-order-from-file)
+      (let ((order (condition-case nil
+                       (my/manifolding-atlas-drawer-order-from-file)
+                     (error nil)))
+            (known nil))
+        (when (and (boundp 'my/manifolding-atlas-org-prompt--specs)
+                   (hash-table-p my/manifolding-atlas-org-prompt--specs))
+          (maphash (lambda (_k spec)
+                     (push (plist-get spec :key) known))
+                   my/manifolding-atlas-org-prompt--specs))
+        (dolist (k (or order nil))
+          (unless (or (member k known)
+                      (member k my/manifolding-atlas-reinforce--drawer-order-extra-keys))
+            (push (format "drawer-order: %s matches no prompt" k)
+                  issues)))))
+    (nreverse issues)))
 (defun my/manifolding-atlas-reinforce--audit ()
   "Warn about prompts not covered by any schema and templates whose
 generated schema is missing or drifted. Silent when clean."
   (let* ((covered (append my/manifolding-atlas-reinforce-audit-allowlist
                           (my/manifolding-atlas-reinforce--schema-field-keys)))
          (uncovered (my/manifolding-atlas-reinforce--audit-prompts covered))
-         (template-issues (my/manifolding-atlas-reinforce--audit-templates)))
+         (template-issues (my/manifolding-atlas-reinforce--audit-templates))
+         (drawer-issues (my/manifolding-atlas-reinforce--audit-drawer-order)))
     (when template-issues
       (lwarn 'manifolding-atlas-reinforce :warning
              "Template schema issues: %s"
-             (string-join (nreverse template-issues) "; ")))))
+             (string-join (nreverse template-issues) "; ")))
+    (when drawer-issues
+      (lwarn 'manifolding-atlas-reinforce :warning
+             "Drawer order issues: %s"
+             (string-join drawer-issues "; ")))))
 #+end_src

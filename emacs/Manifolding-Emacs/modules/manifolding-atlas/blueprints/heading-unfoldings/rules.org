@@ -7,6 +7,7 @@
 :KIND: inline
 :LABEL: Rules
 :END:
+** TODO
 ** WARNING
 ** DRAFT
 ** RATIFIED
