@@ -70,6 +70,8 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
           (list my/manifolding-atlas-links--broken-links-file
                 my/manifolding-atlas-links--broken-unfoldings-file
                 my/manifolding-atlas-links--deleted-files-file
+                my/manifolding-atlas-links--added-blueprints-file
+                my/manifolding-atlas-links--deleted-blueprints-file
                 my/manifolding-atlas-missing--file)))
 
 (defun my/manifolding-atlas-links--delete-if-empty (path)
@@ -529,7 +531,205 @@ Only matches links inside a :PROPERTIES: drawer; body links return nil."
           found)))))
 #+end_src
 
-**** Direction guard
+*** Added/Deleted Heading Blueprints
+Log heading-unfoldings/ blueprint adds/removes to vault admin files,
+same heading + drawer shape as the other queues. No restore links
+(Option H): recovery is git log/checkout in the config repo.
+
+**** Paths and bootstrap
+#+begin_src emacs-lisp
+(defvar my/manifolding-atlas-links--added-blueprints-file "admin/Added Heading Blueprints"
+  "Filename for the added-blueprints log.
+Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
+(setq my/manifolding-atlas-links--added-blueprints-file "admin/Added Heading Blueprints")
+
+(defun my/manifolding-atlas-links--added-blueprints-path ()
+  "Return full path to Added Heading Blueprints in the vault root."
+  (expand-file-name my/manifolding-atlas-links--added-blueprints-file
+                    (my/manifolding-atlas-root-dir)))
+
+(defun my/manifolding-atlas-links--ensure-added-blueprints-file ()
+  "Create Added Heading Blueprints if it does not exist."
+  (let ((path (my/manifolding-atlas-links--added-blueprints-path)))
+    (make-directory (file-name-directory path) t)
+    (unless (file-exists-p path)
+      (with-temp-file path
+        (insert "#+TITLE: Added Heading Blueprints\n")
+        (insert "#+AUTHOR: Manifolding Atlas Git VC System\n")
+        (insert "#+DESCRIPTION: Auto-generated log of added heading blueprints.\n")
+        (insert "#+STARTUP: overview\n\n")))
+    path))
+
+(defvar my/manifolding-atlas-links--deleted-blueprints-file "admin/Deleted Heading Blueprints"
+  "Filename for the deleted-blueprints log.
+Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
+(setq my/manifolding-atlas-links--deleted-blueprints-file "admin/Deleted Heading Blueprints")
+
+(defun my/manifolding-atlas-links--deleted-blueprints-path ()
+  "Return full path to Deleted Heading Blueprints in the vault root."
+  (expand-file-name my/manifolding-atlas-links--deleted-blueprints-file
+                    (my/manifolding-atlas-root-dir)))
+
+(defun my/manifolding-atlas-links--ensure-deleted-blueprints-file ()
+  "Create Deleted Heading Blueprints if it does not exist."
+  (let ((path (my/manifolding-atlas-links--deleted-blueprints-path)))
+    (make-directory (file-name-directory path) t)
+    (unless (file-exists-p path)
+      (with-temp-file path
+        (insert "#+TITLE: Deleted Heading Blueprints\n")
+        (insert "#+AUTHOR: Manifolding Atlas Git VC System\n")
+        (insert "#+DESCRIPTION: Auto-generated log of deleted heading blueprints.\n")
+        (insert "#+STARTUP: overview\n\n")))
+    path))
+#+end_src
+
+**** Blueprint metadata reader
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-links--read-blueprint-meta (file)
+  "Return (KEY ID CONTEXTS KIND) from blueprint FILE, or nil without a KEY heading."
+  (when (and file (file-exists-p file))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (org-mode)
+      (goto-char (point-min))
+      (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
+        (let ((key (match-string-no-properties 1)))
+          (goto-char (match-beginning 0))
+          (list key
+                (org-entry-get nil "ID")
+                (org-entry-get nil "CONTEXTS")
+                (org-entry-get nil "KIND")))))))
+#+end_src
+
+**** Entry writers
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-links--added-blueprint-entry-props (key file id contexts kind)
+  "Return the :PROPERTIES: drawer text for an Added Heading Blueprints entry."
+  (concat "  :PROPERTIES:\n"
+          (format "  :CREATED:        %s\n"
+                  (format-time-string "<%Y-%m-%d %a>"))
+          (format "  :BLUEPRINT_KEY:  %s\n" key)
+          (format "  :BLUEPRINT_FILE: %s\n" file)
+          (when id (format "  :BLUEPRINT_ID:   %s\n" id))
+          (when contexts (format "  :CONTEXTS:        %s\n" contexts))
+          (when kind (format "  :KIND:           %s\n" kind))
+          "  :END:\n"))
+
+(defun my/manifolding-atlas-links--write-added-blueprint (key file &optional id contexts kind)
+  "Append a heading for added blueprint KEY (at FILE) to Added Heading Blueprints."
+  (let ((path (my/manifolding-atlas-links--ensure-added-blueprints-file)))
+    (with-current-buffer (find-file-noselect path)
+      (goto-char (point-max))
+      (insert (format "\n* TODO Added blueprint [[file:%s][%s]]\n" file key))
+      (insert (my/manifolding-atlas-links--added-blueprint-entry-props
+               key file id contexts kind))
+      (save-buffer)
+      (kill-buffer (current-buffer)))))
+
+(defun my/manifolding-atlas-links--deleted-blueprint-entry-props (key file id contexts kind)
+  "Return the :PROPERTIES: drawer text for a Deleted Heading Blueprints entry."
+  (concat "  :PROPERTIES:\n"
+          (format "  :CREATED:        %s\n"
+                  (format-time-string "<%Y-%m-%d %a>"))
+          (format "  :BLUEPRINT_KEY:  %s\n" key)
+          (format "  :BLUEPRINT_FILE: %s\n" file)
+          (when id (format "  :BLUEPRINT_ID:   %s\n" id))
+          (when contexts (format "  :CONTEXTS:        %s\n" contexts))
+          (when kind (format "  :KIND:           %s\n" kind))
+          "  :END:\n"))
+
+(defun my/manifolding-atlas-links--write-deleted-blueprint (key file &optional id contexts kind)
+  "Append a heading for deleted blueprint KEY (at FILE) to Deleted Heading Blueprints."
+  (let ((path (my/manifolding-atlas-links--ensure-deleted-blueprints-file)))
+    (with-current-buffer (find-file-noselect path)
+      (goto-char (point-max))
+      (insert (format "\n* TODO Deleted blueprint %s\n" key))
+      (insert (my/manifolding-atlas-links--deleted-blueprint-entry-props
+               key file id contexts kind))
+      (save-buffer)
+      (kill-buffer (current-buffer)))))
+#+end_src
+
+**** Scope predicate and session set
+#+begin_src emacs-lisp
+(defvar my/manifolding-atlas-links--logged-blueprint-adds nil
+  "Absolute paths of blueprint files already logged as added this session.")
+
+(defun my/manifolding-atlas-links--heading-unfoldings-dir ()
+  "Absolute path of heading-unfoldings/ (plural helper preferred)."
+  (if (fboundp 'my/manifolding-atlas-blueprints-dir)
+      (expand-file-name "heading-unfoldings/" (my/manifolding-atlas-blueprints-dir))
+    (expand-file-name "Manifolding-Emacs/modules/manifolding-atlas/blueprints/heading-unfoldings/"
+                      user-emacs-directory)))
+
+(defun my/manifolding-atlas-links--blueprint-trackable-p (file)
+  "Non-nil when FILE is a prompt blueprint .org under heading-unfoldings/.
+Excludes body-unfoldings/ (body templates, not prompts)."
+  (let ((exp (and (stringp file) (expand-file-name file)))
+        (base (my/manifolding-atlas-links--heading-unfoldings-dir)))
+    (and exp
+         (string-suffix-p ".org" exp)
+         (file-in-directory-p exp base)
+         (not (file-in-directory-p
+               exp (expand-file-name "body-unfoldings/" base))))))
+
+(defun my/manifolding-atlas-links--blueprint-tracked-p (file)
+  "Non-nil when FILE is tracked in the config git repo. Nil on any error."
+  (ignore-errors
+    (let ((top (locate-dominating-file (expand-file-name file) ".git")))
+      (and top
+           (= 0 (call-process magit-git-executable nil nil nil
+                              "-C" top "ls-files" "--error-unmatch" file))))))
+#+end_src
+
+**** Advice wiring
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-links--log-added-blueprint (&rest _)
+  "Log pending blueprint from the ADD menu to Added Heading Blueprints."
+  (when-let ((p (and (boundp 'my/manifolding-atlas--pending-blueprint-register)
+                     my/manifolding-atlas--pending-blueprint-register)))
+    (when (file-exists-p p)
+      (push (expand-file-name p) my/manifolding-atlas-links--logged-blueprint-adds)
+      (let ((meta (my/manifolding-atlas-links--read-blueprint-meta p)))
+        (when meta
+          (apply #'my/manifolding-atlas-links--write-added-blueprint
+                 (car meta) (expand-file-name p) (cdr meta)))))))
+
+(defun my/manifolding-atlas-links--after-blueprint-write (_start _end file &rest _)
+  "Log manually created blueprint FILES to Added Heading Blueprints.
+Skips the ADD-menu path (covered by pending var), already-logged
+files, and git-tracked files (not new)."
+  (let ((exp (and (stringp file) (expand-file-name file))))
+    (when (and exp
+               (my/manifolding-atlas-links--blueprint-trackable-p exp)
+               (not (member exp my/manifolding-atlas-links--logged-blueprint-adds))
+               (not (and (boundp 'my/manifolding-atlas--pending-blueprint-register)
+                         my/manifolding-atlas--pending-blueprint-register
+                         (equal exp (expand-file-name
+                                     my/manifolding-atlas--pending-blueprint-register))))
+               (not (my/manifolding-atlas-links--blueprint-tracked-p exp)))
+      (push exp my/manifolding-atlas-links--logged-blueprint-adds)
+      (let ((meta (my/manifolding-atlas-links--read-blueprint-meta exp)))
+        (when meta
+          (apply #'my/manifolding-atlas-links--write-added-blueprint
+                 (car meta) exp (cdr meta)))))))
+
+(defun my/manifolding-atlas-links--before-blueprint-delete (file &rest _)
+  "Log blueprint FILE deletion to Deleted Heading Blueprints."
+  (let ((exp (and (stringp file) (expand-file-name file))))
+    (when (and exp
+               (my/manifolding-atlas-links--blueprint-trackable-p exp)
+               (file-exists-p exp))
+      (let ((meta (ignore-errors (my/manifolding-atlas-links--read-blueprint-meta exp))))
+        (when meta
+          (apply #'my/manifolding-atlas-links--write-deleted-blueprint
+                 (car meta) exp (cdr meta)))))))
+
+(advice-add 'my/manifolding-atlas--register-pending-blueprint :before
+            #'my/manifolding-atlas-links--log-added-blueprint)
+(advice-add 'write-region :after #'my/manifolding-atlas-links--after-blueprint-write)
+(advice-add 'delete-file :before #'my/manifolding-atlas-links--before-blueprint-delete)
+#+end_src
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--check-direction
     (deleted-id deleted-title links verb peer-key direction)
