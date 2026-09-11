@@ -1,0 +1,11 @@
+#+title:      Zztest Restart Prompt
+#+priority:   30
+
+* ZZTEST_RESTART
+:PROPERTIES:
+:CONTEXTS: file heading task
+:KIND: unfolding
+:LABEL: Zztest Restart
+:END:
+** TODO
+** DONE

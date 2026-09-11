@@ -109,6 +109,57 @@ Move the headings, save, and the vault follows the new order.
               (my/manifolding-atlas--install-drawer-order-save-hook))))
 #+end_src
 
+** Boot sync
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas--sync-drawer-order-new-keys ()
+  "Append prompt keys missing from drawer-order.org, then apply.
+Known spec :key strings minus current order headings, sorted for
+determinism, appended as `** KEY' lines without touching existing
+order. Saves the file once via `with-temp-file' (no hooks), then
+applies (setq + vault sweep) and inserts stubs for the new keys
+through the existing apply path. No-op when nothing is missing,
+specs are unavailable, or the order file is absent. Returns list
+appended."
+  (let ((known nil)
+        (by-key nil))
+    (when (and (boundp 'my/manifolding-atlas-org-prompt--specs)
+               (hash-table-p my/manifolding-atlas-org-prompt--specs))
+      (maphash (lambda (_k spec)
+                 (let ((key (plist-get spec :key)))
+                   (when (and (stringp key) (not (string-empty-p key)))
+                     (push key known)
+                     (push (cons key spec) by-key))))
+               my/manifolding-atlas-org-prompt--specs))
+    (if (null known)
+        (when (file-exists-p (my/manifolding-atlas-drawer-order-file))
+          (message "drawer-order: specs not yet loaded, skipping sync (will retry after register-all)"))
+      (let* ((order (or (my/manifolding-atlas-drawer-order-from-file) nil))
+             (missing (sort (cl-delete-duplicates
+                             (seq-remove (lambda (k) (member k order))
+                                         known)
+                             :test #'string=)
+                            #'string<)))
+        (when missing
+          (let ((f (my/manifolding-atlas-drawer-order-file)))
+            (when (file-exists-p f)
+              (with-temp-file f
+                (insert-file-contents f)
+                (goto-char (point-max))
+                (unless (bolp) (insert "\n"))
+                (dolist (k missing)
+                  (insert (format "** %s\n" k))))
+              (my/manifolding-atlas--apply-drawer-order-file)
+              (my/manifolding-atlas--sweep-sync-drawer-keys
+               (delq nil
+                     (mapcar (lambda (k)
+                               (let ((spec (cdr (assoc k by-key))))
+                                 (when spec
+                                   (cons k (my/manifolding-atlas-org-prompt--default-for-spec
+                                            spec)))))
+                             missing)))
+              missing)))))))
+#+end_src
+
 ** Vault sweep
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas--sweep-drawer-order (&optional order)
@@ -129,7 +180,138 @@ Returns count of files changed; saves trigger auto-commit."
     n))
 #+end_src
 
-** Blueprint file management
+** Vault sync: insert stubs + remove orphans
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas--sweep-sync-drawer-keys (add-alist &optional order)
+  "Insert missing drawer stubs then arrange, per vault note file.
+ADD-ALIST is ((KEY . DEFAULT-VALUE)...). ORDER defaults to
+`my/manifolding-atlas-drawer-key-order'. Skips .git and admin/.
+Files already complete are not saved. Saves once per changed file.
+Returns count of files changed."
+  (let* ((root (my/manifolding-atlas-root-dir))
+         (gitdir (expand-file-name ".git" root))
+         (admindir (expand-file-name "admin/" root))
+         (files (append (directory-files-recursively root "\\.org\\'")
+                        (directory-files-recursively root "[^./]+\\'")))
+         (n 0))
+    (dolist (f files)
+      (unless (or (file-in-directory-p f gitdir)
+                  (file-in-directory-p f admindir))
+        (when (and f (file-exists-p f))
+          (let ((ins (my/manifolding-atlas--ensure-drawer-stubs f add-alist)))
+            (when (and ins
+                       (fboundp 'my/manifolding-atlas-links--log-added-properties))
+              (my/manifolding-atlas-links--log-added-properties f ins))
+            (when (my/manifolding-atlas--arrange-drawer-per-order f order)
+              (setq ins t))
+            (when ins
+              (with-current-buffer (find-file-noselect f)
+                (when (buffer-modified-p)
+                  (save-buffer)))
+              (setq n (1+ n)))))))
+    (message "Drawer sync: %d file(s) updated." n)
+    n))
+
+(defun my/manifolding-atlas--ensure-drawer-stubs (file add-alist)
+  "Insert missing ADD-ALIST stubs into FILE's first level-1 drawer.
+ADD-ALIST is ((KEY . DEFAULT-VALUE)...). Creates the drawer when the
+heading exists but has none. Never saves; caller saves. Returns list
+of inserted (KEY . DEFAULT-VALUE) pairs, nil if none."
+  (when (and file (file-exists-p file) add-alist)
+    (with-current-buffer (find-file-noselect file)
+      (save-restriction
+        (widen)
+        (save-excursion
+          (goto-char (point-min))
+          (when (re-search-forward "^\\* " nil t)
+            (org-back-to-heading t)
+            (let ((sub-end (save-excursion
+                             (org-end-of-subtree t t)
+                             (point)))
+                  (inserted nil))
+              (if (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$" sub-end t)
+                  (let ((drawer-end
+                         (save-excursion
+                           (when (re-search-forward "^[ \t]*:END:[ \t]*$"
+                                                    sub-end t)
+                             (line-beginning-position)))))
+                    (when drawer-end
+                      (dolist (kv add-alist)
+                        (save-excursion
+                          (goto-char (point-min))
+                          (unless (re-search-forward
+                                   (format "^[ \t]*:%s:[ \t]*.*$"
+                                           (regexp-quote (car kv)))
+                                   drawer-end t)
+                            (goto-char drawer-end)
+                            (beginning-of-line)
+                            (insert (format ":%s: %s\n" (car kv) (cdr kv)))
+                            (push kv inserted))))))
+                (end-of-line)
+                (forward-line 1)
+                (insert ":PROPERTIES:\n")
+                (dolist (kv add-alist)
+                  (insert (format ":%s: %s\n" (car kv) (cdr kv))))
+                (insert ":END:\n")
+                (setq inserted (copy-sequence add-alist)))
+              (when inserted
+                (nreverse inserted)))))))))
+
+
+(defun my/manifolding-atlas--sweep-remove-drawer-key (key)
+  "Delete `:KEY:' lines from first level-1 drawers vault-wide.
+Skips .git and admin/. Saves once per changed file.
+Returns count of files changed."
+  (when (and (stringp key) (not (string-empty-p key)))
+    (let* ((root (my/manifolding-atlas-root-dir))
+           (gitdir (expand-file-name ".git" root))
+           (admindir (expand-file-name "admin/" root))
+           (files (append (directory-files-recursively root "\\.org\\'")
+                          (directory-files-recursively root "[^./]+\\'")))
+           (re (format "^[ \t]*:%s:[ \t]*.*$" (regexp-quote key)))
+           (n 0))
+      (dolist (f files)
+        (unless (or (file-in-directory-p f gitdir)
+                    (file-in-directory-p f admindir))
+          (when (and f (file-exists-p f))
+            (with-current-buffer (find-file-noselect f)
+              (save-restriction
+                (widen)
+                (save-excursion
+                  (goto-char (point-min))
+                  (when (re-search-forward "^\\* " nil t)
+                    (org-back-to-heading t)
+                    (let ((sub-end (save-excursion
+                                     (org-end-of-subtree t t)
+                                     (point))))
+                      (when (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$"
+                                               sub-end t)
+                        (forward-line 1)
+                        (let ((props-beg (point))
+                              (drawer-end
+                               (save-excursion
+                                 (when (re-search-forward "^[ \t]*:END:[ \t]*$"
+                                                          sub-end t)
+                                   (line-beginning-position)))))
+                          (when drawer-end
+                            (goto-char props-beg)
+                            (let (dels)
+                              (while (re-search-forward re drawer-end t)
+                                (push (cons (line-beginning-position)
+                                            (min (1+ (line-end-position))
+                                                 (point-max)))
+                                      dels))
+                              (when dels
+                                (dolist (span dels)
+                                  (delete-region (car span) (cdr span)))
+                                (save-buffer)
+                                (when (fboundp 'my/manifolding-atlas-links--log-removed-property)
+                                  (my/manifolding-atlas-links--log-removed-property f key))
+                                (setq n (1+ n)))))))))))))))
+      (message "Drawer key removal: %d file(s) updated." n)
+      n)))
+#+end_src
+
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-blueprints-dir ()
   "Return the blueprints directory."
@@ -5005,21 +5187,27 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas-org-prompt--boot-timer nil)
 
-(with-eval-after-load 'manifolding-atlas
-  (when my/manifolding-atlas-org-prompt--boot-timer
-    (cancel-timer my/manifolding-atlas-org-prompt--boot-timer))
-  (setq my/manifolding-atlas-org-prompt--boot-timer
-        (run-with-idle-timer
-   0 nil
-   (lambda ()
-     (condition-case err
-         (let ((n (my/manifolding-atlas-org-prompt--register-all)))
-           (message "org-prompts: registered %d declarative prompts" n)
-           (when (= n 0)
-             (lwarn 'manifolding-atlas-org-prompts
-                    :warning "registered 0 declarative prompts")))
-       (error (lwarn 'manifolding-atlas-org-prompts :error
-                     "registration failed: %s" err)))))))
+;; No with-eval-after-load gate: 'manifolding-atlas is never provided, so
+;; that wrapper could never fire. This code already lives inside
+;; file-creation.org, which the loader compiles regardless.
+(when my/manifolding-atlas-org-prompt--boot-timer
+  (cancel-timer my/manifolding-atlas-org-prompt--boot-timer))
+(setq my/manifolding-atlas-org-prompt--boot-timer
+      (run-with-idle-timer
+       0 nil
+       (lambda ()
+         (condition-case err
+             (let ((n (my/manifolding-atlas-org-prompt--register-all)))
+               (message "org-prompts: registered %d declarative prompts" n)
+               (let ((added (my/manifolding-atlas--sync-drawer-order-new-keys)))
+                 (when added
+                   (message "drawer-order: appended %d missing keys (%s)"
+                            (length added) (string-join added ", "))))
+               (when (= n 0)
+                 (lwarn 'manifolding-atlas-org-prompts
+                        :warning "registered 0 declarative prompts")))
+           (error (lwarn 'manifolding-atlas-org-prompts :error
+                         "registration failed: %s" err))))))
 #+end_src
 
 ** Prompt Infrastructure

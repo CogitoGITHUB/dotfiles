@@ -650,7 +650,133 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
       (kill-buffer (current-buffer)))))
 #+end_src
 
-**** Scope predicate and session set
+**** Swept property logging
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-links--note-title-of (file)
+  "Return FILE's first heading text without TODO keyword or tags, or nil."
+  (when (and file (file-exists-p file))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (goto-char (point-min))
+      (when (re-search-forward "^\\*+ \\(.*?\\)[ \t]*$" nil t)
+        (let ((raw (match-string-no-properties 1)))
+          (setq raw (replace-regexp-in-string
+                     "^[A-Z][A-Z-]+ " "" raw))
+          (setq raw (replace-regexp-in-string
+                     " +:[A-Za-z0-9_@#:]+:[ \t]*$" "" raw))
+          (let ((s (string-trim raw)))
+            (unless (string-empty-p s) s)))))))
+
+(defun my/manifolding-atlas-links--note-id-of (file)
+  "Return FILE's first :ID: drawer value, or nil."
+  (when (and file (file-exists-p file))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (goto-char (point-min))
+      (when (re-search-forward "^:ID:[ \t]+\\(.+\\)$" nil t)
+        (let ((s (string-trim (match-string-no-properties 1))))
+          (unless (string-empty-p s) s))))))
+
+(defun my/manifolding-atlas-links--added-property-logged-p (key file)
+  "Non-nil when Added file already has an open TODO for KEY in FILE."
+  (let ((path (expand-file-name my/manifolding-atlas-links--added-blueprints-file
+                                (my/manifolding-atlas-root-dir))))
+    (when (file-exists-p path)
+      (with-temp-buffer
+        (insert-file-contents path)
+        (goto-char (point-min))
+        (catch 'found
+          (while (re-search-forward "^\\* TODO Added property \\(\\S-+\\) to " nil t)
+            (when (string= (match-string-no-properties 1) key)
+              (let ((end (save-excursion
+                           (if (re-search-forward "^\\* " nil t)
+                               (match-beginning 0)
+                             (point-max)))))
+                (when (re-search-forward
+                       (format "^  :NOTE_FILE:  %s$" (regexp-quote (expand-file-name file)))
+                       end t)
+                  (throw 'found t)))))
+          nil)))))
+
+(defun my/manifolding-atlas-links--write-added-property-to-note (key file value)
+  "Append `Added property KEY to NOTE' heading (deduped by logged-p)."
+  (unless (my/manifolding-atlas-links--added-property-logged-p key file)
+    (let* ((path (my/manifolding-atlas-links--ensure-added-blueprints-file))
+           (abs (expand-file-name file))
+           (title (or (my/manifolding-atlas-links--note-title-of abs)
+                      (file-name-base abs)))
+           (id (my/manifolding-atlas-links--note-id-of abs)))
+      (with-current-buffer (find-file-noselect path)
+        (goto-char (point-max))
+        (insert (format "\n* TODO Added property %s to [[file:%s][%s]]\n" key abs title))
+        (insert "  :PROPERTIES:\n"
+                (format "  :CREATED:        %s\n"
+                        (format-time-string "<%Y-%m-%d %a>"))
+                (format "  :BLUEPRINT_KEY:  %s\n" key)
+                (format "  :NOTE_FILE:      %s\n" abs)
+                (when id (format "  :NOTE_ID:       %s\n" id))
+                (format "  :DEFAULT_VALUE:  %s\n" value)
+                "  :END:\n")
+        (save-buffer)
+        (kill-buffer (current-buffer))))))
+
+(defun my/manifolding-atlas-links--log-added-properties (file pairs)
+  "Write one Added heading per (KEY . VALUE) in PAIRS for note FILE."
+  (let ((abs (and (stringp file) (expand-file-name file))))
+    (when abs
+      (dolist (kv pairs)
+        (when (and (consp kv) (stringp (car kv)))
+          (my/manifolding-atlas-links--write-added-property-to-note
+           (car kv) abs (cdr kv)))))))
+
+(defun my/manifolding-atlas-links--removed-property-logged-p (key file)
+  "Non-nil when Deleted file already has an open TODO for KEY in FILE."
+  (let ((path (expand-file-name my/manifolding-atlas-links--deleted-blueprints-file
+                                (my/manifolding-atlas-root-dir))))
+    (when (file-exists-p path)
+      (with-temp-buffer
+        (insert-file-contents path)
+        (goto-char (point-min))
+        (catch 'found
+          (while (re-search-forward "^\\* TODO Deleted property \\(\\S-+\\) from " nil t)
+            (when (string= (match-string-no-properties 1) key)
+              (let ((end (save-excursion
+                           (if (re-search-forward "^\\* " nil t)
+                               (match-beginning 0)
+                             (point-max)))))
+                (when (re-search-forward
+                       (format "^  :NOTE_FILE:  %s$" (regexp-quote (expand-file-name file)))
+                       end t)
+                  (throw 'found t)))))
+          nil)))))
+
+(defun my/manifolding-atlas-links--write-removed-property-from-note (key file)
+  "Append `Deleted property KEY from NOTE' heading (deduped by logged-p)."
+  (unless (my/manifolding-atlas-links--removed-property-logged-p key file)
+    (let* ((path (my/manifolding-atlas-links--ensure-deleted-blueprints-file))
+           (abs (expand-file-name file))
+           (title (or (my/manifolding-atlas-links--note-title-of abs)
+                      (file-name-base abs)))
+           (id (my/manifolding-atlas-links--note-id-of abs)))
+      (with-current-buffer (find-file-noselect path)
+        (goto-char (point-max))
+        (insert (format "\n* TODO Deleted property %s from [[file:%s][%s]]\n" key abs title))
+        (insert "  :PROPERTIES:\n"
+                (format "  :CREATED:        %s\n"
+                        (format-time-string "<%Y-%m-%d %a>"))
+                (format "  :BLUEPRINT_KEY:  %s\n" key)
+                (format "  :NOTE_FILE:      %s\n" abs)
+                (when id (format "  :NOTE_ID:       %s\n" id))
+                "  :END:\n")
+        (save-buffer)
+        (kill-buffer (current-buffer))))))
+
+(defun my/manifolding-atlas-links--log-removed-property (file key)
+  "Write one Deleted heading for KEY removed from note FILE."
+  (let ((abs (and (stringp file) (expand-file-name file))))
+    (when (and abs (stringp key) (not (string-empty-p key)))
+      (my/manifolding-atlas-links--write-removed-property-from-note key abs))))
+#+end_src
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas-links--logged-blueprint-adds nil
   "Absolute paths of blueprint files already logged as added this session.")
@@ -715,7 +841,9 @@ files, and git-tracked files (not new)."
                  (car meta) exp (cdr meta)))))))
 
 (defun my/manifolding-atlas-links--before-blueprint-delete (file &rest _)
-  "Log blueprint FILE deletion to Deleted Heading Blueprints."
+  "Log blueprint FILE deletion to Deleted Heading Blueprints.
+Also removes the deleted KEY from vault note drawers (same sweep,
+saves once per changed file)."
   (let ((exp (and (stringp file) (expand-file-name file))))
     (when (and exp
                (my/manifolding-atlas-links--blueprint-trackable-p exp)
@@ -723,7 +851,9 @@ files, and git-tracked files (not new)."
       (let ((meta (ignore-errors (my/manifolding-atlas-links--read-blueprint-meta exp))))
         (when meta
           (apply #'my/manifolding-atlas-links--write-deleted-blueprint
-                 (car meta) exp (cdr meta)))))))
+                 (car meta) exp (cdr meta))
+          (when (fboundp 'my/manifolding-atlas--sweep-remove-drawer-key)
+            (my/manifolding-atlas--sweep-remove-drawer-key (car meta))))))))
 
 (advice-add 'my/manifolding-atlas--register-pending-blueprint :before
             #'my/manifolding-atlas-links--log-added-blueprint)
