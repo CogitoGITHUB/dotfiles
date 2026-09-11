@@ -59,3 +59,4 @@ reorder, then save to apply to the whole vault.
 ** TRAPS_EXTERNAL
 ** TRAPS_INTERNAL
 ** TEST_DRAWER_APPEND
+** ZZTEST_RESTART
