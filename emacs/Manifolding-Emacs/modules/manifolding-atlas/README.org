@@ -266,8 +266,8 @@ RET        confirm → review screen
 confirm with nothing selected = ask nothing at all
 #+end_example
 
-Pick exactly what should be asked.  
-Everything else quietly becomes a ~WARNING~.  
+Pick exactly what should be asked.
+Everything else quietly takes its first-option default (~TODO~).
 The old speed menu is gone; the grid IS the speed setting.
 
 * The asynchronous prompt machine
@@ -310,39 +310,46 @@ The prompt system is a queue.
 Not a maze.  
 Not a confession booth.
 
-* WARNING is not a bug
+* TODO is the default, not a bug
 
-Declarative prompts begin with:
+Declarative prompts begin with their first option — for task prompts
+that is:
 
 #+begin_example
-** WARNING
+** TODO
 #+end_example
 
-That strange little sentinel is intentional.  
-Point starts there.  
+Point starts there.
 Therefore:
 
 : RET
 
 means:
 
-skip this.
+take the default.
 
-A skipped value can become:
-
-: WARNING
-
-and schema validation can subsequently say:
+A skipped prompt resolves to its first option (or ~TODO~ when there
+is no option list) via ~my/manifolding-atlas-org-prompt--default-for-spec~,
+and ~:TASK-DEFAULT: TODO~ pins it for task contexts.
+Clearing a value falls back to the first option the same way.
+Schema validation can subsequently say:
 
 : missing-required
+
+but only when the unfolding is genuinely absent — not when a default
+was applied.
 
 This produces something much more useful than silent failure.
 
 #+begin_quote
-Missing information becomes visible information.  
-The system remembers that you skipped something.  
+Missing information becomes visible information.
+The system applies a sane default and remembers it.
 It does not pretend the field never existed.
 #+end_quote
+
+The old ~WARNING~ sentinel (skip → ~WARNING~ → ~missing-required~)
+is legacy: ~my/manifolding-atlas-blueprint-migrate-warnings~ deletes
+it vault-wide, and new prompts never emit it.
 
 The machine records the holes so you can stare at them later.
 
@@ -366,7 +373,7 @@ Every prompt is a interactive editor, not a question.
 | l       | make it unfolding: create the unfolding-note and edit its content         |
 | a       | key-selection-jump straight to any option line             |
 | RET     | next prompt — refused until something was applied              |
-| q       | skip this prompt (WARNING default)                             |
+| q       | skip this prompt (first-option default)                        |
 | b / B   | step back one · revisit any answered prompt                    |
 | Q / C-g | abort everything — the draft note is deleted                   |
 
@@ -447,6 +454,10 @@ Each declarative prompt can expose a callable:
 
 : my/manifolding-atlas-prompt-<key>
 
+Task-state prompts additionally carry ~:TASK-DEFAULT: TODO~ so file,
+heading, and task contexts agree on the fallback. Clearing a value
+re-applies the same default — there is no empty state.
+
 The schema therefore becomes an API.  
 An API that will eventually be declared obsolete by a newer schema.
 
@@ -455,15 +466,33 @@ An API that will eventually be declared obsolete by a newer schema.
 Validation does not interrupt thought.  
 There are no surprise minibuffers announcing that your note has committed some terrible epistemological crime.
 
-Validation happens at index time.  
-Violations accumulate here:
+Validation happens at index time.
+Violations and lifecycle events accumulate in the admin queues:
 
-: admin/Broken Blueprints
+: admin/Static Blueprints            static defaults wanting unfolding links
+: admin/Broken Unfoldings          broken links rooted in a drawer unfolding
+: admin/Missing Links              broken id: links between notes
+: admin/ReManifold                 deleted files (with orphaned unfoldings)
+: admin/Added Heading Blueprints   per-file log of swept-in drawer keys
+: admin/Deleted Heading Blueprints per-file log of swept-out drawer keys
 
-Every problematic note becomes a TODO carrying:
+Every note holding static defaults becomes a TODO carrying:
 
 : :SCHEMAS:
 : :VIOLATIONS:
+
+Static means: the value is missing or still a plain default
+(~TODO~ and friends) instead of a live ~[[id:…][label]]~ unfolding
+link. Open the entry with RET, answer the prompt — or press ~l~ in
+the picker to make the value a live unfolding note. Link-structure
+breaks (~wrong-type~, ~invalid-reference~) never land here; those
+stay visible via flymake and the doctor.
+
+and every swept drawer key becomes a TODO carrying:
+
+: :BLUEPRINT_KEY:
+: :NOTE_FILE:
+: :DEFAULT_VALUE:
 
 Then:
 
@@ -477,6 +506,12 @@ And:
 
 walks through the violations.
 
+RET on an ~Added Heading Blueprints~ entry opens the note in an
+org-capture buffer positioned on the added ~:KEY:~ line
+(~file:PATH::*KEY~ search anchor + capture advice); the admin TODO
+stays open until marked DONE manually. Deleted-queue entries keep a
+plain file open — the line is gone, there is nothing to anchor to.
+
 The philosophy is simple and slightly sadistic:
 
 #+begin_quote
@@ -486,8 +521,57 @@ Never let validation become friction.
 Let the holes remain visible long enough to hurt.
 #+end_quote
 
-Flymake provides the immediate editing feedback.  
+Flymake provides the immediate editing feedback.
 The reinforcement system provides the global feedback.
+
+* Drawer order
+
+Drawer display order is a file, not a variable:
+
+: blueprints/blueprint-reinforcements/drawer-order.org
+
+One level-2 heading per key, top to bottom. Move the headings, save,
+and the vault follows. Saving applies through
+~my/manifolding-atlas--apply-drawer-order-file~ (setq + vault sweep +
+stub sync); ~SPC v A~ opens it. Headings whose prompt no longer
+exists are pruned automatically on boot — never by hand. Pruning
+compares against registered spec keys (specs must be non-empty, so a
+failed registration can never eat the order file), then re-applies.
+
+New prompt blueprints self-register: 0.05s after boot (a plain timer,
+no idle gate), ~my/manifolding-atlas-links--reconcile-on-boot~ diffs
+on-disk prompt keys against ~blueprint-reinforcements/.known-keys~
+(last boot's record), appends new keys to the file, then sweeps each
+vault note (skipping =.git= and =admin/=) inserting ~:KEY: <first-option>~
+stubs and re-ordering drawers. Files already complete are not saved.
+Gone keys cost one shared vault scan no matter how many there are.
+No event hooks — shell rm, manual moves, and git checkouts all
+reconcile on the next boot. Watch ~*Messages*~:
+
+: reconcile scheduled (fires 0.05s after boot, no idle gate)
+: org-prompts: registered 54 declarative prompts
+: known-keys: reconcile done in 0.31s (+2 -0)
+
+* Added/Deleted Heading Blueprints
+
+Adding or deleting a blueprint file is a vault event, detected by
+boot state-comparison (not hooks), so it works however the file
+changed. The sweep writes one TODO per affected note:
+
+- added → ~admin/Added Heading Blueprints~, heading
+  ~Added property KEY to [[file:PATH::*KEY][title]]~ with
+  ~:BLUEPRINT_KEY: :NOTE_FILE: :NOTE_ID: :DEFAULT_VALUE:~
+- removed → ~admin/Deleted Heading Blueprints~, heading
+  ~Deleted property KEY from [[file:PATH][title]]~
+
+Vault drawers are never stripped on removal — gone keys are log-only,
+knowledge is preserved. Last-known state lives in
+~blueprint-reinforcements/.known-keys~, updated every boot.
+
+RET on an Added entry jumps straight to the value: the ~::*KEY~
+search anchor plus ~my/manifolding-atlas-added--around-open~ opens
+the note in an org-capture buffer with point after the ~:KEY:~
+colon. Mark the admin TODO DONE yourself when satisfied.
 
 * Domains
 
@@ -520,6 +604,7 @@ blueprints/
       files/
       snippets/
     context-prompts/
+    blueprint-reinforcements/  (drawer-order.org — display order, not prompts)
     tags.org, todo.org, … (drawer prompts)
 workflows/
   mastering.org
@@ -659,10 +744,8 @@ r       rename link
 h       capture heading
 c       insert heading
 H       heading → note
-z       quick captures
 
 f       fix violations
-P       update unfoldings
 u       sidebar
 
 E       reinforcement sweep
@@ -683,6 +766,8 @@ N/J/F/B/X/!/S/T
 routines
 
 y       wormhole
+
+A       drawer order
 #+end_example
 
 Org state also provides:
@@ -826,9 +911,11 @@ If prompt registration says:
 something is wrong.  
 If it is around:
 
-: ~53
+: ~54+
 
 the prompt engine probably found the blueprints tree — for now.
+(Count grows as you add prompt files; check the specs hash when in
+doubt.)
 
 * The real model
 

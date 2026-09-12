@@ -994,7 +994,7 @@ When REQUIRED is non-nil, the field is mandatory."
   "Delete all unfoldings with value \"WARNING\" throughout the vault.
 
 Under the old prompt system, skipping a prompt stored \"WARNING\" as
-the unfolding value to track it in Broken Blueprints.  Now schema
+the unfolding value to track it in Static Blueprints.  Now schema
 validation flags notes that are *missing* the metadata entirely as
 `missing-required` violations, so the sentinel is no longer needed.
 Deleting the WARNING sentinel lets the description-list metadata
@@ -1040,7 +1040,7 @@ Deleting the WARNING sentinel lets the description-list metadata
     "PRONUNCIATION" "REGISTER" "SYNONYMS" "TEMPLATE")
   "Unfolding keys managed outside schemas; excluded from the audit.")
 (defun my/manifolding-atlas-reinforce-sweep ()
-  "Run a full-vault schema sweep and rebuild Broken Blueprints."
+  "Run a full-vault schema sweep and rebuild Static Blueprints."
   (interactive)
   ;; Sweeps can fire at arbitrary ambient stack depth (idle inside
   ;; recursive-edits etc). Carry an independent deep budget so ambient
@@ -1080,7 +1080,7 @@ Deleting the WARNING sentinel lets the description-list metadata
 (defun my/manifolding-atlas-reinforce--validate-buffer-note ()
   "Validate the current buffer's note from freshly synced DB data.
 Violations are intentionally silent here — they surface in
-admin/Broken Blueprints via the reinforcement sweeps."
+admin/Static Blueprints via the reinforcement sweeps."
   (setq my/manifolding-atlas-reinforce--guard-timer nil)
   (unless (active-minibuffer-window)
     (when-let ((id (my/manifolding-atlas-links--current-note-id))

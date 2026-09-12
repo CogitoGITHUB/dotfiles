@@ -109,56 +109,11 @@ Move the headings, save, and the vault follows the new order.
               (my/manifolding-atlas--install-drawer-order-save-hook))))
 #+end_src
 
-** Boot sync
-#+begin_src emacs-lisp
-(defun my/manifolding-atlas--sync-drawer-order-new-keys ()
-  "Append prompt keys missing from drawer-order.org, then apply.
-Known spec :key strings minus current order headings, sorted for
-determinism, appended as `** KEY' lines without touching existing
-order. Saves the file once via `with-temp-file' (no hooks), then
-applies (setq + vault sweep) and inserts stubs for the new keys
-through the existing apply path. No-op when nothing is missing,
-specs are unavailable, or the order file is absent. Returns list
-appended."
-  (let ((known nil)
-        (by-key nil))
-    (when (and (boundp 'my/manifolding-atlas-org-prompt--specs)
-               (hash-table-p my/manifolding-atlas-org-prompt--specs))
-      (maphash (lambda (_k spec)
-                 (let ((key (plist-get spec :key)))
-                   (when (and (stringp key) (not (string-empty-p key)))
-                     (push key known)
-                     (push (cons key spec) by-key))))
-               my/manifolding-atlas-org-prompt--specs))
-    (if (null known)
-        (when (file-exists-p (my/manifolding-atlas-drawer-order-file))
-          (message "drawer-order: specs not yet loaded, skipping sync (will retry after register-all)"))
-      (let* ((order (or (my/manifolding-atlas-drawer-order-from-file) nil))
-             (missing (sort (cl-delete-duplicates
-                             (seq-remove (lambda (k) (member k order))
-                                         known)
-                             :test #'string=)
-                            #'string<)))
-        (when missing
-          (let ((f (my/manifolding-atlas-drawer-order-file)))
-            (when (file-exists-p f)
-              (with-temp-file f
-                (insert-file-contents f)
-                (goto-char (point-max))
-                (unless (bolp) (insert "\n"))
-                (dolist (k missing)
-                  (insert (format "** %s\n" k))))
-              (my/manifolding-atlas--apply-drawer-order-file)
-              (my/manifolding-atlas--sweep-sync-drawer-keys
-               (delq nil
-                     (mapcar (lambda (k)
-                               (let ((spec (cdr (assoc k by-key))))
-                                 (when spec
-                                   (cons k (my/manifolding-atlas-org-prompt--default-for-spec
-                                            spec)))))
-                             missing)))
-              missing)))))))
-#+end_src
+** Boot reconcile
+Key add/delete detection lives in restoration.org
+(~my/manifolding-atlas-links--reconcile-on-boot~): a boot diff of
+on-disk keys vs `.known-keys`, not event hooks. The boot timer below
+calls it after registration.
 
 ** Vault sweep
 #+begin_src emacs-lisp
@@ -1603,8 +1558,15 @@ This is the default value of `manifolding-atlas-find-default-create-fn'."
      ;; 3. org-capture opens THE CAPTURE BUFFER — visible, title already in it.
      ;; Stamp the heading keyword from the same TODO default that went
      ;; into the drawer, so heading and option stay synchronized.
-     ;; Arm the re-open offer for when this capture finalizes (C-c C-c).
-     (setq my/manifolding-atlas--pending-open-after-capture file-path)
+      ;; Arm the re-open offer for when this capture finalizes (C-c C-c).
+      ;; Snapshot origin (marker, not just buffer) so no later choice
+      ;; can strand or kill the buffer the user came from.
+      (setq my/manifolding-atlas--pending-open-after-capture file-path
+            my/manifolding-atlas--pending-open-origin (point-marker)
+            my/manifolding-atlas--pending-open-note
+            (cons (ignore-errors (manifolding-atlas-note-id note)) title)
+            my/manifolding-atlas--last-created-file file-path)
+      (message "Open offer armed: %s" (file-name-nondirectory file-path))
      (let ((org-capture-templates
             `(("n" "New Note" plain (file ,file-path) "" :unnarrowed t :empty-lines 1 :kill-buffer t))))
        (org-capture nil "n")
@@ -1612,23 +1574,32 @@ This is the default value of `manifolding-atlas-find-default-create-fn'."
        (my/manifolding-atlas-org-prompt--write-at-heading
         (point-min) 0 nil '("WARNING")
         (cdr (assoc "TODO_STATE" default-unfoldings)) nil)
-      (let* ((capture-buf (current-buffer))
-             (preview-start (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
-             (preview-end (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
-              (template (my/manifolding-atlas-prompt-template--choose-with-realtime-capture-preview capture-buf preview-start preview-end)))
-        ))
-    note))
+       (let* ((capture-buf (current-buffer))
+              (preview-start (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
+              (preview-end (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
+               (template (my/manifolding-atlas-prompt-template--choose-with-realtime-capture-preview capture-buf preview-start preview-end)))
+         ))
+     note))
 #+end_src
 
 ** Re-open offer after new-note capture
 After C-c C-c finalizes a new note ("n" template), arrange its drawer
-per `my/manifolding-atlas-drawer-key-order' so the state reads directly,
-then offer to visit the file so it doesn't have to be searched for:
-RET opens it, SPC skips. One-shot per creation; aborted captures clear
-the pending path.
+per `my/manifolding-atlas-drawer-key-order', then offer a completing-read
+menu: open (capture) (the default) or open (buffer); the same two opens
+combined with link insertion at origin; link insertion alone;
+link insertion plus rename-and-propagate followed by either open;
+or skip (origin restored). One-shot per
+creation; aborted captures clear the pending path. The origin buffer
+is never killed; every step is error-isolated.
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas--pending-open-after-capture nil
   "File to offer opening after the next atlas capture finalizes.")
+(defvar my/manifolding-atlas--pending-open-origin nil
+  "Marker of where the user was when the new-note capture was armed.")
+(defvar my/manifolding-atlas--pending-open-note nil
+  "Cons (ID . TITLE) of the note created by the pending capture.")
+(defvar my/manifolding-atlas--last-created-file nil
+  "File of the most recently created note (for on-demand open menu).")
 
 (defun my/manifolding-atlas--arrange-drawer-per-order (file &optional order)
   "Arrange the first level-1 drawer in FILE per ORDER list.
@@ -1690,26 +1661,193 @@ Returns t when changed. ORDER defaults to
                           (dolist (e ordered)
                             (insert (cdr e)))
                           (save-buffer)
-                          t))))))))))))))
+                          t)))))))))))))
+
+(defun my/manifolding-atlas--open-offer-pick (fname)
+  "Pick a post-creation action for FNAME via completing-read.
+Defaults to \"open (capture)\" (capture visit, origin stays visible)."
+  (let ((actions '("open (capture)" "open (buffer)"
+                   "insert link + open (capture)" "insert link + open (buffer)"
+                   "insert link"
+                   "insert link + rename + open (capture)"
+                   "insert link + rename + open (buffer)"
+                   "skip")))
+    (completing-read (format "New note %s: " (file-name-nondirectory fname))
+                     actions nil t nil nil "open (capture)")))
+
+(defun my/manifolding-atlas--open-offer-open-capture (f)
+  "Open new-note file F via org-capture, point at end."
+  (let ((org-capture-templates
+         `(("p" "Visit new note"
+            plain (file+function ,f (lambda () (goto-char (point-max))))
+            "%?" :kill-buffer t :unnarrowed t :empty-lines 0))))
+    (org-capture nil "p")))
+
+(defun my/manifolding-atlas--open-offer-open-buffer (f)
+  "Open new-note file F via plain find-file in another window."
+  (find-file-other-window f))
+
+(defun my/manifolding-atlas--open-offer-insert-link (f origin note)
+  "Insert an [[id:...][title]] link for NOTE at ORIGIN marker.
+Link string built via `my/manifolding-atlas--make-id-link'.
+Dead origin reports loudly; nil origin stays silent (no promise made)."
+  (let ((id (car note)) (title (cdr note)))
+    (if (and (markerp origin) (marker-buffer origin)
+             (buffer-live-p (marker-buffer origin)) id)
+        (with-current-buffer (marker-buffer origin)
+          (save-excursion
+            (goto-char origin)
+            (insert (my/manifolding-atlas--make-id-link
+                     id (or title (file-name-base f))))))
+      (when (markerp origin)
+        (message "Origin buffer no longer exists; link not inserted%s"
+                 (if id "" " (no note id)"))))))
+
+(defun my/manifolding-atlas--open-offer-rename-open (f origin note open-fn)
+  "Rename NOTE's title, propagate, then call OPEN-FN with the final path.
+Title applied via `manifolding-atlas-buffer-title-set'; inbound
+links and file rename handled by `manifolding-atlas-propagate-title-change'
+(run as-is, old title pre-supplied). Any quit/error in the rename
+step is reported and OPEN-FN still runs — the note exists regardless."
+  (let* ((id (car note)) (title (cdr note))
+         (old-title (or title (file-name-base f)))
+         (final-path f))
+    (condition-case err
+        (let ((new-title (read-string "New title: " old-title)))
+          (if (string= old-title new-title)
+              (message "Title unchanged; skipping rename")
+            (let ((buf (find-file-noselect f)))
+              (with-current-buffer buf
+                (manifolding-atlas-buffer-title-set new-title)
+                (save-buffer)))
+            (let ((manifolding-atlas--title-before-save old-title))
+              (manifolding-atlas-propagate-title-change
+               (list :id id :title new-title :path f)))))
+      (quit (message "Rename skipped"))
+      (error (message "Rename skipped: %s" (error-message-string err))))
+    ;; The rename may have moved the file — re-resolve before opening.
+    (let ((fresh (and id (ignore-errors (manifolding-atlas-db-get-by-id id)))))
+      (when (and fresh (manifolding-atlas-note-path fresh)
+                 (file-exists-p (manifolding-atlas-note-path fresh)))
+        (setq final-path (manifolding-atlas-note-path fresh))))
+    (funcall open-fn final-path)))
+
+(defun my/manifolding-atlas--open-offer-dispatch (choice f origin note)
+  "Run post-creation CHOICE for file F. ORIGIN is a marker (maybe dead),
+NOTE is (ID . TITLE). The origin buffer is never killed; \"skip\"
+restores it."
+  (pcase choice
+    ("open (capture)"
+     (my/manifolding-atlas--open-offer-open-capture f))
+    ("open (buffer)"
+     (my/manifolding-atlas--open-offer-open-buffer f))
+    ("insert link + open (capture)"
+     (my/manifolding-atlas--open-offer-insert-link f origin note)
+     (my/manifolding-atlas--open-offer-open-capture f))
+    ("insert link + open (buffer)"
+     (my/manifolding-atlas--open-offer-insert-link f origin note)
+     (my/manifolding-atlas--open-offer-open-buffer f))
+    ("insert link"
+     (my/manifolding-atlas--open-offer-insert-link f origin note))
+    ("insert link + rename + open (capture)"
+     (my/manifolding-atlas--open-offer-insert-link f origin note)
+     (my/manifolding-atlas--open-offer-rename-open
+      f origin note #'my/manifolding-atlas--open-offer-open-capture))
+    ("insert link + rename + open (buffer)"
+     (my/manifolding-atlas--open-offer-insert-link f origin note)
+     (my/manifolding-atlas--open-offer-rename-open
+      f origin note #'my/manifolding-atlas--open-offer-open-buffer))
+    ("skip"
+     (if (and (markerp origin) (marker-buffer origin)
+              (buffer-live-p (marker-buffer origin)))
+         (pop-to-buffer (marker-buffer origin))
+       (when (markerp origin)
+         (message "Origin buffer no longer exists; staying here"))))
+    (_ (my/manifolding-atlas--open-offer-open-capture f))))
 
 (defun my/manifolding-atlas--maybe-open-after-capture ()
-  "Offer to visit the pending new-note file after capture finalize.
-RET opens it, SPC (or any other key) skips. Clears the pending path first."
+  "Offer post-creation actions for the pending new-note file.
+Never kills the origin buffer; every step is error-isolated so a
+failing action cannot break the finalize chain. Runs synchronously
+inside the hook — finalize already restored windows/kills first."
+  ;; Tripwire (temporary): proves the hook ran and shows arm state.
+  (message "open-offer hook: pending=%s"
+           my/manifolding-atlas--pending-open-after-capture)
   (when-let ((f my/manifolding-atlas--pending-open-after-capture))
-    (setq my/manifolding-atlas--pending-open-after-capture nil)
-    (my/manifolding-atlas--arrange-drawer-per-order f)
-    (when (file-exists-p f)
-      (let ((k (read-key (format "Open %s?  RET open · SPC skip  " (file-name-nondirectory f)))))
-        (when (eq k 13)
-          (find-file f))))))
+    (let ((origin my/manifolding-atlas--pending-open-origin)
+          (note my/manifolding-atlas--pending-open-note))
+      (setq my/manifolding-atlas--pending-open-after-capture nil
+            my/manifolding-atlas--pending-open-origin nil
+            my/manifolding-atlas--pending-open-note nil)
+      (condition-case err
+          (my/manifolding-atlas--arrange-drawer-per-order f)
+        (quit (message "Open offer aborted during drawer arrange: quit"))
+        (error (lwarn 'manifolding-atlas :warning "Drawer arrange: %s" err)))
+      (if (file-exists-p f)
+          (condition-case err
+              (let ((choice (my/manifolding-atlas--open-offer-pick f)))
+                (when choice
+                  (my/manifolding-atlas--open-offer-dispatch
+                   choice f origin note)))
+            (quit (message "Open cancelled"))
+            (error (lwarn 'manifolding-atlas :warning "Open action: %s" err)))
+        (message "Open offer: %s vanished, nothing to open" f))
+      (when (markerp origin) (set-marker origin nil)))))
 
 (add-hook 'org-capture-after-finalize-hook #'my/manifolding-atlas--maybe-open-after-capture)
 
 ;; Aborted captures never finalize — clear stale pending paths.
 (advice-add 'org-capture-kill :before
             (lambda (&rest _)
-              (setq my/manifolding-atlas--pending-open-after-capture nil)
+              (setq my/manifolding-atlas--pending-open-after-capture nil
+                    my/manifolding-atlas--pending-open-origin nil
+                    my/manifolding-atlas--pending-open-note nil)
               (setq my/manifolding-atlas--pending-blueprint-register nil)))
+
+(defun my/manifolding-atlas-open-offer-last ()
+  "Run the post-creation menu for the most recently created note.
+On-demand fallback when a capture ended without finalizing."
+  (interactive)
+  (let ((f (or my/manifolding-atlas--pending-open-after-capture
+               my/manifolding-atlas--last-created-file)))
+    (unless (and f (file-exists-p f))
+      (user-error "No created note file to act on"))
+    (let ((origin my/manifolding-atlas--pending-open-origin)
+          (note my/manifolding-atlas--pending-open-note))
+      (setq my/manifolding-atlas--pending-open-after-capture nil
+            my/manifolding-atlas--pending-open-origin nil
+            my/manifolding-atlas--pending-open-note nil)
+      (let ((choice (my/manifolding-atlas--open-offer-pick f)))
+        (when choice
+          (my/manifolding-atlas--open-offer-dispatch choice f origin note)))
+      (when (markerp origin) (set-marker origin nil)))))
+
+(defun my/manifolding-atlas--capture-live-p ()
+  "Non-nil when any live buffer is in org-capture-mode."
+  (catch 'live
+    (dolist (b (buffer-list))
+      (when (and (buffer-live-p b)
+                 (ignore-errors (buffer-local-value 'org-capture-mode b)))
+        (throw 'live t)))
+    nil))
+
+(defun my/manifolding-atlas--open-offer-watchdog ()
+  "post-command safety net: a capture ended without finalize while an
+open offer was pending. Never prompts here (minibuffer-unsafe) —
+reports loudly and stashes the file for `my/manifolding-atlas-open-offer-last'.
+Instant no-op unless an offer is pending."
+  (when (and my/manifolding-atlas--pending-open-after-capture
+             (not (active-minibuffer-window))
+             (not (my/manifolding-atlas--capture-live-p)))
+    (let ((f my/manifolding-atlas--pending-open-after-capture))
+      (setq my/manifolding-atlas--pending-open-after-capture nil
+            my/manifolding-atlas--pending-open-origin nil
+            my/manifolding-atlas--pending-open-note nil
+            my/manifolding-atlas--last-created-file f)
+      (message "Capture ended without finalize for %s — M-x my/manifolding-atlas-open-offer-last for the open menu"
+               (file-name-nondirectory f)))))
+
+(add-hook 'post-command-hook #'my/manifolding-atlas--open-offer-watchdog)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1783,10 +1921,16 @@ for the original title and once for each alias."
                                 (when (fboundp 'org-capture-get)
                                   (let ((b (ignore-errors (org-capture-get :buffer))))
                                     (when (bufferp b) (buffer-file-name b)))))))
-              (unless (and new-path cur-path
-                           (string-equal (expand-file-name new-path)
-                                         (expand-file-name cur-path)))
-                (manifolding-atlas-visit new-note other-window)))))))))
+              ;; Never steal the buffer while our own "n" capture is still
+              ;; open: visiting the file here drops the user in the FILE
+              ;; buffer, where C-c C-c is plain org-ctrl-c-ctrl-c and the
+              ;; finalize hook (open offer) never fires.
+              (if (and (boundp 'org-capture-mode) org-capture-mode)
+                  (message "find: capture in progress, staying")
+                (unless (and new-path cur-path
+                             (string-equal (expand-file-name new-path)
+                                           (expand-file-name cur-path)))
+                  (manifolding-atlas-visit new-note other-window))))))))))
 
 ;;;###autoload
 
@@ -3746,15 +3890,20 @@ refused until m has applied something."
 (defun my/manifolding-atlas-org-prompt--buffer-accept ()
   "Advance to the next prompt (session) or accept the value.
 In an async session RET only advances when something has been
-applied with m — an accidental RET can never commit a wrong pick."
+applied with m — an accidental RET can never commit a wrong pick.
+When invoked inside a live org-capture buffer (atlas-pick state can
+outlive the picker), defer to the stock finalize so the
+after-finalize hook — and the open offer — still fire."
   (interactive)
-  (if (not (and (org-at-heading-p) (>= (org-outline-level) 2)))
-      (message "Point must be on an option heading (level 2 or deeper)")
-    (let ((title (my/manifolding-atlas-org-prompt--normalize-choice
-                  (org-get-heading t t t t))))
-      (if my/manifolding-atlas-org-prompt--session-p
-          (my/manifolding-atlas-org-prompt--accept-session)
-        (my/manifolding-atlas-org-prompt--accept-standalone title)))))
+  (if (and (boundp 'org-capture-mode) org-capture-mode)
+      (org-capture-finalize)
+    (if (not (and (org-at-heading-p) (>= (org-outline-level) 2)))
+        (message "Point must be on an option heading (level 2 or deeper)")
+      (let ((title (my/manifolding-atlas-org-prompt--normalize-choice
+                    (org-get-heading t t t t))))
+        (if my/manifolding-atlas-org-prompt--session-p
+            (my/manifolding-atlas-org-prompt--accept-session)
+          (my/manifolding-atlas-org-prompt--accept-standalone title))))))
 #+end_src
 #+begin_src emacs-lisp
 
@@ -5193,21 +5342,29 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
 (when my/manifolding-atlas-org-prompt--boot-timer
   (cancel-timer my/manifolding-atlas-org-prompt--boot-timer))
 (setq my/manifolding-atlas-org-prompt--boot-timer
-      (run-with-idle-timer
-       0 nil
+      (run-with-timer
+       0.05 nil
        (lambda ()
-         (condition-case err
-             (let ((n (my/manifolding-atlas-org-prompt--register-all)))
-               (message "org-prompts: registered %d declarative prompts" n)
-               (let ((added (my/manifolding-atlas--sync-drawer-order-new-keys)))
-                 (when added
-                   (message "drawer-order: appended %d missing keys (%s)"
-                            (length added) (string-join added ", "))))
-               (when (= n 0)
+          (condition-case err
+              (let ((n (my/manifolding-atlas-org-prompt--register-all)))
+                (message "org-prompts: registered %d declarative prompts" n)
+                (if (fboundp 'my/manifolding-atlas-links--reconcile-on-boot)
+                    (let ((t0 (float-time))
+                          (rc (my/manifolding-atlas-links--reconcile-on-boot)))
+                      (message "known-keys: reconcile done in %.2fs (+%d -%d)"
+                               (- (float-time) t0)
+                               (length (car rc)) (length (cdr rc))))
+                  (message "known-keys: reconcile unavailable, skipping"))
+                ;; Orphan rows die here, synchronously, same boot pass —
+                ;; no timers: files already settled, engine loaded.
+                (when (fboundp 'my/manifolding-atlas-db--prune-orphans)
+                  (my/manifolding-atlas-db--prune-orphans))
+                (when (= n 0)
                  (lwarn 'manifolding-atlas-org-prompts
                         :warning "registered 0 declarative prompts")))
            (error (lwarn 'manifolding-atlas-org-prompts :error
                          "registration failed: %s" err))))))
+(message "reconcile scheduled (fires 0.05s after boot, no idle gate)")
 #+end_src
 
 ** Prompt Infrastructure
@@ -5683,31 +5840,33 @@ sites (this numeric contract) working now that the speed menu is gone."
       merged)))
 #+end_src
 
-*** Broken Blueprints Management
-Manages Broken Blueprints — an auto-generated file tracking notes whose
-state prompts were skipped (set to WARNING).
+*** Static Blueprints Management
+Manages Static Blueprints — an auto-generated file tracking notes
+holding static default values (or missing them) that want proper
+unfolding use: answer the prompt, or press ~l~ to make the value a
+live unfolding link.
 
 **** Path and file bootstrap
 
 #+begin_src emacs-lisp
-(defvar my/manifolding-atlas-missing--file "admin/Broken Blueprints"
-  "Filename for tracking notes with WARNING state unfoldings.")
-(setq my/manifolding-atlas-missing--file "admin/Broken Blueprints")
+(defvar my/manifolding-atlas-missing--file "admin/Static Blueprints"
+  "Filename for tracking notes with static unfolding values.")
+(setq my/manifolding-atlas-missing--file "admin/Static Blueprints")
 
 (defun my/manifolding-atlas-missing--path ()
-  "Return full path to Broken Blueprints."
+  "Return full path to Static Blueprints."
   (expand-file-name my/manifolding-atlas-missing--file
                     (my/manifolding-atlas-root-dir)))
 
 (defun my/manifolding-atlas-missing--ensure-file ()
-  "Create Broken Blueprints if it does not exist."
+  "Create Static Blueprints if it does not exist."
   (let ((path (my/manifolding-atlas-missing--path)))
     (make-directory (file-name-directory path) t)
     (unless (file-exists-p path)
       (with-temp-file path
-        (insert "#+TITLE: Broken Blueprints\n")
+        (insert "#+TITLE: Static Blueprints\n")
         (insert "#+AUTHOR: Manifolding Atlas Git VC System\n")
-        (insert "#+DESCRIPTION: Auto-generated - notes with unanswered state prompts.\n")
+        (insert "#+DESCRIPTION: Auto-generated - notes holding static defaults that want unfolding links.\n")
         (insert "#+STARTUP: overview\n\n")))
     path))
 #+end_src
@@ -5720,18 +5879,31 @@ note failing three schemas appears once with all of them listed.
 Why: Implementation of ~my/manifolding-atlas-missing--aggregate-health~.
 
 #+begin_src emacs-lisp
+(defvar my/manifolding-atlas-missing--static-types
+  '(missing-required disallowed-value invalid-value template-outdated)
+  "Violation types that belong in Static Blueprints: the value is
+absent or a static default wanting proper unfolding use.
+Link-structure types (wrong-type, invalid-reference, invalid-target)
+are excluded — those stay visible via flymake and the doctor, and
+must not dilute a queue about static values.")
+
 (defun my/manifolding-atlas-missing--aggregate-health ()
-  "Return violation entries aggregated by note id."
+  "Return static-needing violation entries aggregated by note id."
   (let ((by-id (make-hash-table :test #'equal)))
     (dolist (health (manifolding-atlas-blueprint-collection-health))
       (let ((schema-name (manifolding-atlas-blueprint-health-schema health)))
         (dolist (pair (manifolding-atlas-blueprint-health-invalid-notes health))
           (let* ((note (car pair))
-                 (violations (cdr pair))
+                 (violations (cl-remove-if-not
+                              (lambda (v)
+                                (memq (manifolding-atlas-violation-type v)
+                                      my/manifolding-atlas-missing--static-types))
+                              (cdr pair)))
                  (id (manifolding-atlas-note-id note))
                  (title (manifolding-atlas-note-title note))
                  (existing (gethash id by-id)))
-            (if existing
+            (when violations
+              (if existing
                 (progn
                   (plist-put existing :schemas
                              (cons (symbol-name schema-name)
@@ -5742,7 +5914,7 @@ Why: Implementation of ~my/manifolding-atlas-missing--aggregate-health~.
                        (list :id id :title title
                              :schemas (list (symbol-name schema-name))
                              :violations violations)
-                       by-id))))))
+                       by-id)))))))
     (let (entries)
       (maphash (lambda (_id plist) (push plist entries)) by-id)
       (nreverse entries))))
@@ -5758,9 +5930,9 @@ Why: Implementation of ~my/manifolding-atlas-missing--write-entries~.
   "Write ENTRIES as TODO headings to PATH; delete the file when empty."
   (if entries
       (with-temp-file path
-        (insert "#+TITLE: Broken Blueprints\n")
+        (insert "#+TITLE: Static Blueprints\n")
         (insert "#+AUTHOR: Manifolding Atlas Git VC System\n")
-        (insert "#+DESCRIPTION: Auto-generated - notes with schema violations.\n")
+        (insert "#+DESCRIPTION: Auto-generated - notes holding static defaults that want unfolding links.\n")
         (insert "#+STARTUP: overview\n\n")
         (dolist (entry entries)
           (insert (format "* TODO [[id:%s][%s]]\n"
@@ -5789,15 +5961,19 @@ Why: Implementation of ~my/manifolding-atlas-missing--rebuild-from-health~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-missing--rebuild-from-health ()
-  "Rebuild Broken Blueprints from schema health data."
+  "Rebuild Static Blueprints from schema health data.
+Error-isolated: a failure warns but never breaks finalize hooks."
   (interactive)
-  (let ((path (my/manifolding-atlas-missing--path)))
-    (make-directory (file-name-directory path) t)
-    (my/manifolding-atlas-missing--write-entries
-     path (my/manifolding-atlas-missing--aggregate-health))))
+  (condition-case err
+      (let ((path (my/manifolding-atlas-missing--path)))
+        (make-directory (file-name-directory path) t)
+        (my/manifolding-atlas-missing--write-entries
+         path (my/manifolding-atlas-missing--aggregate-health)))
+    (error (lwarn 'manifolding-atlas :warning
+                  "static rebuild failed: %s" err))))
 
 (defun my/manifolding-atlas--post-sync (_property _value _note)
-  "No-op.  Schema health replaces per-unfolding Broken Blueprints sync."
+  "No-op.  Schema health replaces per-unfolding Static Blueprints sync."
   nil)
 #+end_src
 

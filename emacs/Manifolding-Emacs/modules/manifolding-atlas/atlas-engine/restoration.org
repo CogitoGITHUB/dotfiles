@@ -61,8 +61,8 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
 
 **** Admin file inventory and empty cleanup
 #+begin_src emacs-lisp
-(defvar my/manifolding-atlas-missing--file "admin/Broken Blueprints"
-  "Filename for missing prompts queue. Lives in `my/manifolding-atlas-root-dir'.")
+(defvar my/manifolding-atlas-missing--file "admin/Static Blueprints"
+  "Filename for the static-values queue. Lives in `my/manifolding-atlas-root-dir'.")
 
 (defun my/manifolding-atlas-links--admin-file-paths ()
   "Absolute paths of all managed admin queue files."
@@ -106,7 +106,7 @@ RET follows links; saves trigger the cleanup sweep.
                 (my/manifolding-atlas-links--admin-file-paths))
     (setq-local org-return-follows-link t)
     (add-hook 'after-save-hook #'my/manifolding-atlas-links--cleanup-on-save nil t)
-    (when (string= (buffer-name) "Broken Blueprints")
+    (when (string= (buffer-name) "Static Blueprints")
       (setq-local my/manifolding-atlas-missing--active t))
     (goto-char (point-min))
     (when (re-search-forward "^\\*+ " nil t)
@@ -118,7 +118,7 @@ RET follows links; saves trigger the cleanup sweep.
 (require 'cl-lib)
 
 (defun my/manifolding-atlas-missing--around-open (orig-fun &rest args)
-  "Wrap org-open-at-point: from Broken Blueprints, open link then show update menu."
+  "Wrap org-open-at-point: from Static Blueprints, open link then show update menu."
   (let ((active (bound-and-true-p my/manifolding-atlas-missing--active)))
     (if active
         (progn
@@ -127,6 +127,58 @@ RET follows links; saves trigger the cleanup sweep.
           (delete-other-windows))
       (apply orig-fun args))))
 (advice-add 'org-open-at-point :around #'my/manifolding-atlas-missing--around-open)
+#+end_src
+
+**** Added-entry jump to property in capture
+RET on an Added Heading Blueprints entry opens the note in an
+org-capture buffer positioned on the added :KEY: line (widened,
+point on the value). The admin TODO is left untouched — mark DONE
+manually. Deleted Heading Blueprints keeps plain file-open.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-links--added-property-at-point ()
+  "Return (KEY . NOTE-FILE) from the Added entry heading at point, or nil.
+Reads :BLUEPRINT_KEY: and :NOTE_FILE: from the current heading drawer."
+  (when (org-at-heading-p)
+    (let ((key (org-entry-get nil "BLUEPRINT_KEY"))
+          (file (org-entry-get nil "NOTE_FILE")))
+      (when (and key file (not (string-empty-p key)) (file-exists-p file))
+        (cons key file)))))
+
+(defun my/manifolding-atlas-links--capture-at-property (key file)
+  "Open FILE in an org-capture buffer positioned after the :KEY: colon.
+Widened buffer (`:unnarrowed t'), point lands on the value for editing.
+The admin TODO is left alone — mark it DONE manually."
+  (let ((org-capture-templates
+         `(("p" "Edit added property"
+            plain
+            (file+function
+             ,file
+             (lambda ()
+               (goto-char (point-min))
+               (if (re-search-forward
+                    (format "^[ \t]*:%s:[ \t]*" (regexp-quote ,key))
+                    nil t)
+                   (goto-char (match-end 0))
+                 (goto-char (point-min)))))
+            "%?"
+            :kill-buffer t :unnarrowed t :empty-lines 0))))
+    (org-capture nil "p")))
+
+(defun my/manifolding-atlas-added--around-open (orig-fun &rest args)
+  "Wrap org-open-at-point: from Added Heading Blueprints, RET opens the
+note in an org-capture buffer on the added :KEY: line.
+All other buffers fall through to ORIG-FUN untouched."
+  (let ((added-path (ignore-errors
+                      (expand-file-name my/manifolding-atlas-links--added-blueprints-file
+                                       (my/manifolding-atlas-root-dir)))))
+    (if (and buffer-file-name added-path
+             (string= (expand-file-name buffer-file-name) added-path)
+             (my/manifolding-atlas-links--added-property-at-point))
+        (let ((kv (my/manifolding-atlas-links--added-property-at-point)))
+          (delete-other-windows)
+          (my/manifolding-atlas-links--capture-at-property (car kv) (cdr kv)))
+      (apply orig-fun args))))
+(advice-add 'org-open-at-point :around #'my/manifolding-atlas-added--around-open)
 #+end_src
 *** Deleted Entry Writer
 
@@ -586,19 +638,21 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
 **** Blueprint metadata reader
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--read-blueprint-meta (file)
-  "Return (KEY ID CONTEXTS KIND) from blueprint FILE, or nil without a KEY heading."
+  "Return (KEY ID CONTEXTS KIND) from blueprint FILE, or nil without a KEY heading.
+KEY matching is case-sensitive: only UPPER_SNAKE level-1 headings count."
   (when (and file (file-exists-p file))
     (with-temp-buffer
       (insert-file-contents file)
       (org-mode)
       (goto-char (point-min))
-      (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
-        (let ((key (match-string-no-properties 1)))
-          (goto-char (match-beginning 0))
-          (list key
-                (org-entry-get nil "ID")
-                (org-entry-get nil "CONTEXTS")
-                (org-entry-get nil "KIND")))))))
+      (let ((case-fold-search nil))
+        (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
+          (let ((key (match-string-no-properties 1)))
+            (goto-char (match-beginning 0))
+            (list key
+                  (org-entry-get nil "ID")
+                  (org-entry-get nil "CONTEXTS")
+                  (org-entry-get nil "KIND"))))))))
 #+end_src
 
 **** Entry writers
@@ -708,7 +762,7 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
            (id (my/manifolding-atlas-links--note-id-of abs)))
       (with-current-buffer (find-file-noselect path)
         (goto-char (point-max))
-        (insert (format "\n* TODO Added property %s to [[file:%s][%s]]\n" key abs title))
+        (insert (format "\n* TODO Added property %s to [[file:%s::*%s][%s]]\n" key abs key title))
         (insert "  :PROPERTIES:\n"
                 (format "  :CREATED:        %s\n"
                         (format-time-string "<%Y-%m-%d %a>"))
@@ -778,9 +832,6 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
       (my/manifolding-atlas-links--write-removed-property-from-note key abs))))
 #+end_src
 #+begin_src emacs-lisp
-(defvar my/manifolding-atlas-links--logged-blueprint-adds nil
-  "Absolute paths of blueprint files already logged as added this session.")
-
 (defun my/manifolding-atlas-links--heading-unfoldings-dir ()
   "Absolute path of heading-unfoldings/ (plural helper preferred)."
   (if (fboundp 'my/manifolding-atlas-blueprints-dir)
@@ -796,69 +847,209 @@ Excludes body-unfoldings/ (body templates, not prompts)."
     (and exp
          (string-suffix-p ".org" exp)
          (file-in-directory-p exp base)
-         (not (file-in-directory-p
-               exp (expand-file-name "body-unfoldings/" base))))))
-
-(defun my/manifolding-atlas-links--blueprint-tracked-p (file)
-  "Non-nil when FILE is tracked in the config git repo. Nil on any error."
-  (ignore-errors
-    (let ((top (locate-dominating-file (expand-file-name file) ".git")))
-      (and top
-           (= 0 (call-process magit-git-executable nil nil nil
-                              "-C" top "ls-files" "--error-unmatch" file))))))
+          (not (file-in-directory-p
+                exp (expand-file-name "body-unfoldings/" base))))))
 #+end_src
 
-**** Advice wiring
+**** Boot reconcile (state comparison)
+No event hooks: add/delete detection is a boot diff of on-disk keys
+vs `.known-keys` (last boot's record), so shell rm, manual moves,
+git checkouts, and future paths all reconcile on next boot.
+Vault drawers are never stripped — gone keys are log-only.
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-links--log-added-blueprint (&rest _)
-  "Log pending blueprint from the ADD menu to Added Heading Blueprints."
-  (when-let ((p (and (boundp 'my/manifolding-atlas--pending-blueprint-register)
-                     my/manifolding-atlas--pending-blueprint-register)))
+(defun my/manifolding-atlas-links--known-keys-path ()
+  "Absolute path of the last-known prompt-key record.
+Lives beside drawer-order.org in blueprint-reinforcements/."
+  (let ((dir (if (fboundp 'my/manifolding-atlas-drawer-order-file)
+                 (file-name-directory
+                  (my/manifolding-atlas-drawer-order-file))
+               (expand-file-name "Manifolding-Emacs/modules/manifolding-atlas/blueprints/blueprint-reinforcements/"
+                                 user-emacs-directory))))
+    (expand-file-name ".known-keys" dir)))
+
+(defun my/manifolding-atlas-links--known-keys-read ()
+  "Last-known prompt-key set (sorted), or nil when never recorded."
+  (let ((p (my/manifolding-atlas-links--known-keys-path)))
     (when (file-exists-p p)
-      (push (expand-file-name p) my/manifolding-atlas-links--logged-blueprint-adds)
-      (let ((meta (my/manifolding-atlas-links--read-blueprint-meta p)))
-        (when meta
-          (apply #'my/manifolding-atlas-links--write-added-blueprint
-                 (car meta) (expand-file-name p) (cdr meta)))))))
+      (with-temp-buffer
+        (insert-file-contents p)
+        (let ((case-fold-search nil)
+              keys)
+          (goto-char (point-min))
+          (while (re-search-forward "^\\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
+            (push (match-string-no-properties 1) keys))
+          (sort (delete-dups keys) #'string<))))))
 
-(defun my/manifolding-atlas-links--after-blueprint-write (_start _end file &rest _)
-  "Log manually created blueprint FILES to Added Heading Blueprints.
-Skips the ADD-menu path (covered by pending var), already-logged
-files, and git-tracked files (not new)."
-  (let ((exp (and (stringp file) (expand-file-name file))))
-    (when (and exp
-               (my/manifolding-atlas-links--blueprint-trackable-p exp)
-               (not (member exp my/manifolding-atlas-links--logged-blueprint-adds))
-               (not (and (boundp 'my/manifolding-atlas--pending-blueprint-register)
-                         my/manifolding-atlas--pending-blueprint-register
-                         (equal exp (expand-file-name
-                                     my/manifolding-atlas--pending-blueprint-register))))
-               (not (my/manifolding-atlas-links--blueprint-tracked-p exp)))
-      (push exp my/manifolding-atlas-links--logged-blueprint-adds)
-      (let ((meta (my/manifolding-atlas-links--read-blueprint-meta exp)))
-        (when meta
-          (apply #'my/manifolding-atlas-links--write-added-blueprint
-                 (car meta) exp (cdr meta)))))))
+(defun my/manifolding-atlas-links--known-keys-write (keys)
+  "Persist KEYS (sorted, one per line) as the last-known record."
+  (let ((p (my/manifolding-atlas-links--known-keys-path)))
+    (make-directory (file-name-directory p) t)
+    (with-temp-file p
+      (dolist (k (sort (copy-sequence keys) #'string<))
+        (insert k "\n")))))
 
-(defun my/manifolding-atlas-links--before-blueprint-delete (file &rest _)
-  "Log blueprint FILE deletion to Deleted Heading Blueprints.
-Also removes the deleted KEY from vault note drawers (same sweep,
-saves once per changed file)."
-  (let ((exp (and (stringp file) (expand-file-name file))))
-    (when (and exp
-               (my/manifolding-atlas-links--blueprint-trackable-p exp)
-               (file-exists-p exp))
-      (let ((meta (ignore-errors (my/manifolding-atlas-links--read-blueprint-meta exp))))
-        (when meta
-          (apply #'my/manifolding-atlas-links--write-deleted-blueprint
-                 (car meta) exp (cdr meta))
-          (when (fboundp 'my/manifolding-atlas--sweep-remove-drawer-key)
-            (my/manifolding-atlas--sweep-remove-drawer-key (car meta))))))))
+(defun my/manifolding-atlas-links--scan-current-keys ()
+  "Sorted prompt KEY strings on disk right now. File truth only —
+ignores the specs registry so load order cannot skew the diff."
+  (let ((base (my/manifolding-atlas-links--heading-unfoldings-dir))
+        keys)
+    (when (file-directory-p base)
+      (dolist (f (directory-files-recursively base "\\.org\\'"))
+        (when (my/manifolding-atlas-links--blueprint-trackable-p f)
+          (let ((meta (ignore-errors
+                        (my/manifolding-atlas-links--read-blueprint-meta f))))
+            (when (and meta (stringp (car meta))
+                       (not (string-empty-p (car meta))))
+              (push (car meta) keys))))))
+    (sort (delete-dups keys) #'string<)))
 
-(advice-add 'my/manifolding-atlas--register-pending-blueprint :before
-            #'my/manifolding-atlas-links--log-added-blueprint)
-(advice-add 'write-region :after #'my/manifolding-atlas-links--after-blueprint-write)
-(advice-add 'delete-file :before #'my/manifolding-atlas-links--before-blueprint-delete)
+(defun my/manifolding-atlas-links--vault-note-files ()
+  "Vault note files for sweeps: .org + extensionless, minus .git/admin.
+Computed once per reconcile and shared, so N gone keys cost one scan."
+  (let* ((root (my/manifolding-atlas-root-dir))
+         (gitdir (expand-file-name ".git" root))
+         (admindir (expand-file-name "admin/" root)))
+    (cl-remove-if (lambda (f) (or (file-in-directory-p f gitdir)
+                                  (file-in-directory-p f admindir)))
+                  (append (directory-files-recursively root "\\.org\\'")
+                          (directory-files-recursively root "[^./]+\\'")))))
+
+(defun my/manifolding-atlas-links--gone-key-holders (key &optional files)
+  "Vault note files whose first level-1 drawer still holds :KEY:.
+Log-only scan — never modifies. FILES reuses a precomputed
+`my/manifolding-atlas-links--vault-note-files' list when given."
+  (when (and (stringp key) (not (string-empty-p key)))
+    (let ((files (or files (my/manifolding-atlas-links--vault-note-files)))
+          (re (format "^[ \t]*:%s:[ \t]*.*$" (regexp-quote key)))
+          holders)
+      (dolist (f files)
+          (when (and f (file-exists-p f))
+            (when (with-temp-buffer
+                    (insert-file-contents f)
+                    (goto-char (point-min))
+                    (when (re-search-forward "^\\* " nil t)
+                      (let ((sub-end
+                             (save-excursion
+                               (if (re-search-forward "^\\* " nil t)
+                                   (match-beginning 0)
+                                 (point-max)))))
+                        (when (re-search-forward
+                               "^[ \t]*:PROPERTIES:[ \t]*$" sub-end t)
+                          (let ((drawer-end
+                                 (save-excursion
+                                   (when (re-search-forward
+                                          "^[ \t]*:END:[ \t]*$" sub-end t)
+                                     (point)))))
+                            (and drawer-end
+                                 (re-search-forward re drawer-end t)))))))
+              (push f holders))))
+      (nreverse holders))))
+
+(defun my/manifolding-atlas-links--ensure-drawer-order-keys (keys)
+  "Append missing KEYS as `** KEY' lines to drawer-order.org, then apply.
+Returns the appended list. Never reorders or prunes existing headings."
+  (let ((missing (and keys
+                      (fboundp 'my/manifolding-atlas-drawer-order-from-file)
+                      (let ((order (my/manifolding-atlas-drawer-order-from-file)))
+                        (cl-remove-if (lambda (k) (member k order)) keys))))
+        (f (and (fboundp 'my/manifolding-atlas-drawer-order-file)
+                (my/manifolding-atlas-drawer-order-file))))
+    (when (and missing f (file-exists-p f))
+      (with-temp-file f
+        (insert-file-contents f)
+        (goto-char (point-max))
+        (unless (bolp) (insert "\n"))
+        (dolist (k missing)
+          (insert (format "** %s\n" k))))
+      (when (fboundp 'my/manifolding-atlas--apply-drawer-order-file)
+        (my/manifolding-atlas--apply-drawer-order-file)))
+    missing))
+
+(defun my/manifolding-atlas-links--prune-drawer-order-stale ()
+  "Remove drawer-order.org `**' headings matching no prompt key.
+Compares against spec :keys plus the reinforce extra-keys allowlist
+\(e.g. ID). Skips entirely when the specs registry is empty — a
+failed registration must never eat the order file. Applies
+\(setq + vault sweep) when anything was removed. Returns removed list."
+  (let ((removed nil))
+    (when (and (fboundp 'my/manifolding-atlas-drawer-order-from-file)
+               (fboundp 'my/manifolding-atlas-drawer-order-file)
+               (boundp 'my/manifolding-atlas-org-prompt--specs)
+               (hash-table-p my/manifolding-atlas-org-prompt--specs)
+               (> (hash-table-count my/manifolding-atlas-org-prompt--specs) 0))
+      (let ((known nil)
+            (extra (and (boundp 'my/manifolding-atlas-reinforce--drawer-order-extra-keys)
+                        my/manifolding-atlas-reinforce--drawer-order-extra-keys))
+            (f (my/manifolding-atlas-drawer-order-file)))
+        (maphash (lambda (_k spec)
+                   (let ((key (plist-get spec :key)))
+                     (when (and (stringp key) (not (string-empty-p key)))
+                       (push key known))))
+                 my/manifolding-atlas-org-prompt--specs)
+        (let ((order (my/manifolding-atlas-drawer-order-from-file)))
+          (setq removed (cl-remove-if
+                         (lambda (k) (or (member k known) (member k extra)))
+                         order)))
+        (when (and removed (file-exists-p f))
+          (with-temp-file f
+            (insert-file-contents f)
+            (dolist (k removed)
+              (goto-char (point-min))
+              (when (re-search-forward
+                     (format "^\\*\\* +%s[ \t]*$" (regexp-quote k)) nil t)
+                (delete-region (line-beginning-position)
+                               (min (1+ (line-end-position)) (point-max))))))
+          (when (fboundp 'my/manifolding-atlas--apply-drawer-order-file)
+            (my/manifolding-atlas--apply-drawer-order-file))
+          (message "drawer-order: pruned %d stale keys (%s)"
+                   (length removed) (string-join removed ", ")))))
+    removed))
+
+(defun my/manifolding-atlas-links--reconcile-on-boot ()
+  "Diff on-disk prompt keys vs `.known-keys' and reconcile.
+New keys: drawer-order append + stub sweep (Added log per file).
+Gone keys: Deleted log per holder file. Vault drawers are NEVER
+stripped. Stale drawer-order headings (no prompt key) are pruned.
+Updates `.known-keys' to current reality. Idempotent —
+a second boot with no changes is a no-op. Returns (NEW . GONE)."
+  (let ((current (my/manifolding-atlas-links--scan-current-keys))
+        (last-known (my/manifolding-atlas-links--known-keys-read)))
+    (if (null last-known)
+        (progn
+          (my/manifolding-atlas-links--known-keys-write current)
+          (message "known-keys: seeded %d keys (no diff on first record)"
+                   (length current))
+          (cons nil nil))
+      (let ((new (sort (cl-set-difference current last-known :test #'string=)
+                       #'string<))
+            (gone (sort (cl-set-difference last-known current :test #'string=)
+                        #'string<))
+            (vault-files (my/manifolding-atlas-links--vault-note-files)))
+        (when new
+          (my/manifolding-atlas-links--ensure-drawer-order-keys new)
+          (when (fboundp 'my/manifolding-atlas--sweep-sync-drawer-keys)
+            (let ((specs (and (boundp 'my/manifolding-atlas-org-prompt--specs)
+                              my/manifolding-atlas-org-prompt--specs)))
+              (my/manifolding-atlas--sweep-sync-drawer-keys
+               (mapcar (lambda (k)
+                         (let ((spec (and (hash-table-p specs)
+                                          (gethash (intern (downcase k)) specs))))
+                           (cons k (if (and spec
+                                            (fboundp 'my/manifolding-atlas-org-prompt--default-for-spec))
+                                       (my/manifolding-atlas-org-prompt--default-for-spec spec)
+                                     "TODO"))))
+                       new)))))
+        (dolist (k gone)
+          (dolist (f (my/manifolding-atlas-links--gone-key-holders
+                      k vault-files))
+            (my/manifolding-atlas-links--log-removed-property f k)))
+        (my/manifolding-atlas-links--prune-drawer-order-stale)
+        (my/manifolding-atlas-links--known-keys-write current)
+        (when (or new gone)
+          (message "known-keys: +%d -%d (%s / %s)"
+                   (length new) (length gone)
+                   (string-join new ", ") (string-join gone ", ")))
+        (cons new gone)))))
 #+end_src
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--check-direction

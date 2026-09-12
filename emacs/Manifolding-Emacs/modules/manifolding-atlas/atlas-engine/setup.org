@@ -40,6 +40,10 @@ Change only this path to relocate the entire vault."
 
 (setq manifolding-atlas-db-sync-external-method 'poll)
 (setq manifolding-atlas-db-sync-verbose nil)
+;; Belt: fswatch rarely exists on Termux, so poll is the watcher.
+;; Keep its interval tight; guarded in case the engine renames it.
+(when (boundp 'manifolding-atlas-db-sync-poll-interval)
+  (setq manifolding-atlas-db-sync-poll-interval 10))
 
 (defvar my/manifolding-atlas-db--location-used nil
   "Location used when the current DB connection was opened.")

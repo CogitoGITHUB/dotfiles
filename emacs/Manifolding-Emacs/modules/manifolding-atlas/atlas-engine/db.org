@@ -198,6 +198,36 @@ Returns 1 if a note was indexed, 0 otherwise. Handles deletion when file missing
              (cl-some (lambda (dir) (string-prefix-p (expand-file-name dir) (expand-file-name buffer-file-name)))
                       manifolding-atlas-db-sync-directories))
     (manifolding-atlas-db--update-file buffer-file-name)))
+#+end_src
+
+*** Orphan prune (state comparison, not hooks)
+Shell rm, git checkout, and external tools never fire Emacs hooks,
+so deleted files linger as DB ghosts (visible in find completion)
+until something diffs. This does: every distinct DB path missing
+on disk goes through `manifolding-atlas-db--update-file', which
+already deletes the row. File existence is truth — same rule as
+the blueprint `.known-keys' reconcile. Admin history untouched.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-db--prune-orphans ()
+  "Drop DB note rows for vault files that no longer exist on disk.
+Returns pruned count. Never touches files or admin history.
+Skips silently when the engine (emacsql/manifolding-atlas-db) is not
+loaded yet — boot timers fire before it; the idle repeat catches up."
+  (if (not (and (fboundp 'emacsql) (fboundp 'manifolding-atlas-db)
+                (fboundp 'manifolding-atlas-db--update-file)))
+      0
+    (let ((pruned 0))
+    (my/manifolding-atlas--ensure-notes-table)
+    (let ((paths (ignore-errors
+                   (mapcar #'car (emacsql (manifolding-atlas-db)
+                                          [:select :distinct [path] :from notes])))))
+      (dolist (p paths)
+        (when (and (stringp p) (not (file-exists-p p)))
+          (ignore-errors (manifolding-atlas-db--update-file p))
+          (setq pruned (1+ pruned)))))
+    (when (> pruned 0)
+      (message "db orphans: pruned %d note(s) for deleted files" pruned))
+    pruned)))
 
 (defun manifolding-atlas-db-query (&optional filter)
   "Query notes, filtered by FILTER if given."
