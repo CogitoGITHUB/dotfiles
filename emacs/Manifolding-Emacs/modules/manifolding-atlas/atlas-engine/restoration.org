@@ -972,6 +972,10 @@ Compares against spec :keys plus the reinforce extra-keys allowlist
 failed registration must never eat the order file. Applies
 \(setq + vault sweep) when anything was removed. Returns removed list."
   (let ((removed nil))
+    (unless (and (boundp 'my/manifolding-atlas-org-prompt--specs)
+                 (hash-table-p my/manifolding-atlas-org-prompt--specs)
+                 (> (hash-table-count my/manifolding-atlas-org-prompt--specs) 0))
+      (message "drawer-order: prune skipped (prompt registry unavailable)"))
     (when (and (fboundp 'my/manifolding-atlas-drawer-order-from-file)
                (fboundp 'my/manifolding-atlas-drawer-order-file)
                (boundp 'my/manifolding-atlas-org-prompt--specs)
@@ -1040,9 +1044,14 @@ a second boot with no changes is a no-op. Returns (NEW . GONE)."
                                      "TODO"))))
                        new)))))
         (dolist (k gone)
-          (dolist (f (my/manifolding-atlas-links--gone-key-holders
-                      k vault-files))
-            (my/manifolding-atlas-links--log-removed-property f k)))
+          ;; One bad key must never abort prune + known-keys rewrite below.
+          (condition-case err
+              (dolist (f (my/manifolding-atlas-links--gone-key-holders
+                          k vault-files))
+                (my/manifolding-atlas-links--log-removed-property f k))
+            (error (lwarn 'manifolding-atlas :warning
+                          "known-keys: gone-key %s logging failed: %s"
+                          k err))))
         (my/manifolding-atlas-links--prune-drawer-order-stale)
         (my/manifolding-atlas-links--known-keys-write current)
         (when (or new gone)

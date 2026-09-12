@@ -5335,12 +5335,38 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
 * Boot
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas-org-prompt--boot-timer nil)
+(defvar my/manifolding-atlas--reconcile-boot-timer nil)
+(defvar my/manifolding-atlas--reconcile-boot-attempts 0)
+
+(defun my/manifolding-atlas--reconcile-boot-maybe ()
+  "Run boot reconcile once restoration.org is loaded, else retry.
+The 0.05s boot timer can fire before later-priority files load
+\(restoration.org is priority 15); a one-shot skip then loses the
+reconcile for the whole session. Retry every 5s, bounded (~5 min)."
+  (setq my/manifolding-atlas--reconcile-boot-timer nil)
+  (cond
+   ((fboundp 'my/manifolding-atlas-links--reconcile-on-boot)
+    (condition-case err
+        (let ((t0 (float-time))
+              (rc (my/manifolding-atlas-links--reconcile-on-boot)))
+          (message "known-keys: reconcile done in %.2fs (+%d -%d)"
+                   (- (float-time) t0)
+                   (length (car rc)) (length (cdr rc))))
+      (error (lwarn 'manifolding-atlas-org-prompts :error
+                    "reconcile failed: %s" err))))
+   ((< (cl-incf my/manifolding-atlas--reconcile-boot-attempts) 60)
+    (setq my/manifolding-atlas--reconcile-boot-timer
+          (run-with-timer 5 nil #'my/manifolding-atlas--reconcile-boot-maybe)))
+   (t (message "known-keys: reconcile unavailable, skipping"))))
 
 ;; No with-eval-after-load gate: 'manifolding-atlas is never provided, so
 ;; that wrapper could never fire. This code already lives inside
 ;; file-creation.org, which the loader compiles regardless.
 (when my/manifolding-atlas-org-prompt--boot-timer
   (cancel-timer my/manifolding-atlas-org-prompt--boot-timer))
+(when my/manifolding-atlas--reconcile-boot-timer
+  (cancel-timer my/manifolding-atlas--reconcile-boot-timer))
+(setq my/manifolding-atlas--reconcile-boot-attempts 0)
 (setq my/manifolding-atlas-org-prompt--boot-timer
       (run-with-timer
        0.05 nil
@@ -5348,13 +5374,7 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
           (condition-case err
               (let ((n (my/manifolding-atlas-org-prompt--register-all)))
                 (message "org-prompts: registered %d declarative prompts" n)
-                (if (fboundp 'my/manifolding-atlas-links--reconcile-on-boot)
-                    (let ((t0 (float-time))
-                          (rc (my/manifolding-atlas-links--reconcile-on-boot)))
-                      (message "known-keys: reconcile done in %.2fs (+%d -%d)"
-                               (- (float-time) t0)
-                               (length (car rc)) (length (cdr rc))))
-                  (message "known-keys: reconcile unavailable, skipping"))
+                (my/manifolding-atlas--reconcile-boot-maybe)
                 ;; Orphan rows die here, synchronously, same boot pass —
                 ;; no timers: files already settled, engine loaded.
                 (when (fboundp 'my/manifolding-atlas-db--prune-orphans)
