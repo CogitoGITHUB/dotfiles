@@ -58,7 +58,5 @@ reorder, then save to apply to the whole vault.
 ** THINKING_TYPES
 ** TRAPS_EXTERNAL
 ** TRAPS_INTERNAL
-** TEST_DRAWER_APPEND
-** ZZTEST_RESTART
-** RESTART_PROOF
-** Subdirectory
+** FLOWTEST_ALPHA
+** FLOWTEST_BETA
