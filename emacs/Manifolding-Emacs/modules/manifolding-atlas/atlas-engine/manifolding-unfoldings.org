@@ -196,7 +196,9 @@ unique per parent so per-file notes don't leak."
                (root (expand-file-name (format "admin/unfoldings/%s/" property-type) (my/manifolding-atlas-root-dir)))
                (path (expand-file-name slug root))
                (id (my/manifolding-atlas--note-id-by-path path))
-               (title value))
+               (title (format "%s: %s"
+                              (my/manifolding-atlas--property-key-from-type property-type)
+                              value)))
           (if id
               (my/manifolding-atlas--make-id-link id title)
             (make-directory root t)
@@ -204,7 +206,7 @@ unique per parent so per-file notes don't leak."
               (let ((note (manifolding-atlas-create title path
                            :tags nil :unfoldings nil :body nil)))
                 (when note
-                  (my/manifolding-atlas--make-id-link (manifolding-atlas-note-id note) title))))))))))
+                  (my/manifolding-atlas--make-id-link (manifolding-atlas-note-id note) value))))))))))
 #+end_src
 
 ** Scoped To-Plist Factory
@@ -531,10 +533,13 @@ Navigates by NOTE's own path, so it works from any buffer."
     (let* ((slug (my/manifolding-atlas--canonicalize (or parent-id "orphan")))
            (val-slug (my/manifolding-atlas--canonicalize value))
            (root (expand-file-name (format "admin/unfoldings/%s/" property-type) (my/manifolding-atlas-root-dir)))
-           (path (expand-file-name (format "%s-%s" slug val-slug) root)))
+           (path (expand-file-name (format "%s-%s" slug val-slug) root))
+           (title (format "%s: %s"
+                          (my/manifolding-atlas--property-key-from-type property-type)
+                          value)))
       (make-directory root t)
       (let ((manifolding-atlas-create-default-function (lambda (_) '())))
-        (let ((note (manifolding-atlas-create value path
+        (let ((note (manifolding-atlas-create title path
                      :tags nil
                      :unfoldings (when parent-id `(("UNFOLDING_PARENT" . ,parent-id)
                                                     ("UNFOLDING_TYPE" . ,(symbol-name property-type))))
@@ -701,13 +706,15 @@ Puts the raw wormhole lines back exactly where they were.
 (advice-add 'org-element-parse-buffer :around #'my/manifolding-atlas--strip-in-drawer-keywords)
 #+end_src
 
-** RET on a property -- select/create, open, update or change
-Press RET on a property line inside a :PROPERTIES: drawer. If it is
-still unset (WARNING), select an existing option or type a new one --
-either way the resulting note's file opens directly so writing can
-start immediately. If it is already set, choose to update the linked
-note directly or change to a different option. Everywhere else, RET
-behaves normally.
+** RET on a property -- declarative session, then link
+Press RET on a property line inside a :PROPERTIES: drawer. The
+registered declarative spec for that key opens as a picking session
+(letters jump+mark, RET advances); on finish, the picked value is
+linked as an unfolding note and its file opens directly so writing
+can start immediately. If the property already holds an unfolding
+link, choose to update the linked note directly or change to a
+different option. Missing spec is a loud error naming the key --
+never a silent empty picker. Everywhere else, RET behaves normally.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas--current-property-key ()
   "Return the property KEY on the current line, or nil if not on one."
@@ -718,64 +725,6 @@ behaves normally.
 
 
 
-(defun my/manifolding-atlas--property-blueprint-file (property-type)
-  "Return the path to the blueprint file defining UNFOLDING-TYPE's options."
-  (expand-file-name (format "%s.org" property-type)
-                     (expand-file-name "properties" (my/manifolding-atlas-blueprint-dir))))
-
-(defun my/manifolding-atlas--property-unfoldings-as-candidates (property-type)
-  "Return the option strings defined as level-2 headings in the
-UNFOLDING-TYPE blueprint file, excluding the WARNING sentinel."
-  (let ((file (my/manifolding-atlas--property-blueprint-file property-type)))
-    (when (file-exists-p file)
-      (with-temp-buffer
-        (insert-file-contents file)
-        (goto-char (point-min))
-        (let (options)
-          (while (re-search-forward "^\\*\\* \\(.+\\)$" nil t)
-            (let ((title (string-trim (match-string-no-properties 1))))
-              (unless (string-equal title "WARNING")
-                (push title options))))
-          (nreverse options))))))
-
-(defvar-local my/manifolding-atlas--picker-callback nil)
-
-(defun my/manifolding-atlas--picker-select ()
-  (interactive)
-  (unless (org-at-heading-p)
-    (user-error "Point must be on an option"))
-  (let ((title (string-trim (org-get-heading t t t t)))
-        (cb my/manifolding-atlas--picker-callback))
-    (kill-buffer)
-    (when cb (funcall cb title))))
-
-(defvar my/manifolding-atlas--picker-map
-  (let ((m (make-sparse-keymap)))
-    (define-key m (kbd "RET") #'my/manifolding-atlas--picker-select)
-    (define-key m (kbd "q") (lambda () (interactive) (kill-buffer)))
-    m))
-
-(defun my/manifolding-atlas--open-picker (property-type on-select)
-  "Open the UNFOLDING-TYPE blueprint file using the vault's own proven
-capture-style editor (same one unfolding-notes use), then arm a
-key-selection jump restricted to level-2 (**) option headings.
-Pressing an option's letter selects it, aborts this capture (no
-edits are saved from picking), and calls ON-SELECT with its title."
-  (let ((file (my/manifolding-atlas--property-blueprint-file property-type)))
-    (my/manifolding-atlas--edit-file-in-capture file)
-    (goto-char (point-min))
-    (let ((ks-all-windows nil))
-      (ks-jump "^\\*\\* .+$"
-               :beg (point-min)
-               :end (point-max)
-               :action
-               (lambda (pt)
-                 (goto-char pt)
-                 (org-back-to-heading t)
-                 (let ((title (string-trim (org-get-heading t t t t))))
-                   (org-capture-kill)
-                   (funcall on-select title)))))))
-
 (defun my/manifolding-atlas--open-unfolding-file-capture (unfolding-id)
   "Open UNFOLDING-ID's file using the vault's own capture-style editor,
 which already sets :kill-buffer and org-capture-use-indirect-buffer
@@ -785,73 +734,200 @@ correctly so C-c C-c restores the original window."
       (user-error "Could not find the unfolding file for %s" unfolding-id))
     (my/manifolding-atlas--edit-file-in-capture file)))
 
-(defun my/manifolding-atlas--property-choose-and-link (property-type key)
-  "Open the UNFOLDING-TYPE blueprint file so the user can pick an
-option with a single keypress. On selection, create/reuse the unfolding
-note for that value and write its id-link as KEY's plain property
-VALUE inside the note's existing :PROPERTIES: drawer -- never as a
-separate wormholed block -- then open the unfolding note for editing."
-  (let ((marker (point-marker)))
-    (my/manifolding-atlas--open-picker
-     property-type
-      (lambda (final-title)
-        (let* ((parent-note (with-current-buffer (marker-buffer marker)
-                              (save-excursion
-                                (goto-char marker)
-                                (ignore-errors (my/manifolding-atlas--note-at-point)))))
-               (link (my/manifolding-atlas--ensure-unfolding-note property-type final-title parent-note))
-               (unfolding-id (my/manifolding-atlas--id-from-link link)))
-         (unless unfolding-id
-           (user-error "Could not create a reference note for %s" final-title))
-          (save-window-excursion
-            (with-current-buffer (marker-buffer marker)
-              (save-excursion
-                (goto-char marker)
-                (let ((re-render (bound-and-true-p atlas-wormholes-mode)))
-                  (when re-render (atlas-wormholes-remove-all))
-                  (unwind-protect
-                      (my/manifolding-atlas--refresh-property-wormhole property-type final-title unfolding-id)
-                    (when re-render (atlas-wormholes-add-all)))))
-              (save-buffer)))
-         (my/manifolding-atlas--open-unfolding-file-capture unfolding-id))))))
+(defun my/manifolding-atlas--property-pick-live (key property-type)
+  "Pick an option for KEY from its declarative spec and go live instantly.
+Opens the spec's blueprint file in a capture picker; a letter jump
+selects the option, kills the picker (picking saves nothing), then
+creates/reuses the unfolding note, writes its id-link as KEY's
+value, saves, and opens the unfolding note in a capture for editing.
+No options in the file is a loud error -- never a silent empty picker."
+  (let* ((spec (gethash property-type my/manifolding-atlas-org-prompt--specs))
+         (file (and spec (plist-get spec :file)))
+         (marker (point-marker)))
+    (unless (and spec (stringp file) (file-exists-p file))
+      (user-error "No blueprint file for %s" key))
+    (my/manifolding-atlas--edit-file-in-capture file)
+    (goto-char (point-min))
+    (unless (re-search-forward "^\\*\\* .+$" nil t)
+      (org-capture-kill)
+      (user-error "No options in %s" (file-name-nondirectory file)))
+    (goto-char (point-min))
+    (let ((ks-all-windows nil))
+      (ks-jump "^\\*\\* .+$"
+               :beg (point-min)
+               :end (point-max)
+               :action
+               (lambda (pt)
+                 (goto-char pt)
+                 (org-back-to-heading t)
+                 (let ((final-title (string-trim (org-get-heading t t t t))))
+                   (org-capture-kill)
+                   (my/manifolding-atlas--property-go-live
+                    marker property-type key final-title)))))))
 
-(defun my/manifolding-atlas--property-pick-via-session (property-type key)
-  "Open the real declarative-prompt session for UNFOLDING-TYPE/KEY on
-the note at point -- the same picker used at note creation time
-(letters jump+mark, C-l makes it an unfolding, C-e edits the file, RET
-advances). UNFOLDING-TYPE doubles as the registry key-sym."
-  (when (zerop (hash-table-count my/manifolding-atlas-org-prompt--specs))
-    (my/manifolding-atlas-org-prompt--register-all))
-  (let* ((note (my/manifolding-atlas--note-at-point))
-         (spec (gethash property-type my/manifolding-atlas-org-prompt--specs)))
-    (unless note
-      (user-error "Not on a note (no :ID: on this heading)"))
-    (unless spec
-      (user-error "No declarative spec registered for %s" key))
-    (my/manifolding-atlas-org-prompt--session-begin
-     (list (list :spec spec :default nil))
-     note
-     nil)))
+(defface my/manifolding-atlas-context-key-face
+  '((((background light)) :foreground "#7030a0" :weight bold)
+    (((background dark)) :foreground "#c79bf0" :weight bold)
+    (t :weight bold))
+  "Face for the KEY part of unfolding `KEY → value' context lines.
+Light/dark variants keep it readable under modus-operandi and
+modus-vivendi without hardcoded single-theme colors."
+  :group 'manifolding-atlas)
+
+(defface my/manifolding-atlas-context-value-face
+  '((((background light)) :foreground "#c00000" :weight bold)
+    (((background dark)) :foreground "#ff7f7f" :weight bold)
+    (t :weight bold))
+  "Face for the value part of unfolding `KEY → value' context lines.
+Light/dark variants keep it readable under modus-operandi and
+modus-vivendi without hardcoded single-theme colors."
+  :group 'manifolding-atlas)
+
+(defvar my/manifolding-atlas--context-line-keywords
+  '(("^\\([A-Z][A-Z0-9_]*\\) → \\(.*\\)$"
+     (1 'my/manifolding-atlas-context-key-face)
+     (2 'my/manifolding-atlas-context-value-face)))
+  "Font-lock rules highlighting unfolding context lines.")
+
+(defun my/manifolding-atlas--context-line-fontify ()
+  "Enable context-line highlighting in unfolding note buffers only."
+  (when (and buffer-file-name
+             (stringp (my/manifolding-atlas-root-dir))
+             (string-prefix-p
+              (expand-file-name "admin/unfoldings/"
+                                (my/manifolding-atlas-root-dir))
+              (expand-file-name buffer-file-name)))
+    (font-lock-add-keywords nil my/manifolding-atlas--context-line-keywords t)
+    (font-lock-flush)))
+
+(add-hook 'org-mode-hook #'my/manifolding-atlas--context-line-fontify)
+
+(defun my/manifolding-atlas--property-ensure-context-line (unfolding-id key value)
+  "Ensure the unfolding note shows `KEY → VALUE' under its drawer.
+Inserts the context line plus blank space as the first body lines,
+only when not already present -- re-picks never duplicate it.
+Returns non-nil when inserted."
+  (let ((file (and unfolding-id
+                   (ignore-errors (org-id-find-id-file unfolding-id)))))
+    (when (and file (file-exists-p file))
+      (with-current-buffer (find-file-noselect file)
+        (save-excursion
+          (goto-char (point-min))
+          (when (re-search-forward "^\\* " nil t)
+            (org-back-to-heading t)
+            (let ((r (my/manifolding-atlas--drawer-region)))
+              (when r
+                (goto-char (cdr r))
+                (forward-line 1)
+                (unless (looking-at (format "^%s → %s[ \t]*$"
+                                            (regexp-quote key)
+                                            (regexp-quote value)))
+                  (insert (format "%s → %s\n\n" key value))
+                  (save-buffer)
+                  t)))))))))
+
+(defun my/manifolding-atlas--property-go-live (marker property-type key final-title)
+  "Make FINAL-TITLE live for KEY at MARKER, then open it for editing.
+Create/reuse the unfolding note, write its id-link as KEY's plain
+property value, save the origin, and open the unfolding note in a
+capture. The drawer goes straight to the id-link -- the picked value
+is never written as a static intermediate."
+  (let ((buf (marker-buffer marker)))
+    (unless (buffer-live-p buf)
+      (user-error "Origin buffer gone"))
+    (with-current-buffer buf
+      (save-excursion
+        (goto-char marker)
+        (let* ((parent-note (ignore-errors (my/manifolding-atlas--note-at-point)))
+               (link (my/manifolding-atlas--ensure-unfolding-note
+                      property-type final-title parent-note))
+               (unfolding-id (my/manifolding-atlas--id-from-link link)))
+          (unless unfolding-id
+            (user-error "Could not create a reference note for %s" final-title))
+          (save-window-excursion
+            (save-excursion
+              (goto-char marker)
+              (let ((re-render (bound-and-true-p atlas-wormholes-mode)))
+                (when re-render (atlas-wormholes-remove-all))
+                (unwind-protect
+                    (my/manifolding-atlas--refresh-property-wormhole
+                     property-type final-title unfolding-id)
+                  (when re-render (atlas-wormholes-add-all)))))
+            (save-buffer))
+          (dolist (win (get-buffer-window-list buf nil t))
+            (with-selected-window win
+              (unless (window-minibuffer-p win)
+                (revert-buffer :ignore-auto :noconfirm :preserve-modes))))
+          (setq my/manifolding-atlas--pending-unfolding-refresh
+                (cons unfolding-id (buffer-file-name buf)))
+          (my/manifolding-atlas--property-ensure-context-line
+           unfolding-id key final-title)
+          (my/manifolding-atlas--open-unfolding-file-capture unfolding-id))))))
+
+(defvar my/manifolding-atlas--pending-unfolding-refresh nil
+  "Cons (UNFOLDING-ID . ORIGIN-FILE) to refresh after an unfolding
+capture finalizes. Set when RET opens an unfolding; consumed by
+`my/manifolding-atlas--maybe-refresh-unfolding-origin'.")
+
+(defun my/manifolding-atlas--maybe-refresh-unfolding-origin ()
+  "After a RET-opened unfolding capture finalizes, refresh its origin.
+Syncs the origin link description to the unfolding's current title
+and reverts origin windows so edits show immediately. No-op unless
+such a capture just finalized. Fully error-isolated."
+  (when-let ((p my/manifolding-atlas--pending-unfolding-refresh))
+    (setq my/manifolding-atlas--pending-unfolding-refresh nil)
+    (let ((uid (car p)) (ofile (cdr p)))
+      (condition-case err
+          (let* ((uf (and uid (ignore-errors (org-id-find-id-file uid))))
+                 (new-title (and uf (ignore-errors
+                                      (my/manifolding-atlas-links--note-title-of uf)))))
+            (when (and uf new-title (stringp ofile))
+              (dolist (link (ignore-errors
+                              (my/manifolding-atlas--get-incoming-links-with-descriptions uid)))
+                (when (and (string-equal (expand-file-name (plist-get link :source-path))
+                                         (expand-file-name ofile))
+                           (not (string= (or (plist-get link :description) "") new-title)))
+                  (manifolding-atlas--update-link-description
+                   ofile (plist-get link :pos) new-title)
+                  (with-current-buffer (find-file-noselect ofile)
+                    (when (buffer-modified-p) (save-buffer)))
+                  (message "Origin link updated to \"%s\"" new-title)))))
+        (error (lwarn 'manifolding-atlas :warning "Unfolding origin sync: %s" err)))
+      (let ((obuf (and (stringp ofile) (get-file-buffer ofile))))
+        (when (buffer-live-p obuf)
+          (dolist (win (get-buffer-window-list obuf nil t))
+            (with-selected-window win
+              (unless (window-minibuffer-p win)
+                (ignore-errors
+                  (revert-buffer :ignore-auto :noconfirm :preserve-modes))))))))))
+
+(add-hook 'org-capture-after-finalize-hook #'my/manifolding-atlas--maybe-refresh-unfolding-origin)
 
 (defun my/manifolding-atlas-property-make-unfolding ()
-  "RET on a property: select/create its value and open the resulting
-note directly. If the property already has an unfolding value, ask whether
-to update the existing note or change the selected option."
+  "RET on a property: pick from the registered declarative spec, then
+link the picked unfolding note and open it directly. If the property
+already holds an unfolding link, ask whether to update the linked
+note directly or change to a different option."
   (interactive)
   (let ((key (my/manifolding-atlas--current-property-key)))
     (unless key
       (user-error "Not on a property line"))
     (when (member key '("ID"))
       (user-error "Cannot make the ID property an unfolding"))
+    (when (zerop (hash-table-count my/manifolding-atlas-org-prompt--specs))
+      (my/manifolding-atlas-org-prompt--register-all))
     (let* ((property-type (intern (downcase (string-replace "_" "-" key))))
-           (raw (or (org-entry-get nil key) ""))
-           (existing-link (my/manifolding-atlas--unfolding-link-value raw))
-           (existing-id (car existing-link)))
-      (if existing-id
-          (if (y-or-n-p (format "%s is set -- update the note (y) or change the option (n)? " key))
-              (my/manifolding-atlas--open-unfolding-file existing-id)
-            (my/manifolding-atlas--property-choose-and-link property-type key))
-        (my/manifolding-atlas--property-choose-and-link property-type key)))))
+           (spec (gethash property-type my/manifolding-atlas-org-prompt--specs)))
+      (unless spec
+        (user-error "No declarative spec registered for %s" key))
+      (let* ((raw (or (org-entry-get nil key) ""))
+             (existing-link (my/manifolding-atlas--unfolding-link-value raw))
+             (existing-id (car existing-link)))
+        (if existing-id
+            (if (y-or-n-p (format "%s is set -- update the note (y) or change the option (n)? " key))
+                (my/manifolding-atlas--open-unfolding-file-capture existing-id)
+              (my/manifolding-atlas--property-pick-live key property-type))
+          (my/manifolding-atlas--property-pick-live key property-type))))))
 
 (defun my/manifolding-atlas-return-dispatch ()
   "RET dispatcher: make the property at point an unfolding if on one, else

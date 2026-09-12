@@ -265,6 +265,65 @@ Returns count of files changed."
                                 (setq n (1+ n)))))))))))))))
       (message "Drawer key removal: %d file(s) updated." n)
       n)))
+
+(defun my/manifolding-atlas--sweep-remove-drawer-key-if-static (key)
+  "Delete `:KEY:' lines holding static sentinels from first level-1 drawers vault-wide.
+Static = value exactly TODO or WARNING (never real user content).
+Live values stay untouched. Same whole-line span mechanic as
+`my/manifolding-atlas--sweep-remove-drawer-key' (matched line plus
+its newline, no residue). Skips .git and admin/. Saves once per
+changed file. Returns (STRIPPED-FILES . LIVE-HITS) where LIVE-HITS
+is a list of (FILE . VALUE) for lines kept."
+  (when (and (stringp key) (not (string-empty-p key)))
+    (let* ((root (my/manifolding-atlas-root-dir))
+           (gitdir (expand-file-name ".git" root))
+           (admindir (expand-file-name "admin/" root))
+           (files (append (directory-files-recursively root "\\.org\\'")
+                          (directory-files-recursively root "[^./]+\\'")))
+           (re (format "^[ \t]*:%s:[ \t]*\\(.*\\)$" (regexp-quote key)))
+           (stripped 0)
+           live)
+      (dolist (f files)
+        (unless (or (file-in-directory-p f gitdir)
+                    (file-in-directory-p f admindir))
+          (when (and f (file-exists-p f))
+            (with-current-buffer (find-file-noselect f)
+              (save-restriction
+                (widen)
+                (save-excursion
+                  (goto-char (point-min))
+                  (when (re-search-forward "^\\* " nil t)
+                    (org-back-to-heading t)
+                    (let ((sub-end (save-excursion
+                                     (org-end-of-subtree t t)
+                                     (point))))
+                      (when (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$"
+                                               sub-end t)
+                        (forward-line 1)
+                        (let ((props-beg (point))
+                              (drawer-end
+                               (save-excursion
+                                 (when (re-search-forward "^[ \t]*:END:[ \t]*$"
+                                                          sub-end t)
+                                   (line-beginning-position)))))
+                          (when drawer-end
+                            (goto-char props-beg)
+                            (let (dels)
+                              (while (re-search-forward re drawer-end t)
+                                (let ((val (string-trim
+                                            (match-string-no-properties 1))))
+                                  (if (member val '("TODO" "WARNING"))
+                                      (push (cons (line-beginning-position)
+                                                  (min (1+ (line-end-position))
+                                                       (point-max)))
+                                            dels)
+                                    (push (cons f val) live))))
+                              (when dels
+                                (dolist (span dels)
+                                  (delete-region (car span) (cdr span)))
+                                (save-buffer)
+                                (setq stripped (1+ stripped)))))))))))))))
+      (cons stripped (nreverse live)))))
 #+end_src
 
 #+begin_src emacs-lisp

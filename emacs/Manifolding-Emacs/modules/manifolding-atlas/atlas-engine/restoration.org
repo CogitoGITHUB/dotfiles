@@ -704,6 +704,52 @@ KEY matching is case-sensitive: only UPPER_SNAKE level-1 headings count."
       (kill-buffer (current-buffer)))))
 #+end_src
 
+**** Deleted live leftovers log
+Live values surviving a blueprint deletion are recorded here so kept
+context stays findable after the property file is gone.
+#+begin_src emacs-lisp
+(defvar my/manifolding-atlas-links--deleted-live-blueprints-file "admin/Deleted Live Headings Blueprints"
+  "Filename for the deleted-live leftovers log.
+Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
+(setq my/manifolding-atlas-links--deleted-live-blueprints-file "admin/Deleted Live Headings Blueprints")
+
+(defun my/manifolding-atlas-links--deleted-live-blueprints-path ()
+  "Return full path to Deleted Live Headings Blueprints in the vault root."
+  (expand-file-name my/manifolding-atlas-links--deleted-live-blueprints-file
+                    (my/manifolding-atlas-root-dir)))
+
+(defun my/manifolding-atlas-links--ensure-deleted-live-blueprints-file ()
+  "Create Deleted Live Headings Blueprints if it does not exist."
+  (let ((path (my/manifolding-atlas-links--deleted-live-blueprints-path)))
+    (make-directory (file-name-directory path) t)
+    (unless (file-exists-p path)
+      (with-temp-file path
+        (insert "#+TITLE: Deleted Live Headings Blueprints\n")
+        (insert "#+AUTHOR: Manifolding Atlas Git VC System\n")
+        (insert "#+DESCRIPTION: Auto-generated log of live values kept when their blueprint was deleted.\n")
+        (insert "#+STARTUP: overview\n\n")))
+    path))
+
+(defun my/manifolding-atlas-links--write-deleted-live-property (key file value)
+  "Append a `Live KEY remains in FILE' heading holding VALUE."
+  (when (and (stringp key) (not (string-empty-p key))
+             (stringp file) (not (string-empty-p file)))
+    (let ((path (my/manifolding-atlas-links--ensure-deleted-live-blueprints-file)))
+      (with-current-buffer (find-file-noselect path)
+        (goto-char (point-max))
+        (insert (format "\n* TODO Live %s remains in %s\n"
+                        key (file-name-nondirectory file)))
+        (insert "  :PROPERTIES:\n"
+                (format "  :CREATED:        %s\n"
+                        (format-time-string "<%Y-%m-%d %a>"))
+                (format "  :BLUEPRINT_KEY:  %s\n" key)
+                (format "  :NOTE_FILE:      %s\n" (expand-file-name file))
+                (format "  :LIVE_VALUE:     %s\n" (or value ""))
+                "  :END:\n")
+        (save-buffer)
+        (kill-buffer (current-buffer))))))
+#+end_src
+
 **** Swept property logging
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--note-title-of (file)
@@ -855,7 +901,8 @@ Excludes body-unfoldings/ (body templates, not prompts)."
 No event hooks: add/delete detection is a boot diff of on-disk keys
 vs `.known-keys` (last boot's record), so shell rm, manual moves,
 git checkouts, and future paths all reconcile on next boot.
-Vault drawers are never stripped — gone keys are log-only.
+Vault drawers keep live values — only static-sentinel lines for gone
+keys are stripped (live leftovers are logged, never deleted).
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--known-keys-path ()
   "Absolute path of the last-known prompt-key record.
@@ -1012,8 +1059,10 @@ failed registration must never eat the order file. Applies
 (defun my/manifolding-atlas-links--reconcile-on-boot ()
   "Diff on-disk prompt keys vs `.known-keys' and reconcile.
 New keys: drawer-order append + stub sweep (Added log per file).
-Gone keys: Deleted log per holder file. Vault drawers are NEVER
-stripped. Stale drawer-order headings (no prompt key) are pruned.
+Gone keys: Deleted log per holder file, static-sentinel drawer lines
+stripped (live values kept + logged to Deleted Live Headings
+Blueprints), Static Blueprints rebuilt. Stale drawer-order headings
+(no prompt key) are pruned.
 Updates `.known-keys' to current reality. Idempotent —
 a second boot with no changes is a no-op. Returns (NEW . GONE)."
   (let ((current (my/manifolding-atlas-links--scan-current-keys))
@@ -1028,7 +1077,9 @@ a second boot with no changes is a no-op. Returns (NEW . GONE)."
                        #'string<))
             (gone (sort (cl-set-difference last-known current :test #'string=)
                         #'string<))
-            (vault-files (my/manifolding-atlas-links--vault-note-files)))
+            (vault-files (my/manifolding-atlas-links--vault-note-files))
+            (cleanup-stripped 0)
+            (cleanup-live 0))
         (when new
           (my/manifolding-atlas-links--ensure-drawer-order-keys new)
           (when (fboundp 'my/manifolding-atlas--sweep-sync-drawer-keys)
@@ -1046,13 +1097,27 @@ a second boot with no changes is a no-op. Returns (NEW . GONE)."
         (dolist (k gone)
           ;; One bad key must never abort prune + known-keys rewrite below.
           (condition-case err
-              (dolist (f (my/manifolding-atlas-links--gone-key-holders
-                          k vault-files))
-                (my/manifolding-atlas-links--log-removed-property f k))
+              (progn
+                (dolist (f (my/manifolding-atlas-links--gone-key-holders
+                            k vault-files))
+                  (my/manifolding-atlas-links--log-removed-property f k))
+                (when (fboundp 'my/manifolding-atlas--sweep-remove-drawer-key-if-static)
+                  (let ((res (my/manifolding-atlas--sweep-remove-drawer-key-if-static k)))
+                    (setq cleanup-stripped (+ cleanup-stripped (car res)))
+                    (dolist (lv (cdr res))
+                      (my/manifolding-atlas-links--write-deleted-live-property
+                       k (car lv) (cdr lv)))
+                    (setq cleanup-live (+ cleanup-live (length (cdr res)))))))
             (error (lwarn 'manifolding-atlas :warning
-                          "known-keys: gone-key %s logging failed: %s"
+                          "known-keys: gone-key %s cleanup failed: %s"
                           k err))))
         (my/manifolding-atlas-links--prune-drawer-order-stale)
+        (when gone
+          (when (fboundp 'my/manifolding-atlas-missing--rebuild-from-health)
+            (my/manifolding-atlas-missing--rebuild-from-health))
+          (when (or (> cleanup-stripped 0) (> cleanup-live 0))
+            (message "drawer cleanup: stripped %d static, preserved %d live (see Deleted Live Headings Blueprints)"
+                     cleanup-stripped cleanup-live)))
         (my/manifolding-atlas-links--known-keys-write current)
         (when (or new gone)
           (message "known-keys: +%d -%d (%s / %s)"
