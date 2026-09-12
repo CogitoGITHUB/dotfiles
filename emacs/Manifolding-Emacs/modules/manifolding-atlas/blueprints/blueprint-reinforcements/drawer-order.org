@@ -61,3 +61,4 @@ reorder, then save to apply to the whole vault.
 ** TEST_DRAWER_APPEND
 ** ZZTEST_RESTART
 ** RESTART_PROOF
+** Subdirectory
