@@ -32,6 +32,33 @@ refreshed on every Org buffer via hook so load order never matters.
 (font-lock-add-keywords 'org-mode
   '((my/org--activate-property-links)))
 
+(defun my/manifolding-atlas--open-capture-for-note (note &optional _)
+  "Open NOTE for editing via capture when available, else visit file.
+Signals loudly on failure — never silently ignored."
+  (unless note
+    (user-error "Cannot open note: nil note"))
+  (let ((file (cond
+               ((fboundp 'manifolding-atlas-note-path)
+                (manifolding-atlas-note-path note))
+               ((and (fboundp 'manifolding-atlas-note-id)
+                     (fboundp 'org-id-find-id-file))
+                (org-id-find-id-file (manifolding-atlas-note-id note)))
+               (t nil))))
+    (cond
+     ((and file (file-exists-p file)
+           (fboundp 'my/manifolding-atlas--edit-file-in-capture))
+      (my/manifolding-atlas--edit-file-in-capture file))
+     ((and file (file-exists-p file))
+      (find-file file))
+     (file
+      (user-error "Cannot open note: file does not exist: %s" file))
+     ((fboundp 'manifolding-atlas-note-id)
+      (let ((id (manifolding-atlas-note-id note)))
+        (if id
+            (org-id-open id)
+          (user-error "Cannot open note: no file and no ID"))))
+     (t (user-error "Cannot open note: no handler available")))))
+
 (with-eval-after-load 'org
   (defvar my/org--property-link-map
     (let ((map (make-sparse-keymap)))

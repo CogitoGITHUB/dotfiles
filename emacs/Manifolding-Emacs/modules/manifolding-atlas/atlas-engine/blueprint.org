@@ -7,91 +7,6 @@
 :END:
 
 #+begin_src emacs-lisp
-;;; manifolding-atlas-blueprint.el --- Note schema definition and validation -*- lexical-binding: t; -*-
-;;
-;; Copyright (c) 2015-2026 Boris Buliga <boris@d12frosted.io>
-;;
-;; Author: Boris Buliga <boris@d12frosted.io>
-;; Maintainer: Boris Buliga <boris@d12frosted.io>
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation, either version 3 of the
-;; License, or (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program. If not, see
-;; <http://www.gnu.org/licenses/>.
-;;
-;; This file is not part of GNU Emacs.
-;;
-;; Created: 12 Jun 2026
-;;
-;; URL: https://github.com/d12frosted/vulpea
-;;
-;; License: GPLv3
-;;
-;;; Commentary:
-;;
-;; Declarative schemas for manifolding-atlas notes.
-;;
-;; A schema describes the structured expectations for a class of notes:
-;; which notes it applies to (a predicate) and which metadata fields they
-;; should carry, with types, required-ness, and allowed values.
-;;
-;; This file provides schema definition and the registry.  The validation
-;; engine (`manifolding-atlas-blueprint-validate' and friends) is layered on top in the
-;; same module.
-;;
-;; A field spec is a plist with keys:
-;;
-;;   :key       metadata key string (required)
-;;   :type      value type: `string' (default), `number', `symbol',
-;;              `note', or `link'.  Values are read with
-;;              `manifolding-atlas-note-meta-get', so the type vocabulary matches the
-;;              rest of manifolding-atlas.
-;;   :required  t/nil, or a function (note) -> boolean for conditional
-;;              requiredness (e.g. required only for sparkling wines).
-;;   :one-of    a list of allowed values, or a function (note) -> list for
-;;              a dependent enum (e.g. sweetness levels depend on
-;;              carbonation).
-;;   :multiple  non-nil when the field holds a list of values.
-;;   :target-tags  for a `note' field, a list of tags its target must
-;;              carry (all of them); a missing tag yields an
-;;              `invalid-target' violation.
-;;   :validate  optional function (value note) -> t, or an error message
-;;              string, for arbitrary checks.
-;;
-;; Example:
-;;
-;;   (manifolding-atlas-blueprint-define 'wine
-;;     :predicate (lambda (note) (member "wine" (manifolding-atlas-note-tags note)))
-;;     :fields
-;;     '((:key "producer" :type note   :required t)
-;;       (:key "name"     :type string :required t)
-;;       (:key "colour"   :type symbol :required t :one-of (red white rose))
-;;       (:key "grapes"   :type note   :multiple t)
-;;       (:key "carbonation method" :type symbol
-;;             :required (lambda (note)
-;;                         (eq (manifolding-atlas-note-meta-get note "carbonation" 'symbol)
-;;                             'sparkling)))))
-;;
-;; To read a sibling field inside a :required / :one-of function, use
-;; `manifolding-atlas-note-meta-get' directly so you control the value type.
-;;
-;; A schema may inherit fields from others with `:include' (a schema
-;; name or a list of names).  Included fields are merged in before the
-;; schema's own; on a :key collision the later definition wins, so a
-;; schema's own field overrides an included one.  See
-;; `manifolding-atlas-blueprint-define' for the full merge rules.
-;;
-;;; Code:
-
 (require 'cl-lib)
 (require 'ol)
 (require 'manifolding-atlas-db nil t)
@@ -511,50 +426,6 @@ default `manifolding-atlas-db-query'; pass NOTES to aggregate an explicit set."
 * Blueprint DB Validation
 
 #+begin_src emacs-lisp
-;;; manifolding-atlas-db-blueprint-validation.el --- Surface schema violations at sync -*- lexical-binding: t; -*-
-;;
-;; Copyright (c) 2015-2026 Boris Buliga <boris@d12frosted.io>
-;;
-;; Author: Boris Buliga <boris@d12frosted.io>
-;; Maintainer: Boris Buliga <boris@d12frosted.io>
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation, either version 3 of the
-;; License, or (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program. If not, see
-;; <http://www.gnu.org/licenses/>.
-;;
-;; This file is not part of GNU Emacs.
-;;
-;; URL: https://github.com/d12frosted/vulpea
-;;
-;; License: GPLv3
-;;
-;;; Commentary:
-;;
-;; Surface schema violations as notes are indexed.
-;;
-;; Files are the source of truth in manifolding-atlas, so a violating note cannot be
-;; blocked from being written to disk.  Instead this module reacts when a
-;; note enters the database: it validates the note against every
-;; applicable schema and, depending on `manifolding-atlas-db-blueprint-validation-action',
-;; either stays silent, emits a non-blocking warning, or keeps the
-;; violating note out of the database.
-;;
-;; It plugs into the indexing path through
-;; `manifolding-atlas-db-note-index-filter-functions' and is a no-op unless schemas
-;; are registered and one applies to the note being indexed.
-;;
-;;; Code:
-
 (require 'manifolding-atlas-note nil t)
 (require 'manifolding-atlas-blueprint nil t)
 (require 'manifolding-atlas-db-extract nil t)
@@ -627,50 +498,6 @@ conforms or that no schema applies to."
 * Blueprint Flymake
 
 #+begin_src emacs-lisp
-;;; manifolding-atlas-blueprint-flymake.el --- Flymake backend for schema violations -*- lexical-binding: t; -*-
-;;
-;; Copyright (c) 2015-2026 Boris Buliga <boris@d12frosted.io>
-;;
-;; Author: Boris Buliga <boris@d12frosted.io>
-;; Maintainer: Boris Buliga <boris@d12frosted.io>
-;;
-;; This program is free software; you can redistribute it and/or
-;; modify it under the terms of the GNU General Public License as
-;; published by the Free Software Foundation, either version 3 of the
-;; License, or (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program. If not, see
-;; <http://www.gnu.org/licenses/>.
-;;
-;; This file is not part of GNU Emacs.
-;;
-;; URL: https://github.com/d12frosted/vulpea
-;;
-;; License: GPLv3
-;;
-;;; Commentary:
-;;
-;; A flymake backend that flags schema violations in the current note
-;; buffer as you edit.
-;;
-;; Files are the source of truth in manifolding-atlas, so a violating note cannot be
-;; blocked from being written; in-buffer linting is the closest thing to
-;; "enforce on write" that fits the model - you see the problem while
-;; authoring.  Enable `manifolding-atlas-blueprint-flymake-mode' in a note buffer (it is
-;; off by default).  The notes in the buffer (file-level and heading-level)
-;; are validated against every applicable schema with
-;; `manifolding-atlas-blueprint-note-violations', and each violation is shown on the
-;; offending field's line, or on the note's heading for a missing required
-;; field.
-;;
-;;; Code:
-
 (require 'flymake)
 (require 'org-element)
 (require 'manifolding-atlas-note nil t)

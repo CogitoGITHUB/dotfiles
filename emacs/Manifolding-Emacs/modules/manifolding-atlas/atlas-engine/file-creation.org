@@ -1499,7 +1499,9 @@ UNFOLDINGS (alist)."
   (string-join
    (append
     (list
-     (format "* %s" title)
+     (if tags
+         (format "* %s :%s:" title (string-join tags ":"))
+       (format "* %s" title))
      ":PROPERTIES:"
      (format org-property-format ":ID:" id))
     (mapcar
@@ -1510,10 +1512,6 @@ UNFOLDINGS (alist)."
      unfoldings)
     (list
      ":END:")
-    (when tags
-      (list (concat "#+filetags: :"
-                    (string-join tags ":")
-                    ":")))
     (when head (list head))
     (when meta
       (list ""))  ; blank line before meta

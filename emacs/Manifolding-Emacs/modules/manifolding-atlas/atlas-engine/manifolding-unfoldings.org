@@ -196,15 +196,15 @@ unique per parent so per-file notes don't leak."
                (root (expand-file-name (format "admin/unfoldings/%s/" property-type) (my/manifolding-atlas-root-dir)))
                (path (expand-file-name slug root))
                (id (my/manifolding-atlas--note-id-by-path path))
-               (title (format "%s: %s"
-                              (my/manifolding-atlas--property-key-from-type property-type)
-                              value)))
+               (key (my/manifolding-atlas--property-key-from-type property-type))
+               (tag (replace-regexp-in-string "[^A-Za-z0-9_@]" "_" value))
+               (title (format "%s >" key)))
           (if id
-              (my/manifolding-atlas--make-id-link id title)
+              (my/manifolding-atlas--make-id-link id value)
             (make-directory root t)
             (let ((manifolding-atlas-create-default-function (lambda (_) '())))
               (let ((note (manifolding-atlas-create title path
-                           :tags nil :unfoldings nil :body nil)))
+                           :tags (list tag) :unfoldings nil :body nil)))
                 (when note
                   (my/manifolding-atlas--make-id-link (manifolding-atlas-note-id note) value))))))))))
 #+end_src
@@ -389,8 +389,9 @@ and reports which ids were removed for later cleanup.
   "Replace UNFOLDING-TYPE's current entry IN PLACE -- at whatever
 position it already occupies in the drawer, whether a plain value
 line or a legacy wormhole -- instead of always appending at
-the bottom of the drawer. Writes a plain id-link entry; never
-creates wormhole lines (re-picking also clears legacy ones)."
+the bottom of the drawer. Writes a `#+wormhole:' line so
+`atlas-wormholes-add-all' can render it live; re-picking also
+clears legacy wormholes of this type."
   (let (removed insert-marker)
     (save-excursion
       (org-back-to-heading t)
@@ -423,8 +424,10 @@ creates wormhole lines (re-picking also clears legacy ones)."
                        (my/manifolding-atlas--drawer-insert-point)
                        (point-max)))
         (beginning-of-line)
-        (insert (format ":%s: [[id:%s][%s]]\n"
-                        key unfolding-id drawer-value))
+        (insert (format "#+wormhole: [[id:%s][%s: %s]]\n"
+                        unfolding-id
+                        (string-replace "_" " " key)
+                        drawer-value))
         (when insert-marker (set-marker insert-marker nil)))
       (save-buffer))
     removed))
@@ -534,13 +537,13 @@ Navigates by NOTE's own path, so it works from any buffer."
            (val-slug (my/manifolding-atlas--canonicalize value))
            (root (expand-file-name (format "admin/unfoldings/%s/" property-type) (my/manifolding-atlas-root-dir)))
            (path (expand-file-name (format "%s-%s" slug val-slug) root))
-           (title (format "%s: %s"
-                          (my/manifolding-atlas--property-key-from-type property-type)
-                          value)))
+           (key (my/manifolding-atlas--property-key-from-type property-type))
+           (tag (replace-regexp-in-string "[^A-Za-z0-9_@]" "_" value))
+           (title (format "%s >" key)))
       (make-directory root t)
       (let ((manifolding-atlas-create-default-function (lambda (_) '())))
         (let ((note (manifolding-atlas-create title path
-                     :tags nil
+                     :tags (list tag)
                      :unfoldings (when parent-id `(("UNFOLDING_PARENT" . ,parent-id)
                                                     ("UNFOLDING_TYPE" . ,(symbol-name property-type))))
                      :body nil)))
@@ -806,10 +809,15 @@ modus-vivendi without hardcoded single-theme colors."
   "Ensure the unfolding note shows `KEY → VALUE' under its drawer.
 Inserts the context line plus blank space as the first body lines,
 only when not already present -- re-picks never duplicate it.
-Returns non-nil when inserted."
+Repairs already-glued `:END:KEY → value' into correct spacing, and
+ensures exactly one blank line between :END: and context and one
+blank after (file ends with trailing newline). Returns non-nil when
+inserted or repaired."
   (let ((file (and unfolding-id
-                   (ignore-errors (org-id-find-id-file unfolding-id)))))
-    (when (and file (file-exists-p file))
+                   (let ((f (and (fboundp 'org-id-find-id-file)
+                                 (org-id-find-id-file unfolding-id))))
+                     (when (and f (file-exists-p f)) f)))))
+    (when file
       (with-current-buffer (find-file-noselect file)
         (save-excursion
           (goto-char (point-min))
@@ -817,21 +825,65 @@ Returns non-nil when inserted."
             (org-back-to-heading t)
             (let ((r (my/manifolding-atlas--drawer-region)))
               (when r
-                (goto-char (cdr r))
-                (forward-line 1)
-                (unless (looking-at (format "^%s → %s[ \t]*$"
-                                            (regexp-quote key)
-                                            (regexp-quote value)))
-                  (insert (format "%s → %s\n\n" key value))
-                  (save-buffer)
-                  t)))))))))
+                (let ((desired (format "%s → %s" key value))
+                      (desired-re (format "^%s → %s[ \t]*$"
+                                          (regexp-quote key)
+                                          (regexp-quote value))))
+                  ;; Repair glued :END: line if present
+                  (goto-char (cdr r))
+                  (when (looking-at "^:END:[ \t]*\\(.+\\)$")
+                    (let ((trailing (string-trim (match-string 1))))
+                      (unless (string-empty-p trailing)
+                        (delete-region (match-beginning 1) (line-end-position))
+                        ;; If glued trailing was not desired, preserve it as body content
+                        (when (and (not (string= trailing desired))
+                                   (not (string-empty-p trailing)))
+                          (save-excursion
+                            (goto-char (cdr r))
+                            (forward-line 1)
+                            (unless (looking-at "^[ \t]*$")
+                              (insert "\n"))
+                            (insert trailing "\n")))
+                        ;; Ensure END line ends cleanly
+                        (goto-char (cdr r))
+                        (end-of-line)
+                        (unless (bolp) (insert "\n")))))
+                  ;; Normalize spacing and ensure context line
+                  (goto-char (cdr r))
+                  (forward-line 1)
+                  (let ((posAfterEnd (point)))
+                    ;; If already correctly spaced (blank, desired, blank) do nothing
+                    (if (and (looking-at "^[ \t]*$")
+                             (save-excursion
+                               (forward-line 1)
+                               (looking-at desired-re))
+                             (save-excursion
+                               (forward-line 2)
+                               (or (looking-at "^[ \t]*$") (eobp))))
+                        nil
+                      ;; Remove any existing desired line nearby to avoid duplication
+                      (save-excursion
+                        (let ((searchEnd (save-excursion (forward-line 5) (point))))
+                          (when (re-search-forward desired-re searchEnd t)
+                            (delete-region (line-beginning-position)
+                                           (min (1+ (line-end-position)) (point-max))))))
+                      ;; Remove extra blank lines at insertion point
+                      (goto-char posAfterEnd)
+                      (while (and (not (eobp)) (looking-at "^[ \t]*$"))
+                        (delete-region (point) (min (1+ (line-end-position)) (point-max))))
+                      ;; Insert exactly one blank, desired, blank
+                      (insert "\n" desired "\n\n")
+                      ;; Ensure file ends with trailing newline
+                      (goto-char (point-max))
+                      (unless (bolp) (insert "\n"))
+                      (save-buffer)
+                      t)))))))))))
 
 (defun my/manifolding-atlas--property-go-live (marker property-type key final-title)
   "Make FINAL-TITLE live for KEY at MARKER, then open it for editing.
-Create/reuse the unfolding note, write its id-link as KEY's plain
-property value, save the origin, and open the unfolding note in a
-capture. The drawer goes straight to the id-link -- the picked value
-is never written as a static intermediate."
+Create/reuse the unfolding note, replace KEY's drawer entry with a
+live `#+wormhole:' line via `my/manifolding-atlas--refresh-property-wormhole',
+save the origin, and open the unfolding note in a capture."
   (let ((buf (marker-buffer marker)))
     (unless (buffer-live-p buf)
       (user-error "Origin buffer gone"))
@@ -855,13 +907,12 @@ is never written as a static intermediate."
                   (when re-render (atlas-wormholes-add-all)))))
             (save-buffer))
           (dolist (win (get-buffer-window-list buf nil t))
-            (with-selected-window win
-              (unless (window-minibuffer-p win)
-                (revert-buffer :ignore-auto :noconfirm :preserve-modes))))
+            (unless (window-minibuffer-p win)
+              (with-selected-window win
+                (font-lock-flush)
+                (font-lock-ensure))))
           (setq my/manifolding-atlas--pending-unfolding-refresh
                 (cons unfolding-id (buffer-file-name buf)))
-          (my/manifolding-atlas--property-ensure-context-line
-           unfolding-id key final-title)
           (my/manifolding-atlas--open-unfolding-file-capture unfolding-id))))))
 
 (defvar my/manifolding-atlas--pending-unfolding-refresh nil
@@ -895,11 +946,16 @@ such a capture just finalized. Fully error-isolated."
         (error (lwarn 'manifolding-atlas :warning "Unfolding origin sync: %s" err)))
       (let ((obuf (and (stringp ofile) (get-file-buffer ofile))))
         (when (buffer-live-p obuf)
+          (with-current-buffer obuf
+            (save-excursion
+              ;; Ensure link description line is visually refreshed without revert
+              (font-lock-flush (point-min) (point-max))
+              (font-lock-ensure (point-min) (point-max))))
           (dolist (win (get-buffer-window-list obuf nil t))
-            (with-selected-window win
-              (unless (window-minibuffer-p win)
-                (ignore-errors
-                  (revert-buffer :ignore-auto :noconfirm :preserve-modes))))))))))
+            (unless (window-minibuffer-p win)
+              (with-selected-window win
+                (font-lock-flush)
+                (font-lock-ensure)))))))))
 
 (add-hook 'org-capture-after-finalize-hook #'my/manifolding-atlas--maybe-refresh-unfolding-origin)
 
