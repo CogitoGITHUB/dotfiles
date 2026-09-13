@@ -1,12 +1,11 @@
 #+title:      Experiments Prompt
 #+priority:   40
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Experiments
+
 * EXPERIMENTS
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Experiments
-:END:
 ** TODO
 ** WARNING
 ** RUNNING
