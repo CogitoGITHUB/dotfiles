@@ -1,12 +1,11 @@
 #+title:      Traps External Prompt
 #+priority:   36
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Traps External
+
 * TRAPS_EXTERNAL
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Traps External
-:END:
 ** TODO
 ** WARNING
 ** DESIGNED

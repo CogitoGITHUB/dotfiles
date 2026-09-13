@@ -1,12 +1,11 @@
 #+title:      Philosophy Prompt
 #+priority:   28
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Philosophy
+
 * PHILOSOPHY
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Philosophy
-:END:
 ** TODO
 ** WARNING
 ** DEFINED

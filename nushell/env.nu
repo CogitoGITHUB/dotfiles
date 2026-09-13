@@ -52,3 +52,4 @@ $env.EDITOR = "emacs"
 # --- Runtime ---
 
 $env.XDG_RUNTIME_DIR = $"/run/user/(id -u | str trim)"
+$env.ZELLIJ_SOCKET_DIR = $"($env.HOME)/.cache/zellij"

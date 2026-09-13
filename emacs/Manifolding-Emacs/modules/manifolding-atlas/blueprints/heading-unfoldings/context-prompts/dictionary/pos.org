@@ -1,12 +1,13 @@
 #+title:      POS (Part of Speech) Prompt
 #+priority:   17
 
+#+CONTEXTS: dictionary
+#+KIND: unfolding
+#+LABEL: POS
+
 * POS
 :PROPERTIES:
-:CONTEXTS: dictionary
-:KIND: unfolding
 :UNFOLDING: pos
-:LABEL: POS
 :END:
 ** TODO
 ** noun

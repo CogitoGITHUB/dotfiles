@@ -1,12 +1,11 @@
 #+title:      Evidence Prompt
 #+priority:   38
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Evidence
+
 * EVIDENCE
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Evidence
-:END:
 ** TODO
 ** WARNING
 ** LOGGED

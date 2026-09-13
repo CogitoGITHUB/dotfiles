@@ -1,12 +1,11 @@
 #+title:      Signals Prompt
 #+priority:   33
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Signals
+
 * SIGNALS
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Signals
-:END:
 ** TODO
 ** WARNING
 ** WATCHED

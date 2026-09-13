@@ -1,12 +1,11 @@
 #+title:      Rules Prompt
 #+priority:   23
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Rules
+
 * RULES
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Rules
-:END:
 ** TODO
 ** WARNING
 ** DRAFT

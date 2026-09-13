@@ -1,12 +1,13 @@
 #+title:      Register Prompt
 #+priority:   14
 
+#+CONTEXTS: dictionary
+#+KIND: unfolding
+#+LABEL: Register
+
 * REGISTER
 :PROPERTIES:
-:CONTEXTS: dictionary
-:KIND: unfolding
 :UNFOLDING: register
-:LABEL: Register
 :END:
 ** TODO
 ** formal

@@ -1,10 +1,11 @@
 #+title:      Rule Topics Prompt
 #+priority:   24
 
+#+CONTEXTS: rule
+#+KIND: topics
+#+LABEL: Rule Topics
+
 * RULE_TOPICS
 :PROPERTIES:
 :ID: rule-topics
-:CONTEXTS: rule
-:KIND: topics
-:LABEL: Rule Topics
 :END:

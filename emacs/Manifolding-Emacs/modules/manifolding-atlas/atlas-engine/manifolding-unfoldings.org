@@ -424,7 +424,7 @@ clears legacy wormholes of this type."
                        (my/manifolding-atlas--drawer-insert-point)
                        (point-max)))
         (beginning-of-line)
-        (insert (format "#+wormhole: [[id:%s][%s: %s]]\n"
+        (insert (format "#+wormhole: [[id:%s][%s: %s]] :property\n"
                         unfolding-id
                         (string-replace "_" " " key)
                         drawer-value))
@@ -787,21 +787,17 @@ modus-vivendi without hardcoded single-theme colors."
   :group 'manifolding-atlas)
 
 (defvar my/manifolding-atlas--context-line-keywords
-  '(("^\\([A-Z][A-Z0-9_]*\\) → \\(.*\\)$"
+  '(("^\\([A-Z][A-Z0-9_]*\\) > \\(:[A-Za-z0-9_]+:\\)[ \t]*$"
      (1 'my/manifolding-atlas-context-key-face)
      (2 'my/manifolding-atlas-context-value-face)))
-  "Font-lock rules highlighting unfolding context lines.")
+  "Font-lock rules highlighting live-property wormhole lines
+(\"KEY > :tag:\"), wherever they render -- including inside an
+origin note's transclusion, not just unfolding note files.")
 
 (defun my/manifolding-atlas--context-line-fontify ()
-  "Enable context-line highlighting in unfolding note buffers only."
-  (when (and buffer-file-name
-             (stringp (my/manifolding-atlas-root-dir))
-             (string-prefix-p
-              (expand-file-name "admin/unfoldings/"
-                                (my/manifolding-atlas-root-dir))
-              (expand-file-name buffer-file-name)))
-    (font-lock-add-keywords nil my/manifolding-atlas--context-line-keywords t)
-    (font-lock-flush)))
+  "Enable live-property line highlighting in any org buffer."
+  (font-lock-add-keywords nil my/manifolding-atlas--context-line-keywords t)
+  (font-lock-flush))
 
 (add-hook 'org-mode-hook #'my/manifolding-atlas--context-line-fontify)
 

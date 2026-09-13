@@ -1,12 +1,11 @@
 #+title:      Failures Prompt
 #+priority:   37
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Failures
+
 * FAILURES
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Failures
-:END:
 ** TODO
 ** WARNING
 ** RECORDED

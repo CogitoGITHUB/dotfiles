@@ -1,10 +1,11 @@
 #+title:      Email Prompt
 #+priority:   26
 
+#+CONTEXTS: contact
+#+KIND: free
+#+LABEL: Email
+
 * EMAIL
 :PROPERTIES:
 :ID: contact-email
-:CONTEXTS: contact
-:KIND: free
-:LABEL: Email
 :END:

@@ -1,12 +1,11 @@
 #+title:      Objectives Prompt
 #+priority:   21
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Objectives
+
 * OBJECTIVES
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Objectives
-:END:
 ** TODO
 ** WARNING
 ** DRAFT

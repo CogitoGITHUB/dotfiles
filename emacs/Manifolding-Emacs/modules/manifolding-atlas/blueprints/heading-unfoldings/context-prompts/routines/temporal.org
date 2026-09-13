@@ -1,12 +1,11 @@
 #+title:      Routines Temporal Prompt
 #+priority:   5
 
+#+CONTEXTS: routine
+#+KIND: inline
+#+LABEL: Routines: Temporal
+
 * ROUTINE_TEMPORAL
-:PROPERTIES:
-:CONTEXTS: routine
-:KIND: inline
-:LABEL: Routines: Temporal
-:END:
 ** TODO
 ** HOUR
 ** DAY-PART

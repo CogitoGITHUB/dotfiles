@@ -374,8 +374,8 @@ existing file. Registers the prompt when the capture finalizes."
       (let ((id (org-id-new))
             (org-capture-templates
              `(("b" "Blueprint prompt" plain (file ,path)
-                ,(format "* %s\n:PROPERTIES:\n:ID: %s\n:CONTEXTS: file heading\n:KIND: unfolding\n:LABEL: %s\n:END:\n** First option\n%%?"
-                         key id title)
+                ,(format "#+CONTEXTS: file heading\n#+KIND: unfolding\n#+LABEL: %s\n\n* %s\n:PROPERTIES:\n:ID: %s\n:END:\n** First option\n%%?"
+                         title key id)
                 :unnarrowed t :empty-lines 1 :kill-buffer t)))
             (org-capture-use-indirect-buffer nil)
             (org-capture-window-setup 'other-window))
@@ -1544,7 +1544,7 @@ the first option as the value instead of an interactive answer.
 Signals loudly when a spec has no options."
   (when (zerop (hash-table-count my/manifolding-atlas-org-prompt--specs))
     (my/manifolding-atlas-org-prompt--register-all))
-  (let* ((todo-spec (gethash 'todo my/manifolding-atlas-org-prompt--specs))
+  (let* ((todo-spec (gethash 'todo-state my/manifolding-atlas-org-prompt--specs))
          (acc (list (cons "TODO_STATE"
                           (my/manifolding-atlas-org-prompt--first-option
                            todo-spec)))))
@@ -3618,32 +3618,88 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--parse~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--parse (file)
-  "Return specs (KEY OPTIONS PLIST) declared in FILE, or nil."
+  "Return specs (KEY OPTIONS PLIST) declared in FILE, or nil.
+CONTEXTS/KIND/LABEL come from #+CONTEXTS:/#+KIND:/#+LABEL: file
+keywords above the first heading, not an in-drawer property anymore.
+Body text under the KEY heading (before the first option) becomes
+PLIST's :description; body text under each ** option becomes that
+option's entry in PLIST's :option-descriptions alist
+(OPTION . DESCRIPTION). OPTIONS stays a flat list of option strings
+for backward compatibility. A legacy :PROPERTIES:...:END: drawer
+right after the heading is tolerated and skipped (its CONTEXTS/KIND/
+LABEL lines, if any, are ignored -- migrate the file to keywords)."
   (with-temp-buffer
     (insert-file-contents file)
     (goto-char (point-min))
     (unless (re-search-forward "begin_src" nil t)
       (goto-char (point-min))
-      (let ((specs nil) key opts plist)
-        (while (not (eobp))
-          (cond
-           ((looking-at "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$")
-            (setq specs (my/manifolding-atlas-org-prompt--parse-flush
-                         key opts plist specs)
-                  key (match-string 1) opts nil plist nil
-                  plist (my/manifolding-atlas-org-prompt--parse-drawer)))
-           ((and key (looking-at "^\\*\\*+ [. ]*\\(.*?\\)[ \t]*$"))
-            (push (match-string 1) opts)
-            (forward-line 1))
-           ((looking-at "^\\* ")
-            (setq specs (my/manifolding-atlas-org-prompt--parse-flush
-                         key opts plist specs)
-                  key nil opts nil plist nil)
-            (forward-line 1))
-           (t (forward-line 1))))
-        (nreverse
-         (my/manifolding-atlas-org-prompt--parse-flush
-          key opts plist specs))))))
+      (let (file-plist)
+        (while (and (not (eobp))
+                    (or (looking-at "^#\\+\\([A-Za-z_-]+\\):[ \t]*\\(.*\\)$")
+                        (looking-at "^[ \t]*$")))
+          (when (looking-at "^#\\+\\([A-Za-z_-]+\\):[ \t]*\\(.*\\)$")
+            (let ((kw (downcase (match-string 1))))
+              (when (member kw '("contexts" "kind" "label"))
+                (setq file-plist
+                      (plist-put file-plist (intern (concat ":" kw))
+                                 (string-trim (match-string 2)))))))
+          (forward-line 1))
+        (goto-char (point-min))
+        (let ((specs nil) key opts plist desc-lines opt-desc-lines
+              current-opt title-committed)
+          (cl-labels
+              ((commit-title ()
+                 (unless title-committed
+                   (when desc-lines
+                     (setq plist (plist-put plist :description
+                                            (string-trim (string-join (nreverse desc-lines) "\n")))))
+                   (setq title-committed t)))
+               (flush-opt ()
+                 (commit-title)
+                 (when current-opt
+                   (setq plist (plist-put plist :option-descriptions
+                                          (cons (cons current-opt
+                                                      (string-trim
+                                                       (string-join (nreverse opt-desc-lines) "\n")))
+                                                (plist-get plist :option-descriptions))))
+                   (setq current-opt nil opt-desc-lines nil))))
+            (while (not (eobp))
+              (cond
+               ((looking-at "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$")
+                (flush-opt)
+                (setq specs (my/manifolding-atlas-org-prompt--parse-flush
+                             key opts plist specs)
+                      key (match-string 1) opts nil
+                      plist (copy-sequence file-plist)
+                      desc-lines nil title-committed nil)
+                (forward-line 1)
+                (when (looking-at "^[ \t]*:PROPERTIES:[ \t]*$")
+                  (while (not (or (eobp) (looking-at "^[ \t]*:END:[ \t]*$")))
+                    (forward-line 1))
+                  (unless (eobp) (forward-line 1))))
+               ((and key (looking-at "^\\*\\*+ [. ]*\\(.*?\\)[ \t]*$"))
+                (flush-opt)
+                (push (match-string 1) opts)
+                (setq current-opt (match-string 1) opt-desc-lines nil)
+                (forward-line 1))
+               ((looking-at "^\\* ")
+                (flush-opt)
+                (setq specs (my/manifolding-atlas-org-prompt--parse-flush
+                             key opts plist specs)
+                      key nil opts nil plist nil)
+                (forward-line 1))
+               (t
+                (let ((line (string-trim
+                             (buffer-substring (line-beginning-position) (line-end-position)))))
+                  (when (and key (not (string-empty-p line)))
+                    (if current-opt
+                        (push line opt-desc-lines)
+                      (push line desc-lines))))
+                (forward-line 1))))
+            (flush-opt)
+            (nreverse
+             (my/manifolding-atlas-org-prompt--parse-flush
+              key opts plist specs))))))))
 #+end_src
 
 * Registration
@@ -5236,7 +5292,7 @@ Clearing the keyword resets to the first TODO option."
       (org-entry-put nil "TODO_STATE"
                      (or (org-get-todo-state)
                          (my/manifolding-atlas-org-prompt--first-option
-                          (gethash 'todo
+                          (gethash 'todo-state
                                    my/manifolding-atlas-org-prompt--specs)))))))
 
 (defun my/manifolding-atlas--enable-todo-sync-in-vault ()

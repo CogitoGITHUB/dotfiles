@@ -1,12 +1,13 @@
 #+title:      Etymology Prompt
 #+priority:   15
 
+#+CONTEXTS: dictionary
+#+KIND: unfolding
+#+LABEL: Etymology
+
 * ETYMOLOGY
 :PROPERTIES:
-:CONTEXTS: dictionary
-:KIND: unfolding
 :UNFOLDING: etymology
-:LABEL: Etymology
 :END:
 ** TODO
 ** Latin

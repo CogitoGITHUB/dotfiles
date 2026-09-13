@@ -1,10 +1,11 @@
 #+title:      Phone Prompt
 #+priority:   25
 
+#+CONTEXTS: contact
+#+KIND: free
+#+LABEL: Phone
+
 * PHONE
 :PROPERTIES:
 :ID: contact-phone
-:CONTEXTS: contact
-:KIND: free
-:LABEL: Phone
 :END:

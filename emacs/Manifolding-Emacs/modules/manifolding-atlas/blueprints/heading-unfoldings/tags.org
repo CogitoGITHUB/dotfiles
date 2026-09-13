@@ -1,10 +1,11 @@
 #+title:      Tags Prompt
 #+priority:   1
 
+#+CONTEXTS: file heading task
+#+KIND: tags
+#+LABEL: Tags
+
 * TAGS
 :PROPERTIES:
 :ID: tags
-:CONTEXTS: file heading task
-:KIND: tags
-:LABEL: Tags
 :END:

@@ -1,12 +1,13 @@
 #+title:      State Dependency Prompt
 #+priority:   5
 
+#+CONTEXTS: file heading task
+#+KIND: unfolding
+#+LABEL: State: Dependency
+
 * STATE_DEPENDENCY
 :PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: unfolding
 :UNFOLDING: state-dependency
-:LABEL: State: Dependency
 :END:
 ** TODO
 ** WARNING

@@ -1,13 +1,12 @@
 #+title:      Flowtest Epsilon Prompt
 #+priority:   32
 
-* FLOWTEST_EPSILON
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Flowtest Epsilon
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Flowtest Epsilon
 
-** TODO:END:
+* FLOWTEST_EPSILON
+** TODO
 ** WARNING
 ** MAPPED
 ** MAINTAINED

@@ -1,12 +1,11 @@
 #+title:      Context Prompt
 #+priority:   25
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Context
+
 * CONTEXT
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Context
-:END:
 ** TODO
 ** WARNING
 ** CAPTURED

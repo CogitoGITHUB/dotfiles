@@ -1,10 +1,11 @@
 #+title:      Birthday Prompt
 #+priority:   23
 
+#+CONTEXTS: contact
+#+KIND: free
+#+LABEL: Birthday
+
 * BIRTHDAY
 :PROPERTIES:
 :ID: contact-birthday
-:CONTEXTS: contact
-:KIND: free
-:LABEL: Birthday
 :END:

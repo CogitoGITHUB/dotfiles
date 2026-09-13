@@ -1,10 +1,11 @@
 #+title:      Note Prompt
 #+priority:   22
 
+#+CONTEXTS: contact
+#+KIND: free
+#+LABEL: Note
+
 * NOTE
 :PROPERTIES:
 :ID: contact-note
-:CONTEXTS: contact
-:KIND: free
-:LABEL: Note
 :END:

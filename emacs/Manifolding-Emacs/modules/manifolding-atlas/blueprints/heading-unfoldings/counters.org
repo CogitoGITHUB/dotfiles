@@ -1,12 +1,11 @@
 #+title:      Counters Prompt
 #+priority:   32
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Counters
+
 * COUNTERS
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Counters
-:END:
 ** TODO
 ** WARNING
 ** MAPPED

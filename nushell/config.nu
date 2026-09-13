@@ -14,7 +14,7 @@ source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Build.nu"
 source "~/.config/nushell/modules/forms/scripts/ManifoldOS-Weather.nu"
 
 # session / tools
-source "~/.config/nushell/zellij.nu"
+#source "~/.config/nushell/zellij.nu"
 source "~/.config/nushell/modules/forms/scripts/workspace-garden.nu"
 source "~/.config/nushell/modules/forms/scripts/zoxide.nu"
 

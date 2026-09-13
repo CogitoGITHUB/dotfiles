@@ -1,11 +1,12 @@
 #+title:      Priority Prompt
 #+priority:   1
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Priority
+
 * PRIORITY
 :PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Priority
 :TASK-DEFAULT: B
 :END:
 ** TODO

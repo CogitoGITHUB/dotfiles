@@ -1,12 +1,13 @@
 #+title:      TODO State Prompt
 #+priority:   1
 
+#+CONTEXTS: file heading task
+#+KIND: todo
+#+LABEL: TODO
+
 * TODO_STATE
 :PROPERTIES:
 :ID: todo
-:CONTEXTS: file heading task
-:KIND: todo
-:LABEL: TODO
 :TASK-DEFAULT: TODO
 :END:
 ** TODO

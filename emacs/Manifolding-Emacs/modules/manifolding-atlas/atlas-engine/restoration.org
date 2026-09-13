@@ -639,20 +639,23 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-links--read-blueprint-meta (file)
   "Return (KEY ID CONTEXTS KIND) from blueprint FILE, or nil without a KEY heading.
-KEY matching is case-sensitive: only UPPER_SNAKE level-1 headings count."
+KEY matching is case-sensitive: only UPPER_SNAKE level-1 headings count.
+CONTEXTS/KIND are read from #+CONTEXTS:/#+KIND: file keywords; ID
+still comes from the heading's own :PROPERTIES: drawer, when present."
   (when (and file (file-exists-p file))
     (with-temp-buffer
       (insert-file-contents file)
       (org-mode)
       (goto-char (point-min))
-      (let ((case-fold-search nil))
+      (let ((case-fold-search nil)
+            (kw (ignore-errors (org-collect-keywords '("CONTEXTS" "KIND")))))
         (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
           (let ((key (match-string-no-properties 1)))
             (goto-char (match-beginning 0))
             (list key
                   (org-entry-get nil "ID")
-                  (org-entry-get nil "CONTEXTS")
-                  (org-entry-get nil "KIND"))))))))
+                  (car (cdr (assoc "CONTEXTS" kw)))
+                  (car (cdr (assoc "KIND" kw))))))))))
 #+end_src
 
 **** Entry writers

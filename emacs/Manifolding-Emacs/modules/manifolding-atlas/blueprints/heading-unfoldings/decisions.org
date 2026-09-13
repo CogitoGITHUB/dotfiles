@@ -1,12 +1,11 @@
 #+title:      Decisions Prompt
 #+priority:   29
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Decisions
+
 * DECISIONS
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Decisions
-:END:
 ** TODO
 ** WARNING
 ** RECORDED

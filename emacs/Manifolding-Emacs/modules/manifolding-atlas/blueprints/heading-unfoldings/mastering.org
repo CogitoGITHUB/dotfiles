@@ -1,12 +1,11 @@
 #+title:      Mastering Review Prompt
 #+priority:   5
 
+#+CONTEXTS: file heading task
+#+KIND: mastering
+#+LABEL: Mastering: Review
+
 * MASTERING
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: mastering
-:LABEL: Mastering: Review
-:END:
 ** TODO
 ** WARNING
 ** REVIEW

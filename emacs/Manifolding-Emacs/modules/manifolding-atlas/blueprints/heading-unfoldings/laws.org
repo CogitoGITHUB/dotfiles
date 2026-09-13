@@ -1,12 +1,11 @@
 #+title:      Laws Prompt
 #+priority:   27
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Laws
+
 * LAWS
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Laws
-:END:
 ** TODO
 ** WARNING
 ** RESEARCHED

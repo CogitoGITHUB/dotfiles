@@ -1,12 +1,11 @@
 #+title:      Advantages Prompt
 #+priority:   30
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Advantages
+
 * ADVANTAGES
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Advantages
-:END:
 ** TODO
 ** WARNING
 ** VERIFIED

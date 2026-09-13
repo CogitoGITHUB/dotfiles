@@ -1,5 +1,4 @@
 load_plugins {
-    zjstatus
     falcode-zellij-sessions
 }
 ui {
@@ -12,8 +11,8 @@ default_mode "locked"
 default_shell "nu"
 default_cwd "/"
 default_layout "default"
-layout_dir "/home/aoeu/.config/zellij/layouts"
-theme_dir "/home/aoeu/.config/zellij/themes"
+layout_dir "/data/data/com.termux/files/home/.config/zellij/layouts"
+theme_dir "/data/data/com.termux/files/home/.config/zellij/themes"
 mouse_mode false
 pane_frame true
 mirror_session true

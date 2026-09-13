@@ -1,12 +1,11 @@
 #+title:      Quotes Prompt
 #+priority:   34
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Quotes
+
 * QUOTES
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Quotes
-:END:
 ** TODO
 ** WARNING
 ** CURATED

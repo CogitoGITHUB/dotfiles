@@ -1,12 +1,11 @@
 #+title:      Traps Internal Prompt
 #+priority:   35
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Traps Internal
+
 * TRAPS_INTERNAL
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Traps Internal
-:END:
 ** TODO
 ** WARNING
 ** MAPPED

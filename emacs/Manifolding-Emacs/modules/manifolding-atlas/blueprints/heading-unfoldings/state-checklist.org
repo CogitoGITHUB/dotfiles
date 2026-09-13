@@ -1,12 +1,13 @@
 #+title:      State Checklist Prompt
 #+priority:   5
 
+#+CONTEXTS: file heading task
+#+KIND: unfolding
+#+LABEL: State: Checklist
+
 * STATE_CHECKLIST
 :PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: unfolding
 :UNFOLDING: state-checklist
-:LABEL: State: Checklist
 :END:
 ** TODO
 ** WARNING

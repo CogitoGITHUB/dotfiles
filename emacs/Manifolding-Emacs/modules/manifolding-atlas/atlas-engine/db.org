@@ -230,12 +230,15 @@ loaded yet — boot timers fire before it; the idle repeat catches up."
     pruned)))
 
 (defun manifolding-atlas-db-query (&optional filter)
-  "Query notes, filtered by FILTER if given."
+  "Query notes, filtered by FILTER if given.
+Rows whose file no longer exists on disk are dropped before FILTER
+is applied, so callers never see stale/deleted entries."
   (let* ((db (ignore-errors (manifolding-atlas-db)))
          (db-result (when db
-                      (if filter
-                          (seq-filter filter (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes])))
-                        (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes]))))))
+                      (let ((notes (seq-filter
+                                    (lambda (n) (file-exists-p (manifolding-atlas-note-path n)))
+                                    (mapcar #'my/manifolding-atlas--row-to-note (emacsql db [:select * :from notes])))))
+                        (if filter (seq-filter filter notes) notes)))))
     (if (and db-result (consp db-result))
         db-result
       ;; Fallback: scan vault directly when DB not available or empty (same fallback as elsewhere tonight)
@@ -357,6 +360,36 @@ loaded yet — boot timers fire before it; the idle repeat catches up."
     (if db
         (or (ignore-errors (manifolding-atlas-db--update-file path)) 0)
       1)))
+
+(defun manifolding-atlas-db-prune-missing ()
+  "Remove DB rows whose file no longer exists on disk.
+Safe to call anytime; only deletes rows, never touches files."
+  (interactive)
+  (let* ((db (ignore-errors (manifolding-atlas-db)))
+         (rows (and db (ignore-errors (emacsql db [:select [id path] :from notes]))))
+         (removed 0))
+    (dolist (row rows)
+      (let ((id (car row)) (path (cadr row)))
+        (unless (file-exists-p path)
+          (emacsql db [:delete :from notes :where (= id $s1)] id)
+          (setq removed (1+ removed)))))
+    (when (called-interactively-p 'any)
+      (message "manifolding-atlas: pruned %d stale note(s)" removed))
+    removed))
+
+(add-hook 'emacs-startup-hook #'manifolding-atlas-db-prune-missing)
+
+(defun my/manifolding-atlas--prune-on-delete-file (orig-fn filename &rest args)
+  "After deleting FILENAME, prune it from the DB if it was a vault file."
+  (prog1 (apply orig-fn filename args)
+    (when (and (stringp filename)
+               (fboundp 'my/manifolding-atlas-root-dir)
+               (stringp (my/manifolding-atlas-root-dir))
+               (string-prefix-p (expand-file-name (my/manifolding-atlas-root-dir))
+                                 (expand-file-name filename)))
+      (ignore-errors (manifolding-atlas-db-prune-missing)))))
+
+(advice-add 'delete-file :around #'my/manifolding-atlas--prune-on-delete-file)
 
 (defun manifolding-atlas-db-count-notes ()
   (let ((db (manifolding-atlas-db)))

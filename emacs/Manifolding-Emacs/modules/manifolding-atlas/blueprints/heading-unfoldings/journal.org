@@ -1,12 +1,11 @@
 #+title:      Journal Prompt
 #+priority:   24
 
+#+CONTEXTS: file heading task
+#+KIND: inline
+#+LABEL: Journal
+
 * JOURNAL
-:PROPERTIES:
-:CONTEXTS: file heading task
-:KIND: inline
-:LABEL: Journal
-:END:
 ** TODO
 ** WARNING
 ** OPEN
