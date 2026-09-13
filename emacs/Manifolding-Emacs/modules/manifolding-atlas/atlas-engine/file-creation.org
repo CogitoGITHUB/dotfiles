@@ -7329,4 +7329,3 @@ the end after PROPS."
 (provide 'manifolding-atlas-buffer)
 
 #+end_src
-
