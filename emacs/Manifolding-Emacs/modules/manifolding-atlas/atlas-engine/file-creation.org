@@ -374,8 +374,8 @@ existing file. Registers the prompt when the capture finalizes."
       (let ((id (org-id-new))
             (org-capture-templates
              `(("b" "Blueprint prompt" plain (file ,path)
-                ,(format "#+CONTEXTS: file heading\n#+KIND: unfolding\n#+LABEL: %s\n\n* %s\n:PROPERTIES:\n:ID: %s\n:END:\n** First option\n%%?"
-                         title key id)
+                 ,(format "* %s :unfolding:file:heading:task:\n:PROPERTIES:\n:ID: %s\n:END:\n** First option\n%%?"
+                          key id)
                 :unnarrowed t :empty-lines 1 :kill-buffer t)))
             (org-capture-use-indirect-buffer nil)
             (org-capture-window-setup 'other-window))
@@ -440,7 +440,7 @@ Also deletes orphaned vault data dir on the same confirm."
   (let* ((key (with-temp-buffer
                 (insert-file-contents file)
                 (goto-char (point-min))
-                (if (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
+                (if (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)\\([ \t]+:[A-Za-z0-9_:@]+:\\)?[ \t]*$" nil t)
                     (match-string 1)
                   (user-error "No KEY heading in %s" file))))
          (key-sym (intern (downcase key)))
@@ -1635,7 +1635,10 @@ This is the default value of `manifolding-atlas-find-default-create-fn'."
               (preview-start (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
               (preview-end (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
                (template (my/manifolding-atlas-prompt-template--choose-with-realtime-capture-preview capture-buf preview-start preview-end)))
-         ))
+         (when (and template
+                    (not (string-equal template "WARNING"))
+                    (not (string-equal template my/manifolding-atlas-prompt-template--none)))
+           (my/manifolding-atlas-prompt-template--apply template note))))
      note))
 #+end_src
 
@@ -3288,18 +3291,17 @@ Prompts for backlink — yes inserts a link, no deletes the heading."
 #+property: header-args:emacs-lisp :lexical t :results silent
 
 Turns plain org outlines into registered prompts. A declarative file has
-a level-1 heading shaped like a PROPERTY_KEY whose level-2 headings are
-the allowed options — no elisp. Editing headings edits the prompt;
-adding a file adds an unfolding; deleting a file removes it. Files that
-contain src blocks are treated as legacy elisp prompts and skipped.
+a level-1 heading shaped like a PROPERTY_KEY with plain org tags for
+kind and contexts, whose level-2 headings are the allowed options —
+no elisp. Editing headings edits the prompt; adding a file adds an
+unfolding; deleting a file removes it. Files that contain src blocks
+are treated as legacy elisp prompts and skipped.
 
-Optional drawer metadata under the level-1 heading:
-:CONTEXTS: file heading task …   (default: file heading)
-:REQUIRED: t                     (feeds base-schema tracking)
-:KIND: unfolding|inline|todo|multi|tags|tagopt|template|free|scoped|mastering|mindmap   (default unfolding)
-:UNFOLDING:     <family>              (for note-linking kinds — scoped-note family override)
-:LABEL:    <display label>       (default: the KEY)
-:TASK-DEFAULT: <value>           (extra task-context registration default)
+Tag vocabulary on the level-1 heading, e.g. ~* MY_KEY :unfolding:file:heading:~:
+KIND (first match wins): unfolding|inline|todo|multi|tags|tagopt|template|free|scoped|mastering|mindmap|body   (default: unfolding)
+CONTEXTS (all matches, space-joined): file|heading|task|routine|dictionary|contact|recipe|rule   (default: file heading)
+Unknown tags are ignored. No #+ file keywords; no :LABEL: (KEY is the label).
+A :PROPERTIES: drawer holding only :ID: may follow the heading.
 
 * Requires
 
@@ -3555,16 +3557,13 @@ Why: Implementation of ~my/manifolding-atlas-prompt-template--apply~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-prompt-template--apply (val note)
-  "Post-apply: keep TEMPLATE_HASH in sync with VAL on NOTE."
-  (when note
-    (if (and val
+  "Post-apply: add VAL as a tag on NOTE."
+  (when (and note val
              (not (member val (list "WARNING"
                                     my/manifolding-atlas-prompt-template--none))))
-        (my/manifolding-atlas--unfolding-put
-         note "TEMPLATE_HASH"
-         (or (my/manifolding-atlas--capture-file-hash val) "unknown"))
+    (let ((tag (replace-regexp-in-string "[^A-Za-z0-9_@]" "_" val)))
       (manifolding-atlas-visit note)
-      (org-entry-delete nil "TEMPLATE_HASH")
+      (manifolding-atlas-buffer-tags-add (list tag))
       (save-buffer))))
 #+end_src
 
@@ -3617,36 +3616,50 @@ level-2+ collect options, drawers ride along with their key.
 Why: Implementation of ~my/manifolding-atlas-org-prompt--parse~.
 
 #+begin_src emacs-lisp
+(defconst my/manifolding-atlas-blueprint-kinds
+  '(unfolding inline todo multi tags tagopt template free scoped mastering mindmap body live topics)
+  "Valid KIND tags for blueprint KEY headings. First match wins.")
+
+(defconst my/manifolding-atlas-blueprint-contexts
+  '(file heading task routine dictionary contact recipe rule)
+  "Valid CONTEXT tags for blueprint KEY headings. All matches apply.")
+
+(defun my/manifolding-atlas-org-prompt--plist-from-tags (tag-string)
+  "Build a prompt PLIST from TAG-STRING like \":unfolding:file:heading:\".
+The first tag matching `my/manifolding-atlas-blueprint-kinds' becomes
+:kind; tags matching `my/manifolding-atlas-blueprint-contexts' collect
+into :contexts as a space-joined string. Unknown tags are ignored."
+  (let (kind contexts)
+    (dolist (tag (split-string (or tag-string "") ":" t))
+      (let ((sym (intern (downcase tag))))
+        (cond ((and (null kind) (memq sym my/manifolding-atlas-blueprint-kinds))
+               (setq kind (symbol-name sym)))
+              ((and (memq sym my/manifolding-atlas-blueprint-contexts)
+                    (not (member (symbol-name sym) contexts)))
+               (push (symbol-name sym) contexts)))))
+    (append (when kind (list :kind kind))
+            (when contexts (list :contexts (string-join (nreverse contexts) " "))))))
+#+end_src
+#+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--parse (file)
   "Return specs (KEY OPTIONS PLIST) declared in FILE, or nil.
-CONTEXTS/KIND/LABEL come from #+CONTEXTS:/#+KIND:/#+LABEL: file
-keywords above the first heading, not an in-drawer property anymore.
+KIND/CONTEXTS come from plain tags on the level-1 KEY heading, e.g.
+`* MY_KEY :unfolding:file:heading:'. The first KIND tag becomes
+PLIST's :kind string; CONTEXT tags become PLIST's :contexts
+space-joined string; unknown tags are ignored. No #+ file keywords.
 Body text under the KEY heading (before the first option) becomes
 PLIST's :description; body text under each ** option becomes that
 option's entry in PLIST's :option-descriptions alist
 (OPTION . DESCRIPTION). OPTIONS stays a flat list of option strings
-for backward compatibility. A legacy :PROPERTIES:...:END: drawer
-right after the heading is tolerated and skipped (its CONTEXTS/KIND/
-LABEL lines, if any, are ignored -- migrate the file to keywords)."
+for backward compatibility. A :PROPERTIES:...:END: drawer holding the
+:ID: right after the heading is skipped."
   (with-temp-buffer
     (insert-file-contents file)
     (goto-char (point-min))
     (unless (re-search-forward "begin_src" nil t)
       (goto-char (point-min))
-      (let (file-plist)
-        (while (and (not (eobp))
-                    (or (looking-at "^#\\+\\([A-Za-z_-]+\\):[ \t]*\\(.*\\)$")
-                        (looking-at "^[ \t]*$")))
-          (when (looking-at "^#\\+\\([A-Za-z_-]+\\):[ \t]*\\(.*\\)$")
-            (let ((kw (downcase (match-string 1))))
-              (when (member kw '("contexts" "kind" "label"))
-                (setq file-plist
-                      (plist-put file-plist (intern (concat ":" kw))
-                                 (string-trim (match-string 2)))))))
-          (forward-line 1))
-        (goto-char (point-min))
-        (let ((specs nil) key opts plist desc-lines opt-desc-lines
-              current-opt title-committed)
+      (let ((specs nil) key opts plist desc-lines opt-desc-lines
+            current-opt title-committed)
           (cl-labels
               ((commit-title ()
                  (unless title-committed
@@ -3665,12 +3678,12 @@ LABEL lines, if any, are ignored -- migrate the file to keywords)."
                    (setq current-opt nil opt-desc-lines nil))))
             (while (not (eobp))
               (cond
-               ((looking-at "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$")
+               ((looking-at "^\\* \\([A-Z][A-Z0-9_]*\\)\\([ \t]+\\(:[A-Za-z0-9_:@]+:\\)\\)?[ \t]*$")
                 (flush-opt)
                 (setq specs (my/manifolding-atlas-org-prompt--parse-flush
                              key opts plist specs)
                       key (match-string 1) opts nil
-                      plist (copy-sequence file-plist)
+                      plist (my/manifolding-atlas-org-prompt--plist-from-tags (match-string 3))
                       desc-lines nil title-committed nil)
                 (forward-line 1)
                 (when (looking-at "^[ \t]*:PROPERTIES:[ \t]*$")
@@ -3699,7 +3712,7 @@ LABEL lines, if any, are ignored -- migrate the file to keywords)."
             (flush-opt)
             (nreverse
              (my/manifolding-atlas-org-prompt--parse-flush
-              key opts plist specs))))))))
+              key opts plist specs)))))))
 #+end_src
 
 * Registration

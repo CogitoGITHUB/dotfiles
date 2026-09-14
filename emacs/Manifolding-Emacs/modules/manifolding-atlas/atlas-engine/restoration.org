@@ -640,22 +640,34 @@ Lives in `my/manifolding-atlas-root-dir'. Auto-created if missing.")
 (defun my/manifolding-atlas-links--read-blueprint-meta (file)
   "Return (KEY ID CONTEXTS KIND) from blueprint FILE, or nil without a KEY heading.
 KEY matching is case-sensitive: only UPPER_SNAKE level-1 headings count.
-CONTEXTS/KIND are read from #+CONTEXTS:/#+KIND: file keywords; ID
-still comes from the heading's own :PROPERTIES: drawer, when present."
+CONTEXTS/KIND are read from plain tags on the KEY heading, e.g.
+`* MY_KEY :unfolding:file:heading:'; ID still comes from the
+heading's own :PROPERTIES: drawer, when present."
   (when (and file (file-exists-p file))
     (with-temp-buffer
       (insert-file-contents file)
       (org-mode)
       (goto-char (point-min))
-      (let ((case-fold-search nil)
-            (kw (ignore-errors (org-collect-keywords '("CONTEXTS" "KIND")))))
-        (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)[ \t]*$" nil t)
-          (let ((key (match-string-no-properties 1)))
+      (let ((case-fold-search nil))
+        (when (re-search-forward "^\\* \\([A-Z][A-Z0-9_]*\\)\\([ \t]+\\(:[A-Za-z0-9_:@]+:\\)\\)?[ \t]*$" nil t)
+          (let* ((key (match-string-no-properties 1))
+                 (tags (split-string (or (match-string-no-properties 3) "") ":" t))
+                 (down (mapcar #'downcase tags))
+                 (kind (car (cl-intersection
+                             down
+                             (mapcar #'symbol-name my/manifolding-atlas-blueprint-kinds)
+                             :test #'string=)))
+                 (contexts (string-join
+                            (cl-intersection
+                             down
+                             (mapcar #'symbol-name my/manifolding-atlas-blueprint-contexts)
+                             :test #'string=)
+                            " ")))
             (goto-char (match-beginning 0))
             (list key
                   (org-entry-get nil "ID")
-                  (car (cdr (assoc "CONTEXTS" kw)))
-                  (car (cdr (assoc "KIND" kw))))))))))
+                  (unless (string-empty-p contexts) contexts)
+                  kind)))))))
 #+end_src
 
 **** Entry writers
