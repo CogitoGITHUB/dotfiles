@@ -35,10 +35,13 @@ Topics not present here fall back to `protocols-<topic>.org'."
 
 *** Database Table
 Bookkeeping table keyed by note-id with topics, primary-topic, order,
-level, and routed-files for fast protocol queries.
+level, routed-files, and recurrence cadence for fast protocol queries.
+Column migration is explicit (CREATE never adds columns): same
+introspection pattern as routines/mastering, portable ALTER.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols--ensure-table ()
-  "Create the protocols bookkeeping table if it does not exist."
+  "Create the protocols bookkeeping table if it does not exist.
+Migrates older schemas by adding recurrence columns when missing."
   (emacsql (manifolding-atlas-db)
     [:create :table :if :not :exists protocols
      ([(note-id :text :primary-key :not-null)
@@ -46,9 +49,36 @@ level, and routed-files for fast protocol queries.
        (primary-topic :text)
        (protocol-order :integer :not-null)
        (protocol-level :text :not-null)
-       (routed-files :text :not-null)]
+       (routed-files :text :not-null)
+       (pinterval :text)
+       (pdays :text)
+       (panchor :text)
+       (pnext :integer)]
       (:foreign-key [note-id] :references notes [id]
-       :on-delete :cascade))]))
+       :on-delete :cascade))])
+  (let* ((pg (eq (and (boundp 'my/manifolding-atlas-db-backend)
+                      my/manifolding-atlas-db-backend)
+                 'pg))
+         (info (condition-case nil
+                   (if pg
+                       (emacsql (manifolding-atlas-db)
+                         "SELECT column_name FROM information_schema.columns WHERE table_name = 'protocols'")
+                     (emacsql (manifolding-atlas-db)
+                       "PRAGMA table_info(protocols)"))
+                 (error nil)))
+         (cols (mapcar (lambda (row)
+                         (seq-find #'stringp (append row nil)))
+                       info)))
+    (dolist (col '(("pinterval" . "TEXT")
+                   ("pdays" . "TEXT")
+                   ("panchor" . "TEXT")
+                   ("pnext" . "INTEGER")))
+      (unless (member (car col) cols)
+        (condition-case nil
+            (emacsql (manifolding-atlas-db)
+              (format "ALTER TABLE protocols ADD COLUMN %s %s"
+                      (car col) (cdr col)))
+          (error nil))))))
 #+end_src
 
 *** DB Extractor
@@ -73,7 +103,14 @@ notes carrying a PROTOCOL unfolding.
              (level      (or (cdr (assoc "PROTOCOL_LEVEL" unfoldings)) "L1")))
         (emacsql (manifolding-atlas-db)
           [:insert :into protocols :values $v1]
-          (vector note-id topics-str primary order level ""))))
+          (vector note-id topics-str primary order level ""
+                  (cdr (assoc "PROTOCOL_INTERVAL" unfoldings))
+                  (cdr (assoc "PROTOCOL_DAYS" unfoldings))
+                  (cdr (assoc "PROTOCOL_ANCHOR" unfoldings))
+                  (let ((nxt (cdr (assoc "PROTOCOL_NEXT" unfoldings))))
+                    (and nxt
+                         (string-match-p "^[0-9]\\{8\\}$" nxt)
+                         (string-to-number nxt)))))))
     note-data))
 #+end_src
 
@@ -107,11 +144,39 @@ with a PROTOCOL unfolding.
              :required nil
              :validate (lambda (val _note)
                          (if (equal val "WARNING") "missing-required" t)))
-       (list :key "PROTOCOL_LEVEL"
-             :type 'string
-             :required nil
-             :validate (lambda (val _note)
-                         (if (equal val "WARNING") "missing-required" t)))))
+        (list :key "PROTOCOL_LEVEL"
+              :type 'string
+              :required nil
+              :validate (lambda (val _note)
+                          (if (equal val "WARNING") "missing-required" t)))
+        (list :key "PROTOCOL_INTERVAL"
+              :type 'string
+              :required nil
+              :validate (lambda (val _note)
+                          (cond ((or (null val) (equal val "WARNING")) t)
+                                ((not (string-match-p "^[0-9]+[hdwmy]$" val)) "invalid-interval")
+                                (t t))))
+        (list :key "PROTOCOL_DAYS"
+              :type 'string
+              :required nil
+              :validate (lambda (val _note)
+                          (cond ((or (null val) (equal val "WARNING")) t)
+                                ((not (string-match-p "^[A-Za-z/, \t]+$" val)) "invalid-days")
+                                (t t))))
+        (list :key "PROTOCOL_ANCHOR"
+              :type 'string
+              :required nil
+              :validate (lambda (val _note)
+                          (cond ((or (null val) (equal val "WARNING")) t)
+                                ((not (string-match-p "^[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}$" val)) "invalid-date")
+                                (t t))))
+        (list :key "PROTOCOL_NEXT"
+              :type 'string
+              :required nil
+              :validate (lambda (val _note)
+                          (cond ((or (null val) (equal val "WARNING")) t)
+                                ((not (string-match-p "^[0-9]\\{8\\}$" val)) "invalid-next")
+                                (t t))))))
 #+end_src
 
 *** Routing Engine
@@ -256,7 +321,9 @@ Only strips protocol-specific unfoldings; preserves :RULE: t if set."
                         [:select [routed-files] :from protocols
                          :where (= note-id $s1)]
                         note-id))))
-    (dolist (key '("PROTOCOL" "PROTOCOL_TOPICS" "PROTOCOL_ORDER" "PROTOCOL_LEVEL"))
+    (dolist (key '("PROTOCOL" "PROTOCOL_TOPICS" "PROTOCOL_ORDER" "PROTOCOL_LEVEL"
+                  "PROTOCOL_INTERVAL" "PROTOCOL_DAYS" "PROTOCOL_ANCHOR" "PROTOCOL_NEXT"
+                  "PROTOCOL_LAST_RUN" "PROTOCOL_LAST_ELAPSED"))
       (org-entry-delete nil key))
     (save-buffer)
     (when routed
@@ -315,8 +382,9 @@ Only strips protocol-specific unfoldings; preserves :RULE: t if set."
 
 **** Parent heading creation
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-protocols--create-parent (file title topics-str)
-  "Create the TODO parent heading for a new protocol in FILE; return its ID."
+(defun my/manifolding-atlas-protocols--create-parent (file title topics-str &optional interval days)
+  "Create the TODO parent heading for a new protocol in FILE; return its ID.
+INTERVAL/DAYS are optional recurrence cadence, stored as unfoldings."
   (with-current-buffer (find-file-noselect file)
     (goto-char (point-max))
     (unless (bolp) (insert "\n"))
@@ -327,6 +395,10 @@ Only strips protocol-specific unfoldings; preserves :RULE: t if set."
     (org-set-unfolding "PROTOCOL_LEVEL" "L1")
     (when topics-str
       (org-set-unfolding "PROTOCOL_TOPICS" topics-str))
+    (when interval
+      (org-set-unfolding "PROTOCOL_INTERVAL" interval))
+    (when days
+      (org-set-unfolding "PROTOCOL_DAYS" days))
     (save-buffer))
   (with-current-buffer (find-file-noselect file)
     (goto-char (point-max))
@@ -375,6 +447,10 @@ pointers for each selected step."
          (topics (and (not (string-empty-p topics-str))
                       (split-string topics-str " " t)))
          (primary (car topics))
+         (interval (let ((s (read-string "Repeat interval (e.g. 1w, blank = none): ")))
+                     (unless (string-empty-p s) s)))
+         (days (let ((s (read-string "Repeat days (e.g. Mon, blank = none): ")))
+                 (unless (string-empty-p s) s)))
          (file (if primary
                    (my/manifolding-atlas-protocols--resolve-file primary)
                  (expand-file-name "protocols-universal"
@@ -387,7 +463,7 @@ pointers for each selected step."
       (unless (> count 0)
         (user-error "No headings selected"))
       (let ((parent-id (my/manifolding-atlas-protocols--create-parent
-                        file title topics-str)))
+                        file title topics-str interval days)))
         (dolist (step collected)
           (let* ((id (nth 0 step))
                  (heading-title (nth 1 step))
@@ -401,10 +477,214 @@ pointers for each selected step."
         (message "Built protocol \"%s\" with %d step(s)." title count)))))
 #+end_src
 
+*** Recurrence
+Protocol-level anchored rescheduling. This is an owned copy of the
+routines anchor lattice — same behavior, no shared code: each engine
+owns its schedule, and a change to routines timing must never move a
+protocol date. Keep the two in sync by hand; do not merge.
+
+A protocol parent (PROTOCOL=t, PROTOCOL_ORDER=0) carrying
+PROTOCOL_INTERVAL and/or PROTOCOL_DAYS advances when the protocol is
+reset: the anchor becomes today and the next occurrence is computed
+by lattice stepping. Skipped or cadence-less parents are untouched.
+
+**** Owned date lattice
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols--today ()
+  "Today as ISO \"YYYY-MM-DD\"."
+  (format-time-string "%Y-%m-%d"))
+
+(defun my/manifolding-atlas-protocols--parse-interval (str)
+  "Parse STR like \"1w\" into (NUM . UNIT); nil when not an interval."
+  (when (and (stringp str)
+             (string-match "\\`\\s-*\\([0-9]+\\)\\s-*\\([hdwmy]\\)\\s-*\\'" str))
+    (cons (string-to-number (match-string 1 str))
+          (intern (match-string 2 str)))))
+
+(defconst my/manifolding-atlas-protocols--dow-names
+  ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"]
+  "Weekday names indexed like `decoded-time-weekday'.")
+
+(defun my/manifolding-atlas-protocols--parse-days (str)
+  "Parse STR like \"Mon\" into weekday numbers (Sunday 0); nil if none."
+  (when (stringp str)
+    (let (out)
+      (dolist (tok (split-string str "[/, \t]+" t))
+        (let ((pos nil)
+              (low (downcase tok)))
+          (cl-loop for i from 0 to 6
+                   for full = (aref my/manifolding-atlas-protocols--dow-names i)
+                   for flow = (downcase full)
+                   when (or (string= low flow)
+                            (and (>= (length low) 2)
+                                 (or (string-prefix-p low flow)
+                                     (string-prefix-p flow low))))
+                   do (setq pos i))
+          (when pos (push pos out))))
+      (sort (delete-dups out) #'<))))
+
+(defun my/manifolding-atlas-protocols--iso-days (iso)
+  "ISO \"YYYY-MM-DD\" to org day-number."
+  (time-to-days
+   (encode-time 0 0 0
+                (string-to-number (substring iso 8 10))
+                (string-to-number (substring iso 5 7))
+                (string-to-number (substring iso 0 4)))))
+
+(defun my/manifolding-atlas-protocols--days-iso (days)
+  "Org day-number back to ISO. `days-to-time' needs the epoch offset."
+  (format-time-string "%Y-%m-%d"
+                      (days-to-time (- days (time-to-days 0)))))
+
+(defun my/manifolding-atlas-protocols--iso-weekday (iso)
+  "Weekday of ISO date: Sunday 0 through Saturday 6."
+  (nth 6 (decode-time (encode-time 0 0 0
+                                   (string-to-number (substring iso 8 10))
+                                   (string-to-number (substring iso 5 7))
+                                   (string-to-number (substring iso 0 4))))))
+
+(defun my/manifolding-atlas-protocols--iso-add (iso num unit)
+  "Add NUM UNITs (d/w/m/y/h) to ISO; return ISO. \"h\" is a no-op."
+  (require 'calendar)
+  (pcase unit
+    ('h iso)
+    ('d (my/manifolding-atlas-protocols--days-iso
+         (+ (my/manifolding-atlas-protocols--iso-days iso) num)))
+    ('w (my/manifolding-atlas-protocols--days-iso
+         (+ (my/manifolding-atlas-protocols--iso-days iso) (* 7 num))))
+    ((or 'm 'y)
+     (let* ((y (string-to-number (substring iso 0 4)))
+            (m (string-to-number (substring iso 5 7)))
+            (d (string-to-number (substring iso 8 10)))
+            (total (+ (1- m) (if (eq unit 'm) num (* 12 num))))
+            (ny (+ y (/ total 12)))
+            (nm (1+ (% total 12)))
+            (last (calendar-last-day-of-month nm ny)))
+       (format "%04d-%02d-%02d" ny nm (min d last))))))
+
+(defun my/manifolding-atlas-protocols--next-occurrence (anchor today interval days)
+  "Next occurrence ISO strictly after TODAY from ANCHOR (or nil).
+Lattice stepping: advance by INTERVAL past TODAY, then to a listed
+weekday when DAYS is set. DAYS alone means next listed weekday.
+Neither means nil."
+  (when (or interval days)
+    (let ((base (or anchor today))
+          (today-n (my/manifolding-atlas-protocols--iso-days today))
+          (cand nil)
+          (i 0))
+      (if interval
+          (progn
+            (setq cand base)
+            (while (and (<= (my/manifolding-atlas-protocols--iso-days cand)
+                            today-n)
+                        (< (cl-incf i) 1000))
+              (setq cand (my/manifolding-atlas-protocols--iso-add
+                          cand (car interval) (cdr interval))))
+            (when days
+              (setq i 0)
+              (while (and (not (member (my/manifolding-atlas-protocols--iso-weekday cand)
+                                       days))
+                          (< (cl-incf i) 1000))
+                (setq cand (my/manifolding-atlas-protocols--iso-add
+                            cand (car interval) (cdr interval))))))
+        (setq cand (my/manifolding-atlas-protocols--days-iso (1+ today-n))
+              i 0)
+        (while (and (not (member (my/manifolding-atlas-protocols--iso-weekday cand)
+                                 days))
+                    (< (cl-incf i) 8))
+          (setq cand (my/manifolding-atlas-protocols--days-iso
+                      (1+ (my/manifolding-atlas-protocols--iso-days cand))))))
+      (when (< i 1000) cand))))
+#+end_src
+
+**** Parent advance
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols--protocol-parents ()
+  "Alist of (TITLE . ID) for every protocol parent heading.
+Parents are PROTOCOL=t headings with PROTOCOL_ORDER 0."
+  (let (out)
+    (dolist (row (emacsql (manifolding-atlas-db)
+                   [:select [note-id] :from protocols
+                    :where (= protocol-order $s1)]
+                   0))
+      (let ((note (manifolding-atlas-db-get-by-id (car row))))
+        (when note
+          (push (cons (manifolding-atlas-note-title note)
+                      (car row))
+                out))))
+    (nreverse out)))
+
+(defun my/manifolding-atlas-protocols--advance-parent (id)
+  "Advance protocol parent ID when it carries cadence.
+Anchor becomes today; next occurrence is stamped as PROTOCOL_ANCHOR,
+PROTOCOL_NEXT and the SCHEDULED planning line. Cadence-less parents
+are left alone. Return the next ISO date, or nil."
+  (when-let ((marker (org-id-find id t)))
+    (prog1
+        (with-current-buffer (marker-buffer marker)
+          (goto-char marker)
+          (let* ((iv (my/manifolding-atlas-protocols--parse-interval
+                      (org-entry-get nil "PROTOCOL_INTERVAL")))
+                 (dy (my/manifolding-atlas-protocols--parse-days
+                      (org-entry-get nil "PROTOCOL_DAYS"))))
+            (when (or iv dy)
+              (let* ((today (my/manifolding-atlas-protocols--today))
+                     (next (my/manifolding-atlas-protocols--next-occurrence
+                            (org-entry-get nil "PROTOCOL_ANCHOR")
+                            today iv dy)))
+                (when next
+                  (org-entry-put nil "PROTOCOL_ANCHOR" today)
+                  (org-entry-put nil "PROTOCOL_NEXT"
+                                 (concat (substring next 0 4)
+                                         (substring next 5 7)
+                                         (substring next 8 10)))
+                  (save-excursion
+                    (org-back-to-heading t)
+                    (let ((end (save-excursion (org-end-of-subtree t t)))
+                          (sched (format "<%s %s>" next
+                                         (aref my/manifolding-atlas-protocols--dow-names
+                                               (my/manifolding-atlas-protocols--iso-weekday next)))))
+                      (forward-line 1)
+                      (if (re-search-forward "^SCHEDULED:" end t)
+                          (progn (beginning-of-line)
+                                 (delete-region (line-beginning-position)
+                                                (line-end-position))
+                                 (insert (format "SCHEDULED: %s" sched)))
+                        (org-back-to-heading t)
+                        (end-of-line)
+                        (insert (format "\nSCHEDULED: %s" sched)))))
+                  (save-buffer)
+                  (condition-case nil
+                      (emacsql (manifolding-atlas-db)
+                        [:update protocols
+                         :set panchor = $s1, pnext = $s2
+                         :where (= note-id $s3)]
+                        today
+                        (string-to-number
+                         (concat (substring next 0 4)
+                                 (substring next 5 7)
+                                 (substring next 8 10)))
+                        id)
+                    (error nil))
+                  next)))))
+      (set-marker marker nil))))
+
+(defun my/manifolding-atlas-protocols--advance-parents ()
+  "Advance every protocol parent carrying cadence; report how many."
+  (let ((n 0))
+    (dolist (parent (my/manifolding-atlas-protocols--protocol-parents))
+      (when (my/manifolding-atlas-protocols--advance-parent (cdr parent))
+        (cl-incf n)))
+    (when (> n 0)
+      (message "Advanced %d protocol(s)" n))))
+#+end_src
+
 *** Reset — batch TODO flip
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-protocols-reset ()
-  "Set all protocol steps to TODO."
+  "Set all protocol steps to TODO; advance parents carrying cadence.
+The TODO flip is the completion hook: every protocol parent with
+PROTOCOL_INTERVAL/DAYS stamps its next occurrence from the anchor."
   (interactive)
   (let ((ids (mapcar #'car (emacsql (manifolding-atlas-db)
                         [:select [note-id] :from protocols])))
@@ -416,7 +696,159 @@ pointers for each selected step."
           (org-todo "TODO"))
         (set-marker marker nil)
         (setq count (1+ count))))
+    (my/manifolding-atlas-protocols--advance-parents)
     (message "Reset %d protocol steps to TODO." count)))
+#+end_src
+
+*** Run
+Minimal checklist walker: pick a protocol parent, walk its wormhole
+steps top to bottom with per-step timers from STEP_DURATION, mark
+steps DONE as you go. Recurrence is NOT advanced here — reset stays
+the explicit completion hook. Run evidence lands on the parent as
+PROTOCOL_LAST_RUN / PROTOCOL_LAST_ELAPSED.
+
+**** Step collection
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols--parent-steps (parent-id)
+  "Return step IDs from the wormhole lines under protocol PARENT-ID,
+in document order."
+  (when-let ((marker (org-id-find parent-id t)))
+    (prog1
+        (with-current-buffer (marker-buffer marker)
+          (save-excursion
+            (goto-char marker)
+            (let ((end (save-excursion (org-end-of-subtree t t)))
+                  (ids nil))
+              (forward-line 1)
+              (while (re-search-forward
+                      "#\\+wormhole: \\[\\[id:\\([^]]+\\)\\]" end t)
+                (push (match-string-no-properties 1) ids))
+              (nreverse ids))))
+      (set-marker marker nil))))
+#+end_src
+
+**** Step handler
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols--run-step (sid step total)
+  "Run protocol step SID as STEP of TOTAL. Return done/skip/quit, or
+nil when the heading is gone."
+  (let ((marker (org-id-find sid t)))
+    (unless marker (message "Step %d: id:%s not found, skipping" step sid) nil)
+    (prog1
+        (with-current-buffer (marker-buffer marker)
+          (goto-char marker)
+          (let* ((title (org-get-heading t t t t))
+                 (planned (atlas-timer-parse-duration
+                           (org-entry-get nil "STEP_DURATION")))
+                 (t0 (atlas-timer-stopwatch-start))
+                 (choices (append '(?d ?s ?o ?q)
+                                  (when planned '(?t ?+ ?-))))
+                 (prompt (format "[%d/%d] %s — d=done s=skip o=open q=quit%s: "
+                                 step total title
+                                 (if planned
+                                     (format " [timer %s] t=pause +=+1m -=-1m"
+                                             (atlas-timer-format-seconds planned))
+                                   "")))
+                 (answer nil)
+                 (done nil))
+            (when planned (atlas-timer-countdown-start planned))
+            (while (not done)
+              (message "%s" prompt)
+              (setq answer (read-char-choice prompt choices))
+              (pcase answer
+                (?t (condition-case nil
+                        (atlas-timer-countdown-toggle-pause)
+                      (error (message "No active countdown"))))
+                (?+ (setq planned (+ (or planned 0) 60))
+                    (atlas-timer-countdown-start
+                     (+ (or (atlas-timer-countdown-remaining) 0) 60)))
+                (?- (setq planned (max 0 (- (or planned 0) 60)))
+                    (atlas-timer-countdown-start
+                     (max 0 (- (or (atlas-timer-countdown-remaining) 0) 60))))
+                (_ (setq done t))))
+            (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+              (atlas-timer-countdown-stop)
+              (pcase answer
+                (?d (ignore-errors (org-todo "DONE"))
+                    (save-buffer)
+                    (message "[%d/%d] %s — done in %s%s" step total title
+                             (atlas-timer-format-seconds elapsed)
+                             (if planned (format " (planned %s)"
+                                                 (atlas-timer-format-seconds planned)) ""))
+                    'done)
+                (?s (message "[%d/%d] %s — skipped" step total title) 'skip)
+                (?o (find-file (buffer-file-name (marker-buffer marker)))
+                    (goto-char marker)
+                    (pcase (read-char-choice
+                            (format "[%d/%d] %s — d=done s=skip q=quit: "
+                                    step total title)
+                            '(?d ?s ?q))
+                      (?d (ignore-errors
+                            (with-current-buffer (marker-buffer marker)
+                              (goto-char marker)
+                              (org-todo "DONE")
+                              (save-buffer)))
+                          'done)
+                      (?s 'skip)
+                      (?q 'quit)))
+                (?q 'quit)))))
+      (set-marker marker nil))))
+#+end_src
+
+**** Run command
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols-run ()
+  "Walk a protocol's steps top to bottom with per-step timers.
+Done steps flip to DONE (when they carry TODO states); the run
+summary is stamped on the parent. Reset stays the recurrence hook."
+  (interactive)
+  (let* ((parents (my/manifolding-atlas-protocols--protocol-parents)))
+    (unless parents (user-error "No protocols built yet"))
+    (let* ((choice (completing-read "Run protocol: "
+                                    (mapcar #'car parents) nil t))
+           (pid (cdr (assoc choice parents)))
+           (steps (my/manifolding-atlas-protocols--parent-steps pid))
+           (total (length steps))
+           (done 0)
+           (skipped 0)
+           (step 0)
+           (t0 (atlas-timer-stopwatch-start)))
+      (unless steps (user-error "Protocol has no steps"))
+      (catch 'protocols-quit
+        (dolist (sid steps)
+          (setq step (1+ step))
+          (pcase (my/manifolding-atlas-protocols--run-step sid step total)
+            ('quit (throw 'protocols-quit nil))
+            ('done (cl-incf done))
+            ('skip (cl-incf skipped))
+            (_ (cl-incf skipped)))))
+      (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+        (when-let ((marker (org-id-find pid t)))
+          (with-current-buffer (marker-buffer marker)
+            (goto-char marker)
+            (org-entry-put nil "PROTOCOL_LAST_RUN"
+                           (my/manifolding-atlas-protocols--today))
+            (org-entry-put nil "PROTOCOL_LAST_ELAPSED"
+                           (number-to-string elapsed))
+            (save-buffer))
+          (set-marker marker nil))
+        (message "Protocol finished: %d done, %d skipped in %s"
+                 done skipped (atlas-timer-format-seconds elapsed))))))
+#+end_src
+
+**** Agenda files
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-protocols-agenda-files ()
+  "Return existing protocol topic-index files for agenda scoping.
+Parent SCHEDULED lines live in these files. The routed-files
+column stores comma-joined lists, so split before filtering."
+  (seq-filter
+   #'file-exists-p
+   (delete-dups
+    (mapcan (lambda (row)
+              (split-string (or (car row) "") "," t))
+            (emacsql (manifolding-atlas-db)
+              [:select [routed-files] :from protocols])))))
 #+end_src
 
 *** Transient / Hydra Suffixes
@@ -435,4 +867,14 @@ pointers for each selected step."
   :description "Protocol: unmark step"
   (interactive)
   (my/manifolding-atlas-protocols-unmark-step))
+
+(transient-define-suffix my/manifolding-atlas-protocols--run-protocol ()
+  :description "Protocol: run"
+  (interactive)
+  (my/manifolding-atlas-protocols-run))
+
+(transient-define-suffix my/manifolding-atlas-protocols--reset-all ()
+  :description "Protocol: reset all"
+  (interactive)
+  (my/manifolding-atlas-protocols-reset))
 #+end_src
