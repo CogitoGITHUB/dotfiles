@@ -1,0 +1,30 @@
+#+title: Manifold Manifest — Emacs Manuals
+#+date: 2026-09-15
+
+Root manifest for the manuals manifold. Raw material from
+=../manuals.org= (frozen reference, shrinking) is CUT — never
+copied — into stage directories below, one git commit per stage,
+byte-reconciled every time. No IDs, no Atlas ingestion, no
+rewriting: Phase 1 restructures, it does not interpret.
+
+Origin fingerprint at scaffold time:
+- sha256: eaf56d10e8b0f1826db68867580e9fa48bd7f647847ce4880dc680630808d5b0
+- bytes: 7022771, lines: 87170, L1 sections: 86 (all uniquely titled)
+
+Stages (chronological by Emacs lifecycle):
+- =Manifolding-emacs/00-primordial/= — before consciousness
+- (01-awakening through 09-archives land in later stages)
+- =Manifolding-emacs/grimoire-unsorted/= — personal essays, parked (later)
+
+Move log (append-only; one row per cut section):
+| # | section | src lines | bytes | dest | status |
+| 00 | Entering | 3608-3683 | 12214 | 00-primordial/00-entering.org | cut |
+| 00 | Introduction | 6-1635 | 121692 | 00-primordial/01-introduction.org | cut |
+| 00 | Cutomization (title verbatim) | 1636-3449 | 162800 | 00-primordial/02-customization.org | cut |
+| 00 | Quitting and Aborting | 7033-7074 | 4993 | 00-primordial/03-quitting-and-aborting.org | cut |
+
+Stage 00 reconcile: origin 7022771 → moved content 301699 + 4 consumed
+separator newlines → 6721068. L1 86 → 82. Destinations carry a
+5-line provenance header each (76 bytes); content bytes above exclude
+headers. Origin sha now:
+953eba0325b06152985c60fd98a9e7e0026f219da7bf7ad30ca00792c385b004
