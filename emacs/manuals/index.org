@@ -129,3 +129,34 @@ separator newlines → 820338. L1 29 → 21, no duplicates. Origin sha now:
 | 08 | Registers | 9033-9215 | 12077 | 08-rituals/05-registers.org | cut |
 | 08 | Abbrev | 9216-9413 | 19623 | 08-rituals/06-abbrev.org | cut |
 | 08 | org-repeat-by-cron | 11230-11246 | 337 | 08-rituals/07-org-repeat-by-cron.org | cut |
+
+Stage 09 reconcile: origin 820338 → moved content 820104 + 21 consumed
+separator newlines → 213 (residue: 4-line preamble note + blanks, no
+L1 — see preamble row). L1 21 → 0, no duplicates.
+
+| 09 | International Character Set Support | 6-613 | 75996 | 09-archives/05-international-character-set-support.org | cut |
+| 09 | Documentation | 614-1066 | 31596 | 09-archives/00-documentation.org | cut |
+| 09 | Getting Help | 1067-1433 | 26633 | 09-archives/01-getting-help.org | cut |
+| 09 | Editing Commands | 1434-4452 | 251077 | 09-archives/06-editing-commands.org | cut |
+| 09 | Tips and Conventions | 4453-4839 | 42155 | 09-archives/04-tips-and-conventions.org | cut |
+| 09 | Document Viewing | 4840-4902 | 6353 | 09-archives/07-document-viewing.org | cut |
+| 09 | Parsing Program Source | 4903-5858 | 59136 | 09-archives/08-parsing-program-source.org | cut |
+| 09 | Editing Binary Files | 5859-5907 | 2299 | 09-archives/09-editing-binary-files.org | cut |
+| 09 | Searching and Matching | 5908-7273 | 93758 | 09-archives/02-searching-and-matching.org | cut |
+| 09 | Searching and Replacement | 7274-8017 | 81329 | 09-archives/03-searching-and-replacement.org | cut |
+| 09 | GNU Hyperbole | 8018-8476 | 19507 | 09-archives/10-gnu-hyperbole.org | cut |
+| 09 | D-Bus integration | 8477-9799 | 67710 | 09-archives/11-d-bus-integration.org | cut |
+| 09 | Desktop Session Persistence | 9800-9829 | 1330 | 09-archives/12-desktop-session-persistence.org | cut |
+| 09/g | Maybe | 9830-9833 | 65 | grimoire-unsorted/00-maybe.org | cut |
+| 09/g | NASA Power of 10 | 9834-9891 | 3397 | grimoire-unsorted/01-nasa-power-of-10-coding-rules.org | cut |
+| 09/g | Shaping Color Scheme | 9892-9931 | 1860 | grimoire-unsorted/02-shaping-color-scheme.org | cut |
+| 09/g | Org Roam + Gitmal | 9932-10016 | 2779 | grimoire-unsorted/03-org-roam-gitmal-integration-blueprint.org | cut |
+| 09/g | Yolk Overview | 10017-10082 | 2196 | grimoire-unsorted/04-yolk-overview.org | cut |
+| 09/g | Shapeshifter | 10083-10434 | 10006 | grimoire-unsorted/05-shapeshifters-music-from-code.org | cut |
+| 09/g | Live Shapeshifting Mind Maps | 10435-10502 | 2624 | grimoire-unsorted/06-live-shapeshifting-mind-maps.org | cut |
+| 09/g | Guix-Shaping | 10503-11674 | 38298 | grimoire-unsorted/07-guix-shaping.org | cut |
+| 09/g | preamble (no L1 parent) | 1-4 | 211 | grimoire-unsorted/preamble-notes.org | cut |
+
+Origin is now a pointer stub (this file's move log + per-file
+provenance headers are the complete record). Full-chain check:
+7022771 = Σ moved content + 86 separators + stub.

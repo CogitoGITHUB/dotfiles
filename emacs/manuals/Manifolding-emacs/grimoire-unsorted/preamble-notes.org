@@ -1,0 +1,7 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 1-4 (preamble, no L1 parent)
+#+manifold-stage: grimoire-unsorted
+#+manifold-date: 2026-09-15
+
+a mode to acctivate in what page i want or from anywhere using org drill maybe
+use the idea of touch tipyng on any page i want or acctivate it wherever i want like org drill but also use touchtype not only read

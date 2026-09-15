@@ -1,0 +1,1176 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 10503-11674
+#+manifold-stage: grimoire-unsorted
+#+manifold-date: 2026-09-15
+
+* Guix-Shaping
+Managed Guix Package Definitions Through Org Files
+
+** Overview
+
+Guix-Shaping is a configuration management system for generating Guix package definitions from org-mode files. It allows you to organize your package definitions with full documentation and automatically compiles them into proper Guix Scheme modules.
+
+*** Key Features
+
+- *Org-based definitions*: Write your Guix packages in org-mode files with full documentation
+- *Automatic compilation*: Converts org files to Guix Scheme modules automatically
+- *Property-based metadata*: Define package fields using org properties
+- *Error handling*: Robust error reporting during compilation
+- *Priority-based loading*: Control the order files are processed
+- *Auto-reload*: Automatically recompiles when you save org files
+- *Module management*: Properly handles Guix module definitions
+
+*** How It Works
+
+1. You write package definitions in org files stored in =guix-packages/= directory
+2. Each org file can contain package definitions with properties like =:NAME:=, =:VERSION:=, =:SOURCE:=, etc.
+3. Source blocks contain Guix Scheme expressions for package fields
+4. On compilation, these are assembled into proper =define-public= forms
+5. The output is valid Guix Scheme code ready to use
+
+*** Directory Structure
+
+- =~/.emacs.d/guix-packages/= :: Source org files with package definitions
+- =~/.emacs.d/guix-shaped/= :: Compiled Guix Scheme files (auto-generated)
+
+** Installation and Setup
+
+*** Basic Setup
+
+Add this to your =init.el=:
+
+#+begin_src emacs-lisp :tangle no
+;; Load the guix-shaping system
+(load-file (expand-file-name "guix-shaping.el" user-emacs-directory))
+#+end_src
+
+*** First Time Setup
+
+1. Create the configuration directory:
+   #+begin_src shell :tangle no
+   mkdir -p ~/.emacs.d/guix-packages
+   #+end_src
+
+2. Create your first package file (e.g., =~/.emacs.d/guix-packages/my-packages.org=)
+
+3. Run =M-x guix-shaping-boot= to compile
+
+** Core Implementation
+
+*** Header and Dependencies
+
+#+begin_src emacs-lisp
+;;; guix-shaping.el --- Managed Guix package definitions through org files
+;; Copyright (C) 2025
+;; Author: Internal implementation
+
+;;; Commentary:
+;; This system generates Guix package definitions from org-mode files.
+;; Each package is defined using org properties and source blocks.
+
+(require 'cl-lib)
+(require 'ob-core)
+
+;;; Code:
+#+end_src
+
+*** Configuration Variables
+:PROPERTIES:
+:CUSTOM_ID: configuration-variables
+:END:
+
+**** Core Variables
+
+#+begin_src emacs-lisp
+(defvar guix-shaping-packages '()
+  "List of Guix packages being defined.
+This is a plist where keys are package symbols and values are
+plists containing package metadata like :version, :source, :synopsis, etc.")
+
+(defvar guix-shaping--booting nil
+  "Non-nil when running inside `guix-shaping-boot'.
+Used internally to control behavior during the boot process.")
+
+(defvar guix-shaping--boot-errors '()
+  "List of compile/loading errors encountered during guix-shaping boot.
+Each error is a plist with :file, :line, and :message keys.")
+#+end_src
+
+**** Customization Options
+
+***** Statement Wrapping
+
+#+begin_src emacs-lisp
+(defcustom guix-shaping-wrap-statements-in-condition t
+  "Wrap code in condition-case statements.
+When non-nil, code is wrapped to catch and report errors.
+Set to nil for debugging to see raw errors."
+  :type 'boolean
+  :group 'guix-shaping)
+#+end_src
+
+***** Package Field Keywords
+
+#+begin_src emacs-lisp
+(defcustom guix-shaping-package-fields
+  '("name" "version" "source" "build-system" "arguments" "inputs"
+    "native-inputs" "propagated-inputs" "outputs" "home-page"
+    "synopsis" "description" "license" "properties" "supported-systems")
+  "List of Guix package fields that can be used as org tags.
+These correspond to standard Guix package definition fields."
+  :type 'list
+  :group 'guix-shaping)
+#+end_src
+
+***** Directory Configuration
+
+#+begin_src emacs-lisp
+(defcustom guix-shaping-output-directory
+  (expand-file-name "guix-shaped" user-emacs-directory)
+  "Directory where the compiled Guix Scheme files are stored.
+This directory is automatically created if it doesn't exist.
+Files in this directory are auto-generated and should not be edited manually."
+  :type 'string
+  :group 'guix-shaping)
+
+(defcustom guix-shaping-org-directory
+  (expand-file-name "guix-packages" user-emacs-directory)
+  "Directory where the source Org files are stored.
+This is where you should place your package definition org files."
+  :type 'string
+  :group 'guix-shaping)
+#+end_src
+
+***** Compilation Options
+
+#+begin_src emacs-lisp
+(defcustom guix-shaping-force-compile nil
+  "Force compilation of Org files even if Scheme file is newer.
+When non-nil, always recompile org files regardless of timestamps."
+  :type 'boolean
+  :group 'guix-shaping)
+#+end_src
+
+*** Utility Functions
+:PROPERTIES:
+:CUSTOM_ID: utility-functions
+:END:
+
+**** String Indentation
+
+#+begin_src emacs-lisp
+(defun guix-shaping-indent (string n)
+  "Indent STRING by N spaces.
+Adds N spaces to the beginning of each line in STRING."
+  (let ((indentation (make-string n ?\s)))
+    (replace-regexp-in-string "^" indentation string)))
+#+end_src
+
+**** Plist Key Extraction
+
+#+begin_src emacs-lisp
+(defun guix-shaping-plist-keys (plist)
+  "Return the keys of PLIST as a list.
+Extracts all keys from a property list."
+  (let ((keys '()))
+    (while plist
+      (push (car plist) keys)
+      (setq plist (cddr plist)))
+    (nreverse keys)))
+#+end_src
+
+**** Symbol Conversion
+
+#+begin_src emacs-lisp
+(defun guix-shaping-symbol-to-scheme (symbol)
+  "Convert elisp SYMBOL to Guix-style naming.
+Example: 'emacs-my-package becomes 'emacs-my-package"
+  (replace-regexp-in-string "_" "-" (symbol-name symbol)))
+#+end_src
+
+*** Org Element Property Finders
+:PROPERTIES:
+:CUSTOM_ID: org-property-finders
+:END:
+
+**** Property Finding
+
+#+begin_src emacs-lisp
+(defun guix-shaping-find-property (property)
+  "Find PROPERTY in the current Org element or any ancestor element.
+Walks up the org tree from the current position until it finds
+an element with the specified PROPERTY, or returns nil if not found."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property property (org-element-context)))
+            (org-up-element))
+          (org-element-property property (org-element-context)))
+      (error nil))))
+#+end_src
+
+**** Tag Finding
+
+#+begin_src emacs-lisp
+(defun guix-shaping-find-tags ()
+  "Find tags in the current Org element or any ancestor element.
+Returns a list of tags from the nearest headline with tags."
+  (save-excursion
+    (condition-case nil
+        (progn
+          (while (not (org-element-property :tags
+                        (org-element-lineage (org-element-context) '(headline) t)))
+            (org-up-element))
+          (org-element-property :tags
+            (org-element-lineage (org-element-context) '(headline) t)))
+      (error nil))))
+
+(defun guix-shaping-find-tag ()
+  "Find a Guix package field tag in current or ancestor element.
+Looks for tags that match fields in `guix-shaping-package-fields'."
+  (let* ((fields guix-shaping-package-fields)
+         (tag (car (seq-filter (lambda (tag) (member tag fields))
+                               (guix-shaping-find-tags)))))
+    (when tag
+      (replace-regexp-in-string "_" "-" tag))))
+#+end_src
+
+**** Package Name Finding
+
+#+begin_src emacs-lisp
+(defun guix-shaping-find-package ()
+  "Find a Guix package name in current or ancestor element.
+Searches for :PACKAGE: or :NAME: properties.
+Returns the package name as a string."
+  (or (guix-shaping-find-property :PACKAGE)
+      (guix-shaping-find-property :NAME)))
+#+end_src
+
+**** Package Property Finders
+
+#+begin_src emacs-lisp
+(defun guix-shaping-find-version ()
+  "Find package :VERSION: property."
+  (guix-shaping-find-property :VERSION))
+
+(defun guix-shaping-find-module ()
+  "Find module definition :MODULE: property.
+Example: '(my-packages emacs)'"
+  (guix-shaping-find-property :MODULE))
+
+(defun guix-shaping-find-use-modules ()
+  "Find :USE_MODULES: property for module imports."
+  (guix-shaping-find-property :USE_MODULES))
+
+(defun guix-shaping-find-license ()
+  "Find :LICENSE: property."
+  (guix-shaping-find-property :LICENSE))
+
+(defun guix-shaping-find-home-page ()
+  "Find :HOME_PAGE: property."
+  (guix-shaping-find-property :HOME_PAGE))
+
+(defun guix-shaping-find-synopsis ()
+  "Find :SYNOPSIS: property."
+  (guix-shaping-find-property :SYNOPSIS))
+
+(defun guix-shaping-find-build-system ()
+  "Find :BUILD_SYSTEM: property."
+  (guix-shaping-find-property :BUILD_SYSTEM))
+#+end_src
+
+**** Field Finding
+
+#+begin_src emacs-lisp
+(defun guix-shaping-find-field ()
+  "Find a Guix package field property.
+Looks for a :FIELD: property which explicitly specifies the field."
+  (guix-shaping-find-property :FIELD))
+
+(defun guix-shaping-get-package-field ()
+  "Return the package name and field for current context.
+Returns a list of (PACKAGE-NAME FIELD-STRING) or nil."
+  (when-let* ((package (guix-shaping-find-package))
+              (field (or (guix-shaping-find-field)
+                        (guix-shaping-find-tag))))
+    (list package field)))
+#+end_src
+
+*** File Property Functions
+:PROPERTIES:
+:CUSTOM_ID: file-properties
+:END:
+
+**** Property Extraction
+
+#+begin_src emacs-lisp
+(defun guix-shaping-file-properties (file)
+  "Return all #+PROPERTY directives from an org FILE as an alist."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let (properties)
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^\\(?:;;[ \t]*\\)?#\\+\\([A-Za-z0-9_]+\\):[ \t]*\\(.*\\)$"
+              nil t)
+        (let ((key (intern (downcase (match-string 1))))
+              (value (match-string 2)))
+          (push (cons key value) properties)))
+      properties)))
+#+end_src
+
+**** Priority Extraction
+
+#+begin_src emacs-lisp
+(defun guix-shaping-file-priority (file)
+  "Return the priority of an org FILE.
+Lower numbers compile first. Default is 10."
+  (let ((priority (alist-get 'priority (guix-shaping-file-properties file) "10")))
+    (if (string-match-p "^[0-9]+$" priority)
+        (string-to-number priority)
+      10)))
+#+end_src
+
+**** Module Name Extraction
+
+#+begin_src emacs-lisp
+(defun guix-shaping-file-module (file)
+  "Return the module name for FILE.
+Looks for #+MODULE: directive, e.g., '(my-packages emacs)'."
+  (alist-get 'module (guix-shaping-file-properties file)))
+
+(defun guix-shaping-file-use-modules (file)
+  "Return the use-modules list for FILE.
+Looks for #+USE_MODULES: directive."
+  (alist-get 'use_modules (guix-shaping-file-properties file)))
+#+end_src
+
+**** File Listing
+
+#+begin_src emacs-lisp
+(defun guix-shaping-get-files (extension directory)
+  "Return all files matching EXTENSION in DIRECTORY, sorted by priority."
+  (when (file-exists-p directory)
+    (let* ((files (directory-files-recursively directory extension)))
+      (sort files (lambda (a b)
+                    (< (guix-shaping-file-priority a)
+                       (guix-shaping-file-priority b)))))))
+#+end_src
+
+*** Safe Reading and Wrapping Functions
+:PROPERTIES:
+:CUSTOM_ID: safe-reading
+:END:
+
+**** Safe Reading
+
+#+begin_src emacs-lisp
+(defun guix-shaping-safe-read (string file &optional line)
+  "Read STRING as elisp/scheme and return the result.
+If STRING is not valid, displays a warning and returns nil."
+  (condition-case err
+      (read string)
+    (error
+     (display-warning
+      'guix-shaping
+      (if line
+          (format "failed to read body of %s:%s" file line)
+        (format "failed to read body of %s" file))
+      :error)
+     nil)))
+#+end_src
+
+**** Body Wrapping
+
+#+begin_src emacs-lisp
+(defun guix-shaping-wrap-field (file part)
+  "Wrap PART for safe inclusion in package definition.
+FILE is the file name for error reporting.
+PART is a plist with :body and :line."
+  (let* ((body (plist-get part :body))
+         (line (plist-get part :line)))
+    (string-trim-right body)))
+#+end_src
+
+*** Package Building Functions
+:PROPERTIES:
+:CUSTOM_ID: package-building
+:END:
+
+**** Package Parameter Management
+
+#+begin_src emacs-lisp
+(defun guix-shaping-put-package-parameter (package-name parameter value)
+  "Store a PARAMETER with VALUE for PACKAGE-NAME.
+PACKAGE-NAME is a string identifying the package.
+PARAMETER is a keyword (e.g., :source, :description).
+VALUE is the value to store."
+  (setq guix-shaping-packages
+        (plist-put
+         guix-shaping-packages
+         (intern package-name)
+         (plist-put (plist-get guix-shaping-packages (intern package-name))
+                    parameter
+                    value))))
+#+end_src
+
+**** Adding Package Fields
+
+#+begin_src emacs-lisp
+(defun guix-shaping-add-package-field (package body element)
+  "Add a field BODY to PACKAGE configuration.
+PACKAGE is a list of (PACKAGE-NAME FIELD-STRING).
+BODY is the source code as a string.
+ELEMENT is the org element for extracting metadata."
+  (let* ((begin (org-element-property :begin element))
+         (line (line-number-at-pos begin))
+         (package-name (car package))
+         (package-field (intern (concat ":" (car (cdr package)))))
+         (previous-body (plist-get (plist-get guix-shaping-packages
+                                              (intern package-name))
+                                   package-field))
+         (value (append previous-body `((:body ,body :line ,line)))))
+    (guix-shaping-put-package-parameter package-name package-field value)
+    nil))
+#+end_src
+
+**** Package Definition Builder
+
+#+begin_src emacs-lisp
+(defun guix-shaping-build-package-string (package-name package file)
+  "Build a complete Guix package definition for PACKAGE-NAME.
+PACKAGE is a plist containing all fields for the package.
+FILE is the org file name for error reporting."
+  (let* ((name (or (plist-get (car (plist-get package :name)) :body)
+                  package-name))
+         (version (plist-get (car (plist-get package :version)) :body))
+         (source (plist-get (car (plist-get package :source)) :body))
+         (build-system (plist-get (car (plist-get package :build-system)) :body))
+         (arguments (plist-get (car (plist-get package :arguments)) :body))
+         (inputs (plist-get (car (plist-get package :inputs)) :body))
+         (native-inputs (plist-get (car (plist-get package :native-inputs)) :body))
+         (propagated-inputs (plist-get (car (plist-get package :propagated-inputs)) :body))
+         (home-page (plist-get (car (plist-get package :home-page)) :body))
+         (synopsis (plist-get (car (plist-get package :synopsis)) :body))
+         (description (plist-get (car (plist-get package :description)) :body))
+         (license (plist-get (car (plist-get package :license)) :body))
+         (properties (plist-get (car (plist-get package :properties)) :body))
+         (supported-systems (plist-get (car (plist-get package :supported-systems)) :body)))
+    (concat
+     (format "(define-public %s\n" package-name)
+     "  (package\n"
+     (when name
+       (format "    (name %s)\n" name))
+     (when version
+       (format "    (version %s)\n" version))
+     (when source
+       (format "    (source\n%s)\n" (guix-shaping-indent source 5)))
+     (when build-system
+       (format "    (build-system %s)\n" build-system))
+     (when arguments
+       (format "    (arguments\n%s)\n" (guix-shaping-indent arguments 5)))
+     (when inputs
+       (format "    (inputs\n%s)\n" (guix-shaping-indent inputs 5)))
+     (when native-inputs
+       (format "    (native-inputs\n%s)\n" (guix-shaping-indent native-inputs 5)))
+     (when propagated-inputs
+       (format "    (propagated-inputs\n%s)\n" (guix-shaping-indent propagated-inputs 5)))
+     (when home-page
+       (format "    (home-page %s)\n" home-page))
+     (when synopsis
+       (format "    (synopsis %s)\n" synopsis))
+     (when description
+       (format "    (description\n%s)\n" (guix-shaping-indent description 5)))
+     (when license
+       (format "    (license %s)\n" license))
+     (when properties
+       (format "    (properties\n%s)\n" (guix-shaping-indent properties 5)))
+     (when supported-systems
+       (format "    (supported-systems %s)\n" supported-systems))
+     "  ))\n\n")))
+#+end_src
+
+**** Single Package Builder
+
+#+begin_src emacs-lisp
+(defun guix-shaping-build-package (file package-name)
+  "Build a Guix package definition for PACKAGE-NAME.
+FILE is the org file name.
+PACKAGE-NAME is the symbol naming the package."
+  (when-let* ((package (plist-get guix-shaping-packages package-name)))
+    (guix-shaping-build-package-string (symbol-name package-name) package file)))
+#+end_src
+
+**** All Packages Builder
+
+#+begin_src emacs-lisp
+(defun guix-shaping-build-packages (file)
+  "Build all package definitions from FILE.
+Returns a string containing all package definitions."
+  (let ((package-names (guix-shaping-plist-keys guix-shaping-packages))
+        (result ""))
+    (dolist (package-name package-names)
+      (setq result (concat result (guix-shaping-build-package file package-name))))
+    result))
+#+end_src
+
+*** Source Block Processing
+:PROPERTIES:
+:CUSTOM_ID: source-block-processing
+:END:
+
+**** Main Processing Function
+
+#+begin_src emacs-lisp
+(defun guix-shaping-concatenate-source-blocks (file)
+  "Process FILE and extract all package definitions.
+Parses org properties and source blocks to build package definitions.
+Returns a string of standalone code (non-package blocks)."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (let ((results '()))
+      ;; First pass: extract properties from headlines
+      (org-map-entries
+       (lambda ()
+         (let ((line (line-number-at-pos
+                     (org-element-property :begin (org-element-context)))))
+           ;; Store package metadata from properties
+           (when-let* ((package-name (guix-shaping-find-package)))
+             (guix-shaping-put-package-parameter package-name :package line)
+
+             (when-let* ((version (guix-shaping-find-version)))
+               (guix-shaping-put-package-parameter
+                package-name :version `((:body ,version :line ,line))))
+
+             (when-let* ((license (guix-shaping-find-license)))
+               (guix-shaping-put-package-parameter
+                package-name :license `((:body ,license :line ,line))))
+
+             (when-let* ((home-page (guix-shaping-find-home-page)))
+               (guix-shaping-put-package-parameter
+                package-name :home-page `((:body ,home-page :line ,line))))
+
+             (when-let* ((synopsis (guix-shaping-find-synopsis)))
+               (guix-shaping-put-package-parameter
+                package-name :synopsis `((:body ,synopsis :line ,line))))
+
+             (when-let* ((build-system (guix-shaping-find-build-system)))
+               (guix-shaping-put-package-parameter
+                package-name :build-system `((:body ,build-system :line ,line))))))))
+
+      ;; Second pass: process source blocks
+      (org-babel-map-src-blocks nil
+        (let ((body (org-element-property :value (org-element-context)))
+              (line (line-number-at-pos
+                    (org-element-property :begin (org-element-context))))
+              (language (org-element-property :language (org-element-context))))
+          (when (or (string= language "scheme") (string= language "guile"))
+            (if-let* ((package (guix-shaping-get-package-field)))
+                ;; This block belongs to a package
+                (guix-shaping-add-package-field package body (org-element-context))
+              ;; Standalone block
+              (when (stringp body)
+                (push body results))))))
+      ;; Return concatenated standalone blocks
+      (mapconcat 'identity (reverse results) "\n"))))
+#+end_src
+
+*** File Compilation Functions
+:PROPERTIES:
+:CUSTOM_ID: file-compilation
+:END:
+
+**** Output File Naming
+
+#+begin_src emacs-lisp
+(defun guix-shaping-output-file-name (file)
+  "Return the output Scheme file path for org FILE.
+Maintains directory structure and uses .scm extension."
+  (if (string-prefix-p
+       (expand-file-name guix-shaping-org-directory)
+       (expand-file-name file))
+      (expand-file-name
+       (concat (file-name-as-directory guix-shaping-output-directory)
+               (file-name-sans-extension
+                (substring file (length (expand-file-name guix-shaping-org-directory))))
+               ".scm"))
+    (error "File is not in guix-shaping-org-directory")))
+#+end_src
+
+**** Module Header Builder
+
+#+begin_src emacs-lisp
+(defun guix-shaping-build-module-header (file)
+  "Build the module header for FILE.
+Includes define-module and use-module declarations."
+  (let* ((module (guix-shaping-file-module file))
+         (use-modules (guix-shaping-file-use-modules file)))
+    (concat
+     (when module
+       (format "(define-module %s\n" module))
+     (when use-modules
+       (concat "  " use-modules "\n"))
+     (when module
+       ")\n\n"))))
+#+end_src
+
+**** File Compilation
+
+#+begin_src emacs-lisp
+(defun guix-shaping-compile-file (file)
+  "Compile org FILE to Guix Scheme.
+FILE is an org file path.
+Output is stored in `guix-shaping-output-directory'.
+Returns the output file path or nil if no compilation occurred."
+  (unless (file-exists-p file)
+    (error "File to compile does not exist: %s" file))
+  (unless (file-exists-p guix-shaping-output-directory)
+    (make-directory guix-shaping-output-directory t))
+  (let ((output-file (guix-shaping-output-file-name file)))
+    (make-directory (file-name-directory output-file) t)
+    (when (or guix-shaping-force-compile
+              (file-newer-than-file-p file output-file))
+      (message "Guix-Shaping: Compiling %s" file)
+      (let* ((guix-shaping-packages nil)  ; Reset for this file
+             (source (guix-shaping-concatenate-source-blocks file))
+             (module-header (guix-shaping-build-module-header file))
+             (packages (guix-shaping-build-packages file))
+             (output (concat module-header source "\n" packages)))
+        (with-temp-file output-file
+          ;; Add file header comments
+          (insert ";;; Generated by guix-shaping from "
+                  (file-name-nondirectory file) "\n")
+          (insert ";;; Do not edit manually\n\n")
+          (dolist (property (guix-shaping-file-properties file))
+            (insert (format ";;; #+%s: %s\n"
+                            (upcase (symbol-name (car property)))
+                            (cdr property))))
+          (insert "\n" output)))
+      ;; Touch file to update timestamp
+      (when (file-exists-p output-file)
+        (set-file-times output-file))
+      output-file)))
+#+end_src
+
+**** Directory Compilation
+
+#+begin_src emacs-lisp
+(defun guix-shaping-compile-directory ()
+  "Compile all org files in `guix-shaping-org-directory' to Scheme.
+Processes files in priority order.
+Returns a list of compiled output file paths."
+  (let* ((files (guix-shaping-get-files "^[^#]*\\.org$"
+                                        guix-shaping-org-directory))
+         (compiled '()))
+    (dolist (file files)
+      (when-let* ((output (guix-shaping-compile-file file)))
+        (push output compiled)))
+    compiled))
+#+end_src
+
+*** Interactive Commands
+:PROPERTIES:
+:CUSTOM_ID: interactive-commands
+:END:
+
+**** Compile All
+
+#+begin_src emacs-lisp
+(defun guix-shaping-compile ()
+  "Compile all org files to Guix Scheme.
+Use this after making changes to package definitions."
+  (interactive)
+  (let ((compiled (guix-shaping-compile-directory)))
+    (message "Guix-Shaping: Compiled %d file(s)" (length compiled))))
+#+end_src
+
+**** Compile Current Buffer
+
+#+begin_src emacs-lisp
+(defun guix-shaping-compile-current-buffer ()
+  "Compile the current org file.
+Quick way to test changes to a single package definition file.
+Forces compilation even if the file hasn't changed."
+  (interactive)
+  (let ((guix-shaping-force-compile t))
+    (when-let* ((compiled-file (guix-shaping-compile-file
+                                (buffer-file-name (current-buffer)))))
+      (message "Guix-Shaping: Compiled to %s" compiled-file))))
+#+end_src
+
+**** Preview Current Buffer
+
+#+begin_src emacs-lisp
+(defun guix-shaping-preview ()
+  "Display the compiled Scheme for the current buffer.
+Shows what will be generated without actually writing to file.
+Useful for debugging package definitions."
+  (interactive)
+  (let* ((buffer (get-buffer-create "*guix-shaping preview*"))
+         (_ (display-buffer buffer))
+         (file (buffer-file-name (current-buffer)))
+         (guix-shaping-packages nil)
+         (source (guix-shaping-concatenate-source-blocks file))
+         (module-header (guix-shaping-build-module-header file))
+         (packages (guix-shaping-build-packages file))
+         (output (concat module-header source "\n" packages)))
+    (with-current-buffer buffer
+      (scheme-mode)
+      (read-only-mode 1)
+      (save-excursion
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert output)
+          (goto-char (point-min)))))))
+#+end_src
+
+**** Preview Mode
+
+#+begin_src emacs-lisp
+(define-minor-mode guix-shaping-preview-mode
+  "Minor mode to auto-preview compiled Scheme on save.
+When enabled, the preview buffer updates automatically."
+  :lighter " guix-preview"
+  (if guix-shaping-preview-mode
+      (add-hook 'after-save-hook 'guix-shaping-preview nil t)
+    (remove-hook 'after-save-hook 'guix-shaping-preview t)))
+#+end_src
+
+*** Boot and Initialization
+:PROPERTIES:
+:CUSTOM_ID: boot-initialization
+:END:
+
+**** Boot Function
+
+#+begin_src emacs-lisp
+(defun guix-shaping-boot ()
+  "Compile all org files - the main entry point.
+This can be called manually to recompile everything."
+  (interactive)
+  (let ((guix-shaping--booting t))
+    (setq guix-shaping--boot-errors '())
+    (guix-shaping-compile-directory)))
+#+end_src
+
+**** Initial Setup
+
+#+begin_src emacs-lisp
+;; Initialize guix-shaping directories
+(setq guix-shaping-org-directory
+      (expand-file-name "guix-packages" user-emacs-directory)
+      guix-shaping-output-directory
+      (expand-file-name "guix-shaped" user-emacs-directory))
+
+;; Enable preview mode for scheme/guile org blocks
+(add-hook 'org-mode-hook
+          (lambda ()
+            (when (and buffer-file-name
+                       (file-in-directory-p buffer-file-name
+                                           guix-shaping-org-directory))
+              (guix-shaping-preview-mode 1))))
+#+end_src
+
+**** Auto-compile on Save
+
+#+begin_src emacs-lisp
+(defun guix-shaping/auto-compile ()
+  "Auto-compile when an org file in guix-shaping-org-directory is saved."
+  (when (and buffer-file-name
+             (file-in-directory-p buffer-file-name guix-shaping-org-directory)
+             (string-suffix-p ".org" buffer-file-name))
+    (message "Guix-Shaping: Compiling %s…"
+             (file-name-nondirectory buffer-file-name))
+    (condition-case err
+        (let ((guix-shaping-force-compile t))
+          (when-let ((compiled-file (guix-shaping-compile-file buffer-file-name)))
+            (message "Guix-Shaping: Compilation complete ✓")))
+      (error
+       (display-warning
+        'guix-shaping
+        (format "Failed to compile: %s" (error-message-string err))
+        :error)))))
+
+;; Enable auto-compile
+(add-hook 'after-save-hook #'guix-shaping/auto-compile)
+#+end_src
+
+**** Provide Feature
+
+#+begin_src emacs-lisp
+(provide 'guix-shaping)
+;;; guix-shaping.el ends here
+#+end_src
+
+** Usage Guide
+
+*** Basic Package Definition Structure
+
+Here's a template for creating package definitions:
+
+#+begin_src org :tangle no
+,#+TITLE: My Emacs Packages
+,#+PRIORITY: 10
+,#+MODULE: (my-packages emacs)
+,#+USE_MODULES: #:use-module (guix packages) #:use-module (guix git-download) #:use-module (guix build-system emacs) #:use-module ((guix licenses) #:prefix license:)
+
+,* My Custom Package
+:PROPERTIES:
+:PACKAGE: emacs-my-package
+:VERSION: "0.1.0"
+:HOME_PAGE: "https://github.com/username/my-package"
+:SYNOPSIS: "Short description of the package"
+:BUILD_SYSTEM: emacs-build-system
+:LICENSE: license:gpl3+
+:END:
+
+,** Source                                                           :source:
+,#+begin_src scheme
+(origin
+  (method git-fetch)
+  (uri (git-reference
+        (url "https://github.com/username/my-package.git")
+        (commit "a1b2c3d4e5f6g7h8i9j0")))
+  (file-name (git-file-name name version))
+  (sha256
+   (base32 "0v1kqj3w9m9l0x0r5lq8m7q6zqk9h1w3b5xv9c1rjv7l")))
+,#+end_src
+
+,** Description                                                 :description:
+,#+begin_src scheme
+"Longer description. Explain what problem this package solves,
+not how clever it is. Multiple lines are fine."
+,#+end_src
+
+,** Inputs                                                           :inputs:
+,#+begin_src scheme
+(list emacs-minimal
+      emacs-dash)
+,#+end_src
+#+end_src
+
+*** Complete Example
+
+#+begin_src org :tangle no
+,#+TITLE: Emacs Packages Collection
+,#+PRIORITY: 10
+,#+MODULE: (my-packages emacs)
+,#+USE_MODULES: #:use-module (guix packages) #:use-module (guix git-download) #:use-module (guix build-system emacs) #:use-module ((guix licenses) #:prefix license:) #:use-module (gnu packages emacs-xyz)
+
+,* Doom Modeline Fork
+:PROPERTIES:
+:PACKAGE: emacs-doom-modeline-custom
+:VERSION: "3.4.0"
+:HOME_PAGE: "https://github.com/myuser/doom-modeline"
+:SYNOPSIS: "Fancy and fast mode-line inspired by minimalism design"
+:BUILD_SYSTEM: emacs-build-system
+:LICENSE: license:gpl3+
+:END:
+
+,** Source                                                           :source:
+,#+begin_src scheme
+(origin
+  (method git-fetch)
+  (uri (git-reference
+        (url "https://github.com/myuser/doom-modeline.git")
+        (commit (string-append "v" version))))
+  (file-name (git-file-name name version))
+  (sha256
+   (base32 "1abc2def3ghi4jkl5mno6pqr7stu8vwx9yz0")))
+,#+end_src
+
+,** Description                                                 :description:
+,#+begin_src scheme
+"This package provides a fancy and fast mode-line inspired by minimalism
+design.  It's integrated into Doom Emacs and Centaur Emacs.  This is a
+customized fork with additional features."
+,#+end_src
+
+,** Propagated Inputs                                   :propagated-inputs:
+,#+begin_src scheme
+(list emacs-all-the-icons
+      emacs-dash
+      emacs-projectile
+      emacs-shrink-path)
+,#+end_src
+
+,** Arguments                                                     :arguments:
+,#+begin_src scheme
+'(#:include '("^[^/]+.el$" "^[^/]+.el.in$"
+              "^dir$"
+              "^[^/]+.info$"
+              "^[^/]+.texi$"
+              "^[^/]+.texinfo$"
+              "^doc/dir$"
+              "^doc/[^/]+.info$"
+              "^doc/[^/]+.texi$"
+              "^doc/[^/]+.texinfo$")
+  #:exclude '("^.dir-locals.el$" "^test.el$" "^tests.el$" "^[^/]+-test.el$" "^[^/]+-tests.el$"))
+,#+end_src
+#+end_src
+
+*** Using Properties vs Source Blocks
+
+Simple values can be properties, complex expressions should be source blocks:
+
+*Properties (simple values):*
+#+begin_src org :tangle no
+:PROPERTIES:
+:PACKAGE: emacs-my-pkg
+:VERSION: "1.0"
+:LICENSE: license:gpl3+
+:BUILD_SYSTEM: emacs-build-system
+:END:
+#+end_src
+
+*Source blocks (complex expressions):*
+#+begin_src org :tangle no
+,** Source                                                           :source:
+,#+begin_src scheme
+(origin
+  (method git-fetch)
+  ...)
+,#+end_src
+#+end_src
+
+*** Available Package Fields
+
+Standard Guix package fields you can use as tags or =:FIELD:= properties:
+
+- =name= - Package name (usually from :PACKAGE:)
+- =version= - Version string
+- =source= - Source origin definition
+- =build-system= - Build system to use
+- =arguments= - Build system arguments
+- =inputs= - Runtime dependencies
+- =native-inputs= - Build-time dependencies
+- =propagated-inputs= - Dependencies to propagate
+- =outputs= - Multiple outputs (default: "out")
+- =home-page= - Project homepage URL
+- =synopsis= - One-line description
+- =description= - Detailed description
+- =license= - Software license
+- =properties= - Package properties
+- =supported-systems= - Supported system architectures
+
+*** File Priority
+
+Control compilation order with =#+PRIORITY:=:
+
+#+begin_src org :tangle no
+,#+PRIORITY: 1   ; Compile first (base definitions)
+,#+PRIORITY: 10  ; Default priority
+,#+PRIORITY: 99  ; Compile last (depends on others)
+#+end_src
+
+*** Module Definition
+
+Every file should specify its module:
+
+#+begin_src org :tangle no
+,#+MODULE: (my-packages emacs)
+,#+USE_MODULES: #:use-module (guix packages) #:use-module (guix licenses)
+#+end_src
+
+*** Using the Generated Packages
+
+After compilation, you can use your packages with Guix:
+
+#+begin_src shell :tangle no
+# Add to GUIX_PACKAGE_PATH
+export GUIX_PACKAGE_PATH="$HOME/.emacs.d/guix-shaped:$GUIX_PACKAGE_PATH"
+
+# Install a package
+guix install emacs-my-package
+
+# Use in a manifest
+guix package -m manifest.scm
+#+end_src
+
+Example manifest.scm:
+#+begin_src scheme :tangle no
+(specifications->manifest
+ '("emacs-my-package"
+   "emacs-doom-modeline-custom"))
+#+end_src
+
+** Troubleshooting
+
+*** Viewing Compilation Output
+
+Use =M-x guix-shaping-preview= to see what will be generated.
+
+*** Check Module Syntax
+
+After compilation, verify the Scheme syntax:
+
+#+begin_src shell :tangle no
+guile -c "(use-modules (my-packages emacs))"
+#+end_src
+
+*** Force Recompilation
+
+#+begin_src emacs-lisp :tangle no
+(setq guix-shaping-force-compile t)
+(guix-shaping-compile)
+(setq guix-shaping-force-compile nil)
+#+end_src
+
+*** Common Errors
+
+**** Module Not Found
+Make sure =GUIX_PACKAGE_PATH= includes your output directory.
+
+**** Invalid Syntax
+Check your source blocks for proper Scheme syntax.
+Use =guix-shaping-preview= to inspect output.
+
+**** Missing Dependencies
+Verify all required modules are in =#+USE_MODULES:=.
+
+** Advanced Usage
+
+*** Multiple Package Families
+
+Organize by category:
+
+#+begin_example
+guix-packages/
+├── 01-emacs.org         (my-packages emacs)
+├── 02-python.org        (my-packages python)
+├── 03-rust.org          (my-packages rust)
+└── 99-meta.org          (my-packages meta)
+#+end_example
+
+*** Package Inheritance
+
+#+begin_src org :tangle no
+,* My Custom Emacs
+:PROPERTIES:
+:PACKAGE: my-emacs
+:VERSION: "29.1"
+:END:
+
+,** Inherit from emacs package
+,#+begin_src scheme
+(package
+  (inherit emacs)
+  (name "my-emacs"))
+,#+end_src
+
+,** Arguments                                                     :arguments:
+,#+begin_src scheme
+(substitute-keyword-arguments (package-arguments emacs)
+  ((#:configure-flags flags)
+   `(cons "--with-native-compilation" ,flags)))
+,#+end_src
+#+end_src
+
+*** Local Packages with File URLs
+
+#+begin_src org :tangle no
+,** Source                                                           :source:
+,#+begin_src scheme
+(origin
+  (method url-fetch)
+  (uri (string-append "file:///home/user/projects/my-package-"
+                      version ".tar.gz"))
+  (sha256
+   (base32 "...")))
+,#+end_src
+#+end_src
+
+*** Build System Specific Arguments
+
+For =emacs-build-system=:
+#+begin_src org :tangle no
+,** Arguments                                                     :arguments:
+,#+begin_src scheme
+'(#:include '("^[^/]+.el$" "^[^/]+.info$")
+  #:exclude '("^test.el$")
+  #:tests? #f
+  #:emacs ,emacs-minimal)
+,#+end_src
+#+end_src
+
+** Appendix
+
+*** Architecture Overview
+
+#+begin_example
+┌─────────────────────────────────────────────────────────┐
+│                   guix-packages/                        │
+│              (Your org definition files)                │
+└────────────────────┬────────────────────────────────────┘
+                     │
+                     │ (guix-shaping-compile-directory)
+                     ↓
+         ┌───────────────────────────┐
+         │  guix-shaping-concatenate-│
+         │    source-blocks          │
+         │  • Parse org structure    │
+         │  • Extract properties     │
+         │  • Collect code blocks    │
+         └──────────┬────────────────┘
+                    │
+                    ↓
+         ┌───────────────────────────┐
+         │ guix-shaping-build-       │
+         │    packages               │
+         │  • Generate package defs  │
+         │  • Add module headers     │
+         │  • Format Scheme code     │
+         └──────────┬────────────────┘
+                    │
+                    ↓
+         ┌───────────────────────────┐
+         │     guix-shaped/          │
+         │  (Generated .scm files)   │
+         └──────────┬────────────────┘
+                    │
+                    │ (Add to GUIX_PACKAGE_PATH)
+                    ↓
+         ┌───────────────────────────┐
+         │   Guix Package Manager    │
+         │    Install & Use!         │
+         └───────────────────────────┘
+#+end_example
+
+*** Comparison with Standard Guix Workflow
+
+| Standard Guix | Guix-Shaping |
+|---------------|--------------|
+| Edit .scm files directly | Edit .org files with docs |
+| Manual module management | Auto-generated modules |
+| Comments for documentation | Full org-mode documentation |
+| Single large file | Organized by topic |
+| Manual priority ordering | Priority-based compilation |
+
+*** Integration with Development Workflow
+
+1. Develop package in project directory
+2. Document in org file with =:PACKAGE:= property
+3. Auto-compile on save
+4. Test with =guix build -f=
+5. Install locally with =guix install=
+6. Iterate and refine
+
+*** Example Development Cycle
+
+#+begin_src shell :tangle no
+# 1. Edit package definition
+emacs ~/.emacs.d/guix-packages/my-pkg.org
+
+# 2. (Auto-compiles on save)
+
+# 3. Build the package
+guix build -f ~/.emacs.d/guix-shaped/my-pkg.scm emacs-my-package
+
+# 4. Test in isolated environment
+guix shell emacs-my-package
+
+# 5. Install if satisfied
+guix install emacs-my-package
+#+end_src

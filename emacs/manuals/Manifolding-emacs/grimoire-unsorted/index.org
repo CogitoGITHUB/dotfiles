@@ -1,0 +1,16 @@
+#+title: Grimoire Unsorted (parked voice)
+
+Personal essays and blueprints, moved byte-exact, zero editing,
+zero stage assignment. Concepts before details: when the manifold
+is done being built, these get read, placed, or rewritten on their
+own terms — not absorbed silently into stages they didn't choose.
+
+Members (file order preserved):
+- =00-maybe.org= — Maybe (4-line stub)
+- =01-nasa-power-of-10-coding-rules.org= — NASA Power of 10 Coding Rules
+- =02-shaping-color-scheme.org= — Shaping Color Scheme
+- =03-org-roam-gitmal-integration-blueprint.org= — Org Roam + Gitmal Integration Blueprint
+- =04-yolk-overview.org= — Yolk Overview
+- =05-shapeshifters-music-from-code.org= — full title verbatim ("Shapeshifter’s Music from Code")
+- =06-live-shapeshifting-mind-maps.org= — full title verbatim ("Live Shapeshifting Mind Maps !!!")
+- =07-guix-shaping.org= — Guix-Shaping
