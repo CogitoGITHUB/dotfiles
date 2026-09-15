@@ -1,11 +1,7 @@
 #+title:      State Operational Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: Operational
-
-* STATE_OPERATIONAL
+* STATE_OPERATIONAL :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-operational

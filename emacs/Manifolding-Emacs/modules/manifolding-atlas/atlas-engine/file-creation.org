@@ -1629,7 +1629,7 @@ This is the default value of `manifolding-atlas-find-default-create-fn'."
        (org-capture nil "n")
        (delete-other-windows)
        (my/manifolding-atlas-org-prompt--write-at-heading
-        (point-min) 0 nil '("WARNING")
+        (point-min) 0 nil nil
         (cdr (assoc "TODO_STATE" default-unfoldings)) nil)
        (let* ((capture-buf (current-buffer))
               (preview-start (let ((m (make-marker))) (set-marker m (point-max) capture-buf) m))
@@ -3565,6 +3565,102 @@ Why: Implementation of ~my/manifolding-atlas-prompt-template--apply~.
       (manifolding-atlas-visit note)
       (manifolding-atlas-buffer-tags-add (list tag))
       (save-buffer))))
+#+end_src
+
+** Blueprint nesting (wormhole at point)
+
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-blueprint--names ()
+  "Return available blueprint KEY names from the specs registry."
+  (let (keys)
+    (when (and (boundp 'my/manifolding-atlas-org-prompt--specs)
+               (hash-table-p my/manifolding-atlas-org-prompt--specs))
+      (maphash (lambda (_ spec) (push (plist-get spec :key) keys))
+               my/manifolding-atlas-org-prompt--specs))
+    (sort keys #'string<)))
+
+(defun my/manifolding-atlas--get-blueprint-content (key)
+  "Return preview content for blueprint KEY, or nil.
+Reads the blueprint file registered for KEY and returns its raw
+buffer string so the picker can preview it. Downcases KEY to find the
+spec — KEY may be upper like THINKING_TYPES."
+  (when (and key (boundp 'my/manifolding-atlas-org-prompt--specs)
+             (hash-table-p my/manifolding-atlas-org-prompt--specs))
+    (let* ((sym (intern (downcase key)))
+           (spec (gethash sym my/manifolding-atlas-org-prompt--specs))
+           (file (and spec (plist-get spec :file))))
+      (when (and file (file-exists-p file))
+        (with-temp-buffer
+          (insert-file-contents file)
+          (buffer-string))))))
+
+(defun my/manifolding-atlas-blueprint--choose ()
+  "Ask for a blueprint KEY with real-time preview in *Blueprint Preview*."
+  (let* ((cands (my/manifolding-atlas-blueprint--names))
+         (preview-buf "*Blueprint Preview*")
+         (last-cand nil)
+         (update-preview
+          (lambda ()
+            (let* ((input (ignore-errors (minibuffer-contents)))
+                   (cand (cond
+                          ((and (bound-and-true-p vertico-mode)
+                                (fboundp 'vertico--candidate))
+                           (ignore-errors (vertico--candidate)))
+                          (t nil)))
+                   (chosen (or cand input)))
+              (unless (equal chosen last-cand)
+                (setq last-cand chosen)
+                (let ((content (my/manifolding-atlas--get-blueprint-content chosen)))
+                  (with-current-buffer (get-buffer-create preview-buf)
+                    (erase-buffer)
+                    (insert (or content (format "No content for %s" (or chosen ""))))
+                    (goto-char (point-min))
+                    (display-buffer (current-buffer) '((display-buffer-reuse-window display-buffer-in-side-window) (side . right) (window-width . 0.5)))))))))
+         (setup-fn
+          (lambda ()
+            (add-hook 'post-command-hook update-preview nil t)
+            (ignore-errors (funcall update-preview))))
+         (exit-fn
+          (lambda ()
+            (remove-hook 'post-command-hook update-preview t)
+            (when (get-buffer preview-buf)
+              (kill-buffer preview-buf)))))
+    (unwind-protect
+        (progn
+          (add-hook 'minibuffer-setup-hook setup-fn)
+          (add-hook 'minibuffer-exit-hook exit-fn)
+          (completing-read "Blueprint: " cands nil t))
+      (remove-hook 'minibuffer-setup-hook setup-fn)
+      (remove-hook 'minibuffer-exit-hook exit-fn)
+      (remove-hook 'post-command-hook update-preview t)
+      (when (get-buffer preview-buf)
+        (kill-buffer preview-buf)))))
+
+(defun my/manifolding-atlas-blueprint-nest-at-point ()
+  "Insert a wormhole at point for a chosen blueprint.
+Picker is sourced from `my/manifolding-atlas-org-prompt--specs' (all
+registered blueprints) with live preview, mirroring the template
+chooser. Insertion format mirrors
+`my/manifolding-atlas--refresh-property-wormhole':
+`#+wormhole: [[id:ID][KEY]] :property' so the content renders live
+inline via `atlas-wormholes'."
+  (interactive)
+  (when (zerop (hash-table-count my/manifolding-atlas-org-prompt--specs))
+    (my/manifolding-atlas-org-prompt--register-all))
+  (let* ((key (my/manifolding-atlas-blueprint--choose))
+         (spec (and key (gethash (intern (downcase key)) my/manifolding-atlas-org-prompt--specs)))
+         (file (and spec (plist-get spec :file)))
+         (id (and file (cadr (my/manifolding-atlas-links--read-blueprint-meta file)))))
+    (unless (and key spec file id)
+      (user-error "Blueprint %s has no ID — add an :ID: drawer to its KEY heading" (or key "?")))
+    (let ((line (format "#+wormhole: [[id:%s][%s]] :property\n" id key)))
+      (unless atlas-wormholes-mode
+        (let ((atlas-wormholes-add-all-on-activate nil))
+          (atlas-wormholes-mode 1)))
+      (insert line)
+      (save-buffer)
+      (atlas-wormholes-add)
+      (message "Nested blueprint %s" key))))
 #+end_src
 
 * Parser

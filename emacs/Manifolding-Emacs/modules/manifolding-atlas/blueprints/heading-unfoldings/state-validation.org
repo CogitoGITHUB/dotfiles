@@ -1,11 +1,7 @@
 #+title:      State Validation Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: Validation
-
-* STATE_VALIDATION
+* STATE_VALIDATION :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-validation

@@ -1,11 +1,7 @@
 #+title:      Example Sentence Prompt
 #+priority:   11
 
-#+CONTEXTS: dictionary
-#+KIND: scoped
-#+LABEL: Example
-
-* EXAMPLE
+* EXAMPLE :scoped:dictionary:
 :PROPERTIES:
 :ID: examples
 :UNFOLDING: examples

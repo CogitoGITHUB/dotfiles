@@ -1,11 +1,7 @@
 #+title:      Laws Prompt
 #+priority:   27
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Laws
-
-* LAWS
+* LAWS :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** RESEARCHED

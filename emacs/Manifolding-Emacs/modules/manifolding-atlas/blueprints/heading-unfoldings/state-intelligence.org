@@ -1,11 +1,7 @@
 #+title:      State Intelligence Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: Intelligence
-
-* STATE_INTELLIGENCE
+* STATE_INTELLIGENCE :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-intelligence

@@ -1,11 +1,7 @@
 #+title:      Mastering Review Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: mastering
-#+LABEL: Mastering: Review
-
-* MASTERING
+* MASTERING :mastering:file:heading:task:
 ** TODO
 ** WARNING
 ** REVIEW

@@ -1,11 +1,7 @@
 #+title:      Thinking Types Prompt
 #+priority:   1
 
-#+CONTEXTS: file heading
-#+KIND: multi
-#+LABEL: Thinking types
-
-* THINKING_TYPES
+* THINKING_TYPES :multi:file:heading:
 ** TODO
 ** WARNING
 ** analytical

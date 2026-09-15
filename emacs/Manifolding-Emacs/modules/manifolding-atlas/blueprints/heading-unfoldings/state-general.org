@@ -1,11 +1,7 @@
 #+title:      State General Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: General
-
-* STATE_GENERAL
+* STATE_GENERAL :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-general

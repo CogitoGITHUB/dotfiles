@@ -1,11 +1,7 @@
 #+title:      POS (Part of Speech) Prompt
 #+priority:   17
 
-#+CONTEXTS: dictionary
-#+KIND: unfolding
-#+LABEL: POS
-
-* POS
+* POS :unfolding:dictionary:
 :PROPERTIES:
 :UNFOLDING: pos
 :END:

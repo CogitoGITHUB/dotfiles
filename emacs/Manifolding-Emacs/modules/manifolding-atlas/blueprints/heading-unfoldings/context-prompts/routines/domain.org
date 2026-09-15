@@ -1,11 +1,7 @@
 #+title: Routines Domain Prompt
 #+priority: 5
 
-#+CONTEXTS: routine
-#+KIND: inline
-#+LABEL: Routines: Domain
-
-* ROUTINE_DOMAIN
+* ROUTINE_DOMAIN :inline:routine:
 :PROPERTIES:
 :ID: routine-domain
 :END:

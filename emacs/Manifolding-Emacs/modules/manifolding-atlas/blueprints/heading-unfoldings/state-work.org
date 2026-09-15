@@ -1,11 +1,7 @@
 #+title:      State Work Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: Work
-
-* STATE_WORK
+* STATE_WORK :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-work

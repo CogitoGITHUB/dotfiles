@@ -1,11 +1,7 @@
 #+title:      Traps External Prompt
 #+priority:   36
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Traps External
-
-* TRAPS_EXTERNAL
+* TRAPS_EXTERNAL :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** DESIGNED

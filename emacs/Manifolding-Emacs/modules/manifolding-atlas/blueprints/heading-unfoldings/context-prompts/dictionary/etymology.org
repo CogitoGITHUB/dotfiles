@@ -1,11 +1,7 @@
 #+title:      Etymology Prompt
 #+priority:   15
 
-#+CONTEXTS: dictionary
-#+KIND: unfolding
-#+LABEL: Etymology
-
-* ETYMOLOGY
+* ETYMOLOGY :unfolding:dictionary:
 :PROPERTIES:
 :UNFOLDING: etymology
 :END:

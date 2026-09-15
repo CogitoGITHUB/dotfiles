@@ -1,11 +1,7 @@
 #+title:      Blueprint Prompt
 #+priority:   22
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Blueprint
-
-* BLUEPRINT
+* BLUEPRINT :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** DRAFT

@@ -1,11 +1,7 @@
 #+title:      Scope Prompt
 #+priority:   23
 
-#+CONTEXTS: rule
-#+KIND: tagopt
-#+LABEL: Scope
-
-* SCOPE
+* SCOPE :tagopt:rule:
 :PROPERTIES:
 :ID: rule-scope
 :DEFAULT: auto

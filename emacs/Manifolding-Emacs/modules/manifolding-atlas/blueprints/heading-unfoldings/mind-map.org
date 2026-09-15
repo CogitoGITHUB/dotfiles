@@ -1,11 +1,7 @@
 #+title:      Mind Map Placement Prompt
 #+priority:   6
 
-#+CONTEXTS: file task
-#+KIND: mindmap
-#+LABEL: Mind Map
-
-* MIND_MAP_PLACEMENT
+* MIND_MAP_PLACEMENT :mindmap:file:task:
 ** TODO
 ** WARNING
 ** parent

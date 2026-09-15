@@ -1,11 +1,7 @@
 #+title:      Level Prompt
 #+priority:   22
 
-#+CONTEXTS: rule
-#+KIND: tagopt
-#+LABEL: Level
-
-* LEVEL
+* LEVEL :tagopt:rule:
 :PROPERTIES:
 :ID: rule-level
 :DEFAULT: none

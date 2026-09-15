@@ -1,11 +1,7 @@
 #+title:      Flowtest Epsilon Prompt
 #+priority:   32
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Flowtest Epsilon
-
-* FLOWTEST_EPSILON
+* FLOWTEST_EPSILON :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** MAPPED

@@ -1,11 +1,7 @@
 #+title:      Frequency Prompt
 #+priority:   13
 
-#+CONTEXTS: dictionary
-#+KIND: unfolding
-#+LABEL: Frequency
-
-* FREQUENCY
+* FREQUENCY :unfolding:dictionary:
 :PROPERTIES:
 :UNFOLDING: frequency
 :END:

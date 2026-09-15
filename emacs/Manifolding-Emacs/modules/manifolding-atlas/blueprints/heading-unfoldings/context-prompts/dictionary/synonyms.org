@@ -1,11 +1,7 @@
 #+title:      Synonyms Prompt
 #+priority:   12
 
-#+CONTEXTS: dictionary
-#+KIND: scoped
-#+LABEL: Synonyms
-
-* SYNONYMS
+* SYNONYMS :scoped:dictionary:
 :PROPERTIES:
 :ID: synonyms
 :UNFOLDING: synonyms

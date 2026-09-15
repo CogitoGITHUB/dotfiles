@@ -1,11 +1,7 @@
 #+title:      Mastery Prompt
 #+priority:   41
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Mastery
-
-* MASTERY
+* MASTERY :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** INTERNALIZED

@@ -1,11 +1,7 @@
 #+title:      Hypotheses Prompt
 #+priority:   39
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Hypotheses
-
-* HYPOTHESES
+* HYPOTHESES :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** OPEN

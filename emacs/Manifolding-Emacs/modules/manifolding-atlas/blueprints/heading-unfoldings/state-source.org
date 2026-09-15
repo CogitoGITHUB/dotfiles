@@ -1,11 +1,7 @@
 #+title:      State Source Prompt
 #+priority:   5
 
-#+CONTEXTS: file heading task
-#+KIND: unfolding
-#+LABEL: State: Source
-
-* STATE_SOURCE
+* STATE_SOURCE :unfolding:file:heading:task:
 :PROPERTIES:
 :REQUIRED: t
 :UNFOLDING: state-source

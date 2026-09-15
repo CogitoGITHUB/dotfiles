@@ -2926,7 +2926,8 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
   "Wormhole"
   (("y" my/wormhole-hydra/body "wormhole" :exit t))
   "Config"
-  (("A" my/manifolding-atlas-open-drawer-order "drawer order" :exit t)))
+   (("A" my/manifolding-atlas-open-drawer-order "drawer order" :exit t)
+    ("b" my/manifolding-atlas-blueprint-nest-at-point "nest blueprint" :exit t)))
 #+end_src
 
 ** SPC y — Wormhole

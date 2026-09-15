@@ -1,11 +1,7 @@
 #+title:      Leverage Prompt
 #+priority:   31
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Leverage
-
-* LEVERAGE
+* LEVERAGE :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** TRACKED

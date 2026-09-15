@@ -1,11 +1,7 @@
 #+title:      Routines Temporal Prompt
 #+priority:   5
 
-#+CONTEXTS: routine
-#+KIND: inline
-#+LABEL: Routines: Temporal
-
-* ROUTINE_TEMPORAL
+* ROUTINE_TEMPORAL :inline:routine:
 ** TODO
 ** HOUR
 ** DAY-PART

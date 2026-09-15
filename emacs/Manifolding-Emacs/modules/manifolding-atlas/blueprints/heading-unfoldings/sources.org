@@ -1,11 +1,7 @@
 #+title:      Sources Prompt
 #+priority:   42
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Sources
-
-* SOURCES
+* SOURCES :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** VETTED

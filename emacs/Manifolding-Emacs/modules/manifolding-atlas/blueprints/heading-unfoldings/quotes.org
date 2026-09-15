@@ -1,11 +1,7 @@
 #+title:      Quotes Prompt
 #+priority:   34
 
-#+CONTEXTS: file heading task
-#+KIND: inline
-#+LABEL: Quotes
-
-* QUOTES
+* QUOTES :inline:file:heading:task:
 ** TODO
 ** WARNING
 ** CURATED
