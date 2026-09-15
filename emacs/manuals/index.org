@@ -110,3 +110,9 @@ separator newlines → 1065667. L1 48 → 30, no duplicates. Origin sha now:
 | 06 | org-timeblock (title verbatim, see file) | 38817-38833 | 402 | 06-forge/15-org-timeblock.org | cut |
 | 06 | orgit-file | 38834-38853 | 484 | 06-forge/16-orgit-file.org | cut |
 | 06 | magit-todos | 38854-38879 | 597 | 06-forge/17-magit-todos.org | cut |
+
+Stage 07 reconcile: origin 1065667 → moved content 114352 + 1 consumed
+separator newline → 951314. L1 30 → 29, no duplicates. Origin sha now:
+3eb5ddc3302e91566b8611f1c52a255e1b30732c1cc545635d1c88a1aaf4f173
+
+| 07 | Dealing with Trouble | 1434-2841 | 114352 | 07-shadows/00-dealing-with-trouble.org | cut |
