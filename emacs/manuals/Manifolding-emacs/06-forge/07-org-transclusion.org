@@ -1,0 +1,22 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 38880-38897
+#+manifold-stage: 06-forge
+#+manifold-date: 2026-09-15
+
+* Org-Transclusion — assemble living scrolls
+#+begin_src emacs-lisp
+(leaf org-transclusion
+  :straight (org-transclusion
+             :type git
+             :host github
+             :repo "nobiot/org-transclusion")
+  :after org
+  :config
+  ;; Auto-enable in Org buffers (optional; comment out if too much)
+  (add-hook 'org-mode-hook #'org-transclusion-mode)
+
+  ;; Quick keybindings for operations
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c t a") #'org-transclusion-add)
+    (define-key org-mode-map (kbd "C-c t u") #'org-transclusion-refresh)))
+#+end_src

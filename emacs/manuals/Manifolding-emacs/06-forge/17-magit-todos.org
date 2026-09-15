@@ -1,0 +1,30 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 38854-38879
+#+manifold-stage: 06-forge
+#+manifold-date: 2026-09-15
+
+* magit-todos
+
+#+begin_src emacs-lisp
+(leaf magit-todos
+  :straight (magit-todos
+             :type git
+             :host github
+             :repo "alphapapa/magit-todos")
+  :after magit
+  :config
+  (magit-todos-mode 1)
+
+  ;; keyword spectrum
+  (setq magit-todos-keywords '("TODO" "FIXME" "BUG" "NOTE"))
+
+  ;; ignore noise
+  (setq magit-todos-exclude-globs '("node_modules/*"
+                                    "vendor/*"
+                                    "*.min.js"))
+
+  ;; carve a motion into magit-status
+  (define-key magit-status-mode-map (kbd "j T")
+    #'magit-todos-list))
+#+end_src
+

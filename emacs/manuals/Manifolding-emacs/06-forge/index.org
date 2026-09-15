@@ -1,0 +1,22 @@
+#+title: Stage 06 — Forge (creation)
+
+The organism shapes artifacts: programs constructed, maintained,
+and distributed; languages set in type; time computed and kept;
+then the great Org territory whole, followed by the small tools
+that orbit it. Lifecycle order: edit → maintain → distribute →
+typeset → compute → calendar → Org → satellites.
+
+Members:
+- =00-editing-programs.org= — full title verbatim ("Editing Programs ( ams mode ✓✓✓ )")
+- =01-maintaining-large-programs.org= — Maintaining Large Programs
+- =02-preparing-lisp-for-distribution.org= — Preparing Lisp code for distribution
+- =03-commands-for-human-languages.org= — Commands for Human Languages
+- =04-calculator.org= — Calculator (GIANT, ~10k lines, moved whole)
+- =05-calendar-and-diary.org= — The Calendar and the Diary
+- =06-org-manual.org= — full title verbatim ("The Org Manual (check macro replacement)", GIANT, ~11k lines, moved whole)
+- =07-org-transclusion.org= through =17-magit-todos.org= — small package manuals, titles verbatim in files
+
+Subdivision backlog: =04-calculator.org= and =06-org-manual.org=
+are flagged for future manifolding (calc tutorial vs reference;
+Org structure vs agenda vs export are distinct territories).
+Deliberately undecided here.

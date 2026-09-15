@@ -1,0 +1,36 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 39011-39042
+#+manifold-stage: 06-forge
+#+manifold-date: 2026-09-15
+
+* org-roam-tree — tree view for Org-Roam backlinks
+
+#+begin_src emacs-lisp
+(leaf org-roam-tree
+  :straight (org-roam-tree
+             :type git
+             :host github
+             :repo "bradmont/org-roam-tree")
+  :after org-roam
+  :config
+  ;; require the package first
+  (require 'org-roam-tree)
+
+  ;; defer section setup until org-roam-buffer-mode is loaded
+  (with-eval-after-load 'org-roam-buffer
+    ;; Override default sections with tree view
+    (setq org-roam-buffer-sections
+          '(org-roam-tree-backlinks-section
+            org-roam-reflinks-section))
+
+    ;; Optional: autoload tree section whenever org-roam buffer opens
+    (add-hook 'org-roam-buffer-mode-hook #'org-roam-tree-backlinks-section)))
+
+
+#+end_src
+
+
+
+
+
+

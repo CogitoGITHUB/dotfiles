@@ -87,3 +87,26 @@ separator newlines → 3270426. L1 57 → 48, no duplicates. Origin sha now:
 | 05 | Hyperlinking (title verbatim, see file) | 25501-25621 | 7353 | 05-world/06-hyperlinking-and-web-navigation.org | cut |
 | 05 | emacs-everywhere | 44252-44272 | 464 | 05-world/07-emacs-everywhere.org | cut |
 | 05 | Persistent Authentication | 25622-25638 | 1175 | 05-world/08-persistent-authentication.org | cut |
+
+Stage 06 reconcile: origin 3270426 → moved content 2204741 + 18 consumed
+separator newlines → 1065667. L1 48 → 30, no duplicates. Origin sha now:
+4664a470a2222d3c4f3fc104c4b81c63cc339e79ffcde6ab29454312e1b34c81
+
+| 06 | Editing Programs (title verbatim, see file) | 18779-19715 | 88322 | 06-forge/00-editing-programs.org | cut |
+| 06 | Maintaining Large Programs | 19765-21338 | 147159 | 06-forge/01-maintaining-large-programs.org | cut |
+| 06 | Preparing Lisp for distribution (title verbatim, see file) | 18611-18778 | 14174 | 06-forge/02-preparing-lisp-for-distribution.org | cut |
+| 06 | Commands for Human Languages | 22705-23839 | 95938 | 06-forge/03-commands-for-human-languages.org | cut |
+| 06 | Calculator | 7457-17654 | 1101542 | 06-forge/04-calculator.org | cut |
+| 06 | Calendar and Diary (title verbatim, see file) | 6311-7456 | 82711 | 06-forge/05-calendar-and-diary.org | cut |
+| 06 | Org Manual (title verbatim, see file) | 27762-38786 | 667181 | 06-forge/06-org-manual.org | cut |
+| 06 | Org-Transclusion (title verbatim, see file) | 38880-38897 | 583 | 06-forge/07-org-transclusion.org | cut |
+| 06 | Denote-Explore | 38898-38910 | 334 | 06-forge/08-denote-explore.org | cut |
+| 06 | Consult-Denote (title verbatim, see file) | 38911-38926 | 471 | 06-forge/09-consult-denote.org | cut |
+| 06 | org-roam-tree (title verbatim, see file) | 39011-39042 | 742 | 06-forge/10-org-roam-tree.org | cut |
+| 06 | org-supertag | 39043-39059 | 424 | 06-forge/11-org-supertag.org | cut |
+| 06 | org-roam-timeline | 39060-39081 | 475 | 06-forge/12-org-roam-timeline.org | cut |
+| 06 | Universal Launcher | 38927-38980 | 2354 | 06-forge/13-universal-launcher.org | cut |
+| 06 | Speed-type | 38981-39006 | 848 | 06-forge/14-speed-type.org | cut |
+| 06 | org-timeblock (title verbatim, see file) | 38817-38833 | 402 | 06-forge/15-org-timeblock.org | cut |
+| 06 | orgit-file | 38834-38853 | 484 | 06-forge/16-orgit-file.org | cut |
+| 06 | magit-todos | 38854-38879 | 597 | 06-forge/17-magit-todos.org | cut |
