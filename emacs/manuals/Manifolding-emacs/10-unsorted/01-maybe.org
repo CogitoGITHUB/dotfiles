@@ -1,8 +1,0 @@
-#+manifold-source: ../manuals.org
-#+manifold-lines: 9830-9833
-#+manifold-stage: grimoire-unsorted
-#+manifold-date: 2026-09-15
-
-* Maybe
-
-https://codeberg.org/uzu/tidal/src/branch/main/tidal.el
