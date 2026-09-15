@@ -1,0 +1,18 @@
+#+title: Stage 04 — Mind (cognition)
+
+Emacs Lisp forms the cortex: the language itself, then keymaps
+(intent made executable), markers (memory of place), the symbol
+oracle, and program transformation. Lifecycle order follows the
+structure: foundations → remapping → memory → oracle → macros.
+
+Members:
+- =00-elisp.org= — Elisp (GIANT, ~13k lines, moved whole — the
+  cortex stays one territory until Phase 2)
+- =01-keys.org= — Keys
+- =02-markers.org= — Markers
+- =03-detexify.org= — full title verbatim: "Detexify — The Symbol Oracle"
+- =04-dmacro.org= — dmacro
+
+Subdivision backlog: =00-elisp.org= is flagged for future
+manifolding (data types, evaluation, compilation, threads are
+distinct territories). Deliberately undecided here.

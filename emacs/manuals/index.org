@@ -63,3 +63,13 @@ separator newlines → 4773625. L1 66 → 62, no duplicates. Origin sha now:
 | 03 | Non-ASCII Characters | 43555-44359 | 83705 | 03-nerves/01-non-ascii-characters.org | cut |
 | 03 | Syntax Tables | 45703-46236 | 43140 | 03-nerves/02-syntax-tables.org | cut |
 | 03 | Keyboard Macros | 4714-4942 | 21652 | 03-nerves/03-keyboard-macros.org | cut |
+
+Stage 04 reconcile: origin 4773625 → moved content 1059281 + 5 consumed
+separator newlines → 3714339. L1 62 → 57, no duplicates. Origin sha now:
+9d28298e26656d46d2dbd1ec81f8dfadfd2b7c0928fc3e52301ce68c8e817469
+
+| 04 | Keys | 2842-4350 | 114031 | 04-mind/01-keys.org | cut |
+| 04 | Markers | 4351-4649 | 20909 | 04-mind/02-markers.org | cut |
+| 04 | Elisp | 22731-35997 | 922373 | 04-mind/00-elisp.org | cut |
+| 04 | Detexify (title verbatim, see file) | 59185-59242 | 1698 | 04-mind/03-detexify.org | cut |
+| 04 | dmacro | 59423-59441 | 270 | 04-mind/04-dmacro.org | cut |
