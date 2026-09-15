@@ -863,9 +863,12 @@ Deleting the WARNING sentinel lets the description-list metadata
 
 (defvar my/manifolding-atlas-reinforce-audit-allowlist
   '("FILE_NAME" "SUBDIR" "POSITION" "TAG" "THINKING_TYPES"
-    "MASTERING" "MIND_MAP" "POS" "ETYMOLOGY" "EXAMPLE" "FREQUENCY"
-    "PRONUNCIATION" "REGISTER" "SYNONYMS" "TEMPLATE")
-  "Unfolding keys managed outside schemas; excluded from the audit.")
+     "STAGE" "STATUS" "MIND_MAP" "POS" "ETYMOLOGY" "EXAMPLE" "FREQUENCY"
+     "PRONUNCIATION" "REGISTER" "SYNONYMS" "TEMPLATE")
+  "Unfolding keys managed outside schemas; excluded from the audit.
+STAGE and STATUS replaced the retired MASTERING key here: both are
+owned by the mastering engine (spine + workflow state), not by
+declarative schemas.")
 (defun my/manifolding-atlas-reinforce-sweep ()
   "Run a full-vault schema sweep and rebuild Static Blueprints."
   (interactive)

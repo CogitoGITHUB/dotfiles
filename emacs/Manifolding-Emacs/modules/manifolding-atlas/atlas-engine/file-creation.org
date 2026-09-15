@@ -2461,13 +2461,18 @@ UNFOLDINGS values, and META values:
 Note: Does not support %a or %i from org-capture."
   (let* ((id (or id (org-id-new)))
          (context (or context nil)))
-    (if parent
-        ;; Heading-level note creation
-        (manifolding-atlas--create-heading title id parent after
-                               body tags unfoldings context)
-      ;; File-level note creation (original behavior)
-      (manifolding-atlas--create-file title file-name id head meta body
-                           tags unfoldings context))))
+    (let ((note (if parent
+                    ;; Heading-level note creation
+                    (manifolding-atlas--create-heading title id parent after
+                                           body tags unfoldings context)
+                  ;; File-level note creation (original behavior)
+                  (manifolding-atlas--create-file title file-name id head meta body
+                                       tags unfoldings context))))
+      ;; Fundamental mastering: every created note enrolls at birth
+      ;; (admin/ paths excluded inside). Runs after the DB row exists
+      ;; so init/sync see a real note; returns the note unchanged.
+      (my/manifolding-atlas--enroll-new-note note)
+      note)))
 
 
 
@@ -2616,6 +2621,70 @@ BODY, TAGS, UNFOLDINGS, and CONTEXT are as in `manifolding-atlas-create'."
     ;; Return the note
     (or (manifolding-atlas-db-get-by-id id)
         (error "manifolding-atlas-create: Heading note with ID %s not found in database after creation" id))))
+
+** Birth enrollment (mastering fundamental)
+Every note is born into the review pool — learn it all or
+deliberately suspend it, no third state. The single seam is the
+public `manifolding-atlas-create' above (both file and heading
+branches funnel through it), so specialized creators (recipes,
+dictionary, routines, journal, unfolding-notes) need no individual
+wiring. Notes under =admin/= (unfolding-notes, Journal, admin
+queues) are metadata or logs, not knowledge cards, and are excluded
+by path — reviewing them would pollute sessions with machinery.
+Anything enrolled later by hand (mark-review, attest, encounter)
+uses the same init path, so enrollment is idempotent by
+construction: existing stages are never downgraded here, only
+missing ones are set.
+
+Load-order note: the mastering engine (atlas-engine/, priority 10)
+loads after this file (priority -1), so every call below is guarded
+by `fboundp'. At creation time in a live session everything is
+loaded; the guards only protect batch/headless partial loads.
+
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas--admin-path-p (file)
+  "Non-nil when FILE lives under the vault's admin/ territory.
+Covers admin/unfoldings/, admin/Journal/, and admin queues alike."
+  (when file
+    (string-prefix-p
+     (expand-file-name "admin/" (my/manifolding-atlas-root-dir))
+     (file-truename file))))
+
+(defun my/manifolding-atlas--enroll-new-note (note)
+  "Enroll NOTE in mastering at birth: STAGE=AWARE, STATUS=ACTIVE.
+Skips admin/ paths. Never downgrades an existing stage (transplants
+may arrive with one); only fills in what is missing, ensures the
+schedule row exists, and syncs the first tag. Returns NOTE."
+  (when (and note
+             (fboundp 'my/manifolding-atlas-mastering--init-schedule)
+             (fboundp 'my/manifolding-atlas-mastering--sync-stage-tag))
+    (let ((file (manifolding-atlas-note-path note)))
+      (when (and file (file-exists-p file)
+                 (not (my/manifolding-atlas--admin-path-p file)))
+        (let ((stage nil) (status nil))
+          (with-current-buffer (find-file-noselect file)
+            (save-excursion
+              (let ((level (manifolding-atlas-note-level note))
+                    (pos (manifolding-atlas-note-pos note)))
+                (if (and level (> level 0) pos)
+                    (progn (goto-char pos) (org-back-to-heading t))
+                  (goto-char (point-min)))
+                (setq stage (my/manifolding-atlas--drawer-get "STAGE"))
+                (setq status (my/manifolding-atlas--drawer-get "STATUS")))))
+          ;; Birth rule: human creation is the awareness gate. Anything
+          ;; already at ACQUIRING or above (transplants) is left alone.
+          (let ((idx (if (and stage (fboundp 'my/manifolding-atlas-mastering--stage-index))
+                         (my/manifolding-atlas-mastering--stage-index stage)
+                       -1)))
+            (when (< idx 1)
+              (my/manifolding-atlas-mastering--put note "STAGE" "AWARE")
+              (setq stage "AWARE")))
+          (unless status
+            (my/manifolding-atlas-mastering--put note "STATUS" "ACTIVE"))
+          (my/manifolding-atlas-mastering--init-schedule nil note)
+          (my/manifolding-atlas-mastering--sync-stage-tag note (or stage "AWARE"))))))
+  note)
+#+end_src
 
 
 
@@ -3270,9 +3339,12 @@ Prompts for backlink — yes inserts a link, no deletes the heading."
          (body       (cdr pair))
          (note       (manifolding-atlas-create title nil))
          (original-buffer (current-buffer)))
-    ;; Record source relationship pointing back to original heading
+    ;; Record source relationship pointing back to original heading.
+    ;; Uses the cross-buffer property writer (same (note key value)
+    ;; shape as the old call); the extracted note enrolls in mastering
+    ;; through the core create path above.
     (when (and note heading-id)
-      (my/manifolding-atlas--unfolding-put note "SOURCE" heading-id))
+      (my/manifolding-atlas--property-put note "SOURCE" heading-id))
     ;; Replace the default body with the extracted heading content
     (my/manifolding-atlas--transplant-body note body)
     ;; Backlink or delete — work in the original buffer
@@ -5447,7 +5519,14 @@ Clearing the keyword resets to the first TODO option."
                      v)))))
 #+end_src
 ** Mastering fragment
-WARNING records an explicit skip; SUSPEND freezes the schedule.
+The STAGE picker is clamped, not free: capture-time picks may only
+land on UNSEEN (declined to engage — honest, unenrolled-warm) or
+AWARE (birth state). Anything higher is downgraded to AWARE with a
+message pointing at attestation, because review machinery cannot
+evidence understanding and the picker must not let a keystroke fake
+it. Legacy values map one-way: REVIEW/TODO → AWARE, SUSPEND →
+STATUS=SUSPENDED, WARNING → unenrolled guard (no writer emits these
+anymore; the branches exist so old drawers still parse).
 ** my/manifolding-atlas-org-prompt--fragment-mastering
 Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment-mastering~.
 
@@ -5457,13 +5536,36 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment-mastering~.
    ((or (null val) (string-equal val "WARNING"))
     `(:unfoldings ((,key . "WARNING"))))
    ((string-equal val "SUSPEND")
-    `(:unfoldings ((,key . "SUSPEND"))
+    `(:unfoldings ((,key . "AWARE") ("STATUS" . "SUSPENDED"))
       :post-apply (,(apply-partially
                      #'my/manifolding-atlas-mastering--init-schedule t))))
-   (t
+   ((member val '("REVIEW" "TODO"))
+    `(:unfoldings ((,key . "AWARE"))
+      :post-apply (,(apply-partially
+                     #'my/manifolding-atlas-mastering--init-schedule nil))))
+   ((member val '("UNSEEN" "AWARE"))
     `(:unfoldings ((,key . ,val))
       :post-apply (,(apply-partially
+                     #'my/manifolding-atlas-mastering--init-schedule nil))))
+   (t
+    (message "Stage %s cannot be picked at capture; use attest with evidence. Recording AWARE." val)
+    `(:unfoldings ((,key . "AWARE"))
+      :post-apply (,(apply-partially
                      #'my/manifolding-atlas-mastering--init-schedule nil))))))
+#+end_src
+** Status fragment
+STATUS picks write the unfolding and immediately mirror the suspend
+flag into the schedule row, so a capture-time SUSPENDED takes effect
+without waiting for the next index pass. The flag-sync helper lives
+in the mastering engine next to its siblings.
+** my/manifolding-atlas-org-prompt--fragment-status
+Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment-status~.
+
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-org-prompt--fragment-status (key val)
+  (when val
+    `(:unfoldings ((,key . ,val))
+      :post-apply (,#'my/manifolding-atlas-mastering--sync-status-flag))))
 #+end_src
 ** Scoped and multi fragments
 Scoped values trigger their family post-apply; multi is a plain unfolding.
@@ -5534,7 +5636,12 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
 
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-org-prompt--fragment (key kind plist val)
-  (pcase kind
+  ;; STATUS is dispatched on key, not kind: its blueprint uses the
+  ;; plain inline kind, but a SUSPENDED pick must flip the schedule
+  ;; flag immediately rather than waiting for reindex.
+  (if (string-equal key "STATUS")
+      (my/manifolding-atlas-org-prompt--fragment-status key val)
+    (pcase kind
     ('todo (my/manifolding-atlas-org-prompt--fragment-todo val))
     ('tags (my/manifolding-atlas-org-prompt--fragment-tags val))
     ('tagopt (my/manifolding-atlas-org-prompt--fragment-tagopt
@@ -5551,7 +5658,7 @@ Why: Implementation of ~my/manifolding-atlas-org-prompt--fragment~.
             key plist val))
     (_
      (when val
-       `(:unfoldings ((,key . ,val)))))))
+       `(:unfoldings ((,key . ,val))))))))
 #+end_src
 
 * Boot

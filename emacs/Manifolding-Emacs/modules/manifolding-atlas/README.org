@@ -1,3 +1,4 @@
+A complete PostgreSQL implementation will be added when its stage comes.
 #+title: Manifolding Atlas
 
 WIP — WORK IN PROGRESS.  
@@ -137,7 +138,7 @@ It is a structural consequence of the core principle: no current representation 
 |-----------+--------------+--------------------------------------|
 | engine    | atlas-engine/        | vendored engine — the transformation machinery |
 | blueprints    | blueprints/       | executable knowledge structures — unfoldings, templates |
-| workflows | workflows/ | recurring practices — mastering, protocols, routines |
+| workflows | workflows/ | recurring practices — protocols, routines |
 | UI        | sidebar.org | viewport into the current representation        |
 
 Loading is deterministic.
@@ -236,6 +237,86 @@ The Org files own the knowledge.
 SQLite remembers where the knowledge is  
 while the knowledge continues its quiet decomposition.
 #+end_quote
+
+Org files are the durable truth. =notes= and =links= form the
+structural substrate — identity, relations, traversal.
+=mm_nodes=, =mastering_schedule=, and plugin tables are peer
+disposable indexes over that substrate. Higher-level queries compose
+these indexes without making one subsystem authoritative over
+another: the database knows the structure of the Atlas, and the mind
+map is one way of seeing that structure. Canonical composition:
+subtree → graph traversal → join schedule → ordered session.
+
+* PostgreSQL substrate
+
+The disposable index outgrew its file. SQLite remains the frozen
+reference, but the live substrate is PostgreSQL on Termux — same
+emacsql DSL, same tables, same extractors, new wire. The migration
+changes where derived state lives, never what the truth is: the
+vault rebuilds everything from org files, which is why cutover is a
+fresh rescan rather than row surgery.
+
+** Termux provisioning (shell, one time)
+
+: pkg install postgresql
+: mkdir -p $PREFIX/var/lib/postgresql
+: initdb $PREFIX/var/lib/postgresql
+
+Authentication is local trust for now — auto-login, no password
+(the =initdb --auth=trust= default; all local/host pg_hba lines read
+=trust=). This is a deliberate shortcut for the building phase, not
+the end state: the code already reads the password from auth-source
+when one exists, so switching later means creating the SCRAM
+password, flipping pg_hba to =scram-sha-256=, adding the =~/.authinfo=
+line below, and restarting — no code changes. A =test= password was
+considered and not used; trust made it unnecessary. Then:
+
+: pg_ctl -D $PREFIX/var/lib/postgresql start
+: createuser -s atlas
+: createdb -O atlas atlas
+
+When the SCRAM stage comes, the password lives in =~/.authinfo= and
+nowhere else — never a defcustom, never source, never the repo:
+
+: machine localhost port 5432 login atlas password <secret>
+
+No filesystem encryption is attempted here; the local Termux
+environment is the security boundary. At-rest protection is a
+separate future project, not part of this migration.
+
+** Daily operation
+
+: pg_ctl -D $PREFIX/var/lib/postgresql start
+: pg_ctl -D $PREFIX/var/lib/postgresql stop
+
+Postgres is started by hand, on purpose. Emacs never starts it;
+instead =(my/manifolding-atlas-db-health)= reports one of five
+states with the exact recovery step: CONNECTED, DOWN (start it),
+AUTH-FAILED (authinfo + pg_hba — unreachable while trust is on),
+DATABASE-MISSING (createdb), SCHEMA-OUTDATED (rescan). Backup changes meaning with the move:
+the vault no longer contains its own index, so back up both — files
+as before, plus =pg_dump atlas= on whatever rhythm the vault
+deserves.
+
+** Cutover checklist
+
+1. Provision + auth per above; confirm =psql atlas= connects.
+2. In Emacs: =(setq my/manifolding-atlas-db-backend 'pg)=, reconnect.
+3. Health must read CONNECTED (an empty database reports
+   SCHEMA-OUTDATED until the first rescan builds tables — expected).
+4. Full vault rescan. Extractors rebuild notes, links, mm_nodes,
+   mastering_schedule, citations, rules, dictionary from org files.
+5. Semantic validation against the frozen SQLite reference — not
+   row counts but meaning: note/link counts, IDs, paths, titles,
+   tags/unfoldings, link relationships, mm topology
+   (roots/children/order), mastering rows, representative queries
+   including graph traversal (=descendants= / =component= /
+   =shortest-path= agreement is the strongest proof the substrate
+   moved cleanly), then restart/reconnect plus several real sessions.
+6. Rollback at any point before step 5 signs off: set the backend
+   back to =sqlite=; the file and its code path are untouched.
+7. Decommission (later, explicit): delete the SQLite branch and the
+   frozen =.db= file. One substrate.
 
 * Capture: turning thought into structure
 
@@ -447,7 +528,7 @@ Atlas currently understands multiple kinds of semantic fields:
 | ~tagopt~    | choice stored as tag    |
 | ~topics~    | rule topics             |
 | ~template~  | template selection      |
-| ~mastering~ | review scheduling       |
+| ~mastering~ | spine stage (gated)         |
 | ~mindmap~   | manifold placement      |
 
 Each declarative prompt can expose a callable:
@@ -587,12 +668,12 @@ atlas-engine/
     fast-captures
     recipes
     rules
-    workflows/
   blueprint.org
   core-helpers.org
   db.org
   dependencies.org
   file-creation.org
+  mastering.org
   mind-map.org
   restoration.org
   search.org
@@ -607,7 +688,6 @@ blueprints/
     blueprint-reinforcements/  (drawer-order.org — display order, not prompts)
     tags.org, todo.org, … (drawer prompts)
 workflows/
-  mastering.org
   protocols.org
   routines.org
 #+end_example
@@ -632,28 +712,64 @@ The knowledge graph becomes a volume that can be reshaped without rewriting the 
 You are no longer scrolling a buffer.  
 You are moving through a temporary architecture of identities.
 
+Traversal is a first-class keyboard state ([MAP], entered via =SPC m
+t= over any note): =s/n= walk the depth axis (parent up, child down,
+headings ascending to their file card first), =h/t= step the sibling
+axis (previous/next, stopping dead at both ends — never wrapping),
+=r= root, =g= group card, =m= full map, =P/A= placement, =B= crosses
+into mastering by reviewing the branch at point, =q= back to org.
+The map shows =[stage]= on every line plus branch coverage
+(=x/y= cards at UNDERSTANDING or above) in the group buffer, and
+=manifold-map.json= carries stage alongside status and topology as
+the future graphical renderer's contract — a projection, never a
+source of truth.
+
+Ownership law (binding on both subsystems and the future renderer):
+mind-map owns topology, order, relationships, roots, headings,
+location, display, and traversal; mastering owns stage, review, due,
+schedule, session, queue, grade, attestation, and progression; STATUS
+plus the suspend flag are shared. Reading another subsystem's data —
+displaying it, filtering by it, traversing it, querying it — never
+constitutes ownership. Ownership means authority for mutation and
+semantics. Neither subsystem may infer ownership from consumption.
+
 * Mastering
 
 Mastering introduces temporal transformation.
-It turns notes into a memory system with a half-life.
+It turns notes into a memory system with a half-life — and a spine
+that says how far each card has traveled from ignorance to original
+contribution.
+
+Every note is born enrolled: STAGE=AWARE, STATUS=ACTIVE. The spine
+runs UNSEEN → AWARE → ACQUIRING → UNDERSTANDING → CAPABLE →
+PROFICIENT → EXPERT → ADAPTIVE → GENERATIVE → CONTRIBUTING, and the
+stage token is the note's first tag. Reviews measure memory only, so
+the review loop advances just two gates on its own (first contact →
+AWARE, first success → ACQUIRING); everything above ACQUIRING is
+claimed through attestation with recorded evidence, never inferred.
+STATUS (ACTIVE/SUSPENDED/ARCHIVED/DORMANT) is orthogonal — suspending
+a note freezes practice without demoting knowledge.
 
 The Atlas tracks:
 
-: MASTERING_*
+: STAGE / STATUS / MASTERING_* (schedule) / STAGE_EVIDENCE / LAST_VALIDATED
 
 and builds:
 
-- due queues  
-- overdue queues  
-- review sessions  
-- participation pools  
-- review scheduling  
+- due queues (ACTIVE, seen stages only; UNSEEN triaged separately;
+  ordered parents-before-children along the map — foundations first)
+- overdue queues
+- branch-scoped sessions (=SPC v d= reviews the branch at point)
+- review sessions (graded n/f, attest with evidence, suspend inline)
+- participation via status flips (no exits, only pauses)
+- review scheduling (SM-2 variant: proto intervals, synolon scaling,
+  amnesia failures, anagnosis streaks, lethe resets, interval fuzz)
 
-Knowledge therefore has a temporal dimension.  
-A note can exist.  
-A note can be connected.  
-A note can be reviewed.  
-A note can be mastered.  
+Knowledge therefore has a temporal dimension.
+A note can exist.
+A note can be connected.
+A note can be reviewed.
+A note can climb — each rung gated by evidence, not by optimism.
 And then the mastery itself will eventually be declared insufficient.
 
 * Protocols
@@ -757,9 +873,10 @@ p/m/M/i protocols
 w       dictionary
 C       contacts
 
-g/G/M/t mastering
+g/G/M/a/d/t mastering (review / overdue / mark / attest / branch / suspend)
 
-s       search
+s       search center (unified surface)
+S       search menu (scoped launchers)
 
 n/e/f   recipes
 
@@ -776,9 +893,11 @@ Org state also provides:
 : V       find
 : I       insert link
 
-Mind-map mode lives under:
+Mind-map lives under:
 
-: SPC m
+: SPC m       hydra (navigate / position / status / view)
+: SPC m t     traverse state ([MAP]: s/n vertical, h/t horizontal,
+              r root, g group, m map, B branch review, q quit)
 
 and doct capture under:
 
@@ -995,18 +1114,20 @@ Manifolding Atlas is a local-first org-based knowledge/task system inside Emacs.
 
 ** 2. FILE INVENTORY
 
-*** atlas-engine/ (13 files)
-- =dependencies.org= — straight prereqs only (dash, s, emacsql, vui, consult). Priority -31, loads first. No commands.
-- =setup.org= — vault root (=my/manifolding-atlas-root-dir=, =~/test/=), DB location (=admin/manifolding-atlas.db=), legacy DB relocate guard, fswatch sentinel, org-file predicate (extensionless ok), race-safe walk, async scan, parse-method override, idle DB open, agenda wiring.
-- =db.org= — SQLite/emacsql shim + query API. Connection manager, notes/links/wormhole tables, =manifolding-atlas-db-query=, =-by-unfolding/-by-ids/-by-file-path/-by-tags-some/-by-links-some/-links-to/-from/-get-by-id=, =manifolding-atlas-db-count-notes=, =manifolding-atlas-select= picker, orphan-prune (=manifolding-atlas-db-prune-missing= interactive, + startup hook + delete-file advice), alias extractor, =manifolding-atlas-note-*= accessors.
+*** atlas-engine/ (14 files)
+- =dependencies.org= — straight prereqs: dash, s, emacsql, pg (wire lib for the Postgres backend), vui, consult. Priority -31, loads first. No commands.
+- =setup.org= — vault root (=my/manifolding-atlas-root-dir=, =~/test/=), DB location (=admin/manifolding-atlas.db=, sqlite path), backend-aware endpoint guard (sqlite tracks path + legacy relocate; pg tracks backend flip only), fswatch sentinel, org-file predicate (extensionless ok), race-safe walk, async scan, parse-method override, idle DB open, agenda wiring.
+- =db.org= — SQLite/emacsql shim + query API + graph traversal. Backend selector (=my/manifolding-atlas-db-backend=, sqlite default, pg via =emacsql-pg= + auth-source, SCRAM-or-trust per runbook) with 5-state health (=my/manifolding-atlas-db-health=: CONNECTED/DOWN/AUTH-FAILED/DATABASE-MISSING/SCHEMA-OUTDATED). Connection manager, notes/links/wormhole tables, =manifolding-atlas-db-query=, =-by-unfolding/-by-ids/-by-file-path/-by-tags-some/-by-links-some/-links-to/-from/-get-by-id=, graph traversal (neighbors, BFS core, descendants/ancestors/component, shortest-path, link-roots, isolated — =notes=+=links= only, cycle-safe), =manifolding-atlas-db-count-notes=, =manifolding-atlas-select= picker, orphan-prune (=manifolding-atlas-db-prune-missing= interactive, + startup hook + delete-file advice), alias extractor, =manifolding-atlas-note-*= accessors.
 - =core-helpers.org= — shared drawer/point utils: =--note-at-point=, =--buffer-note=, =--drawer-region/-get/-put/-delete= (tolerant, survives wormhole lines), key conversions, org-entry-get/put advice. Duplicated in unfoldings file.
-- =file-creation.org= (~7400 lines, monolith) — templates dirs, drawer-key order system, blueprint add/edit/remove (=my/manifolding-atlas-blueprint-add/-edit/-remove=), doct+yasnippet wiring, prompt registry (=my/manifolding-atlas-register-prompt=), version/doctor, slug/title propagation, =manifolding-atlas-find/-visit/-insert/-create=, =manifolding-atlas-rename-file=, title-change mode, schema fix (=blueprint-insert-fields/fix-violation=), =my/manifolding-atlas-heading-to-note=, org-prompt engine (parse/register/run/ask/fragment/session/collect, =--register-all= ~54 specs=), =manifolding-atlas-buffer-*= get/set API. KNOWN BROKEN REFS INSIDE (not yet fixed): advice on nonexistent =my/manifolding-atlas-capture-new-file= + =-capture-task-file= (~3424); call to nonexistent =my/manifolding-atlas--unfolding-put= (~3275); stale comment referencing =blueprints/templates/templates.org= (~476).
+- =file-creation.org= (~7400 lines, monolith) — templates dirs, drawer-key order system, blueprint add/edit/remove (=my/manifolding-atlas-blueprint-add/-edit/-remove=), doct+yasnippet wiring, prompt registry (=my/manifolding-atlas-register-prompt=), version/doctor, slug/title propagation, =manifolding-atlas-find/-visit/-insert/-create=, =manifolding-atlas-rename-file=, title-change mode, schema fix (=blueprint-insert-fields/fix-violation=), =my/manifolding-atlas-heading-to-note=, org-prompt engine (parse/register/run/ask/fragment/session/collect, =--register-all= ~55 specs=), =manifolding-atlas-buffer-*= get/set API. KNOWN BROKEN REFS INSIDE (not yet fixed): advice on nonexistent =my/manifolding-atlas-capture-new-file= + =-capture-task-file= (~3424); stale comment referencing =blueprints/templates/templates.org= (~476).
 - =blueprint.org= — schema/validation core: blueprint struct/registry/define/validate, field inheritance, validators, validate single/notes/all, collection-health, DB validation filter, flymake backend + minor mode (=manifolding-atlas-blueprint-flymake-mode=), reinforcement sweeps/audits (=my/manifolding-atlas-reinforce-sweep=, =my/manifolding-atlas-blueprint-migrate-warnings=). KNOWN BROKEN (not yet fixed): =--hash-validator= (~751) calls nonexistent =my/manifolding-atlas--capture-file-hash=; =--template-dir= (defun ~598) points at =blueprints/templates/= which does not exist on disk.
 - =manifolding-unfoldings.org= — live-property engine: canonicalize/make-id-link helpers, closed-vocab ensure-note, scoped-per-parent creation (=--create-scoped-note=), wormhole-in-drawer scan, state factory + in-place =#+wormhole:= refresh (=--refresh-property-wormhole=), orphan sweep (=--sweep-orphaned-unfoldings=), hidden-note filter, capture-style file editor, DB-parse tolerance, RET dispatcher (=my/manifolding-atlas-return-dispatch= bound to RET in org, =my/manifolding-atlas-property-make-unfolding=).
-- =mind-map.org= — vault graph: =mm_nodes= table (note-id/parent-id/order-key/node-type/depth), structural+semantic+wormhole edges, =mm/assign-parent/assign-after/assign-between/make-root-interactive=, =mm/goto-parent/root/child/sibling=, =mm/map-display=, =mm/group-display=, =mm/export-json=, =mm/init=, =mm/menu=, =mm/repack-all=. KNOWN BROKEN (not yet fixed): =mm/set-status= (~453) calls nonexistent =my/manifolding-atlas--unfolding-put=.
+- =mind-map.org= — vault graph: =mm_nodes= table (note-id/parent-id/order-key/node-type/depth), structural+semantic+wormhole edges, =mm/assign-parent/assign-after/assign-between/make-root-interactive=, =mm/goto-parent/root/child/sibling= + deterministic =mm/goto-next/prev-sibling= + =mm/traverse-child= (no wrap), traverse entry (=my/mindmap-traverse-enter/quit=), unified STATUS reader/writer (=mm/status-of/set-status=, leftover MM_STATUS translates one-way), =[stage]= map lines + branch coverage, =mm/map-display=, =mm/group-display=, =mm/export-json= (with stage), =mm/init=, =mm/menu=, =mm/repack-all=.
+- =mastering.org= — spaced repetition on a 10-state spine: STAGE/STATUS + =mastering_schedule= table (with stage/status columns + schema migration), gated promotion (auto: first contact/success; attest with evidence above ACQUIRING), map-ordered due + branch sessions, due/overdue/unseen queries, review sessions showing stage/status, =my/manifolding-atlas-mastering-review=, =-review-overdue=, =-mark-review=, =-attest=, =-mark-encountered=, =-toggle-participation= (ACTIVE↔SUSPENDED flip, row kept), =-review-subtree=.
 - =restoration.org= (links plugin) — deletion guards, Missing Links / ReManifold / Broken Unfoldings / Added-Deleted Blueprint admin files, orphan detection (scoped =UNFOLDING_PARENT= fast path vs full scan), before/after file+heading delete advice, boot reconcile via =.known-keys=, =my/manifolding-atlas-links-audit= (only interactive), =my/manifolding-atlas-links--read-blueprint-meta=.
 - =git-vs-backup-system.org= — git auto-commit/push (debounced =auto: <rel>=, per-repo timers), delete guard, restore-by-ID/by-file (=my/manifolding-atlas-links-restore=, =-deleted-restore=), ReManifold cleanup, =restore:= link. Note: duplicate =--before-save= defun (115/119).
-- =search.org= — vault-scoped TODO/FIXME/BUG/HACK/NOTE search (=atlas-search-todo-all/-dir=, =atlas-search-todo=, =-clear-cache=), pure-Lisp scan, consult UI.
+- =search.org= — vault-scoped TODO/FIXME/BUG/HACK/NOTE search (=atlas-search-todo-all/-dir=, =atlas-search-todo=, =-clear-cache=), pure-Lisp scan, consult UI. Now headed inside the Search Center menu (=w=).
+- =search-center.org= — universal retrieval surface: provider registry + candidate contract (id-or-marker navigability, shape-asserted, never-fabricated annotations), progressive preview L0–L4 (+L5 visit), uniform Embark verbs, consult--multi unified session (=my/atlas-search=), async vault-rg source with stage annotations, db providers (due/overdue/unseen/isolated), org-ql preset sources (agenda/priorities/scheduled/deadlines/stuck/habits/effort), files provider, parameterized launchers (tag/stage/status/links/component/path/custom), deft browser with extensionless workaround, 24-head launcher hydra.
 - =sidebar.org= — stub/reserved; only live fn =manifolding-atlas-ui--detect-context-type=. Rest is empty scaffolding. Toggle =manifolding-atlas-ui-sidebar-toggle= (=SPC v u=).
 - =atlas-wormholes.org= (3000+ lines, vendored) — transclusion engine: clone overlays, =#+wormhole: [[id:…]]= add/add-all/remove/detach/refresh (=atlas-wormholes-add=, =-add-all=, =-remove=, =-detach=, =-refresh=, =-open-source=, =-move-to-source=, =-live-sync-start/-exit=), save/kill strip/re-add, keyword parse/format, payload handlers, =atlas-wormholes-map=, plus Atlas tail (=my/atlas-wormholes-add/open=, =:property= keyword handlers, wormhole-links table/extractor, =-query-wormhole-links-to=, =-find-wormhole-unfoldings=).
 
@@ -1029,7 +1150,8 @@ Canonical shape: =#+title:= + =#+priority:= + =* KEY :kind:contexts:= + optional
 - =todo.org= — TODO_STATE machine (=:todo:file:heading:task:=, =:ID: todo= + =:TASK-DEFAULT: TODO= deviation, 24 options TODO..CANCELLED).
 - =thinking.org= — THINKING_TYPES multi (=:multi:file:heading:=).
 - =thinking-types.org= — blank/placeholder, 1 line.
-- =mastering.org= — MASTERING review (=:mastering:file:heading:task:=: TODO/WARNING/REVIEW/SUSPEND).
+- =mastering.org= — STAGE spine (=:mastering:file:heading:task:=: UNSEEN/AWARE/ACQUIRING/UNDERSTANDING/CAPABLE/PROFICIENT/EXPERT/ADAPTIVE/GENERATIVE/CONTRIBUTING, each with prose; first tag mirrors stage).
+- =status.org= — STATUS workflow state (=:inline:file:heading:task:=: ACTIVE/SUSPENDED/ARCHIVED/DORMANT; orthogonal to stage, drawer-only).
 - =mind-map.org= — MIND_MAP_PLACEMENT (=:mindmap:file:task:=: parent/child/sibling/root).
 - =tags.org= — TAGS (=:tags:file:heading:task:=, =:ID: tags=).
 - =unfoldings.org= — NON-UNIFIED procedural: Extra Unfoldings free-form loop with elisp, not a pick-list.
@@ -1105,8 +1227,7 @@ Canonical shape: =#+title:= + =#+priority:= + =* KEY :kind:contexts:= + optional
 - =context-prompts/rules/scope.org= — SCOPE (=:tagopt:rule:= or inline).
 - =context-prompts/rules/topic.org= — RULE_TOPICS (=:topics:rule:=, =:ID: rule-topics=).
 
-*** workflows/ (3)
-- =workflows/mastering.org= — spaced repetition: MASTERING_* unfoldings + =mastering_schedule= table, due/overdue queries, =my/manifolding-atlas-mastering-review=, =-review-overdue=, =-mark-review=, =-toggle-participation=. KNOWN BROKEN (not yet fixed): 13 calls to nonexistent =my/manifolding-atlas--unfolding-put=.
+*** workflows/ (2)
 - =workflows/protocols.org= — protocol steps on headings, BUILD assembling wormhole pointers into topic-indexed files, dual RULE mark. =my/manifolding-atlas-protocols-build=, =-mark-as-step=, =-goto-routed-file=, =my/manifolding-atlas-find-protocols=.
 - =workflows/routines.org= — routines/chains: routine notes tagged =routine=, child entries with SOURCE/ROUTINE_ID/ROUTINE_ORDER, dual-write org+SQLite, =my/manifolding-atlas-routines-create/-chain-create/-find/-generate/-run/-validate/-report/-menu=.
 
@@ -1114,11 +1235,11 @@ Canonical shape: =#+title:= + =#+priority:= + =* KEY :kind:contexts:= + optional
 
 - *File-note creation:* =manifolding-atlas-create= / =manifolding-atlas-find= (=SPC v v=) — completing-read over DB; new title creates file from body template. Body template chosen via *template preview picker* (=my/manifolding-atlas-prompt-template--choose-with-realtime-capture-preview=): candidates from live =directory-files= scan of =body-unfoldings/files/=, side-window =*Blueprint Preview*= updates per keystroke (vertico-aware), picked file's raw =**= body inserted. Post-pick the template name is added as a real org tag. Journal/recipes/dictionary have specialised creators writing subdirs + unfoldings; journal's day-file branch runs its own template picker (=--choose-template=, default =journal=, live preview) while its timestamped-entry branch stays a plain =*** %?= capture.
 - *Heading-note creation:* =my/manifolding-atlas-capture-heading= (=SPC v h=), =my/manifolding-atlas-insert-heading= (=SPC v c=), =my/manifolding-atlas-heading-to-note= (=SPC v H=, promote heading to file, records SOURCE backlink). Journal quick-capture nests =*** %?= timestamped entries under the day file (day file itself carries the journal template body).
-- *Property drawer system:* every note has =:PROPERTIES:= with =:ID:= plus unfolding keys (TODO_STATE, TAGS, SOURCE, MASTERING_*, RULE_TOPICS, …). Helpers: =manifolding-atlas-buffer-unfolding-get/set=, =--drawer-get/-put/-delete= (tolerant raw-text parse, survives wormhole lines), drawer-order file controls display order (=my/manifolding-atlas-open-drawer-order=, =SPC v A=), save-hook auto-arranges, vault sweeps arrange/stub-strip.
+- *Property drawer system:* every note has =:PROPERTIES:= with =:ID:= plus unfolding keys (TODO_STATE, STAGE, STATUS, TAGS, SOURCE, MASTERING_* schedule, RULE_TOPICS, …). Helpers: =manifolding-atlas-buffer-unfolding-get/set=, =--drawer-get/-put/-delete= (tolerant raw-text parse, survives wormhole lines), drawer-order file controls display order (=my/manifolding-atlas-open-drawer-order=, =SPC v A=), save-hook auto-arranges, vault sweeps arrange/stub-strip.
 - *Live-property / wormhole mechanism (RET end-to-end):* point on a property line, press RET → =my/manifolding-atlas-return-dispatch= (bound to RET in org) → reads key at point → looks up blueprint spec in =my/manifolding-atlas-org-prompt--specs= → runs kind-appropriate picker (single/multi/tags/free per =:kind=) → writes plain value OR creates a scoped/shared unfolding note and writes =#+wormhole: [[id:TARGET][KEY: value]] :property= inside the drawer → =atlas-wormholes-add= renders the target's =* Heading= content inline as plain text (asterisk stripped, ID/UNFOLDING_PARENT hidden by =:property= handler). Edits sync both ways. RET on wormhole/context line follows/opens; origin-buffer rendering fixed via =:property= flag. Save/revert hooks strip before save, re-add after.
 - *Tags:* real org tags via =manifolding-atlas-buffer-tags-add= / =org-set-tags-command= (=SPC o e g=); =#+filetags:= consolidated on save; TAGS blueprint (=* TAGS :tags:…=) prompts for heading tags. Property picks add heading tags properly (no =#+filetags= duplication).
 - *Database:* =manifolding-atlas-db= (emacsql SQLite). Tables: notes, links, wormhole-links, citations, mm_nodes, mastering_schedule, dictionary_words, rules, routines. Query fns: =manifolding-atlas-db-query=, =-by-unfolding/-by-ids/-by-file-path/-by-tags-some/-by-links-some/-links-to/-from/-get-by-id=, =-count-notes=, =manifolding-atlas-select=. Stale-note pruning: query-time file-existence filter + startup hook + delete-file advice (=manifolding-atlas-db-prune-missing= interactive).
-- *Search/find:* =manifolding-atlas-find= (vault picker), =manifolding-atlas-find-backlink=, rules/protocols/routines finders, =atlas-search-todo-*= (vault TODO search), consult-line/imenu integration.
+- *Search/find:* Search Center (=SPC v s= unified surface over text/db/org-ql/files providers with L0–L4 preview + Embark; =SPC v S= launcher menu; legacy =atlas-search-todo-*= inside as heads), =manifolding-atlas-find= (vault picker), =manifolding-atlas-find-backlink=, rules/protocols/routines finders, consult-line/imenu integration.
 - *Aliases:* =manifolding-atlas-db--extract-aliases= + buffer alias get/set; ALIASES blueprint file is a removed placeholder (Plan B, no prompt).
 - *Links:* =manifolding-atlas-insert= (=SPC v V= insert link), =my/manifolding-atlas-rename-link= (=SPC v r=), =manifolding-atlas-visit=, org-id links + =#+wormhole:= links indexed separately; Missing Links / Broken Unfoldings admin files + =links-audit=; deletion guards y-or-n-p per incoming (incl. wormholes) + outgoing; git restore cleans Missing Links entries.
 
@@ -1140,12 +1261,12 @@ prose...
 ...
 #+end_example
 
-- =KEY= = uppercase unfolding key (TODO_STATE, THINKING_TYPES, MASTERING, MIND_MAP_PLACEMENT, TAGS, BLUEPRINT, EMAIL, SYNONYMS, RULE_TOPICS, LEVEL, …). 53 such headings.
+- =KEY= = uppercase unfolding key (TODO_STATE, THINKING_TYPES, STAGE, STATUS, MIND_MAP_PLACEMENT, TAGS, BLUEPRINT, EMAIL, SYNONYMS, RULE_TOPICS, LEVEL, …). 54 such headings.
 - First tag = *kind* (renderer): =todo multi tags tagopt template free scoped mastering mindmap body live topics unfolding inline=. e.g. =* TODO_STATE :todo:file:heading:task:=, =* THINKING_TYPES :multi:file:heading:=, =* EMAIL :free:contact:=, =* SYNONYMS :scoped:dictionary:=, =* LEVEL :tagopt:rule:=.
 - Remaining tags = *contexts* (when to prompt): =file heading task= (most), plus =routine dictionary contact recipe rule= for specialised prompts. e.g. =* ROUTINE_DOMAIN :inline:routine:=.
 - =:PROPERTIES:= drawer holds *only =:ID:=* canonically (e.g. =tags.org= → =:ID: tags=, =email.org= → =:ID: contact-email=). Deviations still on disk: =todo.org= adds =:TASK-DEFAULT: TODO=, =priority.org= has only =:TASK-DEFAULT: B= (no ID), =state-work.org= has =:REQUIRED:/:UNFOLDING:= (no ID), some synonyms/level files add =:UNFOLDING:/:DEFAULT:=.
 - Body-blueprint files (=body-unfoldings/files/*.org=) are plain org content (=** Notes=, checklists, LaTeX envs, =%?= stops) with no wrapper heading.
-- Registration: =my/manifolding-atlas-org-prompt--parse= walks the tree (L1 opens keys, L2+ collect options, skips files containing src blocks as legacy), =my/manifolding-atlas-org-prompt--plist-from-tags= maps tags via =my/manifolding-atlas-blueprint-kinds/contexts= consts (first kind-tag wins, all context-tags collect), label falls back to key, =my/manifolding-atlas-org-prompt--register-all= registers ~54 specs.
+- Registration: =my/manifolding-atlas-org-prompt--parse= walks the tree (L1 opens keys, L2+ collect options, skips files containing src blocks as legacy), =my/manifolding-atlas-org-prompt--plist-from-tags= maps tags via =my/manifolding-atlas-blueprint-kinds/contexts= consts (first kind-tag wins, all context-tags collect), label falls back to key, =my/manifolding-atlas-org-prompt--register-all= registers ~55 specs.
 - *Heading-blueprint pick:* RET-on-property flow (§3) — RET on =TODO_STATE:= etc. → spec lookup → kind-appropriate picker → value written or unfolding note created + wormholed.
 - *Body-blueprint pick:* file-creation template preview picker — live =directory-files= scan of =body-unfoldings/files/=, side preview, chosen body inserted, template name added as tag.
 - *Body-blueprint nesting (inserting one blueprint's live content inside another via wormhole/org-id link): planned, not built.* Designed (nest command sourcing all registered specs + live preview + =#+wormhole: [[id:ID][KEY]] :property= insert + =atlas-wormholes-add= render, hydra key =SPC v b=) but flag as not implemented/tested — verify from scratch before relying on it.
@@ -1153,9 +1274,9 @@ prose...
 ** 5. KEYBOARD/HYDRA SYSTEM (=modules/manifolding-keyboard.org=, 5523 lines; loader =manifolding-emacs.el= 1983 lines)
 
 Modal engine (vendored, not evil): states normal [NOR] / insert [INS] / visual [VIS] / org [ORG] / motion [MOT] / vterm [VTE] / magit [GIT] / dired [DIR] / presentation [PRE] / ibuffer [IBF] / atlas-pick [PCK]. =SPC= in most states opens =my/main-hydra= (pretty-hydra, sticky, =SPC= quits, =q= quits submenus, every submenu has =SPC Back=). Single-letter jumps to sub-hydra, single key runs command.
-- =SPC v= Atlas (=my/manifolding-atlas-hydra=): =v= find note, =V= insert link, =r= rename link, =h= capture heading, =c= insert heading, =H= heading-to-note, =f= fix violations, =u= sidebar toggle, =E= reinforce sweep, =k/K/R= rules mark/goto-routed/find, =p/m/M/i= protocols build/mark/goto/find, =w= dictionary menu, =C= contacts menu, =g/G/M/t= mastering review/review-overdue/mark/toggle, =s= todo-dir search, =n/e/f= recipe create/edit/menu, =N/J/F/B/X/!/S/T= routines create/chain/find/generate/run/validate/report/menu, =y= wormhole hydra, =A= drawer order, =b= nest blueprint (planned, not built), =SPC= back. Slim alias =SPC o v= (find/insert/rename/sidebar). Org-state direct: RET dispatch, =V= find, =I= insert.
+- =SPC v= Atlas (=my/manifolding-atlas-hydra=): =v= find note, =V= insert link, =r= rename link, =h= capture heading, =c= insert heading, =H= heading-to-note, =f= fix violations, =u= sidebar toggle, =E= reinforce sweep, =k/K/R= rules mark/goto-routed/find, =p/m/M/i= protocols build/mark/goto/find, =w= dictionary menu, =C= contacts menu, =g/G/M/a/d/t= mastering review/review-overdue/mark/attest/branch/suspend, =s= search center (=S= menu), =n/e/f= recipe create/edit/menu, =N/J/F/B/X/!/S/T= routines create/chain/find/generate/run/validate/report/menu, =y= wormhole hydra, =A= drawer order, =b= nest blueprint (planned, not built), =SPC= back. Slim alias =SPC o v= (find/insert/rename/sidebar). Org-state direct: RET dispatch, =V= find, =I= insert.
 - =SPC y= Wormhole: =a/b/A= add/add-body-only/add-all, =r/R/d/f= remove/remove-all/detach/refresh, =o/m= open-source/move-to-source, =s/x= live-sync start/exit.
-- =SPC m= Mindmap (=mm/*=): =p/c/s/r= goto parent/child/sibling/root, =P/A/B/R/!= assign-parent/after/between/make-root/repack-all, =a/d/x= status active/deprecated/archived, =m/g/j/i= map/group/export/init.
+- =SPC m= Mindmap (=mm/*=): =p/c/s/r/t= goto parent/child/sibling/root/traverse-state, =P/A/B/R/!= assign-parent/after/between/make-root/repack-all, =a/s/d/x= status active/suspended/dormant/archived, =m/g/j/i= map/group/export/init. Traverse state ([MAP]): =s/n= vertical (parent/child), =h/t= horizontal (prev/next sibling, no wrap), =r= root, =g= group, =m= map, =B= branch review, =P/A= placement, =q= quit.
 - =SPC o= Org + children: agenda (=o a=), tasks (=o t=: todo-cycle, priority, schedule, deadline, refile), clock (=o k=), edit (=o e=: headings, templates, code/latex blocks, tags, narrow, capture), capture (=o c=: Atlas note/heading/task), Atlas slim (=o v=).
 - =SPC g= Git (magit status/log/diff/commit/push/fetch/pull/branch/rebase/stash/merge/blame + timemachine/messenger/link/gutter).
 - =SPC d= Dev/literate: debug (helpful, elisp-refs, macrostep, esup, bug-hunter), config (load/status/errors, open modules dir, open keyboard file, =manifolding-emacs-reload=, kill orphans).
@@ -1165,7 +1286,7 @@ Modal engine (vendored, not evil): states normal [NOR] / insert [INS] / visual [
 ** 6. KNOWN-BROKEN OR INCOMPLETE THINGS (found via investigation — what and why, no fixes here)
 
 - =my/manifolding-atlas-capture-new-file= + =my/manifolding-atlas-capture-task-file=: referenced in README table, =file-creation.org:3424-3425= advice, =body-unfoldings/files/atlas.el:10,14= doct =:function= — but *zero =defun= anywhere*. Any path invoking them void-errors. Only-called, never defined.
-- =my/manifolding-atlas--unfolding-put=: 17 calls, zero definitions — =workflows/mastering.org= schedule init (10) + suspend/toggle (3), =atlas-engine/mind-map.org:453= set-status, =file-creation.org:3275= SOURCE record, =plugins/recipes.org:45-46= template store. Live code uses =--drawer-put= / =buffer-unfolding-set= instead; these sites never migrated.
+- =my/manifolding-atlas--unfolding-put=: zero definitions — remaining only-called site: =plugins/recipes.org:45-46= template store. Fixed already: 13 =atlas-engine/mastering.org= calls (now a drawer-put helper), =file-creation.org= SOURCE record (now =--property-put=), =atlas-engine/mind-map.org= set-status (now unified STATUS writer). Live code uses =--drawer-put= / =buffer-unfolding-set= instead.
 - =my/manifolding-atlas--capture-file-hash=: 2 calls (=blueprint.org:751= hash validator, =recipes.org:47=), zero definitions. TEMPLATE_HASH validation + recipe stamping uncallable.
 - =my/manifolding-atlas--capture-path=: 1 call (=recipes.org:36= template-body), zero definitions. Same class.
 - Stale =blueprints/templates/= path: =my/manifolding-atlas-blueprint--template-dir= (=blueprint.org:598=) is defined and called (702/712) but resolves to =blueprints/templates/= which *does not exist on disk* (only =heading-unfoldings/= + =blueprint-reinforcements/= exist). Template-unfolding scanners silently return nil. Comment =file-creation.org:476= references the same moved path as provenance only.
@@ -1186,6 +1307,11 @@ Modal engine (vendored, not evil): states normal [NOR] / insert [INS] / visual [
 - Body-blueprint template-tag-on-pick wired up (post-apply previously called nonexistent =unfolding-put=/=capture-file-hash=; now sanitizes VAL → tag via =manifolding-atlas-visit= + =buffer-tags-add= + =save-buffer=, skipping WARNING/--none).
 - Hardcoded WARNING tag on new-note creation removed.
 - Journal day-file template added (=body-unfoldings/files/journal.org=) + picker wired into first-touch creation (default =journal=, live preview, =%U= stamped, entries unchanged).
+- Mastering rebuilt on a 10-state spine (UNSEEN→CONTRIBUTING) with orthogonal STATUS (ACTIVE/SUSPENDED/ARCHIVED/DORMANT): new STAGE/STATUS blueprints with prose, drawer-order entries, gated engine (auto: first contact/success; attest with evidence above ACQUIRING), first-tag stage sync, birth enrollment for every non-admin note via core create, capture-time stage clamping, suspend-as-flip toggle, =SPC v a= attest key. Retired MASTERING/TODO/WARNING/REVIEW/SUSPEND values (legacy one-way readers remain).
+- Mindmap–mastering coupled under one ownership law (map owns topology/order/display/traversal; mastering owns stage/review/schedule; STATUS + suspend flag shared; reading ≠ owning): unified STATUS (MM_STATUS retired with one-way translation), map-ordered due queue (foundations first), =SPC v d= branch review, [MAP] traverse state (=SPC m t=: s/n vertical, h/t horizontal no-wrap, B branch review), [stage] map lines + branch coverage, stage in =manifold-map.json=. Visual renderer explicitly deferred (projection, never source of truth).
+- Substrate made graph-native without becoming map-owned: =db.org= gains single-hop helpers, an iterative BFS core, descendants/ancestors/component, shortest-path ([FROM … TO], self = one-element), link-roots, and isolated-card queries — all over =notes=+=links= only, cycle-safe, depth-cappable. Law inscribed: files are durable truth, =notes=+=links= the structural substrate, every domain table a peer disposable index; =mm/subtree-of= (placement) and =db-descendants= (links) stay deliberately separate operations.
+- PostgreSQL migration built (code-complete, server provisioned PG 18.2, trust auto-login for the building phase): =pg= dependency, backend selector defaulting to sqlite, =emacsql-pg= branch + 5-state health, backend-aware endpoint guard, portable upsert (mm) and introspection branch (mastering). Provisioned: initdb UTF8/auth-trust, superuser =atlas=, empty database =atlas=, TCP verified + DDL smoke-tested (quoted hyphenated identifiers, FK cascade, PK dedup, information_schema). Cutover = flip backend + fresh rescan + semantic validation; rollback = flip back. A =test= password was offered and declined in favor of trust; SCRAM path documented for later.
+- Search Center built as infrastructure (=search-center.org=): registry + candidate contract (12/12 headless checks: shape, marker fallback, assert-raises, display round-trip, degrading preview, third-party registration incl. replace-semantics), all 8 org-ql preset syntaxes validated headless (extensionless files need live org-mode wiring, confirmed), 24 unique hydra heads, =SPC v s= surface + =SPC v S= menu. Fixed en route: provider re-registration duplicated on string keys (now =equal=-compared); search hydra lives in =manifolding-keyboard.org= beside its siblings (=my/defhydra-state= is defined at priority 20, after the Center loads — first boot caught the void, 190/190 with 1 error, now relocated).
 - Body-blueprint nesting designed (picker from specs + wormhole =:property= insert + hydra =b=) — treat as *planned, not built* until re-verified.
 
 Validation tonight: batch =forward-sexp= check-parens over =file-creation.org= (236 blocks) / =restoration.org= (36) / =manifolding-keyboard.org= (111) — all PASS; headless =register-all= count 54 + =todo-state= spec check.

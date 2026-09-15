@@ -4,6 +4,15 @@
 
 * Database
 
+The substrate law: org files are the durable truth; =notes= and
+=links= are the machine-readable structural substrate — identity
+plus relations plus traversal. =mm_nodes=, =mastering_schedule=, and
+every plugin table are peer disposable indexes over that substrate,
+each rebuilt from files without touching the others. Higher-level
+queries compose indexes; no index is authoritative over another, and
+the substrate itself stays domain-neutral (it knows graph structure,
+never what any subsystem means by it).
+
 ** Database Core
 #+begin_src emacs-lisp
 (provide 'manifolding-atlas-db)
@@ -12,14 +21,89 @@
 (defvar manifolding-atlas-db--connection nil
   "DB connection.")
 
+(defcustom my/manifolding-atlas-db-backend 'sqlite
+  "Substrate backend: sqlite (vault file) or pg (PostgreSQL).
+The SQLite path is the temporary rollback artifact of the Postgres
+migration — byte-identical behavior to before. Flip to pg after the
+server exists and the fresh-rescan cutover checklist (README) passes.
+Scaffolding, not a permanent feature: delete the sqlite branch once
+PostgreSQL has survived real sessions."
+  :type '(choice (const sqlite) (const pg))
+  :group 'manifolding-atlas)
+
+(defcustom my/manifolding-atlas-db-pg-host "localhost"
+  "PostgreSQL host for the pg backend."
+  :type 'string :group 'manifolding-atlas)
+(defcustom my/manifolding-atlas-db-pg-port 5432
+  "PostgreSQL port for the pg backend."
+  :type 'integer :group 'manifolding-atlas)
+(defcustom my/manifolding-atlas-db-pg-dbname "atlas"
+  "PostgreSQL database name for the pg backend."
+  :type 'string :group 'manifolding-atlas)
+(defcustom my/manifolding-atlas-db-pg-user user-login-name
+  "PostgreSQL user for the pg backend.
+The password is never a defcustom and never lives in source: it comes
+solely from auth-source (typically ~/.authinfo as
+\"machine <host> port <port> login <user> password <secret>\").
+SCRAM-SHA-256 on the server side; no md5 fallback anywhere."
+  :type 'string :group 'manifolding-atlas)
+
+(defun my/manifolding-atlas-db-pg-password ()
+  "Fetch the pg password from auth-source, or nil when absent."
+  (require 'auth-source nil t)
+  (when (fboundp 'auth-source-pick-first-password)
+    (auth-source-pick-first-password
+     :host my/manifolding-atlas-db-pg-host
+     :user my/manifolding-atlas-db-pg-user
+     :port my/manifolding-atlas-db-pg-port)))
+
+(defun my/manifolding-atlas-db--connect-pg ()
+  "Open the PostgreSQL connection. Signals classifiable errors."
+  (require 'emacsql-pg)
+  (require 'pg)
+  (emacsql-pg my/manifolding-atlas-db-pg-dbname
+              my/manifolding-atlas-db-pg-user
+              :host my/manifolding-atlas-db-pg-host
+              :port my/manifolding-atlas-db-pg-port
+              :password (my/manifolding-atlas-db-pg-password)))
+
+(defun my/manifolding-atlas-db-health ()
+  "Probe the current backend; return (STATE . HINT).
+STATE is CONNECTED, DOWN, AUTH-FAILED, DATABASE-MISSING, or
+SCHEMA-OUTDATED. HINT names the exact shell recovery step. Never
+signals — infrastructure state must be reportable, not exceptional."
+  (condition-case err
+      (let ((db (manifolding-atlas-db)))
+        (if (null db)
+            (cons 'DOWN "pg_ctl -D $PREFIX/var/lib/postgresql start")
+          (condition-case nil
+              (progn
+                (emacsql db [:select [id] :from notes :limit 1])
+                (cons 'CONNECTED nil))
+            (error (cons 'SCHEMA-OUTDATED "rescan the vault to rebuild indexes")))))
+    (error
+     (let ((msg (error-message-string err)))
+       (cond ((string-match-p "refused\\|could not connect\\|no such host" msg)
+              (cons 'DOWN "pg_ctl -D $PREFIX/var/lib/postgresql start"))
+             ((string-match-p "auth\\|password" msg)
+              (cons 'AUTH-FAILED "check ~/.authinfo entry and pg_hba scram-sha-256"))
+             ((string-match-p "does not exist" msg)
+              (cons 'DATABASE-MISSING "createdb atlas (after createuser)"))
+             (t (cons 'DOWN msg)))))))
+
 (defun manifolding-atlas-db (&optional _args)
   "Return DB connection, opening it if needed."
   (require 'emacsql)
-  (require 'emacsql-sqlite-builtin)
-  (unless (and manifolding-atlas-db--connection
-               (ignore-errors (emacsql-live-p manifolding-atlas-db--connection)))
-    (setq manifolding-atlas-db--connection
-          (emacsql-sqlite-builtin manifolding-atlas-db-location)))
+  (if (eq my/manifolding-atlas-db-backend 'pg)
+      (unless (and manifolding-atlas-db--connection
+                   (ignore-errors (emacsql-live-p manifolding-atlas-db--connection)))
+        (setq manifolding-atlas-db--connection
+              (my/manifolding-atlas-db--connect-pg)))
+    (require 'emacsql-sqlite-builtin)
+    (unless (and manifolding-atlas-db--connection
+                 (ignore-errors (emacsql-live-p manifolding-atlas-db--connection)))
+      (setq manifolding-atlas-db--connection
+            (emacsql-sqlite-builtin manifolding-atlas-db-location))))
   (when (and manifolding-atlas-db--connection
              (not (bound-and-true-p my/manifolding-atlas--notes-table-ready)))
     ;; Guarantee `notes' exists for every caller (find/query/create),
@@ -354,6 +438,152 @@ is applied, so callers never see stale/deleted entries."
                       :aliases nil :primary-title nil
                       :meta nil)))
           (user-error "manifolding-atlas-db-get-by-id: ID %s not found" id))))))
+
+** Graph Traversal
+
+Single-hop relations already exist above (links-to, links-from).
+This section walks the knowledge graph itself: multi-hop reachability
+over =notes= + =links=, domain-neutral and cycle-safe throughout.
+
+The governing distinction, worth protecting: =db-descendants= answers
+"What is reachable through knowledge links?" while =mm/subtree-of=
+answers "What is contained beneath this node in this map?" Those sets
+sometimes look alike but mean different things — semantic
+reachability versus positional containment — so the substrate
+traverses links and the map traverses placement, and neither knows
+about the other's tables. No defun here may reference =mm_nodes=,
+stages, order keys, or parent ids; substrate purity is what keeps
+later composition powerful (ordered review, orphan triage, relation
+tracing, cluster layout — all compose these primitives with domain
+indexes rather than living inside them).
+
+*** Single-hop helpers
+#+begin_src emacs-lisp
+(defun manifolding-atlas-db--link-dests (id)
+  "Destination ids linked from ID, raw single hop."
+  (let ((db (manifolding-atlas-db)))
+    (when db
+      (mapcar #'car (emacsql db [:select [dest] :from links :where (= source $s1)] id)))))
+
+(defun manifolding-atlas-db--link-sources (id)
+  "Source ids linking to ID, raw single hop."
+  (let ((db (manifolding-atlas-db)))
+    (when db
+      (mapcar #'car (emacsql db [:select [source] :from links :where (= dest $s1)] id)))))
+
+(defun manifolding-atlas-db-neighbors (id)
+  "All ids one link away from ID in either direction, deduped, excluding ID."
+  (seq-uniq (seq-remove (lambda (x) (string-equal x id))
+                        (append (manifolding-atlas-db--link-dests id)
+                                (manifolding-atlas-db--link-sources id)))))
+#+end_src
+
+*** Breadth-first core
+One iterative engine for every multi-hop query: visited set, no
+recursion, optional depth cap in edges. Returns visited ids in
+discovery order with the starts first, so callers drop the head to
+exclude origins.
+#+begin_src emacs-lisp
+(defun manifolding-atlas-db--bfs (starts step-fn &optional max-depth)
+  "Walk from STARTS with STEP-FN (id -> id list), cycle-safe.
+Returns visited ids in discovery order, starts first. MAX-DEPTH
+caps edges traversed from any start; nil means unbounded."
+  (let ((seen (make-hash-table :test 'equal))
+        (order nil)
+        (frontier (copy-sequence starts))
+        (depth 0))
+    (dolist (s starts)
+      (puthash s t seen)
+      (push s order))
+    (while (and frontier (or (null max-depth) (< depth max-depth)))
+      (let (next)
+        (dolist (cur frontier)
+          (dolist (nxt (funcall step-fn cur))
+            (unless (gethash nxt seen)
+              (puthash nxt t seen)
+              (push nxt order)
+              (push nxt next))))
+        (setq frontier (nreverse next)))
+      (setq depth (1+ depth)))
+    (nreverse order)))
+#+end_src
+
+*** Reachability
+#+begin_src emacs-lisp
+(defun manifolding-atlas-db-descendants (id &optional max-depth)
+  "Ids reachable from ID following source→dest links, excluding ID.
+Semantic reachability through knowledge links — not map containment
+(contrast mm/subtree-of, which walks placement instead)."
+  (cdr (manifolding-atlas-db--bfs (list id) #'manifolding-atlas-db--link-dests max-depth)))
+
+(defun manifolding-atlas-db-ancestors (id &optional max-depth)
+  "Ids that can reach ID following source→dest links, excluding ID.
+Answers \"what does this knowledge stand on?\" one question the
+review queue may one day sort by."
+  (cdr (manifolding-atlas-db--bfs (list id) #'manifolding-atlas-db--link-sources max-depth)))
+
+(defun manifolding-atlas-db-component (id)
+  "Full connected component of ID in either direction, ID first.
+The unit of orphan triage: a component of one is an unintegrated card."
+  (manifolding-atlas-db--bfs (list id) #'manifolding-atlas-db-neighbors))
+#+end_src
+
+*** Paths and entry points
+#+begin_src emacs-lisp
+(defun manifolding-atlas-db-shortest-path (from to)
+  "Id path [FROM ... TO] along links, nil when disconnected.
+FROM == TO returns the one-element path (FROM): a thing reaches
+itself trivially, which keeps relationship explanations and visual
+tracing total instead of special-cased."
+  (if (string-equal from to)
+      (list from)
+    (let ((seen (make-hash-table :test 'equal))
+          (prev (make-hash-table :test 'equal))
+          (queue (list from))
+          found)
+      (puthash from t seen)
+      (while (and queue (not found))
+        (let ((cur (pop queue)))
+          (dolist (nxt (manifolding-atlas-db-neighbors cur))
+            (unless (gethash nxt seen)
+              (puthash nxt t seen)
+              (puthash nxt cur prev)
+              (if (string-equal nxt to)
+                  (setq found t)
+                (setq queue (append queue (list nxt))))))))
+      (when found
+        (let ((path (list to))
+              (cur to))
+          (while (not (string-equal cur from))
+            (setq cur (gethash cur prev))
+            (push cur path))
+          path)))))
+
+(defun manifolding-atlas-db-link-roots ()
+  "Ids that link out but are never linked to: entry points of the graph.
+Where a newcomer (or a review walk) would start reading."
+  (let ((db (manifolding-atlas-db)))
+    (when db
+      (let ((dests (make-hash-table :test 'equal))
+            (rows (emacsql db [:select [source dest] :from links])))
+        (dolist (r rows)
+          (puthash (nth 1 r) t dests))
+        (seq-uniq (seq-filter (lambda (s) (not (gethash s dests)))
+                              (mapcar #'car rows)))))))
+
+(defun manifolding-atlas-db-isolated ()
+  "Note ids with no links in either direction: unintegrated cards.
+The honest feeder for UNSEEN triage and future \"connect this\"
+review prompts."
+  (let ((db (manifolding-atlas-db)))
+    (when db
+      (let ((linked (make-hash-table :test 'equal)))
+        (dolist (r (emacsql db [:select [source dest] :from links]))
+          (puthash (nth 0 r) t linked)
+          (puthash (nth 1 r) t linked))
+        (seq-filter (lambda (id) (not (gethash id linked)))
+                    (mapcar #'car (emacsql db [:select [id] :from notes])))))))
+#+end_src
 
 (defun manifolding-atlas-db-update-file (path)
   (let ((db (manifolding-atlas-db)))

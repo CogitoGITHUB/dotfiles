@@ -2293,6 +2293,9 @@ Meow #04): this batches an action on every occurrence."
 (manifolding-keyboard-define-state "ibuffer"
   :lighter "[IBF]"
   :cursor-type 'box)
+(manifolding-keyboard-define-state "mindmap"
+  :lighter "[MAP]"
+  :cursor-type 'box)
 #+end_src
 
 *** Atlas Pick State
@@ -2748,6 +2751,37 @@ armed.
 
 * KEYBOARD — Tool Integrations
 
+** Mindmap traverse
+Single-key topology walking. Vertical moves along depth (s = parent
+up, n = child down, headings ascending to their file card first);
+horizontal moves along order (h = previous sibling, t = next sibling,
+stopping dead at both ends — never wrapping). B crosses from map
+space into mastering space by reviewing the branch at point; the
+session returns you to the map when it ends. q/ESC drops back to the
+org state; SPC reaches the main menu; i enters insert for edits.
+Entry is explicit only (SPC m t) — no major-mode hook installs this
+state anywhere.
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-keys
+  :states '("mindmap")
+  :bind
+  `(("<escape>" . my/mindmap-traverse-quit)
+    ("ESC" . my/mindmap-traverse-quit)
+    ("SPC"  . my/main-hydra/body)
+    ("q"   . my/mindmap-traverse-quit)
+    ("i"   . my/insert-state)
+    ("s"   . mm/goto-parent)
+    ("n"   . mm/traverse-child)
+    ("h"   . mm/goto-prev-sibling)
+    ("t"   . mm/goto-next-sibling)
+    ("r"   . mm/goto-root)
+    ("g"   . mm/group-display)
+    ("m"   . mm/map-display)
+    ("B"   . my/manifolding-atlas-mastering-review-subtree)
+    ("P"   . mm/assign-parent)
+    ("A"   . mm/assign-after)))
+#+end_src
+
 ** Vundo
 #+begin_src emacs-lisp
 (with-eval-after-load 'vundo
@@ -2907,9 +2941,12 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
   (("g" my/manifolding-atlas-mastering-review "review due" :exit t)
    ("G" my/manifolding-atlas-mastering-review-overdue "review overdue" :exit t)
    ("M" my/manifolding-atlas-mastering-mark-review "mark reviewed" :exit t)
-   ("t" my/manifolding-atlas-mastering-toggle-participation "toggle pool" :exit t))
-  "Todo"
-  (("s" atlas-search-todo-dir "search todo" :exit t))
+   ("a" my/manifolding-atlas-mastering-attest "attest stage" :exit t)
+   ("d" my/manifolding-atlas-mastering-review-subtree "branch" :exit t)
+   ("t" my/manifolding-atlas-mastering-toggle-participation "suspend" :exit t))
+  "Search"
+  (("s" my/atlas-search "search center" :exit t)
+   ("S" my/atlas-search-hydra/body "search menu" :exit t))
   "Recipe"
   (("n" my/manifolding-atlas-recipe-create "new recipe" :exit t)
    ("e" my/manifolding-atlas-recipes-edit-servings "edit servings" :exit t)
@@ -2956,7 +2993,8 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
   (("p" mm/goto-parent       "parent"     :exit t)
    ("c" mm/goto-child        "child"      :exit t)
    ("s" mm/goto-sibling      "sibling"    :exit t)
-   ("r" mm/goto-root         "root"       :exit t))
+   ("r" mm/goto-root         "root"       :exit t)
+   ("t" my/mindmap-traverse-enter "traverse" :exit t))
   "Position"
   (("P" mm/assign-parent     "assign parent"  :exit t)
    ("A" mm/assign-after      "place after"    :exit t)
@@ -2964,14 +3002,54 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
    ("R" mm/make-root-interactive "make root"   :exit t)
    ("!" mm/repack-all        "repack all"     :exit t))
   "Status"
-  (("a" mm/--status-active     "set active"     :exit t)
-   ("d" mm/--status-deprecated "set deprecated" :exit t)
-   ("x" mm/--status-archived   "set archived"   :exit t))
+  (("a" mm/--status-active     "active"     :exit t)
+   ("s" mm/--status-suspended  "suspended"  :exit t)
+   ("d" mm/--status-dormant    "dormant"    :exit t)
+   ("x" mm/--status-archived   "archived"   :exit t))
   "View"
   (("m" mm/map-display       "map display"    :exit t)
    ("g" mm/group-display     "group display"  :exit t)
    ("j" mm/export-json       "export JSON"    :exit t)
    ("i" mm/init              "init vault"     :exit t)))
+#+end_src
+
+** SPC v S — Atlas Search
+All launchers point at commands defined in
+=atlas-engine/search-center.org= (priority 16, loads before this
+file), so every head resolves at compile time.
+#+begin_src emacs-lisp
+(my/defhydra-state my/atlas-search-hydra nil "Atlas Search"
+ (my/manifolding-atlas-hydra/body "atlas")
+ "Surface"
+ (("s" my/atlas-search "unified surface" :exit t)
+  ("n" my/atlas-deft "deft browser" :exit t))
+ "Text"
+ (("g" my/atlas-search-rg-vault "rg vault" :exit t)
+  ("G" my/atlas-search-rg-dir "rg dir" :exit t)
+  ("l" consult-line-multi "lines (open)" :exit t)
+  ("o" consult-outline "outline" :exit t))
+ "Structured"
+ (("q" my/atlas-search-ql-agenda "agenda" :exit t)
+  ("T" my/atlas-search-org-ql-tag "by tag" :exit t)
+  (":" my/atlas-search-org-ql-custom "custom query" :exit t))
+ "Database"
+ (("t" my/atlas-search-by-tag "by tag" :exit t)
+  ("m" my/atlas-search-by-stage "by stage" :exit t)
+  ("u" my/atlas-search-by-status "by status" :exit t)
+  ("b" my/atlas-search-backlinks "backlinks" :exit t)
+  ("f" my/atlas-search-forward-links "forward" :exit t)
+  ("D" my/atlas-search-by-due "due" :exit t)
+  ("O" my/atlas-search-by-overdue "overdue" :exit t)
+  ("U" my/atlas-search-by-unseen "unseen" :exit t)
+  ("i" my/atlas-search-by-isolated "isolated" :exit t)
+  ("c" my/atlas-search-component "component" :exit t)
+  ("P" my/atlas-search-path "path" :exit t))
+ "Todo"
+ (("w" atlas-search-todo-dir "todo vault" :exit t)
+  ("W" atlas-search-todo-all "todo open" :exit t))
+ "Files"
+ (("F" consult-recent-file "recent" :exit t)
+  ("d" my/atlas-search-find-vault-file "find file" :exit t)))
 #+end_src
 
 ** SPC a — Key Selection

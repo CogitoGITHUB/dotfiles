@@ -46,7 +46,9 @@ Change only this path to relocate the entire vault."
   (setq manifolding-atlas-db-sync-poll-interval 10))
 
 (defvar my/manifolding-atlas-db--location-used nil
-  "Location used when the current DB connection was opened.")
+  "Endpoint identity used when the current DB connection was opened.
+A cons (BACKEND . LOCATION-OR-NIL): sqlite tracks the file path, pg
+tracks the backend alone since its data lives outside the vault.")
 
 (defvar my/manifolding-atlas-db--guard-inside nil
   "Re-entrancy latch for `my/manifolding-atlas-db-location-guard'.
@@ -81,20 +83,24 @@ Runs before every connection attempt; cheap no-op once relocated."
                 (error-message-string err)))))))
 
 (defun my/manifolding-atlas-db-location-guard (orig)
-  "Reconnect when `manifolding-atlas-db-location' changed under us."
+  "Reconnect when the DB endpoint changed under us.
+Tracks backend + location as one endpoint identity: sqlite reacts to
+path changes (plus the legacy file relocation), pg reacts to backend
+flips and ignores path changes (its data lives outside the vault)."
   (unless my/manifolding-atlas-db--guard-inside
     (let ((my/manifolding-atlas-db--guard-inside t))
-      (my/manifolding-atlas-db--relocate-legacy)
-      (when (and manifolding-atlas-db--connection
-                 (not (equal my/manifolding-atlas-db--location-used
-                             manifolding-atlas-db-location)))
-        (manifolding-atlas-db-close))
-      (when (or (null manifolding-atlas-db--connection)
-                (not (equal my/manifolding-atlas-db--location-used
-                            manifolding-atlas-db-location)))
-        (funcall orig)
-        (setq my/manifolding-atlas-db--location-used
-              manifolding-atlas-db-location))))
+      (when (eq my/manifolding-atlas-db-backend 'sqlite)
+        (my/manifolding-atlas-db--relocate-legacy))
+      (let ((endpoint (cons my/manifolding-atlas-db-backend
+                            (and (eq my/manifolding-atlas-db-backend 'sqlite)
+                                 manifolding-atlas-db-location))))
+        (when (and manifolding-atlas-db--connection
+                   (not (equal my/manifolding-atlas-db--location-used endpoint)))
+          (manifolding-atlas-db-close))
+        (when (or (null manifolding-atlas-db--connection)
+                  (not (equal my/manifolding-atlas-db--location-used endpoint)))
+          (funcall orig)
+          (setq my/manifolding-atlas-db--location-used endpoint)))))
   (funcall orig))
 
 (advice-add 'manifolding-atlas-db :around

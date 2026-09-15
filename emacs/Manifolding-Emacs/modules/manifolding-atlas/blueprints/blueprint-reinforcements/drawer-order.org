@@ -24,7 +24,6 @@ reorder, then save to apply to the whole vault.
 ** LAWS
 ** LEVEL
 ** LEVERAGE
-** MASTERING
 ** MASTERY
 ** MIND_MAP_PLACEMENT
 ** NICKNAME
@@ -44,6 +43,8 @@ reorder, then save to apply to the whole vault.
 ** SCOPE
 ** SIGNALS
 ** SOURCES
+** STAGE
+** STATUS
 ** STATE_CHECKLIST
 ** STATE_DEPENDENCY
 ** STATE_GENERAL
