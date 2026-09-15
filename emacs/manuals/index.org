@@ -73,3 +73,17 @@ separator newlines → 3714339. L1 62 → 57, no duplicates. Origin sha now:
 | 04 | Elisp | 22731-35997 | 922373 | 04-mind/00-elisp.org | cut |
 | 04 | Detexify (title verbatim, see file) | 59185-59242 | 1698 | 04-mind/03-detexify.org | cut |
 | 04 | dmacro | 59423-59441 | 270 | 04-mind/04-dmacro.org | cut |
+
+Stage 05 reconcile: origin 3714339 → moved content 443904 + 9 consumed
+separator newlines → 3270426. L1 57 → 48, no duplicates. Origin sha now:
+400c7a76dddeabb80b50d2d839add55fb55354ac531a1674b90185096bdd305c
+
+| 05 | Shell Commands | 20923-21293 | 35644 | 05-world/00-shell-commands.org | cut |
+| 05 | Eshell | 21294-22940 | 107298 | 05-world/01-eshell.org | cut |
+| 05 | VTerm | 44190-44215 | 766 | 05-world/02-vterm.org | cut |
+| 05 | Dired | 2842-3460 | 56099 | 05-world/03-dired.org | cut |
+| 05 | Files | 6930-8454 | 137354 | 05-world/04-files.org | cut |
+| 05 | File Handling (title verbatim, see file) | 25639-26521 | 97751 | 05-world/05-file-handling.org | cut |
+| 05 | Hyperlinking (title verbatim, see file) | 25501-25621 | 7353 | 05-world/06-hyperlinking-and-web-navigation.org | cut |
+| 05 | emacs-everywhere | 44252-44272 | 464 | 05-world/07-emacs-everywhere.org | cut |
+| 05 | Persistent Authentication | 25622-25638 | 1175 | 05-world/08-persistent-authentication.org | cut |

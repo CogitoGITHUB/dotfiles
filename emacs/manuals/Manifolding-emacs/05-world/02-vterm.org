@@ -1,0 +1,30 @@
+#+manifold-source: ../manuals.org
+#+manifold-lines: 44190-44215
+#+manifold-stage: 05-world
+#+manifold-date: 2026-09-15
+
+* VTerm
+
+#+begin_src emacs-lisp
+(leaf vterm
+  :straight (vterm
+             :type git
+             :host github
+             :repo "akermu/emacs-libvterm")
+  :after evil
+  :config
+  ;; Optional: vterm buffer directory
+  (setq vterm-buffer-name "vterm")  ;; default name for new terminals
+
+  ;; Ensure executable exists
+  (unless (executable-find "vterm")
+    (message "⚠️ vterm executable not found. Make sure libvterm is compiled."))
+
+  ;; Evil leader bindings — "V" for terminal
+  (define-key evil-normal-state-map (kbd "SPC V v") #'vterm)
+  (define-key evil-normal-state-map (kbd "SPC V s")
+    (lambda () (interactive)
+      (vterm (generate-new-buffer-name "vterm"))))
+  (define-key evil-normal-state-map (kbd "SPC V r") #'vterm-send-receive))
+#+end_src
+
