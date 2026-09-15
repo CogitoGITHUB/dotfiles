@@ -101,9 +101,49 @@ ordering, and =routine_sessions= journals each run with done/skip counts.
        (routine-id :text :not-null)
        (source-id :text :not-null)
        (entry-order :integer :not-null)
-       (entry-group :text)]
+       (entry-group :text)
+       (step-duration :text)
+       (resched-interval :text)
+       (resched-days :text)
+       (resched-anchor :text)
+       (next-date :integer)]
       (:foreign-key [routine-id] :references notes [id]
-       :on-delete :cascade))]))
+       :on-delete :cascade))])
+  (my/manifolding-atlas-routines--migrate-entry-columns))
+#+end_src
+**** Entries column migration
+=CREATE IF NOT EXISTS= never adds columns to an existing table, so —
+like mastering's stage/status migration — the ensure function
+inspects the schema and alters when an older one is found. Same
+dialect branch (SQLite =PRAGMA=, PostgreSQL =information_schema=),
+portable ALTER, errors swallowed.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--migrate-entry-columns ()
+  "Add timer/reschedule columns to routine_entries when missing."
+  (let* ((pg (eq (and (boundp 'my/manifolding-atlas-db-backend)
+                      my/manifolding-atlas-db-backend)
+                 'pg))
+         (info (condition-case nil
+                   (if pg
+                       (emacsql (manifolding-atlas-db)
+                         "SELECT column_name FROM information_schema.columns WHERE table_name = 'routine_entries'")
+                     (emacsql (manifolding-atlas-db)
+                       "PRAGMA table_info(routine_entries)"))
+                 (error nil)))
+         (cols (mapcar (lambda (row)
+                         (seq-find #'stringp (append row nil)))
+                       info)))
+    (dolist (col '(("step-duration" . "TEXT")
+                   ("resched-interval" . "TEXT")
+                   ("resched-days" . "TEXT")
+                   ("resched-anchor" . "TEXT")
+                   ("next-date" . "INTEGER")))
+      (unless (member (car col) cols)
+        (condition-case nil
+            (emacsql (manifolding-atlas-db)
+              (format "ALTER TABLE routine_entries ADD COLUMN %s %s"
+                      (car col) (cdr col)))
+          (error nil))))))
 #+end_src
 **** Sessions table
 #+begin_src emacs-lisp
@@ -167,7 +207,15 @@ and SESSION_DATE land in =routine_sessions=.
         [:insert :into routine_entries :values $v1]
         (vector note-id rid source
                 (string-to-number order)
-                (cdr (assoc "ROUTINE_GROUP" unfoldings)))))))
+                (cdr (assoc "ROUTINE_GROUP" unfoldings))
+                (cdr (assoc "STEP_DURATION" unfoldings))
+                (cdr (assoc "RESCHEDULE_INTERVAL" unfoldings))
+                (cdr (assoc "RESCHEDULE_DAYS" unfoldings))
+                (cdr (assoc "RESCHEDULE_ANCHOR" unfoldings))
+                (let ((nxt (cdr (assoc "NEXT_DATE" unfoldings))))
+                  (and nxt
+                       (string-match-p "^[0-9]\\{8\\}$" nxt)
+                       (string-to-number nxt))))))))
 #+end_src
 **** Session row extraction
 #+begin_src emacs-lisp
@@ -276,8 +324,13 @@ vocabulary — one factory per shape keeps both schemas terse.
         :validate (my/manifolding-atlas-routines--required-validator))
   (list :key "SESSION_SKIPPED" :type 'string
         :validate (my/manifolding-atlas-routines--required-validator))
-  (list :key "SESSION_TOTAL" :type 'string
-        :validate (my/manifolding-atlas-routines--required-validator))))
+   (list :key "SESSION_TOTAL" :type 'string
+         :validate (my/manifolding-atlas-routines--required-validator))
+   (list :key "SESSION_ELAPSED" :type 'string
+         :validate (lambda (val _n)
+                     (cond ((or (null val) (equal val "WARNING")) t)
+                           ((not (string-match-p "^[0-9]+$" val)) "invalid-elapsed")
+                           (t t))))))
 #+end_src
 
 *** Entry Writing
@@ -298,20 +351,22 @@ into WORKOUT_* unfoldings.
 **** Entry insertion
 Dual-writes: org drawer unfoldings plus immediate routine_entries rows.
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-routines--entry-insert-row (eid rid source order group)
+(defun my/manifolding-atlas-routines--entry-insert-row (eid rid source order group duration interval days)
   "Insert one routine_entries row immediately; tolerate FK timing."
   (condition-case nil
       (emacsql (manifolding-atlas-db)
         [:insert :into routine_entries :values $v1]
-        (vector eid rid source order group))
+        (vector eid rid source order group duration interval days nil nil))
     (error nil)))
 #+end_src
 
 **** Group and prescription prompts
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--prompt-details (items)
-  "Annotate reordered ITEMS with optional group and prescription.
-ITEMS are (id . title) conses; returns (id title group rx) lists."
+  "Annotate reordered ITEMS with group, prescription, duration and cadence.
+ITEMS are (id . title) conses; returns
+\(id title group rx duration interval days) lists. Blanks mean none;
+durations look like 45s/20m, intervals like 2d/1w, days like Mon/Wed/Fri."
   (let (out)
     (dolist (item items)
       (let* ((group (completing-read
@@ -320,10 +375,34 @@ ITEMS are (id . title) conses; returns (id title group rx) lists."
                      nil t nil nil ""))
              (rx (read-string
                   (format "Prescription for %s (e.g. 3x10 @20kg /180, blank = none): "
-                          (cdr item)))))
+                          (cdr item))))
+             (duration (read-string
+                        (format "Step timer for %s (e.g. 45s, blank = none): "
+                                (cdr item))))
+             (interval (read-string
+                        (format "Repeat interval for %s (e.g. 2d/1w, blank = none): "
+                                (cdr item))))
+             (days (read-string
+                    (format "Repeat days for %s (e.g. Mon/Wed/Fri, blank = none): "
+                            (cdr item)))))
+        (when (and (not (string-empty-p duration))
+                   (not (atlas-timer-parse-duration duration)))
+          (message "Duration %S ignored: want 45s/20m/1h30m" duration)
+          (setq duration ""))
+        (when (and (not (string-empty-p interval))
+                   (not (my/manifolding-atlas-routines--parse-interval interval)))
+          (message "Interval %S ignored: want Nd/Nw/Nm/Ny" interval)
+          (setq interval ""))
+        (when (and (not (string-empty-p days))
+                   (not (my/manifolding-atlas-routines--parse-days days)))
+          (message "Days %S ignored: want Mon/Wed/Fri" days)
+          (setq days ""))
         (push (list (car item) (cdr item)
                     (unless (string-empty-p group) group)
-                    (unless (string-empty-p rx) rx))
+                    (unless (string-empty-p rx) rx)
+                    (unless (string-empty-p duration) duration)
+                    (unless (string-empty-p interval) interval)
+                    (unless (string-empty-p days) days))
               out)))
     (nreverse out)))
 #+end_src
@@ -340,7 +419,7 @@ Unparseable prescriptions are kept verbatim in WORKOUT_RX.
 **** Entry heading text
 Builds the full drawer for one entry heading.
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-routines--entry-text (title eid sid routine-id idx group rx)
+(defun my/manifolding-atlas-routines--entry-text (title eid sid routine-id idx group rx duration interval days)
   "Return the entry heading text with its :PROPERTIES: drawer."
   (let* ((parts (my/manifolding-atlas-routines--rx-parts rx))
          (sets (nth 0 parts)) (reps (nth 1 parts))
@@ -356,6 +435,9 @@ Builds the full drawer for one entry heading.
      (when load (format ":WORKOUT_LOAD: %s\n" load))
      (when rest (format ":WORKOUT_REST: %ss\n" rest))
      (when rx (format ":WORKOUT_RX: %s\n" rx))
+     (when duration (format ":STEP_DURATION: %s\n" duration))
+     (when interval (format ":RESCHEDULE_INTERVAL: %s\n" interval))
+     (when days (format ":RESCHEDULE_DAYS: %s\n" days))
      ":END:\n")))
 #+end_src
 **** Entry writer
@@ -363,7 +445,7 @@ Dual-writes: org drawer unfoldings plus immediate routine_entries rows.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--write-entries (note items)
   "Append ITEMS as entry child headings of NOTE.
-ITEMS are (id title group rx) lists from `--prompt-details'.
+ITEMS are (id title group rx duration interval days) lists from `--prompt-details'.
 Dual-writes: org drawer unfoldings plus immediate routine_entries rows."
   (let* ((file (manifolding-atlas-note-path note))
          (routine-id (manifolding-atlas-note-id note))
@@ -376,10 +458,12 @@ Dual-writes: org drawer unfoldings plus immediate routine_entries rows."
         (let ((eid (org-id-new)))
           (insert (my/manifolding-atlas-routines--entry-text
                    (nth 1 item) eid (nth 0 item) routine-id idx
-                   (nth 2 item) (nth 3 item)))
+                   (nth 2 item) (nth 3 item)
+                   (nth 4 item) (nth 5 item) (nth 6 item)))
           (org-id-add-location eid file)
           (my/manifolding-atlas-routines--entry-insert-row
-           eid routine-id (nth 0 item) idx (nth 2 item))))
+           eid routine-id (nth 0 item) idx (nth 2 item)
+           (nth 4 item) (nth 5 item) (nth 6 item))))
       (save-buffer))))
 #+end_src
 
@@ -436,7 +520,8 @@ Used when the DB index has no rows for a routine.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--entries-org (routine)
   "Read entries of ROUTINE directly from org as fallback.
-Returns (source-id title order group sets reps load rest rx) lists."
+Returns (source-id title order group sets reps load rest rx duration
+interval days anchor next) lists."
   (let ((entries nil))
     (with-current-buffer
         (find-file-noselect (manifolding-atlas-note-path routine))
@@ -454,7 +539,12 @@ Returns (source-id title order group sets reps load rest rx) lists."
                          (org-entry-get nil "WORKOUT_REPS")
                          (org-entry-get nil "WORKOUT_LOAD")
                          (org-entry-get nil "WORKOUT_REST")
-                         (org-entry-get nil "WORKOUT_RX"))
+                         (org-entry-get nil "WORKOUT_RX")
+                         (org-entry-get nil "STEP_DURATION")
+                         (org-entry-get nil "RESCHEDULE_INTERVAL")
+                         (org-entry-get nil "RESCHEDULE_DAYS")
+                         (org-entry-get nil "RESCHEDULE_ANCHOR")
+                         (org-entry-get nil "NEXT_DATE"))
                    entries))))
        nil nil))
     (sort (nreverse entries)
@@ -462,9 +552,12 @@ Returns (source-id title order group sets reps load rest rx) lists."
 #+end_src
 **** Live workout detail
 Workout unfoldings always come from the file, never the stale index.
+Timer and reschedule unfoldings ride the same live reader, so the run
+loop never acts on a stale duration or anchor.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--entry-extras (routine)
-  "Hash entry-ID to its (sets reps load rest rx) from ROUTINE's file."
+  "Hash entry-ID to its live unfoldings from ROUTINE's file.
+Value is (sets reps load rest rx duration interval days anchor next)."
   (let ((map (make-hash-table :test 'equal)))
     (with-current-buffer
         (find-file-noselect (manifolding-atlas-note-path routine))
@@ -477,7 +570,12 @@ Workout unfoldings always come from the file, never the stale index.
                             (org-entry-get nil "WORKOUT_REPS")
                             (org-entry-get nil "WORKOUT_LOAD")
                             (org-entry-get nil "WORKOUT_REST")
-                            (org-entry-get nil "WORKOUT_RX"))
+                            (org-entry-get nil "WORKOUT_RX")
+                            (org-entry-get nil "STEP_DURATION")
+                            (org-entry-get nil "RESCHEDULE_INTERVAL")
+                            (org-entry-get nil "RESCHEDULE_DAYS")
+                            (org-entry-get nil "RESCHEDULE_ANCHOR")
+                            (org-entry-get nil "NEXT_DATE"))
                       map))))
        nil nil))
     map))
@@ -489,7 +587,8 @@ Joins one DB row with its live workout extras and source title.
   "Expand one DB ROW with EXTRAS into an entry list."
   (let* ((eid (nth 0 row))
          (sid (nth 1 row))
-         (extra (or (gethash eid extras) '(nil nil nil nil nil)))
+         (extra (or (gethash eid extras) '(nil nil nil nil nil
+                                            nil nil nil nil nil)))
          (snote (manifolding-atlas-db-get-by-id sid)))
     (list sid
           (if snote
@@ -501,7 +600,12 @@ Joins one DB row with its live workout extras and source title.
           (nth 1 extra)
           (nth 2 extra)
           (nth 3 extra)
-          (nth 4 extra))))
+          (nth 4 extra)
+          (nth 5 extra)
+          (nth 6 extra)
+          (nth 7 extra)
+          (nth 8 extra)
+          (nth 9 extra))))
 #+end_src
 **** Entries dispatcher
 Ordering and groups come from the DB index; workout detail is read
@@ -509,7 +613,8 @@ live from the routine file.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--entries (routine)
   "Return ordered entries of ROUTINE as
-(source-id title order group sets reps load rest rx)."
+\(source-id title order group sets reps load rest rx duration
+interval days anchor next)."
   (let* ((rid (manifolding-atlas-note-id routine))
          (rows (condition-case nil
                    (emacsql (manifolding-atlas-db)
@@ -573,7 +678,10 @@ sessions/<year>/<quarter>/<month>/<week>/<date>-<slug>."
 Replaces all previous entry child headings with the fresh results.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--session-insert-steps (results file)
-  "Delete old entry headings and insert RESULTS as fresh ones."
+  "Delete old entry headings and insert RESULTS as fresh ones.
+RESULTS are (source-id title result elapsed planned); the journal
+line carries the timing, and raw seconds land in STEP_ELAPSED and
+STEP_PLANNED unfoldings for queries."
   (org-with-point-at 1
     (org-back-to-heading t)
     (while (re-search-forward "^\\*\\* " nil t)
@@ -585,9 +693,17 @@ Replaces all previous entry child headings with the fresh results.
     (dolist (res results)
       (unless (bolp) (insert "\n"))
       (let ((eid (org-id-new)))
-        (insert (format "** %s\n:PROPERTIES:\n:ID: %s\n:SOURCE: %s\n:STEP_RESULT: %s\n:END:\n"
+        (insert (format "** %s\n:PROPERTIES:\n:ID: %s\n:SOURCE: %s\n:STEP_RESULT: %s\n%s%s:END:\n%s\n"
                         (nth 1 res) eid (nth 0 res)
-                        (symbol-name (nth 2 res))))
+                        (symbol-name (nth 2 res))
+                        (if (nth 3 res)
+                            (format ":STEP_ELAPSED: %d\n" (nth 3 res))
+                          "")
+                        (if (nth 4 res)
+                            (format ":STEP_PLANNED: %d\n" (nth 4 res))
+                          "")
+                        (atlas-timer-format-step-line
+                         (nth 1 res) (nth 2 res) (nth 3 res) (nth 4 res))))
         (org-id-add-location eid file)))))
 #+end_src
 **** Session DB upsert
@@ -610,9 +726,10 @@ Dual-writes the org file and the routine_sessions table. Idempotent
 per day: an existing session for the same routine and date is
 rewritten in place, preserving its ID.
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-routines--session-create (routine results done skipped)
+(defun my/manifolding-atlas-routines--session-create (routine results done skipped elapsed)
   "Create or update today's session note for ROUTINE.
-RESULTS is a list of (source-id title result), result being `done or `skip."
+RESULTS is a list of (source-id title result elapsed planned),
+result being `done or `skip. ELAPSED is whole-run wall seconds."
   (let* ((rid (manifolding-atlas-note-id routine))
          (rtitle (manifolding-atlas-note-title routine))
          (date (my/manifolding-atlas-routines--today-string))
@@ -620,24 +737,34 @@ RESULTS is a list of (source-id title result), result being `done or `skip."
          (total (length results))
          (fname (my/manifolding-atlas-routines--session-path
                  date (manifolding-atlas-title-to-slug rtitle)))
-         (unfoldings `(("SESSION_OF" . ,rid)
-                  ("SESSION_DATE" . ,date)
-                  ("SESSION_DONE" . ,(number-to-string done))
-                  ("SESSION_SKIPPED" . ,(number-to-string skipped))
-                  ("SESSION_TOTAL" . ,(number-to-string total))))
-         (note (or (my/manifolding-atlas-routines--session-note-for rid today)
-                   (my/manifolding-atlas--create-file-wrapper
-                    (format "%s — %s" rtitle date)
-                    fname '("session") unfoldings "")))
-         (file (manifolding-atlas-note-path note))
-         (sid (manifolding-atlas-note-id note)))
-    (with-current-buffer (find-file-noselect file)
-      (org-with-point-at 1
-        (org-back-to-heading t)
-        (dolist (unfolding unfoldings)
-          (org-entry-put nil (car unfolding) (cdr unfolding))))
-      (my/manifolding-atlas-routines--session-insert-steps results file)
-      (save-buffer))
+          (unfoldings `(("SESSION_OF" . ,rid)
+                   ("SESSION_DATE" . ,date)
+                   ("SESSION_DONE" . ,(number-to-string done))
+                   ("SESSION_SKIPPED" . ,(number-to-string skipped))
+                   ("SESSION_TOTAL" . ,(number-to-string total))
+                   ("SESSION_ELAPSED" . ,(number-to-string elapsed))))
+          (note (or (my/manifolding-atlas-routines--session-note-for rid today)
+                    (my/manifolding-atlas--create-file-wrapper
+                     (format "%s — %s" rtitle date)
+                     fname '("session") unfoldings "")))
+          (file (manifolding-atlas-note-path note))
+          (sid (manifolding-atlas-note-id note)))
+     (with-current-buffer (find-file-noselect file)
+       (org-with-point-at 1
+         (org-back-to-heading t)
+         (dolist (unfolding unfoldings)
+           (org-entry-put nil (car unfolding) (cdr unfolding))))
+       (my/manifolding-atlas-routines--session-insert-steps results file)
+       (goto-char (point-min))
+       (while (re-search-forward "^Session: [0-9]+ done / .*$" nil t)
+         (delete-region (line-beginning-position)
+                        (min (point-max) (1+ (line-end-position)))))
+       (goto-char (point-max))
+       (unless (bolp) (insert "\n"))
+       (insert (format "%s\n"
+                       (atlas-timer-format-session-line
+                        done skipped total elapsed)))
+       (save-buffer))
     (my/manifolding-atlas-routines--session-db-upsert sid rid today done skipped total)
     (message "Session logged: %s (%d done / %d skipped)"
              (manifolding-atlas-note-title note) done skipped)
@@ -763,6 +890,47 @@ Opens =*routines-report*= in an org buffer.
         (insert (my/manifolding-atlas-routines--report-section row today)))
       (display-buffer (current-buffer)))
     (message "Routine report updated")))
+#+end_src
+
+*** Agenda Facet
+Read-only org surface for routines. Atlas writes SCHEDULED planning
+lines (sole writer); agenda only displays them. No org repeaters on
+any Atlas-managed timestamp — that rule also excludes =org-habit=,
+which structurally requires a TODO keyword, a repeater, and
+org-owned rescheduling (a triple violation). The streak graph habit
+would give is rendered here instead, from the streak engine that
+already owns compliance truth: a 14-day strip where =#= trained.
+
+**** Agenda files
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines-agenda-files ()
+  "Return routine note files for agenda scoping.
+Entry SCHEDULED lines live in the routine files, so those are what
+the agenda needs. Missing files are dropped, never created."
+  (seq-filter
+   #'file-exists-p
+   (mapcar (lambda (row)
+             (let ((note (manifolding-atlas-db-get-by-id (car row))))
+               (and note (manifolding-atlas-note-path note))))
+           (emacsql (manifolding-atlas-db)
+             [:select [note-id] :from routines]))))
+#+end_src
+
+**** Streak strip
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--streak-strip (routine-id &optional days)
+  "Return a DAYS-long (default 14) streak strip for ROUTINE-ID.
+Newest day last; \"#\" means a session exists that day, \".\" means
+none. Built from routine_sessions, the same truth the report uses."
+  (let* ((days (or days 14))
+         (today (time-to-days (current-time)))
+         (have (make-hash-table :test 'eql)))
+    (dolist (row (my/manifolding-atlas-routines--sessions-for routine-id))
+      (puthash (my/manifolding-atlas-routines--dateint-days (nth 0 row))
+               t have))
+    (mapconcat (lambda (n)
+                 (if (gethash (- today (- days 1 n)) have) "#" "."))
+               (number-sequence 0 (1- days)) "")))
 #+end_src
 
 *** Heading Collection
@@ -1202,6 +1370,232 @@ themselves routines.
     (message "Validated %d routines, %d problem(s)" count (length report))))
 #+end_src
 
+*** Anchored Rescheduling
+Elisp-native port of the reschedule-by-rule idea: a stable anchor
+(last completion date) plus an interval and/or weekday set decide the
+next due date, immune to manual drag-drift. No Python, no croniter.
+Computed at session completion for done entries; skipped entries
+never advance. Each engine owns its copy of this logic — routines and
+protocols intentionally do not share it.
+
+**** Interval and weekday parsing
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--parse-interval (str)
+  "Parse STR like \"2d\"/\"1w\"/\"3m\"/\"1y\" into (NUM . UNIT).
+UNIT is one of d/w/m/y. Return nil when STR is not an interval.
+\"h\" parses as (NUM . h) but anchor math is day-precision, so hour
+intervals resolve to the same day; intra-day repetition belongs to
+the run, not the anchor."
+  (when (and (stringp str)
+             (string-match "\\`\\s-*\\([0-9]+\\)\\s-*\\([hdwmy]\\)\\s-*\\'" str))
+    (cons (string-to-number (match-string 1 str))
+          (intern (match-string 2 str)))))
+
+(defconst my/manifolding-atlas-routines--dow-names
+  ["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"]
+  "Three-letter weekday names indexed like `decoded-time-weekday'.")
+
+(defun my/manifolding-atlas-routines--parse-days (str)
+  "Parse STR like \"Mon/Wed/Fri\" into a sorted list of weekday numbers.
+Sunday is 0. Accept full names, any case, separated by slash, comma
+or whitespace. Return nil when nothing parses."
+  (when (stringp str)
+    (let (out)
+      (dolist (tok (split-string str "[/, \t]+" t))
+        (let ((pos nil)
+              (low (downcase tok)))
+          (cl-loop for i from 0 to 6
+                   for full = (aref my/manifolding-atlas-routines--dow-names i)
+                   for flow = (downcase full)
+                   when (or (string= low flow)
+                            (and (>= (length low) 2)
+                                 (or (string-prefix-p low flow)
+                                     (string-prefix-p flow low))))
+                   do (setq pos i))
+          (when pos (push pos out))))
+      (sort (delete-dups out) #'<))))
+#+end_src
+
+**** Date arithmetic
+Day-precision ISO helpers. Months clamp (Jan 31 + 1m = Feb 28/29),
+never overflow-normalize.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--iso-days (iso)
+  "Convert ISO date \"YYYY-MM-DD\" to an org day-number."
+  (time-to-days
+   (encode-time 0 0 0
+                (string-to-number (substring iso 8 10))
+                (string-to-number (substring iso 5 7))
+                (string-to-number (substring iso 0 4)))))
+
+(defun my/manifolding-atlas-routines--days-iso (days)
+  "Convert an org day-number back to ISO \"YYYY-MM-DD\".
+Note `days-to-time' uses the Emacs epoch, not `time-to-days'' —
+the offset must be subtracted first."
+  (format-time-string "%Y-%m-%d"
+                      (days-to-time (- days (time-to-days 0)))))
+
+(defun my/manifolding-atlas-routines--iso-weekday (iso)
+  "Weekday number of ISO date: Sunday 0 through Saturday 6."
+  (nth 6 (decode-time (encode-time 0 0 0
+                                   (string-to-number (substring iso 8 10))
+                                   (string-to-number (substring iso 5 7))
+                                   (string-to-number (substring iso 0 4))))))
+
+(defun my/manifolding-atlas-routines--iso-add (iso num unit)
+  "Add NUM UNITs (d/w/m/y/h) to ISO date; return ISO.
+\"h\" is sub-day and returns ISO unchanged (day precision)."
+  (require 'calendar)
+  (pcase unit
+    ('h iso)
+    ('d (my/manifolding-atlas-routines--days-iso
+         (+ (my/manifolding-atlas-routines--iso-days iso) num)))
+    ('w (my/manifolding-atlas-routines--days-iso
+         (+ (my/manifolding-atlas-routines--iso-days iso) (* 7 num))))
+    ((or 'm 'y)
+     (let* ((y (string-to-number (substring iso 0 4)))
+            (m (string-to-number (substring iso 5 7)))
+            (d (string-to-number (substring iso 8 10)))
+            (total (+ (1- m) (if (eq unit 'm) num (* 12 num))))
+            (ny (+ y (/ total 12)))
+            (nm (1+ (% total 12)))
+            (last (calendar-last-day-of-month nm ny)))
+       (format "%04d-%02d-%02d" ny nm (min d last))))))
+#+end_src
+
+**** Next-date computation
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--next-date (anchor today interval days)
+  "Next due ISO date strictly after TODAY.
+ANCHOR is the last-completion ISO date (or nil for first run).
+INTERVAL is a (NUM . UNIT) from `--parse-interval' (or nil).
+DAYS is a weekday-number list from `--parse-days' (or nil).
+Lattice rule: step from the anchor by INTERVAL until past TODAY;
+with DAYS, keep stepping until a listed weekday lands. DAYS alone
+means the next listed weekday after TODAY. Neither means nil."
+  (when (or interval days)
+    (let ((base (or anchor today))
+          (today-n (my/manifolding-atlas-routines--iso-days today))
+          (cand nil)
+          (i 0))
+      (if interval
+          (progn
+            (setq cand base)
+            (while (and (<= (my/manifolding-atlas-routines--iso-days cand)
+                            today-n)
+                        (< (cl-incf i) 1000))
+              (setq cand (my/manifolding-atlas-routines--iso-add
+                          cand (car interval) (cdr interval))))
+            (when days
+              (setq i 0)
+              (while (and (not (member (my/manifolding-atlas-routines--iso-weekday cand)
+                                       days))
+                          (< (cl-incf i) 1000))
+                (setq cand (my/manifolding-atlas-routines--iso-add
+                            cand (car interval) (cdr interval))))))
+        (setq cand (my/manifolding-atlas-routines--days-iso (1+ today-n))
+              i 0)
+        (while (and (not (member (my/manifolding-atlas-routines--iso-weekday cand)
+                                 days))
+                    (< (cl-incf i) 8))
+          (setq cand (my/manifolding-atlas-routines--days-iso
+                      (1+ (my/manifolding-atlas-routines--iso-days cand))))))
+      (when (< i 1000) cand))))
+#+end_src
+
+**** Advance writer
+Sole writer of entry next-dates. Writes three facets at once: the
+RESCHEDULE_ANCHOR and NEXT_DATE drawer unfoldings (machine truth the
+extractor indexes) and the SCHEDULED planning line (the org/agenda
+facet). No org-schedule call, no hooks — a plain planning-line edit,
+so org can only ever display these dates, never decide them.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--write-entry-next (routine sid anchor next)
+  "Stamp ANCHOR (ISO) and NEXT (ISO) onto ROUTINE's entries for SID.
+Writes RESCHEDULE_ANCHOR + NEXT_DATE unfoldings and the SCHEDULED
+planning line; updates the routine_entries row to match."
+  (let ((file (manifolding-atlas-note-path routine))
+        (next-int (string-to-number (concat (substring next 0 4)
+                                            (substring next 5 7)
+                                            (substring next 8 10))))
+        (sched (format "<%s %s>" next
+                       (aref my/manifolding-atlas-routines--dow-names
+                             (my/manifolding-atlas-routines--iso-weekday next)))))
+    (with-current-buffer (find-file-noselect file)
+      (org-map-entries
+       (lambda ()
+         (when (string= (org-entry-get nil "SOURCE") sid)
+           (org-entry-put nil "RESCHEDULE_ANCHOR" anchor)
+           (org-entry-put nil "NEXT_DATE"
+                          (format "%d" next-int))
+           (save-excursion
+             (org-back-to-heading t)
+             (let ((end (save-excursion (org-end-of-subtree t t))))
+               (forward-line 1)
+               (if (re-search-forward "^SCHEDULED:" end t)
+                   (progn (beginning-of-line)
+                          (delete-region (line-beginning-position)
+                                         (line-end-position))
+                          (insert (format "SCHEDULED: %s" sched)))
+                 (org-back-to-heading t)
+                 (end-of-line)
+                 (insert (format "\nSCHEDULED: %s" sched)))))))
+       nil nil)
+      (save-buffer))
+    (condition-case nil
+        (emacsql (manifolding-atlas-db)
+          [:update routine_entries
+           :set resched-anchor = $s1, next-date = $s2
+           :where (and (= routine-id $s3) (= source-id $s4))]
+          anchor next-int
+          (manifolding-atlas-note-id routine) sid)
+      (error nil))))
+
+(defun my/manifolding-atlas-routines--advance-anchors (routine results)
+  "Advance rescheduling for done entries in RESULTS.
+RESULTS are (source-id title result ...) lists. Done entries step
+their anchor to today and compute the next date; skipped entries
+and entries without cadence are left alone."
+  (let ((today (my/manifolding-atlas-routines--today-string))
+        (advanced 0))
+    (dolist (res results)
+      (when (eq (nth 2 res) 'done)
+        (let* ((sid (nth 0 res))
+               (cad (my/manifolding-atlas-routines--entry-cadence
+                     routine sid)))
+          (when cad
+            (let ((next (my/manifolding-atlas-routines--next-date
+                         (nth 2 cad) today (nth 0 cad) (nth 1 cad))))
+              (when next
+                (my/manifolding-atlas-routines--write-entry-next
+                 routine sid today next)
+                (cl-incf advanced)))))))
+    (when (> advanced 0)
+      (message "Rescheduled %d entries" advanced))))
+
+(defun my/manifolding-atlas-routines--entry-cadence (routine sid)
+  "Return (INTERVAL DAYS ANCHOR) for ROUTINE's first entry with SID.
+INTERVAL/DAYS are parsed (nil when absent); ANCHOR is the raw ISO
+string (nil when absent). Return nil when the entry has no cadence."
+  (let (found)
+    (with-current-buffer
+        (find-file-noselect (manifolding-atlas-note-path routine))
+      (org-map-entries
+       (lambda ()
+         (when (and (not found)
+                    (string= (org-entry-get nil "SOURCE") sid))
+           (let ((iv (my/manifolding-atlas-routines--parse-interval
+                      (org-entry-get nil "RESCHEDULE_INTERVAL")))
+                 (dy (my/manifolding-atlas-routines--parse-days
+                      (org-entry-get nil "RESCHEDULE_DAYS"))))
+             (when (or iv dy)
+               (setq found
+                     (list iv dy
+                           (org-entry-get nil "RESCHEDULE_ANCHOR")))))))
+       nil nil))
+    found))
+#+end_src
+
 *** Run Session
 Step-by-step execution in a review buffer. Steps that are in the
 mastering pool show their review status; due steps can be graded with
@@ -1210,13 +1604,20 @@ to journal the session.
 
 **** Step display
 #+begin_src emacs-lisp
-(defun my/manifolding-atlas-routines--display-step (buf step total title sid badge)
+(defun my/manifolding-atlas-routines--display-step (buf step total title sid badge planned remaining)
   (with-current-buffer buf
     (let ((inhibit-read-only t))
       (erase-buffer)
       (insert (format "[%d/%d] %s\n\n" step total title))
       (when badge
         (insert (format "mastering: %s\n" badge)))
+      (when planned
+        (insert (format "timer: %s planned%s\n"
+                        (atlas-timer-format-seconds planned)
+                        (if remaining
+                            (format ", %s left"
+                                    (atlas-timer-format-seconds remaining))
+                          ""))))
       (insert (format "[[id:%s][open]]\n" sid)))))
 #+end_src
 **** Open-note followup prompt
@@ -1242,8 +1643,15 @@ After opening a step's note, the user is asked again; returns
 #+end_src
 **** Single-step handler
 Returns (RESULT . GRADED-P), or 'quit, or nil when nothing was
-recorded for this step.
+recorded for this step. Step timing (elapsed seconds, planned
+seconds) is stashed in `--step-timings' keyed by source-id, whether
+or not the step is recorded — the run command decides what lands in
+the journal. t pauses/resumes the countdown, + and - nudge the
+planned duration by a minute mid-step.
 #+begin_src emacs-lisp
+(defvar my/manifolding-atlas-routines--step-timings nil
+  "Alist of (SOURCE-ID ELAPSED PLANNED) for the current run.")
+
 (defun my/manifolding-atlas-routines--run-step (buf entry step total)
   "Interactively run ENTRY as step STEP of TOTAL in review BUF."
   (let* ((sid (nth 0 entry))
@@ -1252,7 +1660,11 @@ recorded for this step.
          (mastery (my/manifolding-atlas-routines--mastery-status sid))
          (badge (car mastery))
          (due-p (cdr mastery))
-         (choices (if due-p '(?l ?r ?d ?s ?o ?q) '(?d ?s ?o ?q)))
+         (planned (atlas-timer-parse-duration (nth 9 entry)))
+         (t0 (atlas-timer-stopwatch-start))
+         (base-choices (if due-p '(?l ?r ?d ?s ?o ?q) '(?d ?s ?o ?q)))
+         (choices (append base-choices
+                          (when planned '(?t ?+ ?-))))
          (prompt
           (concat (format "[%d/%d] %s%s — "
                           step total stitle
@@ -1260,30 +1672,76 @@ recorded for this step.
                   (if due-p
                       "l=learn+done r=review-only d=done s=skip o=open q=quit: "
                     "d=done s=skip o=open q=quit: "))))
+    (when planned
+      (atlas-timer-countdown-start planned)
+      (setq prompt (concat prompt "t=pause +=+1m -=-1m: ")))
     (my/manifolding-atlas-routines--display-step
-     buf step total stitle sid badge)
-    (pcase (read-char-choice prompt choices)
-      (?l (my/manifolding-atlas-routines--grade-step sid) '(done . t))
-      (?r (my/manifolding-atlas-routines--grade-step sid)
-          (message "Reviewed without marking practice.") nil)
-      (?d '(done . nil))
-      (?s '(skip . nil))
-      (?o (let ((res (my/manifolding-atlas-routines--open-followup
-                      snote sid due-p)))
-            (cond ((eq res 'quit) 'quit)
-                  ((eq res 'done-learn)
-                   (my/manifolding-atlas-routines--grade-step sid)
-                   '(done . t))
-                  (res (cons res nil))
-                  (t nil))))
-      (?q 'quit))))
+     buf step total stitle sid badge planned
+     (and planned (atlas-timer-countdown-remaining)))
+    (let ((done nil)
+          (answer nil))
+      (while (not done)
+        (setq answer (read-char-choice prompt choices))
+        (pcase answer
+          (?t (condition-case nil
+                  (atlas-timer-countdown-toggle-pause)
+                (error (message "No active countdown")))
+              (my/manifolding-atlas-routines--display-step
+               buf step total stitle sid badge planned
+               (atlas-timer-countdown-remaining)))
+          (?+ (setq planned (+ (or planned 0) 60))
+              (atlas-timer-countdown-start
+               (+ (or (atlas-timer-countdown-remaining) 0) 60))
+              (my/manifolding-atlas-routines--display-step
+               buf step total stitle sid badge planned
+               (atlas-timer-countdown-remaining)))
+          (?- (setq planned (max 0 (- (or planned 0) 60)))
+              (atlas-timer-countdown-start
+               (max 0 (- (or (atlas-timer-countdown-remaining) 0) 60)))
+              (my/manifolding-atlas-routines--display-step
+               buf step total stitle sid badge planned
+               (atlas-timer-countdown-remaining)))
+          (_ (setq done t))))
+      (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+        (atlas-timer-countdown-stop)
+        (push (list sid elapsed planned)
+              my/manifolding-atlas-routines--step-timings)
+        (pcase answer
+          (?l (my/manifolding-atlas-routines--grade-step sid) '(done . t))
+          (?r (my/manifolding-atlas-routines--grade-step sid)
+              (message "Reviewed without marking practice.") nil)
+          (?d '(done . nil))
+          (?s '(skip . nil))
+          (?o (let ((res (my/manifolding-atlas-routines--open-followup
+                          snote sid due-p)))
+                (cond ((eq res 'quit) 'quit)
+                      ((eq res 'done-learn)
+                       (my/manifolding-atlas-routines--grade-step sid)
+                       '(done . t))
+                      (res (cons res nil))
+                      (t nil))))
+          (?q 'quit))))))
 #+end_src
 **** Run command
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-routines--attach-timing (sid title result)
+  "Build a result tuple (SID TITLE RESULT ELAPSED PLANNED).
+Timing comes from `--step-timings'; missing entries mean untimed."
+  (let ((tim (assoc sid my/manifolding-atlas-routines--step-timings)))
+    (list sid title result
+          (and tim (nth 1 tim))
+          (and tim (nth 2 tim)))))
+#+end_src
+
+**** Run entry point
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines-run (&optional routine)
   "Execute ROUTINE (or prompt for one) step by step in a review buffer.
 Steps that are in the mastering pool show their review status; due
-steps can be graded with r (learn) before being practiced.  At the
+steps can be graded with r (learn) before being practiced. Steps
+with STEP_DURATION run a countdown (t pauses, +/- nudge a minute);
+the whole run is stopwatched and per-step times land in the session
+journal. Done entries advance their reschedule anchors. At the
 end, offer to journal the session."
   (interactive)
   (let* ((routine (or routine
@@ -1297,7 +1755,9 @@ end, offer to journal the session."
           (skipped 0)
           (learned 0)
           (step 0)
-          (results nil))
+          (results nil)
+          (my/manifolding-atlas-routines--step-timings nil)
+          (t0 (atlas-timer-stopwatch-start)))
       (with-current-buffer buf
         (special-mode)
         (setq buffer-read-only t))
@@ -1314,16 +1774,23 @@ end, offer to journal the session."
                 ('done (setq done (1+ done)))
                 ('skip (setq skipped (1+ skipped))))
               (when (cdr res) (setq learned (1+ learned)))
-              (push (list (nth 0 entry) (nth 1 entry) (car res))
-                    results)))))))
-        (kill-buffer buf)
+              (push (my/manifolding-atlas-routines--attach-timing
+                     (nth 0 entry) (nth 1 entry) (car res))
+                    results))))))
+      (kill-buffer buf)
+      (atlas-timer-countdown-stop)
+      (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+        (when results
+          (my/manifolding-atlas-routines--advance-anchors
+           routine (nreverse results)))
         (when (and results
                    (y-or-n-p (format "Log session (%d done / %d skipped / %d learned)? "
                                      done skipped learned)))
           (my/manifolding-atlas-routines--session-create
-           routine (nreverse results) done skipped))
-        (message "Routine finished: %d done, %d skipped, %d learned"
-                 done skipped learned)))
+           routine (nreverse results) done skipped elapsed))
+        (message "Routine finished: %d done, %d skipped, %d learned in %s"
+                 done skipped learned
+                 (atlas-timer-format-seconds elapsed))))))
 #+end_src
 
 *** Add Entry & Due Reviews

@@ -160,3 +160,114 @@ Finds the property drawer of the heading at point without org's own strict parsi
 (advice-add 'org-entry-get :around #'my/manifolding-atlas--org-entry-get-fallback)
 (advice-add 'org-entry-put :around #'my/manifolding-atlas--org-entry-put-fallback)
 #+end_src
+
+* Shared Timer Helper
+
+Single home for all Atlas timing: one duration grammar, countdowns via
+=org-timer=, stopwatches via =current-time=, one journal-line
+formatter. Routines, protocols and mastering call these; none of them
+implements timing itself.
+
+** Duration grammar
+Parses =45s=, =20m=, =1h30m= (units h/m/s, any non-empty combination).
+Returns seconds as an integer, or nil when VALUE is not a duration.
+#+begin_src emacs-lisp
+(defun atlas-timer-parse-duration (value)
+  "Parse VALUE like \"45s\", \"20m\" or \"1h30m\" into seconds.
+Return an integer, or nil when VALUE is not a valid duration."
+  (when (and (stringp value)
+             (string-match "\\`\\(?:\\([0-9]+\\)h\\)?\\(?:\\([0-9]+\\)m\\)?\\(?:\\([0-9]+\\)s\\)?\\'" value)
+             (or (match-string 1 value)
+                 (match-string 2 value)
+                 (match-string 3 value)))
+    (+ (* 3600 (string-to-number (or (match-string 1 value) "0")))
+       (* 60 (string-to-number (or (match-string 2 value) "0")))
+       (string-to-number (or (match-string 3 value) "0")))))
+
+(defun atlas-timer-format-seconds (seconds)
+  "Format SECONDS as a short human string like \"1h02m\" or \"45s\"."
+  (let ((s (round (or seconds 0))))
+    (if (< s 60)
+        (format "%ds" s)
+      (let ((m (/ s 60)))
+        (if (< m 60)
+            (format "%dm%02ds" m (% s 60))
+          (format "%dh%02dm" (/ m 60) (% m 60)))))))
+#+end_src
+
+** Stopwatch
+Start returns an opaque token (a time value); elapsed takes the token
+back. Pure on time values, so headless tests can drive it with fake
+starts.
+#+begin_src emacs-lisp
+(defun atlas-timer-stopwatch-start ()
+  "Return a stopwatch token marking now."
+  (current-time))
+
+(defun atlas-timer-stopwatch-elapsed (token &optional now)
+  "Return whole seconds elapsed since TOKEN (a `current-time' value).
+NOW defaults to now; pass an explicit time in tests."
+  (round (float-time (time-subtract (or now (current-time)) token))))
+#+end_src
+
+** Countdown
+Thin wrappers over =org-timer=. =org-timer-start-time= holds the
+deadline (not the start), so remaining time is deadline minus now.
+Starting a countdown while one runs silently replaces it.
+#+begin_src emacs-lisp
+(defun atlas-timer-countdown-start (seconds)
+  "Start an `org-timer' countdown of SECONDS; return SECONDS."
+  (require 'org-timer)
+  (atlas-timer-countdown-stop)
+  (org-timer-set-timer (org-timer-secs-to-hms seconds))
+  seconds)
+
+(defun atlas-timer-countdown-stop ()
+  "Stop any running `org-timer' countdown; never signals."
+  (require 'org-timer)
+  (when org-timer-start-time
+    (ignore-errors (org-timer-stop))))
+
+(defun atlas-timer-countdown-remaining ()
+  "Return whole seconds left on the running countdown, or nil."
+  (require 'org-timer)
+  (when (timerp org-timer-countdown-timer)
+    (max 0 (round (float-time (time-subtract org-timer-start-time
+                                             (current-time)))))))
+
+(defun atlas-timer-countdown-toggle-pause ()
+  "Pause or resume the running countdown, like `org-timer-pause-or-continue'."
+  (require 'org-timer)
+  (org-timer-pause-or-continue))
+#+end_src
+
+** Journal lines
+One formatter so session journals read the same in every engine.
+OVER is positive when the step ran long, negative when short, nil when
+no duration was planned.
+#+begin_src emacs-lisp
+(defun atlas-timer-format-step-line (title result elapsed planned)
+  "Format one journal line for TITLE with RESULT (`done or `skip).
+ELAPSED is seconds spent (or nil); PLANNED is seconds planned (or nil)."
+  (let ((over (and elapsed planned (- elapsed planned))))
+    (format "- [%s] %s — %s%s"
+            (symbol-name result)
+            title
+            (if elapsed (atlas-timer-format-seconds elapsed) "untimed")
+            (cond ((null over) "")
+                  ((> over 0)
+                   (format " (planned %s, +%s over)"
+                           (atlas-timer-format-seconds planned)
+                           (atlas-timer-format-seconds over)))
+                  ((< over 0)
+                   (format " (planned %s, %s under)"
+                           (atlas-timer-format-seconds planned)
+                           (atlas-timer-format-seconds (- over))))
+                  (t (format " (planned %s, on time)"
+                             (atlas-timer-format-seconds planned)))))))
+
+(defun atlas-timer-format-session-line (done skipped total elapsed)
+  "Format the session summary line: counts plus wall-clock ELAPSED."
+  (format "Session: %d done / %d skipped / %d total in %s"
+          done skipped total (atlas-timer-format-seconds elapsed)))
+#+end_src
