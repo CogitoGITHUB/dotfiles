@@ -1,0 +1,23 @@
+#+title: Stage 02 — Body (embodiment)
+
+Buffers breathe, windows posture, frames orient; display is the
+skin, cursor the focus. Lifecycle order: containers first
+(buffers → windows → frames), then location (positions), then the
+giant display territory whole, then the small tools that move
+through it (pulsar, center lock, switch-window, move-text).
+
+Members:
+- =00-buffers.org= — Buffers
+- =01-windows.org= — Windows
+- =02-frames.org= — Frames
+- =03-positions.org= — Positions
+- =04-controlling-the-display.org= — Controlling the Display (GIANT,
+  ~10k lines, moved whole — size does not determine topology)
+- =05-pulsar.org= — pulsar
+- =06-center-lock.org= — full title verbatim: "Center Lock — cursor gravitational axis"
+- =07-switch-window.org= — switch-window
+- =08-move-text.org= — full title verbatim: "Move-text — lift and drop lines like sculpting clay"
+
+Subdivision backlog: =04-controlling-the-display.org= is flagged for
+future manifolding (display engine, faces, overlays, minibuffer are
+distinct territories). Deliberately undecided here.

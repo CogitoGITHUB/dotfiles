@@ -40,3 +40,17 @@ separator newlines → 6395214. L1 82 → 75, no duplicates. Origin sha now:
 | 01 | Standard Errors | 3363-3512 | 7960 | 01-awakening/04-standard-errors.org | cut |
 | 01 | DAP (title verbatim, see file) | 81291-81316 | 743 | 01-awakening/05-dap.org | cut |
 | 01 | Flycheck | 81317-81336 | 499 | 01-awakening/06-flycheck.org | cut |
+
+Stage 02 reconcile: origin 6395214 → moved content 1442706 + 9 consumed
+separator newlines → 4952499. L1 75 → 66, no duplicates. Origin sha now:
+18e5cfd7629b42961ccb01eb2b0758cfef7acb6c2c06ac09157f840c2678e70e
+
+| 02 | Controlling the Display | 4714-14878 | 893744 | 02-body/04-controlling-the-display.org | cut |
+| 02 | Buffers | 14879-15424 | 49547 | 02-body/00-buffers.org | cut |
+| 02 | Windows | 15425-18092 | 259676 | 02-body/01-windows.org | cut |
+| 02 | Frames | 18093-20029 | 183875 | 02-body/02-frames.org | cut |
+| 02 | Positions | 20030-20501 | 40332 | 02-body/03-positions.org | cut |
+| 02 | pulsar | 76794-77057 | 10279 | 02-body/05-pulsar.org | cut |
+| 02 | switch-window | 77058-77188 | 3862 | 02-body/07-switch-window.org | cut |
+| 02 | Move-text (title verbatim, see file) | 77189-77210 | 629 | 02-body/08-move-text.org | cut |
+| 02 | Center Lock (title verbatim, see file) | 77489-77513 | 762 | 02-body/06-center-lock.org | cut |
