@@ -889,6 +889,31 @@ Returns 'quit, 'suspend, or 'open; n/f apply the algorithm immediately.
     (?q 'quit)))
 #+end_src
 
+**** Timebox budget
+An optional session budget ("review for 20 minutes, then stop
+cleanly"). The timebox is a stop condition, never a grading input:
+per-card elapsed is shown for self-knowledge and summarized at the
+end, but grades stay purely next/fail — a slow correct recall is
+still correct. No SCHEDULED, no repeaters, no schedule writes here;
+the SM-2 table is untouched.
+#+begin_src emacs-lisp
+(defvar my/manifolding-atlas-mastering--timebox-seconds nil
+  "Session budget in seconds; nil means untimed.")
+
+(defun my/manifolding-atlas-mastering-set-timebox (duration)
+  "Set the review session budget from DURATION (45s/20m, blank clears).
+The budget stops the session when it runs out; it never grades."
+  (interactive "sTimebox (e.g. 20m, blank = off): ")
+  (setq my/manifolding-atlas-mastering--timebox-seconds
+        (and (not (string-empty-p duration))
+             (atlas-timer-parse-duration duration)))
+  (message "Review timebox: %s"
+           (if my/manifolding-atlas-mastering--timebox-seconds
+               (atlas-timer-format-seconds
+                my/manifolding-atlas-mastering--timebox-seconds)
+             "off")))
+#+end_src
+
 **** Review session loop
 The open action visits the note, then offers an inline re-grade.
 #+begin_src emacs-lisp
@@ -896,18 +921,29 @@ The open action visits the note, then offers an inline re-grade.
   "Review NOTE-IDS in sequence, grading with algorithm."
   (let ((buf (get-buffer-create "*manifolding-atlas-mastering-review*"))
         (total (length ids))
-        (reviewed 0))
+        (reviewed 0)
+        (t0 (atlas-timer-stopwatch-start)))
     (with-current-buffer buf
       (special-mode)
       (setq buffer-read-only t))
     (pop-to-buffer-same-window buf)
     (catch 'mastering-quit
       (dolist (id ids)
+        (when (and my/manifolding-atlas-mastering--timebox-seconds
+                   (> (atlas-timer-stopwatch-elapsed t0)
+                      my/manifolding-atlas-mastering--timebox-seconds))
+          (message "Timebox reached — stopping cleanly.")
+          (throw 'mastering-quit nil))
         (let* ((note (manifolding-atlas-db-get-by-id id))
-               (title (if note (manifolding-atlas-note-title note) id)))
+               (title (if note (manifolding-atlas-note-title note) id))
+               (c0 (atlas-timer-stopwatch-start)))
           (my/manifolding-atlas-mastering--display-note id)
           (message "[%d/%d] %s" (1+ reviewed) total title)
           (let ((action (my/manifolding-atlas-mastering--grade-prompt id)))
+            (message "[%d/%d] %s (%s/card)"
+                     (1+ reviewed) total title
+                     (atlas-timer-format-seconds
+                      (atlas-timer-stopwatch-elapsed c0)))
             (cond
              ((eq action 'quit) (throw 'mastering-quit nil))
              ((eq action 'suspend)
@@ -925,6 +961,13 @@ The open action visits the note, then offers an inline re-grade.
                       (?f (my/manifolding-atlas-mastering--apply-grade id nil))
                       (?s (my/manifolding-atlas-mastering--set-suspend id 1))))))))))
         (cl-incf reviewed)))
+    (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+      (message "Reviewed %d/%d in %s%s" reviewed total
+               (atlas-timer-format-seconds elapsed)
+               (if (> reviewed 0)
+                   (format " (avg %s/card)"
+                           (atlas-timer-format-seconds (/ elapsed reviewed)))
+                 "")))
     (kill-buffer buf)))
 #+end_src
 

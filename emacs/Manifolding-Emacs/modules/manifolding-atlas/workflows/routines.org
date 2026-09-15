@@ -679,9 +679,9 @@ Replaces all previous entry child headings with the fresh results.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--session-insert-steps (results file)
   "Delete old entry headings and insert RESULTS as fresh ones.
-RESULTS are (source-id title result elapsed planned); the journal
-line carries the timing, and raw seconds land in STEP_ELAPSED and
-STEP_PLANNED unfoldings for queries."
+RESULTS are (source-id title result elapsed planned grade); the
+journal line carries timing and learn-grade, and raw seconds land in
+STEP_ELAPSED and STEP_PLANNED unfoldings for queries."
   (org-with-point-at 1
     (org-back-to-heading t)
     (while (re-search-forward "^\\*\\* " nil t)
@@ -693,7 +693,7 @@ STEP_PLANNED unfoldings for queries."
     (dolist (res results)
       (unless (bolp) (insert "\n"))
       (let ((eid (org-id-new)))
-        (insert (format "** %s\n:PROPERTIES:\n:ID: %s\n:SOURCE: %s\n:STEP_RESULT: %s\n%s%s:END:\n%s\n"
+        (insert (format "** %s\n:PROPERTIES:\n:ID: %s\n:SOURCE: %s\n:STEP_RESULT: %s\n%s%s%s:END:\n%s%s\n"
                         (nth 1 res) eid (nth 0 res)
                         (symbol-name (nth 2 res))
                         (if (nth 3 res)
@@ -702,8 +702,14 @@ STEP_PLANNED unfoldings for queries."
                         (if (nth 4 res)
                             (format ":STEP_PLANNED: %d\n" (nth 4 res))
                           "")
+                        (if (nth 5 res)
+                            (format ":STEP_GRADE: %s\n" (nth 5 res))
+                          "")
                         (atlas-timer-format-step-line
-                         (nth 1 res) (nth 2 res) (nth 3 res) (nth 4 res))))
+                         (nth 1 res) (nth 2 res) (nth 3 res) (nth 4 res))
+                        (if (nth 5 res)
+                            (format " · learned %s" (nth 5 res))
+                          "")))
         (org-id-add-location eid file)))))
 #+end_src
 **** Session DB upsert
@@ -728,7 +734,7 @@ rewritten in place, preserving its ID.
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--session-create (routine results done skipped elapsed)
   "Create or update today's session note for ROUTINE.
-RESULTS is a list of (source-id title result elapsed planned),
+RESULTS is a list of (source-id title result elapsed planned grade),
 result being `done or `skip. ELAPSED is whole-run wall seconds."
   (let* ((rid (manifolding-atlas-note-id routine))
          (rtitle (manifolding-atlas-note-title routine))
@@ -1070,14 +1076,16 @@ BADGE is nil when the note is not in the review pool."
 **** Step grading
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--grade-step (sid)
-  "Grade SID through the mastering algorithm (learn-before-practice)."
+  "Grade SID through the mastering algorithm (learn-before-practice).
+Return `next, `fail, or nil when grading did not happen."
   (when (fboundp 'my/manifolding-atlas-mastering--review-algorithm)
     (let* ((g (read-char-choice "Learn: n=next f=fail: " '(?n ?f)))
            (success (eq g ?n)))
       (my/manifolding-atlas-mastering--update
        sid success
        (my/manifolding-atlas-mastering--review-algorithm sid success))
-      (message "Mastering updated: %s" (if success "next" "fail")))))
+      (message "Mastering updated: %s" (if success "next" "fail"))
+      (if success 'next 'fail))))
 #+end_src
 
 *** Creation
@@ -1650,7 +1658,8 @@ the journal. t pauses/resumes the countdown, + and - nudge the
 planned duration by a minute mid-step.
 #+begin_src emacs-lisp
 (defvar my/manifolding-atlas-routines--step-timings nil
-  "Alist of (SOURCE-ID ELAPSED PLANNED) for the current run.")
+  "Alist of (SOURCE-ID ELAPSED PLANNED GRADE) for the current run.
+GRADE is `next/`fail when the step was graded, else nil.")
 
 (defun my/manifolding-atlas-routines--run-step (buf entry step total)
   "Interactively run ENTRY as step STEP of TOTAL in review BUF."
@@ -1702,35 +1711,42 @@ planned duration by a minute mid-step.
                buf step total stitle sid badge planned
                (atlas-timer-countdown-remaining)))
           (_ (setq done t))))
-      (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
+      (let ((elapsed (atlas-timer-stopwatch-elapsed t0))
+            (grade nil)
+            (result nil))
         (atlas-timer-countdown-stop)
-        (push (list sid elapsed planned)
+        (setq result
+              (pcase answer
+                (?l (setq grade (my/manifolding-atlas-routines--grade-step sid))
+                    '(done . t))
+                (?r (setq grade (my/manifolding-atlas-routines--grade-step sid))
+                    (message "Reviewed without marking practice.") nil)
+                (?d '(done . nil))
+                (?s '(skip . nil))
+                (?o (let ((res (my/manifolding-atlas-routines--open-followup
+                                snote sid due-p)))
+                      (cond ((eq res 'quit) 'quit)
+                            ((eq res 'done-learn)
+                             (setq grade (my/manifolding-atlas-routines--grade-step sid))
+                             '(done . t))
+                            (res (cons res nil))
+                            (t nil))))
+                (?q 'quit)))
+        (push (list sid elapsed planned grade)
               my/manifolding-atlas-routines--step-timings)
-        (pcase answer
-          (?l (my/manifolding-atlas-routines--grade-step sid) '(done . t))
-          (?r (my/manifolding-atlas-routines--grade-step sid)
-              (message "Reviewed without marking practice.") nil)
-          (?d '(done . nil))
-          (?s '(skip . nil))
-          (?o (let ((res (my/manifolding-atlas-routines--open-followup
-                          snote sid due-p)))
-                (cond ((eq res 'quit) 'quit)
-                      ((eq res 'done-learn)
-                       (my/manifolding-atlas-routines--grade-step sid)
-                       '(done . t))
-                      (res (cons res nil))
-                      (t nil))))
-          (?q 'quit))))))
+        result))))
 #+end_src
 **** Run command
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-routines--attach-timing (sid title result)
-  "Build a result tuple (SID TITLE RESULT ELAPSED PLANNED).
-Timing comes from `--step-timings'; missing entries mean untimed."
+  "Build a result tuple (SID TITLE RESULT ELAPSED PLANNED GRADE).
+Timing and learn-grade come from `--step-timings'; missing entries
+mean untimed and ungraded."
   (let ((tim (assoc sid my/manifolding-atlas-routines--step-timings)))
     (list sid title result
           (and tim (nth 1 tim))
-          (and tim (nth 2 tim)))))
+          (and tim (nth 2 tim))
+          (and tim (nth 3 tim)))))
 #+end_src
 
 **** Run entry point
