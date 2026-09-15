@@ -1,0 +1,19 @@
+#+title: Stage 08 — Rituals (habits)
+
+Intent becomes rhythm: the mark (focus itself, marked IMPORTANT),
+then moving and shaping text, fixing and sorting it, storing places
+and phrases, expanding abbreviations, and finally the repeating
+ritual that fires on its own. Lifecycle order: focus → move →
+shape → fix → store → expand → repeat.
+
+Members:
+- =00-the-mark-and-the-region.org= — full title verbatim ("The Mark and the Region ✓✓✓ {IMPORTANT !!!}")
+- =01-killing-and-moving-text.org= — Killing and Moving Text
+- =02-indentation.org= — Indentation
+- =03-commands-for-fixing-typos.org= — Commands for Fixing Typos
+- =04-sorting-text.org= — Sorting Text
+- =05-registers.org= — Registers (incl. Bookmarks as level-2 structure)
+- =06-abbrev.org= — Abbrev
+- =07-org-repeat-by-cron.org= — org-repeat-by-cron
+
+Subdivision backlog: none yet.

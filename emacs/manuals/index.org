@@ -116,3 +116,16 @@ separator newline → 951314. L1 30 → 29, no duplicates. Origin sha now:
 3eb5ddc3302e91566b8611f1c52a255e1b30732c1cc545635d1c88a1aaf4f173
 
 | 07 | Dealing with Trouble | 1434-2841 | 114352 | 07-shadows/00-dealing-with-trouble.org | cut |
+
+Stage 08 reconcile: origin 951314 → moved content 130968 + 8 consumed
+separator newlines → 820338. L1 29 → 21, no duplicates. Origin sha now:
+827d7e69d8c7ff42f7bacb1e00e02e27e4abbc8df6edec2cfa7a22f683e77a90
+
+| 08 | Commands for Fixing Typos | 7274-7481 | 18030 | 08-rituals/03-commands-for-fixing-typos.org | cut |
+| 08 | Sorting Text | 7482-7541 | 5282 | 08-rituals/04-sorting-text.org | cut |
+| 08 | Killing and Moving Text | 8286-8681 | 38225 | 08-rituals/01-killing-and-moving-text.org | cut |
+| 08 | Indentation | 8682-8844 | 18236 | 08-rituals/02-indentation.org | cut |
+| 08 | Mark and Region (title verbatim, see file) | 8845-9032 | 19158 | 08-rituals/00-the-mark-and-the-region.org | cut |
+| 08 | Registers | 9033-9215 | 12077 | 08-rituals/05-registers.org | cut |
+| 08 | Abbrev | 9216-9413 | 19623 | 08-rituals/06-abbrev.org | cut |
+| 08 | org-repeat-by-cron | 11230-11246 | 337 | 08-rituals/07-org-repeat-by-cron.org | cut |
