@@ -4,6 +4,87 @@ A complete PostgreSQL implementation will be added when its stage comes.
 WIP — WORK IN PROGRESS.  
 The corpse is still twitching. The document is already out of date.
 
+* Timers + Anchored Rescheduling (2026-09-16) — IMPLEMENTED, NEEDS REFINEMENT
+
+This is something important that needs further work to refine and put
+into actionable work. The machinery below is built, committed (5
+commits), and boots with no errors — but it has not yet been lived
+in. The refinement backlog at the end of this section is the action
+list. Work it before calling this done.
+
+** What landed
+
+Shared timing (one home, three callers):
+- =atlas-timer-*= in =core-helpers.org=: duration grammar (45s/20m/1h30m),
+  org-timer countdowns (start/stop/remaining/pause), current-time
+  stopwatches, journal-line formatters. Verified headless, including a
+  real countdown cycle.
+
+Routines (primary):
+- STEP_DURATION countdowns per step (=t= pause, =+=/=-= nudge a minute),
+  whole-run stopwatch, elapsed/overrun/learn-grade (=next=/=fail=) in
+  session journals, SESSION_ELAPSED on the session note.
+- Anchored rescheduling: RESCHEDULE_INTERVAL/DAYS/ANCHOR + NEXT_DATE
+  unfoldings and =routine_entries= columns (with schema migration),
+  computed at session completion from the anchor — done advances,
+  skipped doesn't. Next dates materialized as SCHEDULED planning lines
+  (Atlas sole writer, plain edit, no hooks, no repeaters).
+
+Protocols:
+- Owned anchor lattice (deliberate duplicate of routines', no shared
+  schedule code): PROTOCOL_INTERVAL/DAYS/ANCHOR/NEXT + table columns +
+  schema fields. Build prompts cadence; =protocols-reset= is the
+  completion hook (TODO flip + parent advance). Minimal
+  =protocols-run= walks wormhole steps with timers; run evidence
+  stamped on the parent. New transient suffixes for run/reset.
+
+Day agenda (new =workflows/agenda-day.org=, priority 17):
+- =my/manifolding-atlas-agenda-day=: read-only due surface, routines +
+  protocols grouped by engine, 14-day streak strips from
+  routine_sessions, mastering as due-count only. org-habit deliberately
+  excluded (it requires TODO + repeater + org-owned rescheduling).
+
+Mastering:
+- Session timebox (=mastering-set-timebox=, e.g. 20m): stop condition
+  only, never grades. Per-card timing shown, end summary with average.
+  SM-2 algorithm provably untouched (diff-checked). Due Reviews
+  learn-grades flow into the routine session journal — the journal is
+  now the cross-engine practice log.
+
+Rules held throughout: each engine owns its schedule; agenda is
+read-only; elisp-only (no Python/croniter); no org repeaters on any
+Atlas timestamp; new unfolding keys need no manual registration (the
+.known-keys reconcile seeds them automatically).
+
+** Refinement backlog (actionable work, in suggested order)
+
+1. Live it: one real workout routine + one weekly protocol, run for a
+   week. Timers, anchors, journals, day agenda — confirm the loop
+   feels right before polishing anything.
+2. Prompt fatigue: =--prompt-details= now asks 4 questions per entry
+   (group/rx/duration/interval/days). Add routine-level defaults
+   (e.g. default STEP_DURATION per group) or a "same as previous"
+   key.
+3. Protocol runs deserve journals too: currently only a parent stamp
+   (LAST_RUN/LAST_ELAPSED). Decide: session notes like routines, or
+   stamp is enough.
+4. Wire =agenda-day= into keys: transient/hydra entry (SPC v …) and a
+   daily habit of opening it. An unbound command is a dead command.
+5. Skip semantics for streaks: skipped steps don't advance anchors,
+   but should a skip log a missed day or stay neutral? Decide before
+   trusting streak strips (planned rest days must not corrupt signal).
+6. Postgres backend: new =routine_entries=/=protocols= columns migrate
+   on both backends in code, but only sqlite has run. Verify on pg.
+7. =register-all= count + full boot check on the live daemon after
+   reload (this container validated tangle/compile/behavior only).
+8. Run-buffer header: remaining time is a snapshot at step display;
+   decide whether live mode-line countdown display is enough (it
+   already runs via org-timer) or the header should refresh.
+9. Due Reviews composite with timers: run it end-to-end (grading +
+   timing + journal + anchor advance on mastering-sourced entries).
+10. True-cron escape hatch: if a rule ever exceeds weekly-sets +
+    intervals, revisit — until then, no solver gets written.
+
 #+begin_quote
 The map is not the knowledge.
 The map is not even the final product.
