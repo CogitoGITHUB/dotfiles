@@ -28,3 +28,15 @@ separator newlines → 6721068. L1 86 → 82. Destinations carry a
 5-line provenance header each (76 bytes); content bytes above exclude
 headers. Origin sha now:
 953eba0325b06152985c60fd98a9e7e0026f219da7bf7ad30ca00792c385b004
+
+Stage 01 reconcile: origin 6721068 → moved content 325847 + 7 consumed
+separator newlines → 6395214. L1 82 → 75, no duplicates. Origin sha now:
+947366004e971dea3606c728a67cf5c5cf24b67758c3544cbeed09f1274a6548
+
+| 01 | Lisp History | 6-163 | 11414 | 01-awakening/00-lisp-history.org | cut |
+| 01 | GNU Emacs Internals | 25363-26796 | 108386 | 01-awakening/01-gnu-emacs-internals.org | cut |
+| 01 | Processes | 40853-42511 | 133215 | 01-awakening/02-processes.org | cut |
+| 01 | Compiling and Testing Programs | 57797-58475 | 63630 | 01-awakening/03-compiling-and-testing-programs.org | cut |
+| 01 | Standard Errors | 3363-3512 | 7960 | 01-awakening/04-standard-errors.org | cut |
+| 01 | DAP (title verbatim, see file) | 81291-81316 | 743 | 01-awakening/05-dap.org | cut |
+| 01 | Flycheck | 81317-81336 | 499 | 01-awakening/06-flycheck.org | cut |

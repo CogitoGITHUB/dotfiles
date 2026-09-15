@@ -1,0 +1,18 @@
+#+title: Stage 01 — Awakening (engines)
+
+The hidden machinery hums: where Lisp came from, what Emacs is
+built of, how it talks to the outside world, how it compiles and
+tests, how it fails loudly, and the tools that watch it do all of
+that. Lifecycle order: history → internals → processes →
+compilation → errors → debuggers.
+
+Members:
+- =00-lisp-history.org= — Lisp History
+- =01-gnu-emacs-internals.org= — GNU Emacs Internals
+- =02-processes.org= — Processes
+- =03-compiling-and-testing-programs.org= — Compiling and Testing Programs
+- =04-standard-errors.org= — Standard Errors
+- =05-dap.org= — full title verbatim: "DAP — Debug Adapter Protocol for Emacs / LSP Debugger"
+- =06-flycheck.org= — Flycheck
+
+Subdivision backlog: none yet.
