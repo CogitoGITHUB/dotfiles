@@ -132,13 +132,7 @@ edit any block directly.
 
 ** Keymap definition helper
 #+begin_src emacs-lisp
-(defun manifolding-keyboard--define-keymap (keymaps keybindings)
-  "Define KEYBINDINGS for all the KEYMAPS."
-  (dolist (keymap keymaps)
-    (pcase-dolist (`(,key . ,def) keybindings)
-      (let ((keys (if (listp key) key (list key))))
-        (dolist (k keys)
-          (define-key (symbol-value keymap) k def))))))
+
 #+end_src
 
 ** Define-keys function
@@ -208,12 +202,7 @@ Atomic upstream — kept whole.
         (keymap (manifolding-keyboard-get-state-keymap state)))
     `(manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)))
 
-(defmacro manifolding-keyboard-define-substate (substate &rest body)
-  "Define a new SUBSTATE minor mode with options in BODY."
-  (declare (indent defun))
-  (let ((mode (manifolding-keyboard-get-substate-mode substate))
-        (keymap (manifolding-keyboard-get-substate-keymap substate)))
-    `(manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)))
+
 #+end_src
 
 ** Buffer initialization & setup
@@ -313,9 +302,7 @@ Atomic upstream — kept whole.
       (revert-buffer t t)
       (message "Restored %s to %s"
                (file-name-nondirectory file) (substring hash 0 7)))))
-(defun my/magit-status ()
-  (interactive)
-  (magit-status))
+
 #+end_src
 
 ** Misc commands
@@ -342,26 +329,13 @@ Atomic upstream — kept whole.
   (if (treemacs-is-treemacs-window? (selected-window))
       (treemacs-quit)
     (treemacs-select-window)))
-(defun my/ks-zap-to-char-inclusive ()
-  "Zap from point up to and including a key-selection-selected character."
-  (interactive)
-  (let ((start (point)))
-    (ks-goto-char-timer)
-    (forward-char 1)
-    (kill-region start (point))))
+
 (defun my/ks-ibuffer-visit ()
   "Jump to an ibuffer entry line and visit its buffer."
   (interactive)
   (ks-goto-char-timer)
   (ibuffer-visit-buffer))
-(defun my/window-quit ()
-  "Quit current window, or switch to previous buffer when only one window.
-If more than one window is visible in the selected frame, close the
-current window; otherwise switch to the previously visited buffer."
-  (interactive)
-  (if (> (length (window-list (selected-frame))) 1)
-      (quit-window)
-    (previous-buffer)))
+
 #+end_src
 
 ** TUI ESC / Meta disambiguation (Meow-extracted, ~my/esc-mode~)
@@ -501,11 +475,7 @@ where you've been. Standalone — depends only on ~mark-ring~, ~point-marker~,
 Dvorak-safe. Bound to ~j~ (older) / ~k~ (newer) in normal + motion states; if
 you have never set a mark the commands no-op safely.
 #+begin_src emacs-lisp
-(defcustom my/pop-or-unpop-to-mark-repeat-unpop nil
-  "If non-nil, repeating ~my/pop-or-unpop-to-mark~ keeps unpopping forward
-instead of toggling direction."
-  :type 'boolean
-  :group 'manifolding-keyboard)
+
 
 (defun my/unpop-to-mark ()
   "Unpop off the mark ring (move forward to a newer position). Does nothing
@@ -527,19 +497,7 @@ if the mark ring is empty."
     (setq mark-ring (append mark-ring (list (point-marker)))))
   (pop-to-mark-command))
 
-(defun my/pop-or-unpop-to-mark (arg)
-  "Call ~my/pop-to-mark~ or ~my/unpop-to-mark~ depending on ARG.
 
-With a negative prefix ARG, call ~my/unpop-to-mark~. Otherwise call
-~my/pop-to-mark~. See ~my/pop-or-unpop-to-mark-repeat-unpop~."
-  (interactive "p")
-  (if (or (and my/pop-or-unpop-to-mark-repeat-unpop
-               (eq last-command 'my/unpop-to-mark))
-          (< arg 0))
-      (progn
-        (setq this-command 'my/unpop-to-mark)
-        (my/unpop-to-mark))
-    (my/pop-to-mark)))
 #+end_src
 
 ** Symbol/word occurrence collector (Meow-extracted, ~my/jump-to-symbol~)
@@ -1086,14 +1044,9 @@ normal + motion states. The obsolete ~boon-reg-cur-after~ is not ported.
   "Make a region with MRK, PNT and CURSOR, as the list (mark point cursor)."
   (list mrk pnt cursor))
 
-(defun my/reg-nil (reg)
-  "Return t if either the point or the mark of region REG is nil."
-  (not (or (my/reg-point reg) (my/reg-mark reg))))
 
-(defun my/reg-bounds (bnds)
-  "Convert BNDS as (mark . point) into a list of one region, or nil."
-  (when bnds
-    (list (my/reg-mk (car bnds) (cdr bnds) nil))))
+
+
 
 (defun my/reg-mark  (reg) (nth 0 reg))
 (defun my/reg-point (reg) (nth 1 reg))
@@ -1105,33 +1058,11 @@ normal + motion states. The obsolete ~boon-reg-cur-after~ is not ported.
              (copy-marker (my/reg-point reg))
              (my/reg-cursor reg)))
 
-(defun my/reg-from-markers (reg)
-  "Convert the marker borders of REG back to plain positions."
-  (my/reg-mk (marker-position (my/reg-mark reg))
-             (marker-position (my/reg-point reg))
-             (my/reg-cursor reg)))
 
-(defun my/reg-borders (reg how-much)
-  "Given a normalized region REG, return its borders as a region list.
-The size of each border is HOW-MUCH."
-  (list (my/reg-mk (my/reg-end reg)   (- (my/reg-end reg) how-much)   (my/reg-cursor reg))
-        (my/reg-mk (my/reg-begin reg) (+ (my/reg-begin reg) how-much) (my/reg-cursor reg))))
 
-(defun my/reg-include-spaces (reg)
-  "Return REG extended to include surrounding spaces around point.
-Spaces are searched after point if the region is directed forward, else before."
-  (save-excursion
-    (let* ((mk (my/reg-mark reg))
-           (pt (my/reg-point reg))
-           (fwd (> pt mk))
-           (skip-pt (if fwd 'skip-syntax-forward 'skip-syntax-backward))
-           (skip-mk (if fwd 'skip-syntax-backward 'skip-syntax-forward))
-           (pt-ext (progn (goto-char pt) (funcall skip-pt "-") (point))))
-      (my/reg-mk (if (equal pt-ext pt)
-                     (progn (goto-char mk) (funcall skip-mk "-") (point))
-                   mk)
-                 pt-ext
-                 (my/reg-cursor reg)))))
+
+
+
 
 (defun my/reg-begin (reg)
   "The beginning of region REG."
@@ -1141,17 +1072,11 @@ Spaces are searched after point if the region is directed forward, else before."
   "The end of region REG."
   (max (my/reg-point reg) (my/reg-mark reg)))
 
-(defun my/reg-content (reg)
-  "Given region REG, return its content (crop the region by 1 on each side)."
-  (my/reg-mk (+ (my/reg-begin reg) 1) (- (my/reg-end reg) 1) (my/reg-cursor reg)))
 
-(defun my/reg-before (r1 r2)
-  "Return non-nil when region R1 occurs before region R2."
-  (< (my/reg-begin r1) (my/reg-end r2)))
 
-(defun my/reg-after (r1 r2)
-  "Return non-nil when region R2 occurs before region R1."
-  (> (my/reg-begin r1) (my/reg-end r2)))
+
+
+
 
 (defun my/yank-line-content ()
   "Copy the code content of the current line to the kill-ring.
@@ -1286,21 +1211,14 @@ search, so it can be jumped between."
             (font-lock-flush)
             entry))))))
 
-(defun my/hl-remove (pattern)
-  "Remove the highlight PATTERN."
-  (font-lock-remove-keywords nil (list (plist-get (cdr pattern) :kw)))
-  (push (plist-get (cdr pattern) :face) my/hl-unused-faces)
-  (setq my/hl-patterns (delete pattern my/hl-patterns))
-  (font-lock-flush))
+
 
 (defun my/hl-search (pattern &optional direction limit)
   "Search for highlighted PATTERN up to LIMIT.
 Search backward if DIRECTION is non-nil."
   (funcall (car (plist-get (cdr pattern) :kw)) limit direction))
 
-(defun my/hl-search-backward (pattern &optional limit)
-  "Search for highlighted PATTERN up to LIMIT, backward."
-  (my/hl-search pattern t limit))
+
 
 (defun my/hl-regexp (regexp &optional face)
   "Highlight each match of REGEXP with FACE (chosen from defaults if nil)."
@@ -1372,28 +1290,9 @@ Return non-nil if any change was made."
            t)
           (t nil))))
 
-(defun my/splice-fix-spaces ()
-  "Normalize spacing on both sides of a yanked boundary.
-Return non-nil if any change was made."
-  (interactive)
-  (let ((fix-here (my/fix-a-space))
-        (fix-there (save-excursion
-                     (goto-char (mark))
-                     (my/fix-a-space))))
-    (or fix-here fix-there)))
 
-(defun my/splice (number-of-copies)
-  "Yank NUMBER-OF-COPIES times, replacing the region if active.
-Re-running after a yank fixes the spacing instead."
-  (interactive "p")
-  (unless (and (eq number-of-copies 1)
-               (eq last-command 'yank)
-               (my/splice-fix-spaces))
-    (when (use-region-p)
-      (kill-region (my/reg-begin (my/reg-mk (mark) (point) nil))
-                   (my/reg-end (my/reg-mk (mark) (point) nil))))
-    (dotimes (_ number-of-copies) (yank))
-    (message "If spaces are wrong, run my/splice again.")))
+
+
 #+end_src
 
 ** Quick-search highlighted text + unified navigate (Boon-extracted, ~my/qsearch~ / ~my/navigate~)
@@ -1445,15 +1344,9 @@ Move point to the start of the match, wrapping around with feedback."
     (error "Nothing to search: highlight something before using my/qsearch."))
   (when isearch-success (goto-char (match-beginning 0))))
 
-(defun my/qsearch-next (&optional pattern)
-  "Search the next occurrence of the current search regexp."
-  (interactive)
-  (my/qsearch t pattern))
 
-(defun my/qsearch-previous (&optional pattern)
-  "Search the previous occurrence of the current search regexp."
-  (interactive)
-  (my/qsearch nil pattern))
+
+
 
 (defun my/qsearch-next-at-point ()
   "Highlight the text at point then jump to its next match."
@@ -1481,10 +1374,7 @@ Move point to the start of the match, wrapping around with feedback."
   (interactive)
   (my/navigate t))
 
-(defun my/navigate-backward ()
-  "Go to the previous item of interest."
-  (interactive)
-  (my/navigate nil))
+
 #+end_src
 
 ** Line-scoped character search (Boon-extracted, ~my/find-char-*~ / ~my/search-char-*~)
@@ -1512,16 +1402,9 @@ and ~my/find-char-backward~ → ~2~ in normal + motion states.
   (search-backward (make-string 1 char))
   (forward-char 1))
 
-(defun my/search-char-forward (count)
-  "Search COUNT times for a character read from the keyboard, forward on this line."
-  (interactive "p")
-  (let ((char (read-char)))
-    (search-forward (string char) (line-end-position) nil count)))
 
-(defun my/search-char-backward (count)
-  "Search COUNT times for a character read from the keyboard, backward on this line."
-  (interactive "p")
-  (my/search-char-forward (if count (- count) (- 1))))
+
+
 #+end_src
 
 ** Quote-next-key escape hatch (Boon-extracted, ~my/quote-character~)
@@ -2693,7 +2576,6 @@ armed.
       ("n"          . magit-section-forward)
       ("p"          . magit-section-backward)
       ("N"          . magit-section-forward-sibling)
-      ("P"          . magit-section-backward-sibling)
       ("^"          . magit-section-up)
       ("<tab>"      . magit-section-toggle)
       ("v"          . magit-section-cycle-global)
@@ -2921,8 +2803,7 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
    ("c" my/manifolding-atlas-insert-heading "at point" :exit t)
    ("H" my/manifolding-atlas-heading-to-note "heading→note" :exit t))
    "Meta"
-   (("f" my/manifolding-atlas--fix-violations "fix warnings" :exit t)
-    ("u" manifolding-atlas-ui-sidebar-toggle "sidebar" :exit t)
+   (("u" manifolding-atlas-ui-sidebar-toggle "sidebar" :exit t)
     ("E" my/manifolding-atlas-reinforce-sweep "schema sweep" :exit t))
   "Rules"
   (("k" my/manifolding-atlas-rules-mark-as-rule "mark rule" :exit t)
@@ -2931,7 +2812,6 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
   "Protocols"
   (("p" my/manifolding-atlas-protocols-build "build" :exit t)
    ("m" my/manifolding-atlas-protocols-mark-as-step "mark step" :exit t)
-   ("M" my/manifolding-atlas-protocols-goto-routed-file "protocol file" :exit t)
    ("i" my/manifolding-atlas-find-protocols "find protocols" :exit t))
   "Vocab"
   (("w" my/manifolding-atlas-dictionary-menu "dictionary" :exit t))
@@ -2945,8 +2825,7 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
    ("d" my/manifolding-atlas-mastering-review-subtree "branch" :exit t)
    ("t" my/manifolding-atlas-mastering-toggle-participation "suspend" :exit t))
   "Search"
-  (("s" my/atlas-search "search center" :exit t)
-   ("S" my/atlas-search-hydra/body "search menu" :exit t))
+  (("s" my/atlas-search "search center" :exit t))
   "Recipe"
   (("n" my/manifolding-atlas-recipe-create "new recipe" :exit t)
    ("e" my/manifolding-atlas-recipes-edit-servings "edit servings" :exit t)
@@ -2992,7 +2871,6 @@ All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-st
   "Navigate"
   (("p" mm/goto-parent       "parent"     :exit t)
    ("c" mm/goto-child        "child"      :exit t)
-   ("s" mm/goto-sibling      "sibling"    :exit t)
    ("r" mm/goto-root         "root"       :exit t)
    ("t" my/mindmap-traverse-enter "traverse" :exit t))
   "Position"
