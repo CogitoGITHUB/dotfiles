@@ -574,7 +574,8 @@ today's date in the drawer. Refusal is silent: no evidence, no stage."
                        (class (cdr (assoc stage my/manifolding-atlas-mastering--gate-evidence)))
                        (evidence (if (eq class 'automatic)
                                      "automatic: review evidence"
-                                   (read-string (format "Evidence for %s (required): " stage)))))
+                                   (read-string (format "Evidence for %s (required): " stage)
+                                                (my/manifolding-atlas-mastering--evidence-prefill)))))
                   (if (and (eq class 'assessment) (string-blank-p evidence))
                       (message "Attestation refused: %s needs recorded evidence." stage)
                     (my/manifolding-atlas--drawer-put "STAGE" stage)
@@ -877,16 +878,25 @@ the knowledge left off."
 
 **** Grading prompt handler
 Returns 'quit, 'suspend, or 'open; n/f apply the algorithm immediately.
+t launches a typing drill and re-prompts (never grades).
 #+begin_src emacs-lisp
 (defun my/manifolding-atlas-mastering--grade-prompt (id)
-  "Ask for a grade on ID's review."
-  (pcase (read-char-choice "n=next f=fail s=suspend o=open q=quit: "
-                           '(?n ?f ?s ?o ?q))
-    (?n (my/manifolding-atlas-mastering--apply-grade id t) nil)
-    (?f (my/manifolding-atlas-mastering--apply-grade id nil) nil)
-    (?s 'suspend)
-    (?o 'open)
-    (?q 'quit)))
+  "Ask for a grade on ID's review.
+t launches a typing drill and re-prompts the same card; it never
+grades and never advances the session."
+  (catch 'graded
+    (while t
+      (pcase (read-char-choice "n=next f=fail s=suspend o=open t=type q=quit: "
+                               '(?n ?f ?s ?o ?t ?q))
+        (?n (my/manifolding-atlas-mastering--apply-grade id t)
+            (throw 'graded nil))
+        (?f (my/manifolding-atlas-mastering--apply-grade id nil)
+            (throw 'graded nil))
+        (?s (throw 'graded 'suspend))
+        (?o (throw 'graded 'open))
+        (?t (my/manifolding-atlas-mastering--type-drill-for id)
+            (message "Drill launched — grade when ready."))
+        (?q (throw 'graded 'quit))))))
 #+end_src
 
 **** Timebox budget
@@ -954,12 +964,19 @@ The open action visits the note, then offers an inline re-grade.
                 (let ((inhibit-read-only t))
                   (with-current-buffer buf (erase-buffer)))
                 (when (y-or-n-p "Grade this note? ")
-                  (let ((g (read-char-choice "n=next f=fail s=suspend q=quit: "
-                                             '(?n ?f ?s ?q))))
-                    (pcase g
-                      (?n (my/manifolding-atlas-mastering--apply-grade id t))
-                      (?f (my/manifolding-atlas-mastering--apply-grade id nil))
-                      (?s (my/manifolding-atlas-mastering--set-suspend id 1))))))))))
+                  (catch 'inline-graded
+                    (while t
+                      (pcase (read-char-choice "n=next f=fail s=suspend t=type q=quit: "
+                                               '(?n ?f ?s ?t ?q))
+                        (?n (my/manifolding-atlas-mastering--apply-grade id t)
+                            (throw 'inline-graded nil))
+                        (?f (my/manifolding-atlas-mastering--apply-grade id nil)
+                            (throw 'inline-graded nil))
+                        (?s (my/manifolding-atlas-mastering--set-suspend id 1)
+                            (throw 'inline-graded nil))
+                        (?t (my/manifolding-atlas-mastering--type-drill-for id)
+                            (message "Drill launched — grade when ready."))
+                        (?q (throw 'inline-graded nil)))))))))))
         (cl-incf reviewed)))
     (let ((elapsed (atlas-timer-stopwatch-elapsed t0)))
       (message "Reviewed %d/%d in %s%s" reviewed total
@@ -969,6 +986,298 @@ The open action visits the note, then offers an inline re-grade.
                            (atlas-timer-format-seconds (/ elapsed reviewed)))
                  "")))
     (kill-buffer buf)))
+#+end_src
+
+*** Typing Drills
+Typing practice on top of mastering: drill any material by hand,
+record the stats as a TYPING_LAST drawer property, reuse them as
+attest evidence. Typing suggests nothing and grades nothing — SM-2
+only ever sees manual n/f. Transcription fluency is not recall;
+these numbers testify, they do not judge.
+
+**** Floor and capture state
+#+begin_src emacs-lisp
+(defcustom my/manifolding-atlas-typing-accuracy-floor 85
+  "Accuracy percent below which attest prefill is flagged [low-acc].
+The prefill still appears (it is editable); it just never looks clean."
+  :type 'integer
+  :group 'my/manifolding-atlas)
+
+(defvar my/manifolding-atlas-mastering--pending-drill nil
+  "Cons (NOTE-ID . SCOPE-TAG) for the launched drill awaiting completion.
+Cleared on completion (recorded) or quit (abandoned).")
+
+(defvar my/manifolding-atlas-mastering--drill-advice-on nil
+  "Non-nil once the speed-type completion advice is installed.")
+
+(defun my/manifolding-atlas-mastering--ensure-drill-capture ()
+  "Install the drill-stats capture advice, loading speed-type if needed.
+Signal a user error when speed-type is unavailable."
+  (unless my/manifolding-atlas-mastering--drill-advice-on
+    (unless (fboundp 'speed-type-complete)
+      (require 'speed-type nil t))
+    (unless (fboundp 'speed-type-complete)
+      (user-error "Typing drills need speed-type, which is not loaded"))
+    (advice-add 'speed-type-complete :after
+                #'my/manifolding-atlas-mastering--capture-drill-stats)
+    (advice-add 'speed-type-quit :after
+                #'my/manifolding-atlas-mastering--abandon-drill)
+    (setq my/manifolding-atlas-mastering--drill-advice-on t)))
+
+(defun my/manifolding-atlas-mastering--capture-drill-stats (&rest _)
+  "Stash the just-completed drill stats; record them when expected.
+Runs :after `speed-type-complete', in the drill buffer, so the
+buffer-local counters are directly readable. A completion with no
+pending drill (ordinary speed-type use) only stashes."
+  (let ((entries (bound-and-true-p speed-type--entries)))
+    (when (numberp entries)
+      (setq my/manifolding-atlas-mastering--last-drill-stats
+            (list :entries entries
+                  :errors (or (bound-and-true-p speed-type--errors) 0)
+                  :corrections (or (bound-and-true-p speed-type--corrections) 0)
+                  :seconds (let ((reg (bound-and-true-p speed-type--time-register)))
+                             (if (and reg (fboundp 'speed-type--elapsed-time))
+                                 (round (speed-type--elapsed-time reg))
+                               0))))
+      (when my/manifolding-atlas-mastering--pending-drill
+        (my/manifolding-atlas-mastering--record-drill
+         (car my/manifolding-atlas-mastering--pending-drill)
+         my/manifolding-atlas-mastering--last-drill-stats
+         (cdr my/manifolding-atlas-mastering--pending-drill))
+        (setq my/manifolding-atlas-mastering--pending-drill nil)))))
+
+(defun my/manifolding-atlas-mastering--abandon-drill (&rest _)
+  "Clear a pending drill without recording (quit = no trace)."
+  (setq my/manifolding-atlas-mastering--pending-drill nil))
+#+end_src
+
+**** Material assembly
+Drawers and wormhole pointers are untypable and stripped; everything
+else (prose, code fences, math) stays byte-verbatim. Multi-pick
+follows selection order — the drill measures what was practiced in
+the order practiced, not document order.
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-mastering--strip-untypables (text)
+  "Remove drawer blocks and wormhole lines from TEXT."
+  (with-temp-buffer
+    (insert text)
+    (goto-char (point-min))
+    (while (re-search-forward "^:[A-Z_]+:[ \t]*$" nil t)
+      (let ((beg (line-beginning-position)))
+        (if (re-search-forward "^:END:[ \t]*$" nil t)
+            (delete-region beg (min (point-max) (1+ (line-end-position))))
+          (goto-char (point-max)))))
+    (goto-char (point-min))
+    (while (re-search-forward "^#\\+wormhole:.*$" nil t)
+      (delete-region (line-beginning-position)
+                     (min (point-max) (1+ (line-end-position)))))
+    (buffer-string)))
+
+(defun my/manifolding-atlas-mastering--chunk-meta (text)
+  "Return (LANGS TEXT-P) for drill TEXT.
+LANGS lists src-block languages; TEXT-P is non-nil when prose
+survives outside code blocks."
+  (let (langs)
+    (with-temp-buffer
+      (insert text)
+      (goto-char (point-min))
+      (while (re-search-forward "^#\\+begin_src \\(\\S-+\\)" nil t)
+        (push (match-string-no-properties 1) langs))
+      (goto-char (point-min))
+      (while (re-search-forward "^#\\+\\(begin\\|end\\)_src.*$" nil t)
+        (delete-region (line-beginning-position)
+                       (min (point-max) (1+ (line-end-position)))))
+      (goto-char (point-min))
+      (list (delete-dups langs)
+            (re-search-forward "[^ \t\n]" nil t)))))
+
+(defun my/manifolding-atlas-mastering--scope-tag (metas nsrc)
+  "Scope tag for drill chunks METAS ((LANGS TEXT-P) list) from NSRC notes.
+Single note: prose, code:LANG, code:mixed, or code:LANGS+prose.
+Several notes: mixed:N-notes. The tag says what the number means."
+  (if (> nsrc 1)
+      (format "mixed:%d-notes" nsrc)
+    (let ((langs (delete-dups (mapcan #'car metas)))
+          (textp (cl-some #'cadr metas)))
+      (cond ((and langs textp)
+             (format "code:%s+prose"
+                     (if (= (length langs) 1) (car langs) "mixed")))
+            (langs
+             (if (= (length langs) 1)
+                 (format "code:%s" (car langs))
+               "code:mixed"))
+            (t "prose")))))
+
+(defun my/manifolding-atlas-mastering--subtree-body ()
+  "Stripped body text of the heading at point (whole subtree)."
+  (save-excursion
+    (org-back-to-heading t)
+    (forward-line 1)
+    (let ((beg (point))
+          (end (save-excursion (org-end-of-subtree t t))))
+      (my/manifolding-atlas-mastering--strip-untypables
+       (buffer-substring-no-properties beg end)))))
+
+(defun my/manifolding-atlas-mastering--collect-drill-headings ()
+  "Multi-pick drill headings via ks-goto-line; C-g finishes.
+Returns markers in selection order. Requires ks-goto-line."
+  (unless (fboundp 'ks-goto-line)
+    (user-error "Drill picking needs ks-goto-line, which is not loaded"))
+  (let (marks)
+    (message "Pick drill headings. C-g when done.")
+    (while (condition-case nil
+               (progn (ks-goto-line)
+                      (when (org-at-heading-p)
+                        (push (point-marker) marks))
+                      t)
+             (quit nil)))
+    (nreverse marks)))
+
+(defun my/manifolding-atlas-mastering--assemble-drill (scope)
+  "Assemble drill text per SCOPE (body/pick/file) in current buffer.
+Returns (TEXT NSRC METAS): the text, distinct-source count, and
+per-chunk metadata for the scope tag."
+  (pcase scope
+    ("body"
+     (let ((text (my/manifolding-atlas-mastering--subtree-body)))
+       (list text 1 (list (my/manifolding-atlas-mastering--chunk-meta text)))))
+    ("pick"
+     (let ((marks (my/manifolding-atlas-mastering--collect-drill-headings))
+           (texts nil)
+           (srcs nil))
+       (unless marks (user-error "Nothing picked"))
+       (dolist (m marks)
+         (with-current-buffer (marker-buffer m)
+           (save-excursion
+             (goto-char m)
+             (push (my/manifolding-atlas-mastering--subtree-body) texts)
+             (push (or (org-entry-get nil "ID")
+                       (buffer-file-name (marker-buffer m)))
+                   srcs)))
+         (set-marker m nil))
+       (let ((texts (nreverse texts)))
+         (list (mapconcat #'identity texts "\n\n")
+               (length (delete-dups srcs))
+               (mapcar #'my/manifolding-atlas-mastering--chunk-meta texts)))))
+    ("file"
+     (let ((text (my/manifolding-atlas-mastering--strip-untypables
+                  (buffer-substring-no-properties (point-min) (point-max)))))
+       (list text 1 (list (my/manifolding-atlas-mastering--chunk-meta text)))))
+    (_ (user-error "Unknown drill scope"))))
+#+end_src
+
+**** Drill launcher and record
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-mastering--format-typing-last (stats scope)
+  "Format drill STATS (:entries :errors :corrections :seconds) for the drawer."
+  (let* ((entries (or (plist-get stats :entries) 0))
+         (errors (or (plist-get stats :errors) 0))
+         (corrections (or (plist-get stats :corrections) 0))
+         (seconds (max 1 (or (plist-get stats :seconds) 0)))
+         (wpm (if (fboundp 'speed-type--net-wpm)
+                  (round (speed-type--net-wpm entries errors corrections seconds))
+                (round (/ (/ (float entries) 5) (/ seconds 60.0)))))
+         (acc (if (fboundp 'speed-type--accuracy)
+                  (round (speed-type--accuracy entries (- entries errors) corrections))
+                (round (* 100.0 (/ (float (max 0 (- entries errors))) (max 1 entries)))))))
+    (format "%s wpm:%d acc:%d%% secs:%d scope:%s"
+            (format-time-string "%Y-%m-%d") wpm acc seconds scope)))
+
+(defun my/manifolding-atlas-mastering--parse-typing-last (s)
+  "Parse a TYPING_LAST string into a plist, or nil."
+  (when (and (stringp s)
+             (string-match "^\\([0-9-]+?\\) wpm:\\([0-9]+\\) acc:\\([0-9]+\\)% secs:\\([0-9]+\\) scope:\\(\\S-+\\)$" s))
+    (list :date (match-string 1 s)
+          :wpm (string-to-number (match-string 2 s))
+          :acc (string-to-number (match-string 3 s))
+          :secs (string-to-number (match-string 4 s))
+          :scope (match-string 5 s))))
+
+(defun my/manifolding-atlas-mastering--record-drill (id stats scope)
+  "Write TYPING_LAST for ID from drill STATS. Last write wins by design:
+this property believes the last thing that happened — not the best,
+not the latest good. Warm-ups overwrite real attempts."
+  (let ((note (manifolding-atlas-db-get-by-id id)))
+    (unless note (user-error "Drill note gone"))
+    (let ((file (manifolding-atlas-note-path note)))
+      (unless file (user-error "Drill note has no file"))
+      (with-current-buffer (find-file-noselect file)
+        (save-excursion
+          (let ((level (manifolding-atlas-note-level note))
+                (pos (manifolding-atlas-note-pos note)))
+            (if (and level (> level 0) pos)
+                (progn (goto-char pos) (org-back-to-heading t))
+              (goto-char (point-min)))
+            (my/manifolding-atlas--drawer-put
+             "TYPING_LAST"
+             (my/manifolding-atlas-mastering--format-typing-last stats scope))
+            (save-buffer)
+            (message "Drill recorded on %s."
+                     (manifolding-atlas-note-title note))))))))
+
+(defun my/manifolding-atlas-mastering--type-drill-for (id)
+  "Launch a typing drill feeding ID's TYPING_LAST.
+Manual scope pick (note body, ks multi-pick, full file), then a
+speed-type session on the assembled text. Completion records the
+stats; quitting leaves no trace. Returns nil (never grades)."
+  (my/manifolding-atlas-mastering--ensure-drill-capture)
+  (let ((note (manifolding-atlas-db-get-by-id id)))
+    (unless note (user-error "No note for drill"))
+    (let ((file (manifolding-atlas-note-path note)))
+      (unless file (user-error "Drill note has no file"))
+      (with-current-buffer (find-file-noselect file)
+        (save-excursion
+          (let ((level (manifolding-atlas-note-level note))
+                (pos (manifolding-atlas-note-pos note)))
+            (if (and level (> level 0) pos)
+                (progn (goto-char pos) (org-back-to-heading t))
+              (goto-char (point-min)))
+            (let* ((scope (completing-read "Drill scope: "
+                                           '("body" "pick" "file")
+                                           nil t nil nil "body"))
+                   (assembled (my/manifolding-atlas-mastering--assemble-drill scope))
+                   (text (nth 0 assembled)))
+              (unless (string-match-p "[^ \t\n]" text)
+                (user-error "Nothing typable in scope %s" scope))
+              (let ((tag (my/manifolding-atlas-mastering--scope-tag
+                          (nth 2 assembled) (nth 1 assembled))))
+                (setq my/manifolding-atlas-mastering--pending-drill (cons id tag))
+                (let ((buf (get-buffer-create "*typing-drill*")))
+                  (with-current-buffer buf
+                    (erase-buffer)
+                    (insert text)
+                    (goto-char (point-min)))
+                  (pop-to-buffer-same-window buf)
+                  (speed-type-region (point-min) (point-max))
+                  (message "Drill scope %s — complete it; stats land on the note." tag)))))))))
+  nil)
+
+(defun my/manifolding-atlas-mastering-type-drill ()
+  "Drill the note at point outside any review session."
+  (interactive)
+  (let ((note (my/manifolding-atlas--buffer-note)))
+    (unless note (user-error "No note at point"))
+    (my/manifolding-atlas-mastering--type-drill-for
+     (manifolding-atlas-note-id note))))
+#+end_src
+
+**** Evidence bridge
+#+begin_src emacs-lisp
+(defun my/manifolding-atlas-mastering--evidence-prefill ()
+  "Prefill attest evidence from TYPING_LAST at point, or nil.
+Below-floor accuracy is flagged [low-acc N%] so a sloppy run never
+presents as a clean claim. Editable either way."
+  (when-let ((raw (my/manifolding-atlas--drawer-get "TYPING_LAST"))
+             (st (my/manifolding-atlas-mastering--parse-typing-last raw)))
+    (let ((acc (plist-get st :acc)))
+      (format "%styped %s at %dwpm/%d%% on %s"
+              (if (< acc my/manifolding-atlas-typing-accuracy-floor)
+                  (format "[low-acc %d%%] " acc)
+                "")
+              (plist-get st :scope)
+              (plist-get st :wpm)
+              acc
+              (plist-get st :date)))))
 #+end_src
 
 *** Commands
