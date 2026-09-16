@@ -6,7 +6,6 @@ Requires, reload behavior, init state, hooks, modeline, activation.
 #+begin_src emacs-lisp
 (require 'manifolding-keyboard)
 (require 'which-key)
-(require 'ace-window)
 (require 'pretty-hydra)
 (require 'vundo)
 #+end_src
