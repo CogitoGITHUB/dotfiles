@@ -1,0 +1,62 @@
+#+title: Manifolding Keyboard — Setup
+#+priority: 20
+
+Requires, reload behavior, init state, hooks, modeline, activation.
+** Requires
+#+begin_src emacs-lisp
+(require 'manifolding-keyboard)
+(require 'which-key)
+(require 'ace-window)
+(require 'pretty-hydra)
+(require 'vundo)
+#+end_src
+** Force keymap redefinition on reload
+#+begin_src emacs-lisp
+(dolist (sym '(manifolding-keyboard-normal-state-keymap
+                manifolding-keyboard-insert-state-keymap
+                manifolding-keyboard-visual-state-keymap
+                manifolding-keyboard-org-state-keymap
+                manifolding-keyboard-motion-state-keymap
+                manifolding-keyboard-vterm-state-keymap
+                manifolding-keyboard-magit-state-keymap
+                manifolding-keyboard-dired-state-keymap
+                manifolding-keyboard-presentation-state-keymap
+                manifolding-keyboard-atlas-pick-state-keymap))
+  (makunbound sym))
+#+end_src
+** Init State
+#+begin_src emacs-lisp
+(setq manifolding-keyboard-init-state-fn
+      (lambda ()
+        (cond
+         ((minibufferp) nil)
+         ((derived-mode-p 'org-mode)    "org")
+         ((derived-mode-p 'dired-mode)  "dired")
+         ((derived-mode-p 'vterm-mode)  "vterm")
+         ((derived-mode-p 'ibuffer-mode) "ibuffer")
+         ((derived-mode-p 'magit-mode)  nil)
+         ((derived-mode-p 'vundo-mode)  nil)
+         ((buffer-local-value 'buffer-read-only (current-buffer)) "motion")
+         (t "normal"))))
+(manifolding-keyboard-setup)
+#+end_src
+** State Hooks
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook   (lambda () (manifolding-keyboard-set-state "org")))
+(add-hook 'dired-mode-hook (lambda () (manifolding-keyboard-set-state "dired")))
+(add-hook 'vterm-mode-hook (lambda () (manifolding-keyboard-set-state "vterm")))
+(add-hook 'help-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))
+(add-hook 'Info-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))
+(add-hook 'view-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))
+(add-hook 'magit-mode-hook (lambda () (manifolding-keyboard-set-state "magit")))
+#+end_src
+** Modeline
+#+begin_src emacs-lisp
+(add-hook 'manifolding-keyboard-state-change-hook #'doom-modeline-refresh-bars)
+#+end_src
+** Activate
+#+begin_src emacs-lisp
+(setq echo-keystrokes 0)
+(setq centaur-tabs-ace-jump-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?s ?n))
+(which-key-mode 1)
+#+end_src

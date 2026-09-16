@@ -1,0 +1,103 @@
+#+title: Manifolding Keyboard — Engine Macros
+#+priority: 20
+
+Macro definitions: state machine, minor modes, hydra states. Evaluated before everything that invokes them.
+** Requires & group
+#+begin_src emacs-lisp
+(require 'cl-lib)
+
+(defgroup manifolding-keyboard nil
+  "Build your own minor modes for modal editing."
+  :group 'editing
+  :tag "Manifolding-Keyboard"
+  :prefix "manifolding-keyboard-")
+#+end_src
+** Local variable macro
+#+begin_src emacs-lisp
+(defmacro manifolding-keyboard-define-local-var (symbol &optional init-value docstring)
+  "Define SYMBOL as a permanent buffer-local variable."
+  (declare (indent defun) (doc-string 3))
+  `(progn
+     (defvar ,symbol ,init-value ,docstring)
+     (make-variable-buffer-local ',symbol)
+     (put ',symbol 'permanent-local t)))
+#+end_src
+** Minor mode definition macro
+Atomic upstream — kept whole.
+#+begin_src emacs-lisp
+(defmacro manifolding-keyboard--define-minor-mode (mode keymap body)
+  "Define a minor MODE with KEYMAP and options in BODY."
+  (let ((mode-name (symbol-name mode))
+        (sparse (plist-get body :sparse))
+        (no-suppress (plist-get body :no-suppress))
+        (lighter (plist-get body :lighter))
+        (cursor-type (plist-get body :cursor-type))
+        (no-emulation (plist-get body :no-emulation)))
+    `(progn
+      (defvar ,keymap
+        (if ,sparse (make-sparse-keymap) (make-keymap))
+        ,(format "Keymap for %s." mode-name))
+      (unless ,no-suppress
+        (suppress-keymap ,keymap))
+      (define-minor-mode ,mode
+        ,(format "Manifolding-Keyboard minor mode %s" mode-name)
+        :lighter ,lighter
+        :keymap ,keymap
+        (when ,cursor-type (setq-local cursor-type ,cursor-type)))
+      (unless ,no-emulation
+        (unless (boundp 'manifolding-keyboard--emulation-mode-map-alist)
+          (setq manifolding-keyboard--emulation-mode-map-alist nil))
+        (add-to-list 'manifolding-keyboard--emulation-mode-map-alist (cons ',mode ,keymap))
+        (add-to-list 'emulation-mode-map-alists manifolding-keyboard--emulation-mode-map-alist)))))
+#+end_src
+** Define-state macro
+#+begin_src emacs-lisp
+(defmacro manifolding-keyboard-define-state (state &rest body)
+  "Define a new STATE minor mode with options in BODY."
+  (declare (indent defun))
+  (let ((mode (manifolding-keyboard-get-state-mode state))
+        (keymap (manifolding-keyboard-get-state-keymap state)))
+    `(manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)))
+
+
+#+end_src
+* Hydra Infrastructure
+
+** Defhydra-state macro
+Single declaration generates both a manifolding-keyboard state's keybindings and its hydra menu. Bindings with `:exit nil` become state keys; all bindings appear in the hydra. The "Back → parent" group is automatic.
+#+begin_src emacs-lisp
+(defmacro my/defhydra-state (hydra-name state-name title back-target &rest spec)
+  "Define manifolding-keyboard STATE-NAME and its hydra menu from SPEC.
+STATE-NAME may be nil for hydras without a manifolding-keyboard state.
+BACK-TARGET is (HYDRA/BODY LABEL) for the back link, or nil for root.
+SPEC is alternating group-name / binding-list pairs:
+  GROUP-NAME  ((KEY CMD LABEL &key EXIT) ...)
+Bindings with :exit nil go into the manifolding-keyboard state keymap.
+A \"Back\" group linking to BACK-TARGET is appended automatically."
+  (declare (indent defun))
+  (let ((groups '())
+        (state-binds '()))
+    (while spec
+      (let ((group-name (pop spec))
+            (bindings (pop spec)))
+        (push (list group-name bindings) groups)
+        (dolist (b bindings)
+          (unless (plist-get (cdddr b) :exit)
+            (push (list (nth 0 b) (nth 1 b)) state-binds)))))
+    (setq groups (nreverse groups)
+          state-binds (nreverse state-binds))
+    (let ((back-group
+           (when back-target
+             `("Back" (("SPC" ,(car back-target) ,(cadr back-target) :exit t))))))
+      `(progn
+         ,@(when state-name
+             `((manifolding-keyboard-define-keys
+                :states '(,state-name)
+                :bind ',state-binds)))
+         (pretty-hydra-define ,hydra-name
+           (:title ,title :quit-key "q" :separator "─")
+           (,@(apply #'append (mapcar (lambda (g)
+                                        (list (car g) (cadr g)))
+                                      groups))
+            ,@back-group))))))
+#+end_src
