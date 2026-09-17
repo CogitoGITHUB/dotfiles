@@ -79,10 +79,31 @@ those are never lazy-loading artifacts.
     "outline-" "rectangle-" "mark-" "kill-" "save-" "other-" "beginning-" "save-buffer"
     "scroll-" "forward-" "backward-" "next-" "previous-" "goto-" "move-" "copy-"
     "delete-" "split-" "switch-" "find-" "query-" "flush-" "describe-" "ghostel"
-    "evil-show-digraphs")
+    "evil-show-digraphs" "my/dired-" "my/mindmap-")
   "Command prefixes treated as external (warn, never error, when unbound)."
   :type '(repeat string)
   :group 'manifolding-keyboard)
+;; NOTE: my/dired-* (dired.org), my/mindmap-* (mind-map.org) resolve at
+;; boot from sibling modules — covered here, not flagged.
+
+(defun manifolding-keyboard--defined-hydras ()
+  "Hydra body symbols defined in leaders/ (generated at boot by pretty-hydra).
+Returns e.g. (my/main-hydra/body my/select-hydra/body ...)."
+  (let ((out nil))
+    (dolist (file (and (file-directory-p (expand-file-name "leaders/" (manifolding-keyboard--module-dir)))
+                       (directory-files (expand-file-name "leaders/" (manifolding-keyboard--module-dir)) t "\\.org$")))
+      (dolist (blk (manifolding-emacs-concatenate-source-blocks file))
+        (with-temp-buffer
+          (insert blk)
+          (goto-char (point-min))
+          (condition-case nil
+              (while t
+                (let ((form (read (current-buffer))))
+                  (when (and (consp form)
+                             (memq (car form) '(my/defhydra-state pretty-hydra-define)))
+                    (push (intern (format "%s/body" (nth 1 form))) out))))
+            (end-of-file nil)))))
+    out))
 
 (defun manifolding-keyboard--external-p (sym)
   "Non-nil when SYM matches an external prefix."
@@ -98,7 +119,9 @@ Returns violation count; details go to *keyboard-validation*."
         (violations 0))
     (with-current-buffer (get-buffer-create "*keyboard-validation*")
       (erase-buffer)
-      (dolist (sub '("states/" "leaders/"))
+      (let ((hydras (manifolding-keyboard--defined-hydras))
+            (subdirs '("states/" "leaders/")))
+      (dolist (sub subdirs)
         (dolist (file (and (file-directory-p (expand-file-name sub dir))
                                     (directory-files (expand-file-name sub dir) t "\\.org$")))
           (let ((rel (file-relative-name file dir)))
@@ -131,6 +154,7 @@ Returns violation count; details go to *keyboard-validation*."
                                   (let ((cmd (cdr b)))
                                     (when (and (symbolp cmd)
                                                (not (fboundp cmd))
+                                               (not (memq cmd hydras))
                                                (not (manifolding-keyboard--external-p cmd)))
                                       (setq violations (1+ violations))
                                       (with-current-buffer "*keyboard-validation*"
@@ -140,7 +164,7 @@ Returns violation count; details go to *keyboard-validation*."
                               (setq violations (1+ violations))
                               (with-current-buffer "*keyboard-validation*"
                                 (insert (format "%s: non-nil hydra state (must stay hydra-only)\n" rel)))))))))
-                  (end-of-file nil)))))))
+                  (end-of-file nil))))))))
       (insert (format "\nValidation done: %d violation(s).\n" violations))
       (display-buffer (current-buffer)))
     (message "Keyboard validation: %d violation(s)" violations)
