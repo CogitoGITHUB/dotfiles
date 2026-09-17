@@ -1191,3 +1191,12 @@ Otherwise, forward to `goto-line' with ARG."
   (my/qsearch nil)
   (deactivate-mark))
 #+end_src
+** Companion command (missed in first pass, universal-shared)
+#+begin_src emacs-lisp
+(defun my/save-all ()
+  "Save all modified buffers."
+  (interactive)
+  (let ((modified (seq-some #'buffer-modified-p (buffer-list))))
+    (save-some-buffers t)
+    (message (if modified "Saved." "Nothing to save."))))
+#+end_src
