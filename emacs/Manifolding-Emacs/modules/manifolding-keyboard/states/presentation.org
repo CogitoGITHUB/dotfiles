@@ -1,0 +1,26 @@
+#+title: Manifolding Keyboard — Presentation State
+#+priority: 20
+
+Keys specific to the presentation state. Shared bindings live in universal.org.
+
+** Bindings
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-keys
+  :states '("presentation")
+  :bind
+  `(
+    ("P" . org-tree-slide-presentation-profile)
+    ("a" . my/ks-hydra/body)
+    ("e" . org-tree-slide-move-previous-tree)
+    ("h" . backward-char)
+    ("o" . org-cycle)
+    ("p" . org-tree-slide-simple-profile)
+    ("q" . ,(lambda ()
+                  (interactive)
+                  (org-tree-slide-mode -1)
+                  (manifolding-keyboard-set-state "org")))
+    ("t" . forward-char)
+    ("u" . org-tree-slide-move-next-tree)
+    ("v" . org-tree-slide-content)
+))
+#+end_src

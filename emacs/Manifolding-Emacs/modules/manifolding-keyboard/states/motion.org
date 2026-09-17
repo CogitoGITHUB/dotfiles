@@ -1,0 +1,19 @@
+#+title: Manifolding Keyboard — Motion State
+#+priority: 20
+
+Keys specific to the motion state. Shared bindings live in universal.org.
+
+** Bindings
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-keys
+  :states '("motion")
+  :bind
+  `(
+    ("e" . scroll-up-command)
+    ("h" . backward-button)
+    ("o" . consult-outline)
+    ("p" . previous-line)
+    ("t" . forward-button)
+    ("u" . scroll-down-command)
+))
+#+end_src

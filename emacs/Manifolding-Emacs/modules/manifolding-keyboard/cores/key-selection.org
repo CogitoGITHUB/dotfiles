@@ -1744,41 +1744,6 @@ When BOTTOM-UP is non-nil, display ks candidates from top to bottom"
      (ks--line-cands arg beg end bottom-up))))
 
 ;;;###autoload
-(defun ks-goto-line (&optional arg)
-  "Jump to a line start in current buffer.
-
-When ARG is 1, jump to lines currently visible, with the option
-to cancel to `goto-line' by entering a number.
-
-When ARG is 4, negate the window scope determined by
-`ks-all-windows'.
-
-Otherwise, forward to `goto-line' with ARG."
-  (interactive "p")
-  (setq arg (or arg 1))
-  (if (not (memq arg '(1 4)))
-      (progn
-        (goto-char (point-min))
-        (forward-line (1- arg)))
-    (ks-with ks-goto-line
-      (let* ((ks-handler-old ks-handler-function)
-             (ks-handler-function
-              (lambda (char)
-                (if (or (< char ?0)
-                        (> char ?9))
-                    (funcall ks-handler-old char)
-                  (let ((line (read-from-minibuffer
-                               "Goto line: " (string char))))
-                    (when line
-                      (ks-push-mark)
-                      (save-restriction
-                        (widen)
-                        (goto-char (point-min))
-                        (forward-line (1- (string-to-number line))))
-                      (throw 'done 'exit))))))
-             (r (ks--line (eq arg 4))))
-        (when (and (not (memq r '(t nil))) (eq ks-action #'identity))
-          (ks-action-goto r))))))
 
 ;;;###autoload
 (defun ks-goto-line-above (&optional offset bottom-up)
@@ -2148,16 +2113,6 @@ Otherwise, the whole regex is highlighted."
 (defvar ks--old-cands nil)
 
 ;;;###autoload
-(defun ks-goto-char-timer (&optional arg)
-  "Read one or many consecutive chars and jump to the first one.
-The window scope is determined by `ks-all-windows' (ARG negates it)."
-  (interactive "P")
-  (let ((ks-all-windows (if arg
-                             (not ks-all-windows)
-                           ks-all-windows)))
-    (ks-with ks-goto-char-timer
-      (setq ks--old-cands (ks--read-candidates))
-      (ks-process ks--old-cands))))
 
 (defun ks-push-mark ()
   "Store the current point and window."

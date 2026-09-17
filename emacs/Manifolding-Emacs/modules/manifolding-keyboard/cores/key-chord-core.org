@@ -178,10 +178,6 @@ double-tap chord is defined once."
       (define-key keymap (vector 'my/chord key1 key2) command)
       (define-key keymap (vector 'my/chord key2 key1) command))))
 
-(defun my/chord-define-global (keys command)
-  "Globally define a chord of the two keys in KEYS calling COMMAND."
-  (interactive "sSet key chord globally (2 keys): \nCSet chord \"%s\" to command: ")
-  (my/chord-define (current-global-map) keys command))
 
 (defun my/chord-define-local (keys command)
   "Locally define a chord of the two keys in KEYS calling COMMAND."
@@ -198,3 +194,4 @@ double-tap chord is defined once."
   (interactive "sUnset key chord locally (2 keys): ")
   (my/chord-define (current-local-map) keys nil))
 #+end_src
+** Local definers
