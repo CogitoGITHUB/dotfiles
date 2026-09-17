@@ -5,39 +5,9 @@ SPC root hub plus its owned commands.
 
 ** Main menu
 
-All navigation menus.  See SPC → submenu → key.  Defined via `my/defhydra-state`.
-#+begin_src emacs-lisp
-(pretty-hydra-define my/main-hydra
-  (:title "Main Menu" :quit-key "SPC" :separator "─")
-  ("Submenus"
-    (("a" my/ks-hydra/body       "key sel"    :exit t)
-    ("t" my/bookmarks-hydra/body  "bookmarks"  :exit t)
-    ("e" my/activities-hydra/body "activities" :exit t)
-    ("s" my/select-hydra/body     "select"     :exit t)
-    ("r" my/registers-hydra/body  "registers"  :exit t)
-    ("w" my/windows-hydra/body    "windows"    :exit t)
-    ("i" my/tabs-hydra/body       "tabs"       :exit t)
-    ("l" my/project-hydra/body    "project"    :exit t)
-    ("n" my/files-hydra/body      "files"      :exit t)
-    ("h" my/buffers-hydra/body    "buffers"    :exit t)
-    ("o" my/org-hydra/body        "org"        :exit t)
-    ("d" my/literate-hydra/body   "dev"        :exit t)
-    ("x" my/templates-hydra/body  "templates"  :exit t)
-    ("m" manifolding-mind-map-mode "mind map"   :exit t)
-    ("u" my/open-dashboard        "dashboard"  :exit t)
-    ("g" my/git-hydra/body        "git"        :exit t)
-    ("b" my/browse-hydra/body     "browse"     :exit t)
-    ("p" org-tree-slide-mode      "present"    :exit t))
-   "Quick Access"
-   (("o" org-open-at-point          "open link"    :exit t)
-    ("v" my/manifolding-atlas-hydra/body       "manifolding-atlas"       :exit t)
-    ("T" ghostel                    "terminal"     :exit t)
-    ("z" my/manifolding-atlas-quick-captures   "fast capture"  :exit t)
-    ("/" evil-show-digraphs         "digraphs"     :exit t))
-   "Exit"
-   (("q" nil "quit" :exit t)
-    ("Q" nil "quit" :exit t))))
-#+end_src
+Root menu (`my/main-hydra`, Transient era). Submenu list lives in
+`engine/menus.org` and derives from the leader registry — edit there,
+not here. Owned file-open commands below.
 ** Owned commands
 #+begin_src emacs-lisp
 (defun my/find-file (path)

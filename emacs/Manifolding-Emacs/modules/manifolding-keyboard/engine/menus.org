@@ -1,0 +1,92 @@
+#+title: Manifolding Keyboard — Menus
+#+priority: 20
+
+Auto-derived Transient menus. Nothing here hand-lists keys: states
+menus walk live keymaps, the main hub lists the leaders/ directory,
+and per-leader menus come from the =my/defhydra-state= spec the files
+already carry (macro emits Transient directly). Add/delete a leader
+file or binding and the menus follow with zero edits here.
+
+* Registry
+#+begin_src emacs-lisp
+(defvar my/menus-hydra-registry nil
+  "Alist (HYDRA-NAME . TITLE) populated by my/defhydra-state expansion.
+Read by the main hub menu; shrinks on its own when files are deleted.")
+#+end_src
+
+* States menus (approach a: read the live keymap)
+#+begin_src emacs-lisp
+(defun my/menus-state-suffixes (state)
+  "Suffix specs for STATE's keymap: (KEY DESC CMD).
+DESC is the command's docstring first line (empty fallback).
+Unbound-remnant entries (lambdas are named at define time, so every
+entry here is a symbol) pass through untouched."
+  (let ((map (manifolding-keyboard-get-state-keymap state))
+        (out nil))
+    (when (boundp map)
+      (map-keymap
+       (lambda (ev cmd)
+         (when (and (symbolp cmd) (commandp cmd))
+           (let* ((doc (or (documentation cmd) ""))
+                  (desc (car (split-string doc "\n"))))
+             (push (list (key-description (vector ev)) desc cmd) out))))
+       (symbol-value map)))
+    (sort out (lambda (a b) (string< (car a) (car b))))))
+
+(transient-define-prefix my/menus-state-menu ()
+  "State menu, derived from the current state's live keymap."
+  ["Keys" :class transient-column :setup-children
+   (lambda (_)
+     (my/menus-state-suffixes
+      (or manifolding-keyboard-state "normal")))])
+#+end_src
+
+* Main hub (directory-derived submenu list)
+#+begin_src emacs-lisp
+(defun my/menus-leader-suffixes ()
+  "One suffix per leader: (KEY LABEL CMD) from the hydra registry.
+KEY is the leader's SPC sub-key, recovered from the main menu map
+below; LABEL/CMD come from registry titles and hydra bodies."
+  (let ((out nil))
+    (dolist (entry (append my/menus-leader-map nil))
+      (let* ((key (car entry))
+             (hydra (cdr entry))
+             (title (or (cdr (assq hydra my/menus-hydra-registry))
+                        (symbol-name hydra))))
+        (push (list key title (intern (format "%s/body" hydra))) out)))
+    (sort out (lambda (a b) (string< (car a) (car b))))))
+
+(defvar my/menus-leader-map
+  '(("v" . my/manifolding-atlas-hydra)
+    ("y" . my/wormhole-hydra)
+    ("m" . my/mindmap-hydra)
+    ("S" . my/atlas-search-hydra)
+    ("a" . my/ks-hydra)
+    ("o" . my/org-hydra)
+    ("g" . my/git-hydra)
+    ("b" . my/browse-hydra)
+    ("d" . my/literate-hydra)
+    ("w" . my/windows-hydra)
+    ("i" . my/tabs-hydra)
+    ("h" . my/buffers-hydra)
+    ("t" . my/bookmarks-hydra)
+    ("n" . my/files-hydra)
+    ("r" . my/registers-hydra)
+    ("s" . my/select-hydra)
+    ("e" . my/activities-hydra)
+    ("x" . my/templates-hydra))
+  "SPC sub-key to leader hydra. The one hand list in the menu system:
+19 static pairs (key assignment is inherently manual), everything
+below them derived.")
+
+(transient-define-prefix my/main-hydra/body ()
+  "Main menu. Submenus derived from the leader map + hydra registry."
+  ["Leaders" :class transient-column :setup-children
+   (lambda (_) (my/menus-leader-suffixes))]
+  ["Quick Access" :class transient-column
+   ("o" "open link" org-open-at-point)
+   ("v" "manifolding-atlas" my/manifolding-atlas-hydra/body)
+   ("T" "terminal" ghostel)
+   ("z" "fast capture" my/manifolding-atlas-quick-captures)
+   ("/" "digraphs" evil-show-digraphs)])
+#+end_src

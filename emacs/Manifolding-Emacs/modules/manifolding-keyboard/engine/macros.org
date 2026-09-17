@@ -84,23 +84,46 @@ invocation unregisters the state on next boot, nothing else touched."
 * Hydra Infrastructure
 
 ** Defhydra-state macro
-Single declaration generates both a manifolding-keyboard state's keybindings and its hydra menu. Bindings with `:exit nil` become state keys; all bindings appear in the hydra. The "Back → parent" group is automatic.
+Single declaration generates both a manifolding-keyboard state's keybindings and its Transient menu. Bindings with `:exit nil` become state keys (and sticky Transient suffixes); all bindings appear in the menu. The "Back → parent" group is automatic. Same spec shape the Hydra engine took — engine swapped, files untouched.
 #+begin_src emacs-lisp
 (defmacro my/defhydra-state (hydra-name state-name title back-target &rest spec)
-  "Define manifolding-keyboard STATE-NAME and its hydra menu from SPEC.
-STATE-NAME may be nil for hydras without a manifolding-keyboard state.
+  "Define manifolding-keyboard STATE-NAME and its Transient menu from SPEC.
+STATE-NAME may be nil for menus without a manifolding-keyboard state.
 BACK-TARGET is (HYDRA/BODY LABEL) for the back link, or nil for root.
 SPEC is alternating group-name / binding-list pairs:
   GROUP-NAME  ((KEY CMD LABEL &key EXIT) ...)
-Bindings with :exit nil go into the manifolding-keyboard state keymap.
-A \"Back\" group linking to BACK-TARGET is appended automatically."
+Bindings with :exit nil go into the manifolding-keyboard state keymap
+and become sticky (:transient t) suffixes; the rest exit after invoke.
+Lambda CMDs get deterministic wrapper names (my/<hydra>-<key>-action).
+A \"Back\" group linking to BACK-TARGET is appended automatically.
+The menu command is <HYDRA-NAME>/body, same as the Hydra era."
   (declare (indent defun))
   (let ((groups '())
-        (state-binds '()))
+        (state-binds '())
+        (wrappers '()))
     (while spec
       (let ((group-name (pop spec))
             (bindings (pop spec)))
-        (push (list group-name bindings) groups)
+        (push (list group-name
+                    (mapcar (lambda (b)
+                              (let ((key (nth 0 b))
+                                    (cmd (nth 1 b))
+                                    (label (nth 2 b))
+                                    (exit (plist-get (nthcdr 3 b) :exit)))
+                                (when (and (consp cmd) (eq (car cmd) 'lambda))
+                                  (let ((w (intern (format "my/%s-%s-action"
+                                                           (substring (symbol-name hydra-name) 3)
+                                                           key))))
+                                    (push `(defun ,w ()
+                                             ,(format "Wrapper for %s %s menu key." hydra-name key)
+                                             (interactive)
+                                             (funcall ,cmd))
+                                          wrappers)
+                                    (setq cmd w)))
+                                (append (list key label cmd)
+                                        (when (eq exit nil) '(:transient t)))))
+                            bindings))
+              groups)
         (dolist (b bindings)
           (unless (plist-get (cdddr b) :exit)
             (push (list (nth 0 b) (nth 1 b)) state-binds)))))
@@ -108,16 +131,23 @@ A \"Back\" group linking to BACK-TARGET is appended automatically."
           state-binds (nreverse state-binds))
     (let ((back-group
            (when back-target
-             `("Back" (("SPC" ,(car back-target) ,(cadr back-target) :exit t))))))
+             `([ "Back" :class transient-column
+                 ("SPC" ,(cadr back-target) ,(car back-target)) ]))))
       `(progn
+         ,@wrappers
          ,@(when state-name
              `((manifolding-keyboard-define-keys
                 :states '(,state-name)
                 :bind ',state-binds)))
-         (pretty-hydra-define ,hydra-name
-           (:title ,title :quit-key "q" :separator "─")
-           (,@(apply #'append (mapcar (lambda (g)
-                                        (list (car g) (cadr g)))
-                                      groups))
-            ,@back-group))))))
+         (transient-define-prefix
+             ,(intern (format "%s/body" hydra-name)) ()
+           ,title
+           ,@(mapcar (lambda (g)
+                       (apply #'vector (car g) :class 'transient-column
+                              (cadr g)))
+                     groups)
+           ,@back-group)
+         (when (boundp 'my/menus-hydra-registry)
+           (cl-pushnew (cons ',hydra-name ,title)
+                       my/menus-hydra-registry :test #'equal))))))
 #+end_src

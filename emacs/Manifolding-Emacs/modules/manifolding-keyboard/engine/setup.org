@@ -6,7 +6,7 @@ Requires, reload behavior, init state, hooks, modeline, activation.
 #+begin_src emacs-lisp
 (require 'manifolding-keyboard)
 (require 'which-key)
-(require 'pretty-hydra)
+(require 'transient)
 (require 'vundo)
 #+end_src
 ** Force keymap redefinition on reload
