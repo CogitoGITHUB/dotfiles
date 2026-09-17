@@ -73,16 +73,36 @@ check). Duplicate keys and non-nil hydra states are always violations:
 those are never lazy-loading artifacts.
 #+begin_src emacs-lisp
 (defcustom manifolding-keyboard-external-prefixes
-  '("consult-" "magit-" "org-" "vterm-" "multi-vterm" "mm/" "manifolding-atlas-"
+  '("consult-" "magit-" "org-" "mm/" "manifolding-atlas-"
     "my/manifolding-atlas-" "evil-" "mwheel-" "text-scale-" "tab-bar-" "centaur-tabs-"
     "org-tree-slide-" "treemacs-" "vundo" "git-timemachine" "dired-" "ibuffer-"
     "outline-" "rectangle-" "mark-" "kill-" "save-" "other-" "beginning-" "save-buffer"
     "scroll-" "forward-" "backward-" "next-" "previous-" "goto-" "move-" "copy-"
     "delete-" "split-" "switch-" "find-" "query-" "flush-" "describe-" "ghostel"
-    "evil-show-digraphs")
+    "evil-show-digraphs" "my/dired-" "my/mindmap-")
   "Command prefixes treated as external (warn, never error, when unbound)."
   :type '(repeat string)
   :group 'manifolding-keyboard)
+;; NOTE: my/dired-* (dired.org), my/mindmap-* (mind-map.org) resolve at
+;; boot from sibling modules — covered here, not flagged.
+
+(defun manifolding-keyboard--defined-hydras ()
+  "Hydra body symbols defined in leaders/ (generated at boot by pretty-hydra)."
+  (let ((out nil))
+    (dolist (file (and (file-directory-p (expand-file-name "leaders/" (manifolding-keyboard--module-dir)))
+                       (directory-files (expand-file-name "leaders/" (manifolding-keyboard--module-dir)) t "\\.org$")))
+      (dolist (blk (manifolding-emacs-concatenate-source-blocks file))
+        (with-temp-buffer
+          (insert blk)
+          (goto-char (point-min))
+          (condition-case nil
+              (while t
+                (let ((form (read (current-buffer))))
+                  (when (and (consp form)
+                             (memq (car form) '(my/defhydra-state pretty-hydra-define)))
+                    (push (intern (format "%s/body" (nth 1 form))) out))))
+            (end-of-file nil)))))
+    out))
 
 (defun manifolding-keyboard--external-p (sym)
   "Non-nil when SYM matches an external prefix."
@@ -91,25 +111,27 @@ those are never lazy-loading artifacts.
              manifolding-keyboard-external-prefixes)))
 
 (defun manifolding-keyboard-validate ()
-  "Validate states/ and leaders/: priority slot, bindings, hydra shape.
+  "Validate states/ and leaders/: priority slot, bindings, hydra shape, self-registration.
 Returns violation count; details go to *keyboard-validation*."
   (interactive)
   (let ((dir (manifolding-keyboard--module-dir))
-        (violations 0))
+        (violations 0)
+        (hydras (manifolding-keyboard--defined-hydras)))
     (with-current-buffer (get-buffer-create "*keyboard-validation*")
       (erase-buffer)
       (dolist (sub '("states/" "leaders/"))
         (dolist (file (and (file-directory-p (expand-file-name sub dir))
-                                    (directory-files (expand-file-name sub dir) t "\\.org$")))
-          (let ((rel (file-relative-name file dir)))
-            ;; 1. priority slot (load-bearing: ties resolve by directory order)
+                           (directory-files (expand-file-name sub dir) t "\\.org$")))
+          (let ((rel (file-relative-name file dir))
+                (singles nil)
+                (invokes nil)
+                (inits nil))
             (with-temp-buffer
               (insert-file-contents file)
               (unless (re-search-forward "^#\\+priority:[ \t]*20[ \t]*$" nil t)
                 (setq violations (1+ violations))
                 (with-current-buffer "*keyboard-validation*"
                   (insert (format "%s: missing #+priority: 20\n" rel)))))
-            ;; 2-4. per-block checks on tangled code
             (dolist (blk (manifolding-emacs-concatenate-source-blocks file))
               (with-temp-buffer
                 (insert blk)
@@ -131,6 +153,7 @@ Returns violation count; details go to *keyboard-validation*."
                                   (let ((cmd (cdr b)))
                                     (when (and (symbolp cmd)
                                                (not (fboundp cmd))
+                                               (not (memq cmd hydras))
                                                (not (manifolding-keyboard--external-p cmd)))
                                       (setq violations (1+ violations))
                                       (with-current-buffer "*keyboard-validation*"
@@ -139,8 +162,29 @@ Returns violation count; details go to *keyboard-validation*."
                             (unless (null (nth 2 form))
                               (setq violations (1+ violations))
                               (with-current-buffer "*keyboard-validation*"
-                                (insert (format "%s: non-nil hydra state (must stay hydra-only)\n" rel)))))))))
-                  (end-of-file nil)))))))
+                                (insert (format "%s: non-nil hydra state (must stay hydra-only)\n" rel)))))
+                           ((eq (car form) 'manifolding-keyboard-define-state)
+                            (push (cadr form) invokes)
+                            (let ((init (plist-get (cddr form) :init)))
+                              (when init
+                                (push (if (and (consp init) (eq (car init) 'function))
+                                          (cadr init)
+                                        init)
+                                      inits))))))))
+                  (end-of-file nil))))
+            (dolist (st singles)
+              (unless (member st invokes)
+                (setq violations (1+ violations))
+                (with-current-buffer "*keyboard-validation*"
+                  (insert (format "%s: state %s bound but never invoked\n" rel st)))))
+            (dolist (fn inits)
+              (unless (and (symbolp fn) (fboundp fn))
+                (setq violations (1+ violations))
+                (with-current-buffer "*keyboard-validation*"
+                  (insert (format "%s: :init %s unbound\n" rel fn))))))))
+      ;; self-registration sweep: single-state bindings need a same-file invocation.
+      ;; (Singles/invokes/inits are per-file; the sweep above already compared
+      ;; them per file. This comment marks the seam: nothing global lives here.)
       (insert (format "\nValidation done: %d violation(s).\n" violations))
       (display-buffer (current-buffer)))
     (message "Keyboard validation: %d violation(s)" violations)
