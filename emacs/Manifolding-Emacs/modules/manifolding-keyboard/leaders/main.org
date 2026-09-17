@@ -5,7 +5,7 @@ SPC root hub plus its owned commands.
 
 ** Main menu
 
-Root menu (`my/main-hydra`, Transient era). Submenu list lives in
+Root menu (`my/main-hydra/body`, Transient era). Submenu list lives in
 `engine/menus.org` and derives from the leader registry — edit there,
 not here. Owned file-open commands below.
 ** Owned commands
