@@ -50,14 +50,34 @@ Atomic upstream — kept whole.
         (add-to-list 'manifolding-keyboard--emulation-mode-map-alist (cons ',mode ,keymap))
         (add-to-list 'emulation-mode-map-alists manifolding-keyboard--emulation-mode-map-alist)))))
 #+end_src
+** State registry
+One invocation of =manifolding-keyboard-define-state= both defines the
+mode/keymap AND registers the state here — a state file is one unit,
+never invocation-plus-separate-push. Order in this alist is newest
+eval first (push); =init-state-fn= consults colliding states via an
+explicit precedence list, not position, so alphabetical file order
+can never silently reorder decisions.
+#+begin_src emacs-lisp
+(defvar manifolding-keyboard-state-init-alist nil
+  "Alist (STATE . INIT-FN) of known states and auto-activation predicates.
+INIT-FN nil means manual-only activation (hooks, commands, prompts).")
+#+end_src
 ** Define-state macro
 #+begin_src emacs-lisp
 (defmacro manifolding-keyboard-define-state (state &rest body)
-  "Define a new STATE minor mode with options in BODY."
+  "Define a new STATE minor mode with options in BODY.
+:init INIT-FN registers an auto-activation predicate: a function
+symbol (preferred) or lambda, called with no args — non-nil means
+activate this state. Nil (default) leaves activation manual.
+Registration is a side effect of expansion: dropping this file's
+invocation unregisters the state on next boot, nothing else touched."
   (declare (indent defun))
   (let ((mode (manifolding-keyboard-get-state-mode state))
-        (keymap (manifolding-keyboard-get-state-keymap state)))
-    `(manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)))
+        (keymap (manifolding-keyboard-get-state-keymap state))
+        (init (plist-get body :init)))
+    `(progn
+       (manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)
+       (push (cons ,state ,init) manifolding-keyboard-state-init-alist))))
 
 
 #+end_src

@@ -2,6 +2,14 @@
 #+priority: 20
 
 Whole block, all external prompt functions.
+** State definition
+Self-registration: mode and keymap in one unit (manual activation only). Delete this file and the state unregisters on next boot.
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-state "atlas-pick"
+  :sparse t
+  :lighter "[PCK]"
+  :cursor-type 'box)
+#+end_src
 ** Atlas Pick
 Flow: session pickers open with an auto-armed key-selection loop
 (org-prompts.org) that owns letters for jumps+marking and takes

@@ -68,42 +68,21 @@ Errors loudly when the file already exists."
 * Validator
 
 Warns, never errors, on external commands (consult-*, magit-*, org-*,
-mm/* loads lazily — erroring would train you to ignore the
+vterm-*, mm/* load lazily — erroring would train you to ignore the
 check). Duplicate keys and non-nil hydra states are always violations:
 those are never lazy-loading artifacts.
 #+begin_src emacs-lisp
 (defcustom manifolding-keyboard-external-prefixes
-  '("consult-" "magit-" "org-" "mm/" "manifolding-atlas-"
+  '("consult-" "magit-" "org-" "vterm-" "multi-vterm" "mm/" "manifolding-atlas-"
     "my/manifolding-atlas-" "evil-" "mwheel-" "text-scale-" "tab-bar-" "centaur-tabs-"
     "org-tree-slide-" "treemacs-" "vundo" "git-timemachine" "dired-" "ibuffer-"
     "outline-" "rectangle-" "mark-" "kill-" "save-" "other-" "beginning-" "save-buffer"
     "scroll-" "forward-" "backward-" "next-" "previous-" "goto-" "move-" "copy-"
     "delete-" "split-" "switch-" "find-" "query-" "flush-" "describe-" "ghostel"
-    "evil-show-digraphs" "my/dired-" "my/mindmap-")
+    "evil-show-digraphs")
   "Command prefixes treated as external (warn, never error, when unbound)."
   :type '(repeat string)
   :group 'manifolding-keyboard)
-;; NOTE: my/dired-* (dired.org), my/mindmap-* (mind-map.org) resolve at
-;; boot from sibling modules — covered here, not flagged.
-
-(defun manifolding-keyboard--defined-hydras ()
-  "Hydra body symbols defined in leaders/ (generated at boot by pretty-hydra).
-Returns e.g. (my/main-hydra/body my/select-hydra/body ...)."
-  (let ((out nil))
-    (dolist (file (and (file-directory-p (expand-file-name "leaders/" (manifolding-keyboard--module-dir)))
-                       (directory-files (expand-file-name "leaders/" (manifolding-keyboard--module-dir)) t "\\.org$")))
-      (dolist (blk (manifolding-emacs-concatenate-source-blocks file))
-        (with-temp-buffer
-          (insert blk)
-          (goto-char (point-min))
-          (condition-case nil
-              (while t
-                (let ((form (read (current-buffer))))
-                  (when (and (consp form)
-                             (memq (car form) '(my/defhydra-state pretty-hydra-define)))
-                    (push (intern (format "%s/body" (nth 1 form))) out))))
-            (end-of-file nil)))))
-    out))
 
 (defun manifolding-keyboard--external-p (sym)
   "Non-nil when SYM matches an external prefix."
@@ -119,9 +98,7 @@ Returns violation count; details go to *keyboard-validation*."
         (violations 0))
     (with-current-buffer (get-buffer-create "*keyboard-validation*")
       (erase-buffer)
-      (let ((hydras (manifolding-keyboard--defined-hydras))
-            (subdirs '("states/" "leaders/")))
-      (dolist (sub subdirs)
+      (dolist (sub '("states/" "leaders/"))
         (dolist (file (and (file-directory-p (expand-file-name sub dir))
                                     (directory-files (expand-file-name sub dir) t "\\.org$")))
           (let ((rel (file-relative-name file dir)))
@@ -154,7 +131,6 @@ Returns violation count; details go to *keyboard-validation*."
                                   (let ((cmd (cdr b)))
                                     (when (and (symbolp cmd)
                                                (not (fboundp cmd))
-                                               (not (memq cmd hydras))
                                                (not (manifolding-keyboard--external-p cmd)))
                                       (setq violations (1+ violations))
                                       (with-current-buffer "*keyboard-validation*"
@@ -164,7 +140,7 @@ Returns violation count; details go to *keyboard-validation*."
                               (setq violations (1+ violations))
                               (with-current-buffer "*keyboard-validation*"
                                 (insert (format "%s: non-nil hydra state (must stay hydra-only)\n" rel)))))))))
-                  (end-of-file nil))))))))
+                  (end-of-file nil)))))))
       (insert (format "\nValidation done: %d violation(s).\n" violations))
       (display-buffer (current-buffer)))
     (message "Keyboard validation: %d violation(s)" violations)

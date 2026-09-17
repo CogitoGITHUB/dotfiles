@@ -3,6 +3,13 @@
 
 Keys specific to the presentation state. Shared bindings live in universal.org.
 
+** State definition
+Self-registration: mode and keymap in one unit (manual activation only). Delete this file and the state unregisters on next boot.
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-state "presentation"
+  :lighter "[PRE]"
+  :cursor-type 'bar)
+#+end_src
 ** Bindings
 #+begin_src emacs-lisp
 (manifolding-keyboard-define-keys

@@ -18,8 +18,7 @@ Bindings shared across states (merged define-keys per state-set) plus every shar
     ("S" . tab-bar-switch-to-next-tab)
     ("s" . my/select-hydra/body)
     ("w" . my/save-all)
-    ("q" . save-buffers-kill-terminal)
-    ("m" . my/macro-hydra/body)))
+    ("q" . save-buffers-kill-terminal)))
 #+end_src
 *** Shared: normal + visual + org + motion + dired + ibuffer + mindmap
 #+begin_src emacs-lisp

@@ -162,50 +162,6 @@ Modal state core: variables, naming, the define-keys binder, initialization, and
 
 (provide 'manifolding-keyboard)
 #+end_src
-** State definitions
-#+begin_src emacs-lisp
-(manifolding-keyboard-define-state "normal"
-  :lighter "[NOR]"
-  :cursor-type 'box)
-(manifolding-keyboard-define-state "insert"
-  :sparse t
-  :no-suppress t
-  :lighter "[INS]"
-  :cursor-type 'bar)
-(manifolding-keyboard-define-state "visual"
-  :lighter "[VIS]"
-  :cursor-type 'hollow)
-(manifolding-keyboard-define-state "org"
-  :lighter "[ORG]"
-  :cursor-type 'box)
-(manifolding-keyboard-define-state "motion"
-  :lighter "[MOT]"
-  :cursor-type 'hbar)
-(manifolding-keyboard-define-state "magit"
-  :lighter "[GIT]"
-  :cursor-type 'box)
-(manifolding-keyboard-define-state "dired"
-  :lighter "[DIR]"
-  :cursor-type 'box)
-(manifolding-keyboard-define-state "presentation"
-  :lighter "[PRE]"
-  :cursor-type 'bar)
-(manifolding-keyboard-define-state "ibuffer"
-  :lighter "[IBF]"
-  :cursor-type 'box)
-(manifolding-keyboard-define-state "mindmap"
-  :lighter "[MAP]"
-  :cursor-type 'box)
-#+end_src
-
-*** Atlas Pick State
-Own block: an error here must never abort the core rebuild above.
-#+begin_src emacs-lisp
-(manifolding-keyboard-define-state "atlas-pick"
-  :sparse t
-  :lighter "[PCK]"
-  :cursor-type 'box)
-#+end_src
 
 *** Tree Slide Hooks
 #+begin_src emacs-lisp

@@ -3,6 +3,18 @@
 
 Keys specific to the ibuffer state. Shared bindings live in universal.org.
 
+** State definition
+Self-registration: mode, keymap, and init predicate in one unit. Delete this file and the state unregisters on next boot.
+#+begin_src emacs-lisp
+(defun my/ibuffer-state-init-p ()
+  "Auto-activate ibuffer state in ibuffer buffers."
+  (derived-mode-p 'ibuffer-mode))
+#+end_src
+#+begin_src emacs-lisp
+(manifolding-keyboard-define-state "ibuffer"
+  :lighter "[IBF]"
+  :cursor-type 'box :init #'my/ibuffer-state-init-p)
+#+end_src
 ** Owned functions
 #+begin_src emacs-lisp
 (defun my/ks-ibuffer-visit ()
