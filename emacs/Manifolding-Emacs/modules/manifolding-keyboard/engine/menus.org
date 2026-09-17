@@ -17,10 +17,10 @@ Read by the main hub menu; shrinks on its own when files are deleted.")
 * States menus (approach a: read the live keymap)
 #+begin_src emacs-lisp
 (defun my/menus-state-suffixes (state)
-  "Suffix specs for STATE's keymap: (KEY DESC CMD).
+  "Parsed suffix objects for STATE's keymap, for :setup-children.
 DESC is the command's docstring first line (empty fallback).
-Unbound-remnant entries (lambdas are named at define time, so every
-entry here is a symbol) pass through untouched."
+Raw (KEY DESC CMD) specs must go through `transient-parse-suffix':
+init-time consumes parsed objects, not source specs."
   (let ((map (manifolding-keyboard-get-state-keymap state))
         (out nil))
     (when (boundp map)
@@ -31,7 +31,8 @@ entry here is a symbol) pass through untouched."
                   (desc (car (split-string doc "\n"))))
              (push (list (key-description (vector ev)) desc cmd) out))))
        (symbol-value map)))
-    (sort out (lambda (a b) (string< (car a) (car b))))))
+    (mapcar (lambda (s) (transient-parse-suffix 'my/menus-state-menu s))
+            (sort out (lambda (a b) (string< (car a) (car b)))))))
 
 (transient-define-prefix my/menus-state-menu ()
   "State menu, derived from the current state's live keymap."
@@ -44,17 +45,21 @@ entry here is a symbol) pass through untouched."
 * Main hub (directory-derived submenu list)
 #+begin_src emacs-lisp
 (defun my/menus-leader-suffixes ()
-  "One suffix per leader: (KEY LABEL CMD) from the hydra registry.
-KEY is the leader's SPC sub-key, recovered from the main menu map
-below; LABEL/CMD come from registry titles and hydra bodies."
+  "One parsed suffix per leader for the main hub's :setup-children.
+KEY is the SPC sub-key (manual — key assignment is inherently so);
+LABEL/CMD derive from the registry and hydra bodies. Raw specs go
+through `transient-parse-suffix': init-time consumes parsed objects."
   (let ((out nil))
     (dolist (entry (append my/menus-leader-map nil))
       (let* ((key (car entry))
              (hydra (cdr entry))
              (title (or (cdr (assq hydra my/menus-hydra-registry))
                         (symbol-name hydra))))
-        (push (list key title (intern (format "%s/body" hydra))) out)))
-    (sort out (lambda (a b) (string< (car a) (car b))))))
+        (push (transient-parse-suffix
+               'my/main-hydra/body
+               (list key title (intern (format "%s/body" hydra))))
+              out)))
+    out))
 
 (defvar my/menus-leader-map
   '(("v" . my/manifolding-atlas-hydra)
