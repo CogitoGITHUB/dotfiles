@@ -1913,7 +1913,7 @@ tracking, an idle sweep to surface deferred-load errors early, and
             '(("my/manifolding-atlas-org-prompt--ask" . "org-prompts.org")
               ("my/manifolding-atlas-collect-prompts" . "prompt-engine.org")
               ("my/manifolding-atlas-routines-run" . "routines.org")
-                              ("manifolding-keyboard-define-keys" . "manifolding-keyboard.org")))
+                              ("manifolding-keyboard-define-keys" . "engine/state-machine.org")))
      (unless (fboundp (intern (car check)))
        (message "⚠ CRITICAL: %s is VOID — check %s for paren/nesting issues"
                 (car check) (cdr check)))))
