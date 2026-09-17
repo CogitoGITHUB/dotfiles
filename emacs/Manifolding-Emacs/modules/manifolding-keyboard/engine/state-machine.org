@@ -181,9 +181,6 @@ Modal state core: variables, naming, the define-keys binder, initialization, and
 (manifolding-keyboard-define-state "motion"
   :lighter "[MOT]"
   :cursor-type 'hbar)
-(manifolding-keyboard-define-state "vterm"
-  :lighter "[VTE]"
-  :cursor-type 'box)
 (manifolding-keyboard-define-state "magit"
   :lighter "[GIT]"
   :cursor-type 'box)

@@ -10,7 +10,6 @@ Keys specific to the insert state. Shared bindings live in universal.org.
   (interactive)
   (cond
    ((derived-mode-p 'org-mode)   (manifolding-keyboard-set-state "org"))
-   ((derived-mode-p 'vterm-mode) (manifolding-keyboard-set-state "vterm"))
    (t                            (manifolding-keyboard-set-state "normal"))))
 #+end_src
 ** Bindings

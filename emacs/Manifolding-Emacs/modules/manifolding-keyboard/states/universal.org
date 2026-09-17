@@ -6,7 +6,7 @@ Bindings shared across states (merged define-keys per state-set) plus every shar
 ** Shared bindings
 #+begin_src emacs-lisp
 (manifolding-keyboard-define-keys
-  :states '("normal" "visual" "org" "motion" "vterm" "dired")
+  :states '("normal" "visual" "org" "motion" "dired")
   :bind
   `(("<wheel-up>"   . mwheel-scroll)
     ("<wheel-down>" . mwheel-scroll)
@@ -16,16 +16,15 @@ Bindings shared across states (merged define-keys per state-set) plus every shar
     ("T" . centaur-tabs-ace-jump)
     ("H" . tab-bar-switch-to-prev-tab)
     ("S" . tab-bar-switch-to-next-tab)
-    ("Z" . my/vterm-toggle)
     ("s" . my/select-hydra/body)
     ("w" . my/save-all)
     ("q" . save-buffers-kill-terminal)
     ("m" . my/macro-hydra/body)))
 #+end_src
-*** Shared: normal + visual + org + motion + vterm + dired + ibuffer + mindmap
+*** Shared: normal + visual + org + motion + dired + ibuffer + mindmap
 #+begin_src emacs-lisp
 (manifolding-keyboard-define-keys
-  :states '("normal" "visual" "org" "motion" "vterm" "dired" "ibuffer" "mindmap")
+  :states '("normal" "visual" "org" "motion" "dired" "ibuffer" "mindmap")
   :bind
   `(
     ("SPC" . my/main-hydra/body)
@@ -49,10 +48,10 @@ Bindings shared across states (merged define-keys per state-set) plus every shar
     ("n" . next-line)
 ))
 #+end_src
-*** Shared: motion + vterm + ibuffer
+*** Shared: motion + ibuffer
 #+begin_src emacs-lisp
 (manifolding-keyboard-define-keys
-  :states '("motion" "vterm" "ibuffer")
+  :states '("motion" "ibuffer")
   :bind
   `(
     ("ESC" . my/normal-state)

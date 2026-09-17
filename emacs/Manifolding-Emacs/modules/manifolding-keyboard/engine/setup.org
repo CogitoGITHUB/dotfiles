@@ -16,7 +16,6 @@ Requires, reload behavior, init state, hooks, modeline, activation.
                 manifolding-keyboard-visual-state-keymap
                 manifolding-keyboard-org-state-keymap
                 manifolding-keyboard-motion-state-keymap
-                manifolding-keyboard-vterm-state-keymap
                 manifolding-keyboard-magit-state-keymap
                 manifolding-keyboard-dired-state-keymap
                 manifolding-keyboard-presentation-state-keymap
@@ -31,7 +30,6 @@ Requires, reload behavior, init state, hooks, modeline, activation.
          ((minibufferp) nil)
          ((derived-mode-p 'org-mode)    "org")
          ((derived-mode-p 'dired-mode)  "dired")
-         ((derived-mode-p 'vterm-mode)  "vterm")
          ((derived-mode-p 'ibuffer-mode) "ibuffer")
          ((derived-mode-p 'magit-mode)  nil)
          ((derived-mode-p 'vundo-mode)  nil)
@@ -43,7 +41,6 @@ Requires, reload behavior, init state, hooks, modeline, activation.
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook   (lambda () (manifolding-keyboard-set-state "org")))
 (add-hook 'dired-mode-hook (lambda () (manifolding-keyboard-set-state "dired")))
-(add-hook 'vterm-mode-hook (lambda () (manifolding-keyboard-set-state "vterm")))
 (add-hook 'help-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))
 (add-hook 'Info-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))
 (add-hook 'view-mode-hook  (lambda () (manifolding-keyboard-set-state "motion")))

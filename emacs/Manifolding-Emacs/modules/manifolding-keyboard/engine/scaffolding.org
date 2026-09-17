@@ -68,12 +68,12 @@ Errors loudly when the file already exists."
 * Validator
 
 Warns, never errors, on external commands (consult-*, magit-*, org-*,
-vterm-*, mm/* load lazily — erroring would train you to ignore the
+mm/* loads lazily — erroring would train you to ignore the
 check). Duplicate keys and non-nil hydra states are always violations:
 those are never lazy-loading artifacts.
 #+begin_src emacs-lisp
 (defcustom manifolding-keyboard-external-prefixes
-  '("consult-" "magit-" "org-" "vterm-" "multi-vterm" "mm/" "manifolding-atlas-"
+  '("consult-" "magit-" "org-" "mm/" "manifolding-atlas-"
     "my/manifolding-atlas-" "evil-" "mwheel-" "text-scale-" "tab-bar-" "centaur-tabs-"
     "org-tree-slide-" "treemacs-" "vundo" "git-timemachine" "dired-" "ibuffer-"
     "outline-" "rectangle-" "mark-" "kill-" "save-" "other-" "beginning-" "save-buffer"
