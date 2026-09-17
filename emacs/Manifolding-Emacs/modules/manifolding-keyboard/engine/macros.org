@@ -5,6 +5,7 @@ Macro definitions: state machine, minor modes, hydra states. Evaluated before ev
 ** Requires & group
 #+begin_src emacs-lisp
 (require 'cl-lib)
+(require 'transient)
 
 (defgroup manifolding-keyboard nil
   "Build your own minor modes for modal editing."
@@ -77,7 +78,8 @@ invocation unregisters the state on next boot, nothing else touched."
         (init (plist-get body :init)))
     `(progn
        (manifolding-keyboard--define-minor-mode ,mode ,keymap ,body)
-       (push (cons ,state ,init) manifolding-keyboard-state-init-alist))))
+       (cl-pushnew (cons ,state ,init) manifolding-keyboard-state-init-alist
+                   :key #'car :test #'equal))))
 
 
 #+end_src
@@ -94,7 +96,8 @@ SPEC is alternating group-name / binding-list pairs:
   GROUP-NAME  ((KEY CMD LABEL &key EXIT) ...)
 Bindings with :exit nil go into the manifolding-keyboard state keymap
 and become sticky (:transient t) suffixes; the rest exit after invoke.
-Lambda CMDs get deterministic wrapper names (my/<hydra>-<key>-action).
+Non-symbol CMDs (lambdas, call forms like (fn arg)) get deterministic
+wrapper names (my/<hydra>-<key>-action).
 A \"Back\" group linking to BACK-TARGET is appended automatically.
 The menu command is <HYDRA-NAME>/body, same as the Hydra era."
   (declare (indent defun))
@@ -110,14 +113,16 @@ The menu command is <HYDRA-NAME>/body, same as the Hydra era."
                                     (cmd (nth 1 b))
                                     (label (nth 2 b))
                                     (exit (plist-get (nthcdr 3 b) :exit)))
-                                (when (and (consp cmd) (eq (car cmd) 'lambda))
+                                (unless (symbolp cmd)
                                   (let ((w (intern (format "my/%s-%s-action"
                                                            (substring (symbol-name hydra-name) 3)
                                                            key))))
                                     (push `(defun ,w ()
                                              ,(format "Wrapper for %s %s menu key." hydra-name key)
                                              (interactive)
-                                             (funcall ,cmd))
+                                             ,(if (and (consp cmd) (eq (car cmd) 'lambda))
+                                                  `(funcall ,cmd)
+                                                cmd))
                                           wrappers)
                                     (setq cmd w)))
                                 (append (list key label cmd)

@@ -227,9 +227,43 @@ Returns violation count; details go to *keyboard-validation*."
                 (with-current-buffer "*keyboard-validation*"
                   (insert (format "%s: no docstring on %s (menu desc falls back to blank)\n"
                                   rel cmd))))))))
-      ;; self-registration sweep: single-state bindings need a same-file invocation.
-      ;; (Singles/invokes/inits are per-file; the sweep above already compared
-      ;; them per file. This comment marks the seam: nothing global lives here.)
+      ;; 7. eval-order: every state referenced in a define-keys :states
+      ;; list must be invoked in the same file or an alphabetically
+      ;; earlier one (directory eval order). Catches the universal-after
+      ;; -visual class of void-keymap boot errors structurally.
+      (let ((invoked-by-file nil))
+        (dolist (file (and (file-directory-p (expand-file-name "states/" dir))
+                           (directory-files (expand-file-name "states/" dir) t "\\.org$")))
+          (let ((rel (file-relative-name file dir))
+                (invokes nil)
+                (refs nil))
+            (dolist (blk (manifolding-emacs-concatenate-source-blocks file))
+              (with-temp-buffer
+                (insert blk)
+                (goto-char (point-min))
+                (condition-case nil
+                    (while t
+                      (let ((form (read (current-buffer))))
+                        (when (consp form)
+                          (cond
+                           ((eq (car form) 'manifolding-keyboard-define-state)
+                            (push (cadr form) invokes))
+                           ((eq (car form) 'manifolding-keyboard-define-keys)
+                            (dolist (st (cadr (plist-get (cdr form) :states)))
+                              (push st refs)))))))
+                  (end-of-file nil))))
+            (push (cons rel invokes) invoked-by-file)
+            (let ((earlier (apply #'append
+                                  (mapcar #'cdr
+                                          (cl-remove-if-not
+                                           (lambda (e) (string< (car e) rel))
+                                           invoked-by-file)))))
+              (dolist (st refs)
+                (unless (or (member st invokes) (member st earlier))
+                  (setq violations (1+ violations))
+                  (with-current-buffer "*keyboard-validation*"
+                    (insert (format "%s: state %s bound before invocation (order violation)\n"
+                                    rel st)))))))))
       (insert (format "\nValidation done: %d violation(s).\n" violations))
       (display-buffer (current-buffer)))
     (message "Keyboard validation: %d violation(s)" violations)

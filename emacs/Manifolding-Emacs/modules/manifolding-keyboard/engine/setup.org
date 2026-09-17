@@ -6,7 +6,6 @@ Requires, reload behavior, init state, hooks, modeline, activation.
 #+begin_src emacs-lisp
 (require 'manifolding-keyboard)
 (require 'which-key)
-(require 'transient)
 (require 'vundo)
 #+end_src
 ** Force keymap redefinition on reload
@@ -41,7 +40,6 @@ dired beats it too. Everything else follows, newest first.")
                                  (seq-difference (mapcar #'car manifolding-keyboard-state-init-alist)
                                                  manifolding-keyboard-state-precedence)))
                 "normal")))))
-(manifolding-keyboard-setup)
 #+end_src
 ** State Hooks
 #+begin_src emacs-lisp
