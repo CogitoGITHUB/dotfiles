@@ -26,7 +26,7 @@ SPC d: dev tree (literate/debug/config).
    ("s" literate-config-status          "status"         :exit t)
    ("e" literate-config-errors          "errors"         :exit t)
    ("d" (lambda () (interactive) (my/dired-here)) "modules dir"   :exit t)
-   ("k" (lambda () (interactive) (my/find-file (expand-file-name "Manifolding-Emacs/modules/manifolding-keyboard.org" user-emacs-directory))) "keyboard" :exit t))
+   ("k" (lambda () (interactive) (my/find-file (expand-file-name "Manifolding-Emacs/modules/manifolding-keyboard/" user-emacs-directory))) "keyboard" :exit t))
   "Manifold"
   (("r" manifolding-emacs-reload        "reload all"     :exit t)
    ("c" manifolding-emacs-reload-current-buffer "reload buf" :exit t)
