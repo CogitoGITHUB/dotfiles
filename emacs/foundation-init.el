@@ -85,15 +85,23 @@
   (leaf-keywords-init))
 ;; (my/init-note "[init] core ready")
 
+(defvar my/emacs-root
+  (file-name-directory
+   (or (and (boundp 'manifold--foundation-org)
+            manifold--foundation-org)
+       load-file-name buffer-file-name))
+  "Directory holding the Foundation org. Derived, never hardcoded.")
+
 (defun my/load-literate-loader (&optional file)
-  "Tangle the loader org to .el, then load it."
+  "Tangle the loader org to ~/.config/emacs/manifolding-emacs.el, then load it."
   (or file (setq file
-                 (expand-file-name "manifolding-emacs.org"
-                                   (expand-file-name "Manifolding-Emacs/"
-                                                     user-emacs-directory))))
+                 (let ((dir my/emacs-root))
+                   (or (let ((f (expand-file-name "manifolding-emacs" dir)))
+                         (when (file-exists-p f) f))
+                       (expand-file-name "manifolding-emacs.org" dir)))))
   (unless (file-exists-p file)
     (error "[init] literate loader missing: %s" file))
-  (let ((el (concat (file-name-sans-extension file) ".el")))
+  (let ((el (locate-user-emacs-file "manifolding-emacs.el")))
     ;; (my/init-note "[init] tangling loader…")
     (with-demoted-errors "[init] tangle failed: %s"
       (org-babel-tangle-file file))
@@ -115,7 +123,7 @@
 
 (setq manifolding-emacs-package-method 'leaf
       manifolding-emacs-org-directory
-      (expand-file-name "Manifolding-Emacs/modules" user-emacs-directory)
+      (expand-file-name "modules" my/emacs-root)
       manifolding-emacs-output-directory
       (expand-file-name "manifolding-emacs" user-emacs-directory))
 (setq inhibit-startup-screen t)
@@ -126,8 +134,8 @@
       revert-without-query '(".*")
       global-auto-revert-non-file-buffers t)
 
-;; Everything else lives in Manifolding-Emacs/modules/*.org.
-;; See keyboard.org for keybindings.
-;; See buffer-management.org for buffer lifecycle.
+;; Everything else lives in <my/emacs-root>/modules (extensionless).
+;; See keyboard leaders for keybindings.
+;; See buffer-management for buffer lifecycle.
 
 ;;; foundation-init.el ends here

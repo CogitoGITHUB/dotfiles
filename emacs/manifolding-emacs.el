@@ -67,8 +67,12 @@ single biggest lever leaf gives you for boot-time cost."
   :type '(choice (const t) (const nil) (const auto))
   :group 'manifolding-emacs)
 
+(defvar manifolding-emacs-loader-dir
+  (file-name-directory (or load-file-name buffer-file-name default-directory))
+  "Directory holding the loader. Derived, never hardcoded.")
+
 (defcustom manifolding-emacs-org-directory
-  (expand-file-name "org" user-emacs-directory)
+  (expand-file-name "modules" manifolding-emacs-loader-dir)
   "Directory where the Org files are stored."
   :type 'string :group 'manifolding-emacs)
 
@@ -88,7 +92,7 @@ single biggest lever leaf gives you for boot-time cost."
   :type 'string :group 'manifolding-emacs)
 
 (defcustom manifolding-emacs-todo-file
-  (expand-file-name "modules/TODO.org" user-emacs-directory)
+  (expand-file-name "modules/TODO" manifolding-emacs-loader-dir)
   "Org file that boot errors get filed to by
 `manifolding-emacs-add-error-to-todo'."
   :type 'string :group 'manifolding-emacs)
@@ -654,16 +658,7 @@ return its trimmed body string."
         (push (cons (intern (downcase (match-string 1)))
                     (match-string 2))
               properties))
-      properties)))
-
-(defun manifolding-emacs-file-priority (file)
-  (let ((priority (string-trim
-                   (alist-get 'priority
-                              (manifolding-emacs-file-properties file)
-                              "10"))))
-    (if (string-match-p "^-?[0-9]+$" priority)
-        (string-to-number priority)
-      10)))
+       properties)))
 
 (defun manifolding-emacs-file-remote (file)
   (when-let* ((remote (alist-get 'remote
@@ -673,10 +668,7 @@ return its trimmed body string."
 (defun manifolding-emacs-file-lexical-binding (file)
   (not (equal (alist-get 'lexical_binding
                          (manifolding-emacs-file-properties file) "t")
-              "nil")))
-
-(defun manifolding-emacs-file-disabled-p (file)
-  (alist-get 'disabled (manifolding-emacs-file-properties file)))
+               "nil")))
 
 (defun manifolding-emacs-file-profile (file)
   "Return FILE's #+PROFILE: as a symbol, or `manifolding-emacs-default-profile'."
@@ -697,13 +689,153 @@ return its trimmed body string."
            (cl-pushnew name names))))
       (nreverse names))))
 
+(defun manifolding-emacs-file-first-headline (file)
+  "Return (LINE TAGS ID PARENT ORDER) of FILE's first headline, or nil.
+TAGS is the raw trailing colon group; ID/PARENT/ORDER from the drawer
+after it (nil when absent). Headline search skips src blocks."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (goto-char (point-min))
+    (let (insrc found)
+      (while (and (not found) (not (eobp)))
+        (let ((line (buffer-substring-no-properties
+                     (line-beginning-position) (line-end-position))))
+          (cond
+           ((string-match-p "^[ \t]*#\\+begin_" line) (setq insrc t))
+           ((string-match-p "^[ \t]*#\\+end_" line) (setq insrc nil))
+           ((and (not insrc) (string-match "^\\*+ \\(.*\\)$" line))
+            (let* ((text (match-string 1 line))
+                   (tags (and (string-match "\\s-+\\(:[[:alnum:]_@]+\\(?::[[:alnum:]_@]+\\)*:\\)\\s-*$" text)
+                              (match-string 1 text))))
+              (setq found (list line tags))))))
+        (forward-line 1))
+      (when found
+        (let ((tags (nth 1 found)) id parent order)
+          (save-excursion
+            (goto-char (point-min))
+            (when (re-search-forward "^\\*+ " nil t)
+              (forward-line 1)
+              (when (looking-at-p "^[ \t]*:PROPERTIES:[ \t]*$")
+                (forward-line 1)
+                (while (and (not (eobp))
+                            (not (looking-at-p "^[ \t]*:END:[ \t]*$")))
+                  (cond
+                   ((looking-at "^[ \t]*:ID:[ \t]*\\(\\S-+\\)")
+                    (setq id (match-string 1)))
+                   ((looking-at "^[ \t]*:MM_PARENT:[ \t]*\\(\\S-+\\)")
+                    (setq parent (match-string 1)))
+                   ((looking-at "^[ \t]*:MM_ORDER:[ \t]*\\(\\S-+\\)")
+                    (setq order (match-string 1))))
+                  (forward-line 1)))))
+          (list (nth 0 found) tags id parent
+                (and order (string-match-p "^-?[0-9.]+$" order)
+                     (string-to-number order))))))))
+
+(defun manifolding-emacs-file-loadable-p (file)
+  "Non-nil when FILE's first headline carries :ATLAS: or :EMACS_MECHANISM:.
+No tag = not loaded, by design."
+  (when-let* ((parsed (manifolding-emacs-file-first-headline file))
+              (tags (nth 1 parsed)))
+    (let ((names (split-string (string-trim tags ":" ":") ":" t)))
+      (or (member "ATLAS" names) (member "EMACS_MECHANISM" names)))))
+
+(defun manifolding-emacs-file-title (file)
+  "FILE's own #+title:, falling back to its basename. Display only."
+  (or (when (file-exists-p file)
+        (with-temp-buffer
+          (insert-file-contents file nil 0 4096)
+          (goto-char (point-min))
+          (when (re-search-forward "^#\\+title:[ \t]*\\(.+\\)$" nil t)
+            (string-trim (match-string 1)))))
+      (file-name-nondirectory file)))
+
+(defun manifolding-emacs--state< (a b)
+  "Order two file states: numeric :MM_ORDER: first, path second."
+  (let ((oa (or (plist-get a :order) 1e18))
+        (ob (or (plist-get b :order) 1e18)))
+    (or (< oa ob)
+        (and (= oa ob) (string< (plist-get a :file) (plist-get b :file))))))
+
+(defun manifolding-emacs--parent-dangling-p (par by-id)
+  "Non-nil when PAR names a parent that resolves to no known id."
+  (and (stringp par) (not (string-empty-p par))
+       (not (string= (downcase par) "none"))
+       (not (assoc par by-id))))
+
 (defun manifolding-emacs-get-files (extension directory)
-  "Return all files matching EXTENSION under DIRECTORY, priority-sorted."
+  "Discover files, keep only tagged ones, order by in-file mm state.
+Chained files (with :MM_PARENT:/:MM_ORDER:) load parents-first via a
+cycle-guarded walk; chainless files (no mm keys) append after, by name.
+Cycles and dangling parents fall back to root with a message."
   (if (file-directory-p directory)
-      (let ((files (directory-files-recursively directory extension)))
-        (sort files (lambda (a b)
-                      (< (manifolding-emacs-file-priority a)
-                         (manifolding-emacs-file-priority b)))))
+      (let* ((all (directory-files-recursively directory extension))
+             (tagged (seq-filter #'manifolding-emacs-file-loadable-p all))
+             (skipped (- (length all) (length tagged)))
+             (states (mapcar (lambda (f)
+                               (let ((p (manifolding-emacs-file-first-headline f)))
+                                 (list :file f :id (nth 2 p)
+                                       :parent (nth 3 p)
+                                       :order (nth 4 p))))
+                             tagged))
+             (chained (seq-filter (lambda (s) (or (plist-get s :parent)
+                                                  (plist-get s :order)))
+                                  states))
+             (free (sort (seq-remove (lambda (s) (or (plist-get s :parent)
+                                                     (plist-get s :order)))
+                                     states)
+                         (lambda (a b) (string< (plist-get a :file)
+                                                (plist-get b :file)))))
+             (by-id (delq nil (mapcar (lambda (s)
+                                        (and (plist-get s :id)
+                                             (cons (plist-get s :id) s)))
+                                      chained)))
+             (children (make-hash-table :test #'equal))
+             (roots nil)
+             (dangling 0)
+             (ordered nil)
+             (visiting nil)
+             (done (make-hash-table :test #'equal))
+             (cycles 0))
+        (dolist (s chained)
+          (let ((par (plist-get s :parent)))
+            (if (and par (not (string-empty-p par))
+                     (not (string= (downcase par) "none"))
+                     (assoc par by-id))
+                (push s (gethash par children))
+              (progn
+                (when (manifolding-emacs--parent-dangling-p par by-id)
+                  (setq dangling (1+ dangling)))
+                (push s roots)))))
+        (setq roots (sort roots #'manifolding-emacs--state<))
+        (maphash (lambda (k v) (puthash k (sort v #'manifolding-emacs--state<) children)) children)
+        (cl-labels ((walk (s)
+                      (let ((f (plist-get s :file)))
+                        (cond
+                         ((gethash f done) nil)
+                         ((member f visiting) (setq cycles (1+ cycles)) nil)
+                         (t (push f visiting)
+                            (push f ordered)
+                            (puthash f t done)
+                            (dolist (c (gethash (plist-get s :id) children))
+                              (walk c))
+                            (setq visiting (delq f visiting)))))))
+          (dolist (r roots) (walk r)))
+        (setq ordered (nreverse ordered))
+        (dolist (s free)
+          (setq ordered (nconc ordered (list (plist-get s :file)))))
+        (when (> cycles 0)
+          (message "manifolding-emacs: %d parent cycle(s) broken (kept as roots)"
+                   cycles))
+        (when (> dangling 0)
+          (message "manifolding-emacs: %d file(s) with dangling parent loaded as roots"
+                   dangling))
+        (when (> (length free) 0)
+          (message "manifolding-emacs: %d chainless file(s) appended after chain"
+                   (length free)))
+        (when (> skipped 0)
+          (message "manifolding-emacs: skipping %d untagged file(s) (no :ATLAS:/:EMACS_MECHANISM:)"
+                   skipped))
+        ordered)
     (progn (message "manifolding-emacs: directory does not exist: %s"
                     directory)
            nil)))
@@ -893,7 +1025,7 @@ with explicit :host/:repo); record an error and return nil otherwise."
   (interactive)
   (let ((manifolding-emacs-force-download t))
     (dolist (file (manifolding-emacs-get-files
-                   "^[^#]*\\.org$" (manifolding-emacs-get-org-directory)))
+                   "[^./]+$" (manifolding-emacs-get-org-directory)))
       (when-let* ((remote-file-plist (manifolding-emacs-file-remote file)))
         (manifolding-emacs-pull-remote-file remote-file-plist)))))
 
@@ -1152,36 +1284,26 @@ something broke during extraction."
 
 (defun manifolding-emacs-compile-file-cached (file &optional _force)
   "Compile FILE fresh. Always re-extracts and re-evaluates.
-Returns FILE, or nil when the file is disabled."
+Returns FILE."
   (unless (file-exists-p file)
     (error "File to compile does not exist: %s" file))
-  (if (manifolding-emacs-file-disabled-p file)
-      (progn
-        (message "manifolding-emacs: skipping disabled file %s"
-                 (file-name-nondirectory file))
-        nil)
-    (pcase-let* ((`(,parts . ,profile)
-                  (manifolding-emacs--extract-parts file)))
-      (manifolding-emacs--eval-parts file parts profile)
-      file)))
+  (pcase-let* ((`(,parts . ,profile)
+                (manifolding-emacs--extract-parts file)))
+    (manifolding-emacs--eval-parts file parts profile)
+    file))
 
 (defun manifolding-emacs-compile-file (file)
-  "Compile FILE.  Returns FILE, or nil if skipped (disabled).
+  "Compile FILE. Returns FILE.
 Always bypasses the cache: this entry point means \"the user just
 touched this file\"."
   (unless (file-exists-p file)
     (error "File to compile does not exist: %s" file))
-  (if (manifolding-emacs-file-disabled-p file)
-      (progn
-        (message "manifolding-emacs: skipping disabled file %s"
-                 (file-name-nondirectory file))
-        nil)
-    (message "manifolding-emacs: compiling %s"
-             (file-name-nondirectory file))
-    (pcase-let* ((`(,parts . ,profile)
-                  (manifolding-emacs--extract-parts file)))
-      (manifolding-emacs--eval-parts file parts profile)
-      file)))
+  (message "manifolding-emacs: compiling %s"
+           (manifolding-emacs-file-title file))
+  (pcase-let* ((`(,parts . ,profile)
+                (manifolding-emacs--extract-parts file)))
+    (manifolding-emacs--eval-parts file parts profile)
+    file))
 
 (defun manifolding-emacs-recompile-package (file package-name)
   "Re-extract FILE and (re-)eval only PACKAGE-NAME, leaving every other
@@ -1207,7 +1329,7 @@ If PROGRESS-FN is given, call it with (CURRENT TOTAL FILE) before
 compiling each file — used to drive a splash screen without this file
 knowing anything about UI."
   (let* ((files (manifolding-emacs-get-files
-                 "^[^#]*\\.org$" (manifolding-emacs-get-org-directory)))
+                 "[^./]+$" (manifolding-emacs-get-org-directory)))
          (compiled '()) (current 0) (total (length files))
          (paren-errors 0) (void-errors 0))
     (dolist (file files)
@@ -1229,7 +1351,7 @@ knowing anything about UI."
             :level 'file :file file :message msg)))))
     (cond
      ((> paren-errors 0)
-      (message "manifolding-emacs: %d paren error(s) — run: sh ~/.config/emacs/paren-scan.sh"
+      (message "manifolding-emacs: %d paren error(s) — see the error entries above for exact positions"
                paren-errors))
      ((> void-errors 0)
       (message "manifolding-emacs: %d void function(s) — check nesting in listed files"
@@ -1237,10 +1359,10 @@ knowing anything about UI."
     (nreverse compiled)))
 
 (defun manifolding-emacs-aggregate-directory (output-file)
-  "Concatenate every Org file's raw contents into OUTPUT-FILE."
+  "Concatenate every tagged file's raw contents into OUTPUT-FILE."
   (let (result)
     (dolist (file (manifolding-emacs-get-files
-                   "^[^#]*\\.org$" (manifolding-emacs-get-org-directory)))
+                   "[^./]+$" (manifolding-emacs-get-org-directory)))
       (push (with-temp-buffer
               (insert-file-contents file) (buffer-string))
             result))
@@ -1301,7 +1423,7 @@ that should happen silently just because nothing broke today."
   "Show which #+PROFILE: each module file declares, in a report buffer."
   (interactive)
   (let ((files (manifolding-emacs-get-files
-                "^[^#]*\\.org$" (manifolding-emacs-get-org-directory)))
+                "[^./]+$" (manifolding-emacs-get-org-directory)))
         (buf (get-buffer-create "*manifolding-emacs profiles*")))
     (with-current-buffer buf
       (erase-buffer)
@@ -1455,12 +1577,12 @@ and displayed by the dashboard's Manifold status widget.")
          (head (concat "MANIFOLDING-EMACS\n\n"
                        (propertize eta 'face 'bold) "\n\n"
                        bar "\n\n"
-                       (if file
-                           (concat
-                            (format "%s: " label)
-                            (propertize (file-name-nondirectory file)
-                                        'face 'bold))
-                         "")
+                        (if file
+                            (concat
+                             (format "%s: " label)
+                             (propertize (manifolding-emacs-file-title file)
+                                         'face 'bold))
+                          "")
                        "\n"
                        (format "%s%d errors · %d warnings\n"
                                (if (alist-get :fatal
@@ -1518,9 +1640,9 @@ and displayed by the dashboard's Manifold status widget.")
   (condition-case nil
       (let ((path (expand-file-name
                    "admin/MISSING PROMPTS"
-                   (if (fboundp 'my/manifolding-atlas-root-dir)
-                       (my/manifolding-atlas-root-dir)
-                     "~/test/"))))
+                    (if (fboundp 'my/manifolding-atlas-root-dir)
+                        (my/manifolding-atlas-root-dir)
+                      (expand-file-name "~")))))
         (if (not (file-exists-p path))
             0
           (with-temp-buffer
@@ -1555,17 +1677,17 @@ Non-clean boots stay in *Manifolding-Emacs* with the full report."
   "When non-nil, the dashboard lists every module TODO instead of a few.")
 
 (defconst manifolding-emacs-splash--modules-dir
-  (expand-file-name "Manifolding-Emacs/modules/" user-emacs-directory))
+  (expand-file-name "modules/" manifolding-emacs-loader-dir))
 
 (defun manifolding-emacs-splash--module-todos ()
-  "Return list of (FILE-BASE . TITLE) TODO headings from modules/*.org."
+  "Return list of (FILE-BASE . TITLE) TODO headings from extensionless modules."
   (condition-case nil
       (let ((results nil)
             (files (directory-files
                     manifolding-emacs-splash--modules-dir
-                    t "\\.org\\'")))
+                    t "[^./]+$")))
         (dolist (f files)
-          (let ((base (file-name-nondirectory f)))
+          (let ((base (manifolding-emacs-file-title f)))
             (with-temp-buffer
               (insert-file-contents f)
               (goto-char (point-min))
@@ -1579,9 +1701,9 @@ Non-clean boots stay in *Manifolding-Emacs* with the full report."
   "One-line git summary of the vault, or nil when unavailable."
   (condition-case nil
       (when (fboundp 'magit-git-lines)
-        (let ((root (if (fboundp 'my/manifolding-atlas-root-dir)
-                        (my/manifolding-atlas-root-dir)
-                      "~/test/")))
+         (let ((root (if (fboundp 'my/manifolding-atlas-root-dir)
+                         (my/manifolding-atlas-root-dir)
+                       (expand-file-name "~"))))
           (let* ((branch (car (magit-git-lines "-C" root
                                                "rev-parse" "--abbrev-ref"
                                                "HEAD")))
@@ -1606,7 +1728,7 @@ Non-clean boots stay in *Manifolding-Emacs* with the full report."
                           "admin/MISSING PROMPTS"
                           (if (fboundp 'my/manifolding-atlas-root-dir)
                               (my/manifolding-atlas-root-dir)
-                            "~/test/")))
+                            (expand-file-name "~"))))
            (git-line (manifolding-emacs-splash--vault-git-info))
            (todos (manifolding-emacs-splash--module-todos))
            (todo-lines
@@ -1693,10 +1815,9 @@ Non-clean boots stay in *Manifolding-Emacs* with the full report."
 under the active Org directory."
   (let (result)
     (dolist (file (manifolding-emacs-get-files
-                   "^[^#]*\\.org$" (manifolding-emacs-get-org-directory)))
-      (unless (manifolding-emacs-file-disabled-p file)
-        (dolist (name (manifolding-emacs-file-package-names file))
-          (push (cons name file) result))))
+                   "[^./]+$" (manifolding-emacs-get-org-directory)))
+      (dolist (name (manifolding-emacs-file-package-names file))
+        (push (cons name file) result)))
     (nreverse result)))
 
 (defun manifolding-emacs-doctor--collect-rows ()
