@@ -1,0 +1,6 @@
+    0.00s (+  0.00s) foundation-start
+    8.14s (+  8.14s) straight-ready
+    8.78s (+  0.64s) core-ready
+    9.83s (+  1.05s) loader-loaded
+    9.83s (+  0.00s) boot-start
+   10.17s (+  0.34s) boot-end

@@ -11,6 +11,17 @@
   (when (fboundp 'tool-bar-mode)   (tool-bar-mode -1))
   (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)))
 
+(setq gc-cons-threshold (* 64 1024 1024)
+      gc-cons-percentage 0.6)
+(defvar my/saved-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+(add-hook 'after-init-hook
+          (lambda ()
+            (setq file-name-handler-alist my/saved-file-name-handler-alist
+                  gc-cons-threshold (* 16 1024 1024)
+                  gc-cons-percentage 0.1))
+          t)
+
 (add-to-list 'default-frame-alist '(background-color . "#000000"))
 (add-to-list 'default-frame-alist '(foreground-color . "#FFFFFF"))
 (unless noninteractive

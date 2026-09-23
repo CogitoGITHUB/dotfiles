@@ -1,0 +1,1 @@
+(("/data/data/com.termux/files/home/.config/" ("emacs/bookmarks" 4 1790151373)))

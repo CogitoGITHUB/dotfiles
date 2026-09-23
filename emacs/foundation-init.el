@@ -13,6 +13,31 @@
 (defun my/init-note (fmt &rest args)
   (let ((message-log-max nil)) (apply #'message fmt args)))
 
+;; Boot phase measurement: near-zero overhead timestamp marks.
+;; Report lands in *Messages* and ~/.config/emacs/boot-times.log
+;; via after-init-hook.  See boot-speed plan Phase A1.
+(defvar my/boot-t0 (current-time)
+  "Boot start time for phase measurement.")
+(defvar my/boot-marks nil
+  "Alist of LABEL . SECONDS-SINCE-BOOT, pushed by `my/boot-mark'.")
+(defun my/boot-mark (label)
+  "Record LABEL with seconds elapsed since `my/boot-t0'."
+  (push (cons label (float-time (time-subtract (current-time) my/boot-t0)))
+        my/boot-marks))
+(defun my/boot-report ()
+  "Write phase timings to *Messages* and boot-times.log."
+  (let ((marks (nreverse my/boot-marks)) (prev 0.0) (lines nil))
+    (dolist (m marks)
+      (push (format "%8.2fs (+%6.2fs) %s" (cdr m) (- (cdr m) prev) (car m))
+            lines)
+      (setq prev (cdr m)))
+    (let ((text (mapconcat #'identity (nreverse lines) "\n")))
+      (message "BOOT-TIMES:\n%s" text)
+      (write-region (concat text "\n") nil
+                    (locate-user-emacs-file "boot-times.log") nil 'quiet))))
+(add-hook 'after-init-hook #'my/boot-report t)
+(my/boot-mark "foundation-start")
+
 ;; (my/init-note "[init] straight bootstrap…")
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -22,6 +47,7 @@
   (when (file-exists-p bootstrap-file)
     (load bootstrap-file nil 'nomessage)))
 ;; (my/init-note "[init] straight ready")
+(my/boot-mark "straight-ready")
 
 (let ((straight-build-dir
        (expand-file-name "straight/build/" user-emacs-directory)))
@@ -84,6 +110,7 @@
 (eval-and-compile
   (leaf-keywords-init))
 ;; (my/init-note "[init] core ready")
+(my/boot-mark "core-ready")
 
 (defvar my/emacs-root
   (file-name-directory
@@ -103,13 +130,17 @@
     (error "[init] literate loader missing: %s" file))
   (let ((el (locate-user-emacs-file "manifolding-emacs.el")))
     ;; (my/init-note "[init] tangling loader…")
-    (with-demoted-errors "[init] tangle failed: %s"
-      (org-babel-tangle-file file))
+    ;; Guarded like the Foundation tangle: with explicit sync allowed,
+    ;; re-tangling an up-to-date loader every boot is pure waste.
+    (when (or (not (file-exists-p el)) (file-newer-than-file-p file el))
+      (with-demoted-errors "[init] tangle failed: %s"
+        (org-babel-tangle-file file)))
     ;; (my/init-note "[init] loading literate loader…")
     (load el nil t)))
 
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 (my/load-literate-loader)
+(my/boot-mark "loader-loaded")
 
 ;; (my/init-note "[init] loader ready — booting modules…")
 
@@ -123,11 +154,14 @@
 
 (setq manifolding-emacs-package-method 'leaf
       manifolding-emacs-org-directory
-      (expand-file-name "modules" my/emacs-root)
+      (or manifolding-emacs-vault-root
+          (expand-file-name "modules" my/emacs-root))
       manifolding-emacs-output-directory
       (expand-file-name "manifolding-emacs" user-emacs-directory))
 (setq inhibit-startup-screen t)
+(my/boot-mark "boot-start")
 (manifolding-emacs-boot)
+(my/boot-mark "boot-end")
 
 (global-auto-revert-mode 1)
 (setq auto-revert-verbose nil
