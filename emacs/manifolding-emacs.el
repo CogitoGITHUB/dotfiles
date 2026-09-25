@@ -2282,7 +2282,11 @@ timing must never break a boot."
                        bar "\n\n"
                           (if file
                               (concat
-                               (format "%s: " label)
+                               ;; Phase label in red on its own line, the
+                               ;; unit title beneath: instantly clear
+                               ;; what is happening to what.
+                               (propertize (concat label ":") 'face 'error)
+                               "\n"
                                ;; Belt and suspenders: a nil title must never
                                ;; throw inside the progress renderer.
                                (propertize (or (manifolding-emacs-file-title file) "?")
@@ -2292,12 +2296,17 @@ timing must never break a boot."
                                  ('loaded "  [cached]")
                                  (_ "")))
                             "")
-                       "\n"
-                       (format "%s%d errors · %d warnings\n"
-                               (if (alist-get :fatal
-                                        manifolding-emacs-splash--state)
-                                   "BOOT THREW — " "")
-                               (length errors) (length warnings))))
+                        "\n"
+                        ;; Clean boot, clean screen: the counts only
+                        ;; appear once there is something to report.
+                        (if (and (zerop (length errors))
+                                 (zerop (length warnings)))
+                            ""
+                          (format "%s%d errors · %d warnings\n"
+                                  (if (alist-get :fatal
+                                           manifolding-emacs-splash--state)
+                                      "BOOT THREW — " "")
+                                  (length errors) (length warnings)))))
          (body (concat head
                        (manifolding-emacs-splash--problems-section
                         "ERRORS" errors)
