@@ -1012,6 +1012,51 @@ later boots skip re-scanning them too.  Never throws."
   (or (plist-get u :id)
       (list (plist-get u :file) (plist-get u :start-line))))
 
+(defvar manifolding-emacs--bootstrap-first-paths '("manifolding-keyboard/")
+  "Path fragments whose units load before everything else.
+Matched with `regexp-quote' against the unit's :file.  Relative
+order among matched units is unchanged.")
+
+(defvar manifolding-emacs--bootstrap-first-ids
+  '("6ea27555-1532-4a52-9487-04e410a43f1d")
+  "Unit IDs loading right after the bootstrap paths, in listed order.
+First entry is the manifolding dashboard: banner and widgets exist
+before anything that references them.")
+
+(defvar manifolding-emacs--always-recompile-ids
+  '("6ea27555-1532-4a52-9487-04e410a43f1d")
+  "Unit IDs that recompile fresh every boot, skipping the .elc.
+Active-development escape hatch: edits are live the moment the unit
+loads, no cache between you and the code.  Empty in steady state.")
+
+(defun manifolding-emacs--pin-bootstrap-units (ordered)
+  "Move bootstrap units to the front of ORDERED: path-matched units
+first (relative order kept), then listed IDs in listed order.
+Missing IDs are ignored, so deleting a pinned unit can never break
+a boot; pinned units keep their parent-before-child guarantee
+against the rest (their own parents are inside the pinned block or
+parentless).  Never throws."
+  (condition-case nil
+      (let (dir-pinned id-pinned rest)
+        (dolist (u ordered)
+          (if (cl-some (lambda (frag)
+                         (string-match-p (regexp-quote frag)
+                                         (or (plist-get u :file) "")))
+                       manifolding-emacs--bootstrap-first-paths)
+              (push u dir-pinned)
+            (push u rest)))
+        (setq dir-pinned (nreverse dir-pinned)
+              rest (nreverse rest))
+        (dolist (id manifolding-emacs--bootstrap-first-ids)
+          (let ((found (cl-find id rest
+                                :key (lambda (u) (plist-get u :id))
+                                :test #'equal)))
+            (when found
+              (setq rest (delq found rest))
+              (setq id-pinned (nconc id-pinned (list found))))))
+        (nconc dir-pinned id-pinned rest))
+    (error ordered)))
+
 (defun manifolding-emacs--collect-units (files)
   "Order tagged heading units across FILES: chained parents-first via a
 cycle-guarded walk (siblings by :MM_ORDER:), chainless units appended
@@ -1084,7 +1129,7 @@ after by file and position.  Returns ordered unit plists."
     (when (> (length free) 0)
       (message "manifolding-emacs: %d chainless unit(s) appended after chain"
                (length free)))
-    ordered))
+    (manifolding-emacs--pin-bootstrap-units ordered)))
 
 (defun manifolding-emacs--units-files (units)
   "Unique files of ordered UNITS, in order."
@@ -1971,7 +2016,12 @@ compiled, in completion order."
     (setq manifolding-emacs--boot-phase :compiling)
     (dolist (u units)
       (let ((file (plist-get u :file))
-            (t0 (float-time)))
+            (t0 (float-time))
+            ;; Active-development units skip every cache: fresh parse
+            ;; plus fresh compile, so edits are live on load.
+            (fresh (and (plist-get u :id)
+                        (member (plist-get u :id)
+                                manifolding-emacs--always-recompile-ids))))
         (setq current (1+ current))
         (when progress-fn (funcall progress-fn current total file))
         (unless (member file pulled)
@@ -1981,17 +2031,17 @@ compiled, in completion order."
         (condition-case err
             (pcase-let* ((`(,parts . ,profile)
                           (manifolding-emacs--compile-unit-parts
-                           file u force)))
+                           file u (or force fresh))))
               ;; Announce cached vs fresh before the (possibly slow)
               ;; load, so the splash tells no-cache apart live.
               (when progress-fn
                 (funcall progress-fn current total file
-                         (if (or force
+                         (if (or force fresh
                                  (not (manifolding-emacs--unit-cached-p
                                        file u parts)))
                              'compiled 'loaded)))
               (let ((status (manifolding-emacs--unit-load
-                             file u parts profile force)))
+                             file u parts profile (or force fresh))))
                 (unless (member file compiled)
                   (push file compiled))
                 (push (list (- (float-time) t0) file status)
