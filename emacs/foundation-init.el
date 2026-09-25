@@ -25,17 +25,35 @@
   (push (cons label (float-time (time-subtract (current-time) my/boot-t0)))
         my/boot-marks))
 (defun my/boot-report ()
-  "Write phase timings to *Messages* and boot-times.log."
+  "Write phase timings to *Messages* and boot-times.log, plus GC
+seconds and the 10 slowest units (measured, never guessed)."
   (let ((marks (nreverse my/boot-marks)) (prev 0.0) (lines nil))
     (dolist (m marks)
       (push (format "%8.2fs (+%6.2fs) %s" (cdr m) (- (cdr m) prev) (car m))
             lines)
       (setq prev (cdr m)))
     (let ((text (mapconcat #'identity (nreverse lines) "\n")))
+      (when (and (boundp 'gc-elapsed) my/boot-gc-t0)
+        (setq text (concat text (format "\nGC: %.1fs of boot in garbage collection"
+                                        (- gc-elapsed my/boot-gc-t0)))))
+      (let ((slow (ignore-errors
+                    (with-temp-buffer
+                      (insert-file-contents
+                       (locate-user-emacs-file "unit-times.log"))
+                      (goto-char (point-min))
+                      (forward-line 1)
+                      (buffer-substring-no-properties
+                       (point)
+                       (save-excursion
+                         (forward-line 10) (point)))))))
+        (when (and (stringp slow) (not (string-empty-p (string-trim slow))))
+          (setq text (concat text "\nSlowest units:\n" slow))))
       (message "BOOT-TIMES:\n%s" text)
       (write-region (concat text "\n") nil
                     (locate-user-emacs-file "boot-times.log") nil 'quiet))))
 (add-hook 'after-init-hook #'my/boot-report t)
+(defvar my/boot-gc-t0 (and (boundp 'gc-elapsed) gc-elapsed)
+  "GC seconds at boot start, for the boot report.")
 (my/boot-mark "foundation-start")
 
 ;; (my/init-note "[init] straight bootstrap…")
@@ -149,8 +167,14 @@
             (lambda () (setq manifolding-emacs--boot-warnings '())))
 (advice-add 'display-warning :before
             (lambda (type message &rest _)
-              (push (list :type type :message message)
-                    manifolding-emacs--boot-warnings)))
+              ;; Single recorder for the whole boot (the loader no
+              ;; longer double-captures): routes through record-warning
+              ;; for file attribution when the loader is up, plain push
+              ;; before it exists.
+              (if (fboundp 'manifolding-emacs-record-warning)
+                  (manifolding-emacs-record-warning type message)
+                (push (list :type type :message message)
+                      manifolding-emacs--boot-warnings))))
 
 (setq manifolding-emacs-package-method 'leaf
       manifolding-emacs-org-directory
