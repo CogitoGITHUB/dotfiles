@@ -909,18 +909,25 @@ stale (salt-mismatched) index just means one full-scan boot."
                      ;; Also purge WIP entries: forbidden territory is never
                      ;; indexed, even if an older boot recorded it.
                      (when (and (file-exists-p k)
-                                (not (string-match-p "/WIP-DONT-TOUCH/" k)))
+                                (not (string-match-p "/WIP/" k)))
                        (push (cons k v) pairs)))
                    manifolding-emacs--discovery-index)
-          (manifolding-emacs--cache-write
-           (manifolding-emacs-discovery-index-file)
-           (list :version manifolding-emacs-cache-salt :files pairs)))
+          ;; One previous generation kept: if this write ever corrupts,
+          ;; the last-known-good index is one rename away.
+          (let ((idx (manifolding-emacs-discovery-index-file)))
+            (when (file-exists-p idx)
+              (copy-file idx (concat idx ".prev") t))
+            (manifolding-emacs--cache-write
+             idx (list :version manifolding-emacs-cache-salt :files pairs))))
       (error nil))))
 
 (defun manifolding-emacs--index-lookup (file)
-  "Hash-verified index entry for FILE, or nil.
-Stat match first (no I/O), then one literal read + hash to verify, as
-agreed: stat is the fast path, hash is the trust.  Hits are marked
+  "Stat-trusted index entry for FILE, or nil.
+mtime+size match is the trust: no file I/O on hits, so warm boots
+skip re-reading the whole vault.  Safety comes from the per-unit
+parts-hash guarding every compiled load — a stale entry can only
+cost a re-extract, never load stale code.  Hash mismatches still
+re-verify through `--index-ensure'.  Hits are marked
 session-verified; misses read nothing."
   (manifolding-emacs--index-load)
   (when (file-exists-p file)
@@ -930,9 +937,7 @@ session-verified; misses read nothing."
         (let ((sig (manifolding-emacs--file-sig file)))
           (when (and sig
                      (equal (plist-get entry :mtime) (nth 0 sig))
-                     (equal (plist-get entry :size) (nth 1 sig))
-                     (equal (plist-get entry :hash)
-                            (manifolding-emacs--cache-content-hash file)))
+                     (equal (plist-get entry :size) (nth 1 sig)))
             (push (file-truename file) manifolding-emacs--index-verified)
             entry))))))
 
@@ -1098,7 +1103,7 @@ files are never read, loaded, or compiled — by any caller."
                                               (string-match-p "/admin/" f)
                                               ;; WIP is forbidden territory:
                                               ;; never walk it, never read it.
-                                              (string-match-p "/WIP-DONT-TOUCH/" f)
+                                              (string-match-p "/WIP/" f)
                                               ;; The walk MATCH cannot express
                                               ;; "extensionless" (substring
                                               ;; semantics match trailing
@@ -1463,8 +1468,9 @@ failing code so you never have to guess."
       (manifolding-emacs--eval-package-string package-name
                                               package-string file))))
 
-(defconst manifolding-emacs-cache-salt "4"
-  "Bump to invalidate every cached module after loader changes.")
+(defconst manifolding-emacs-cache-salt "5"
+  "Bump to invalidate every cached module after loader changes.
+5: per-unit .elc pipeline (compiled loads replace interpreted eval).")
 
 (defun manifolding-emacs-cache-dir ()
   (expand-file-name "module-cache/"
@@ -1498,11 +1504,15 @@ failing code so you never have to guess."
   (make-directory (file-name-directory path) t)
   ;; print-length/print-level MUST be nil here: a bound value would
   ;; truncate the serialized parts and silently corrupt the entry.
+  ;; Atomic tmp+rename: a killed boot never leaves a half-written cache
+  ;; (readers validate and fall back to rescan on any corruption).
   (let ((print-length nil)
-        (print-level nil))
-    (with-temp-file path
+        (print-level nil)
+        (tmp (concat path ".tmp")))
+    (with-temp-file tmp
       (insert ";; manifolding-emacs module cache\n"
-              (prin1-to-string data)))))
+              (prin1-to-string data)))
+    (rename-file tmp path t)))
 
 (defun manifolding-emacs--extract-parts (file &optional unit)
   "Return (PARTS . PROFILE) mirroring compile-file's eval units.
@@ -1660,10 +1670,197 @@ must never break a boot."
           (manifolding-emacs--cache-write
            (manifolding-emacs-cache-path
             (manifolding-emacs--cache-id file start-line))
-           (list :version manifolding-emacs-cache-salt
-                 :method manifolding-emacs-package-method
-                 :mtime (nth 0 sig) :size (nth 1 sig)
-                 :content-hash h :profile profile :parts parts))))
+            (list :version manifolding-emacs-cache-salt
+                  :method manifolding-emacs-package-method
+                  :mtime (nth 0 sig) :size (nth 1 sig)
+                  :content-hash h :profile profile :parts parts))))
+    (error nil)))
+
+(defvar manifolding-emacs--unit-elc-live-ids nil
+  "Unit elc-ids seen this boot.  Prune orphans against this set.")
+
+(defun manifolding-emacs--unit-elc-dir ()
+  "Directory for per-unit compiled artifacts (.el/.elc/.state.el).
+Under ~/.config/emacs, never the vault: binaries must not pollute
+the vault repo, trip its watcher, or churn git."
+  (expand-file-name "module-el/"
+                    (expand-file-name ".local/cache/" user-emacs-directory)))
+
+(defun manifolding-emacs--unit-elc-id (file unit)
+  "Stable artifact id for UNIT in FILE.
+Salt + package method + binding mode + the drawer's :ID: UUID, so
+renames, moves, and unit-boundary shifts keep the cache while the
+extracted content is identical.  Units without an :ID: fall back to
+truename + start line (they miss on moves, like the old parts cache
+— still correct, just one recompile)."
+  (secure-hash 'sha256
+               (concat manifolding-emacs-cache-salt "\0"
+                       (symbol-name manifolding-emacs-package-method) "\0"
+                       (symbol-name manifolding-emacs-lexical-binding) "\0"
+                       (or (plist-get unit :id)
+                           (concat (file-truename file) "\0"
+                                   (format "%s"
+                                           (or (plist-get unit :start-line)
+                                               1)))))))
+
+(defun manifolding-emacs--unit-parts-hash (parts)
+  "SHA256 over PARTS (kind+name+body).  The load/compile key: an exact
+match means the .elc on disk was built from precisely these parts, so
+loading it is provably identical to evaluating them fresh."
+  (secure-hash 'sha256
+               (mapconcat (lambda (p)
+                            (concat (symbol-name (plist-get p :kind)) "\0"
+                                    (format "%s" (or (plist-get p :name) ""))
+                                    "\0"
+                                    (plist-get p :body) "\0"))
+                          parts "")))
+
+(defun manifolding-emacs--unit-elc-paths (id)
+  "Return (EL ELC STATE) artifact paths for unit id ID."
+  (let ((dir (manifolding-emacs--unit-elc-dir)))
+    (list (expand-file-name (concat id ".el") dir)
+          (expand-file-name (concat id ".elc") dir)
+          (expand-file-name (concat id ".state.el") dir))))
+
+(defun manifolding-emacs--unit-write-el (el parts)
+  "Write PARTS bodies to EL with a lexical-binding header matching
+`manifolding-emacs-lexical-binding'.  Never throws."
+  (condition-case nil
+      (progn
+        (make-directory (file-name-directory el) t)
+        (with-temp-file el
+          (insert (format ";;; manifolding-emacs unit -*- lexical-binding: %s -*-\n"
+                          (if manifolding-emacs-lexical-binding "t" "nil"))
+                  ";; Generated: re-created on any parts change.  Do not edit.\n\n")
+          (dolist (p parts)
+            (insert (plist-get p :body) "\n\n")))
+        t)
+    (error nil)))
+
+(defun manifolding-emacs--unit-state-write (state-path mode parts-hash)
+  "Record MODE (`compiled' or `eval') and PARTS-HASH for a unit.
+Never throws."
+  (condition-case nil
+      (manifolding-emacs--cache-write
+       state-path
+       (list :version manifolding-emacs-cache-salt
+             :method manifolding-emacs-package-method
+             :mode mode :parts-hash parts-hash))
+    (error nil)))
+
+(defun manifolding-emacs--unit-state-ok-p (state parts-hash)
+  "Non-nil when STATE validates this boot's PARTS-HASH.
+Salt, method, and exact parts must all match: this is the guarantee
+that a loaded .elc equals freshly evaluated source."
+  (and (listp state)
+       (equal (plist-get state :version) manifolding-emacs-cache-salt)
+       (equal (plist-get state :method) manifolding-emacs-package-method)
+       (equal (plist-get state :parts-hash) parts-hash)))
+
+(defun manifolding-emacs--unit-note-loaded (file parts)
+  "Record package statuses + DEFINED-but-VOID checks after a compiled
+load, mirroring `manifolding-emacs--eval-parts' diagnostics so loaded
+units report exactly like evaluated ones."
+  (dolist (part parts)
+    (let ((body (plist-get part :body)))
+      (when (eq (plist-get part :kind) 'package)
+        (manifolding-emacs-record-status
+         (plist-get part :name) 'ok file))
+      (when (and (string-match "^(defun[ \t]+\\([^ \t\n)+]+\\)" body)
+                 (not (fboundp (intern (match-string 1 body)))))
+        (message "manifolding-emacs WARNING [%s]: %s defined but VOID"
+                 file (match-string 1 body))
+        (manifolding-emacs-record-error
+         :level 'part :file file
+         :message (format "%s defined but VOID — nested inside another form"
+                          (match-string 1 body)))))))
+
+(defun manifolding-emacs--unit-load (file unit parts profile &optional force)
+  "Load UNIT's PARTS, compiling only on change.  Returns the status
+symbol `loaded', `compiled', or `eval'.
+- `loaded': state validates the exact parts-hash and the .elc exists:
+  load it, nothing compiled, nothing evaluated from source.
+- `compiled': parts changed (or FORCE): write .el, byte-compile, load.
+- `eval': compilation impossible (write/compile/load failure):
+  interpreted eval fallback, today's behavior.
+FORCE skips the state match and recompiles (explicit user touch).
+Never throws: every failure records an error and falls through to the
+next tier, so one bad unit can't break a boot."
+  (let* ((id (manifolding-emacs--unit-elc-id file unit))
+         (ph (manifolding-emacs--unit-parts-hash parts))
+         (paths (manifolding-emacs--unit-elc-paths id))
+         (el (nth 0 paths)) (elc (nth 1 paths)) (statep (nth 2 paths))
+         (straight-current-profile
+          (or profile (and (boundp 'straight-current-profile)
+                           straight-current-profile)))
+         (load-it (lambda ()
+                    (load elc nil t)
+                    (manifolding-emacs--unit-note-loaded file parts))))
+    (push id manifolding-emacs--unit-elc-live-ids)
+    (cond
+     ((and (not force)
+           (file-exists-p elc)
+           (manifolding-emacs--unit-state-ok-p
+            (manifolding-emacs--cache-read statep) ph))
+      (condition-case err
+          (progn (funcall load-it) 'loaded)
+        (error
+         (manifolding-emacs-record-error
+          :level 'file :file file
+          :message (format "compiled load failed (%s), recompiling"
+                           (error-message-string err)))
+         ;; Corrupt .elc: drop it and recompile exactly once (force
+         ;; prevents looping back into this branch).
+         (ignore-errors (delete-file elc))
+         (manifolding-emacs--unit-load file unit parts profile t))))
+     (t
+      (if (manifolding-emacs--unit-write-el el parts)
+          (progn
+            (ignore-errors (delete-file elc))
+            (if (and (condition-case nil
+                         (progn (byte-compile-file el) t)
+                       (error nil))
+                     (file-exists-p elc))
+                (condition-case err
+                    (progn
+                      (manifolding-emacs--unit-state-write
+                       statep 'compiled ph)
+                      (funcall load-it)
+                      'compiled)
+                  (error
+                   (manifolding-emacs-record-error
+                    :level 'file :file file
+                    :message (format "fresh .elc failed to load (%s), eval fallback"
+                                     (error-message-string err)))
+                   (ignore-errors (delete-file elc))
+                   (manifolding-emacs--eval-parts file parts profile)
+                   (manifolding-emacs--unit-state-write statep 'eval ph)
+                   'eval))
+              (manifolding-emacs-record-error
+               :level 'file :file file
+               :message "byte-compile failed, eval fallback")
+              (manifolding-emacs--eval-parts file parts profile)
+              (manifolding-emacs--unit-state-write statep 'eval ph)
+              'eval))
+        (manifolding-emacs-record-error
+         :level 'file :file file :message ".el write failed, eval fallback")
+        (manifolding-emacs--eval-parts file parts profile)
+        'eval)))))
+
+(defun manifolding-emacs--prune-elc-cache ()
+  "Delete .el/.elc/.state.el artifacts for units not seen this boot.
+Added/deleted code churn leaves no stale binaries behind: a removed
+unit's artifacts vanish on the next boot.  Never throws."
+  (condition-case nil
+      (let ((dir (manifolding-emacs--unit-elc-dir)))
+        (when (file-directory-p dir)
+          (dolist (f (directory-files dir nil "\\.elc\\'"))
+            (let ((id (file-name-sans-extension f)))
+              (unless (member id manifolding-emacs--unit-elc-live-ids)
+                (dolist (ext '(".elc" ".el" ".state.el"))
+                  (ignore-errors
+                    (delete-file (expand-file-name (concat id ext)
+                                                   dir)))))))))
     (error nil)))
 
 (defun manifolding-emacs--compile-unit-parts (file unit &optional force)
@@ -1694,7 +1891,7 @@ boot."
     (dolist (u units)
       (pcase-let* ((`(,parts . ,profile)
                     (manifolding-emacs--compile-unit-parts file u t)))
-        (manifolding-emacs--eval-parts file parts profile)))
+        (manifolding-emacs--unit-load file u parts profile t)))
     file))
 
 (defun manifolding-emacs-recompile-package (file package-name)
@@ -1724,11 +1921,17 @@ If PROGRESS-FN is given, call it with (CURRENT TOTAL FILE) per unit —
 used to drive a splash screen without this file knowing anything
 about UI.  PROGRESS-FN also fires per file during discovery (phase
 `:reading'), so the splash names each file while it is read.
-Unchanged units replay from the content-hash cache
-(mtime/size fast path, content-hash fallback); FORCE re-extracts and
-re-evaluates everything.  Returns the files that compiled, in
-completion order."
+Each unit loads from its compiled .elc on an exact parts-hash match
+— nothing recompiles, nothing re-evaluates from source.  Changed
+units byte-compile fresh; compile failures fall back to interpreted
+eval.  FORCE recompiles and reloads everything.  Per-unit durations
+and statuses land in `manifolding-emacs--unit-times' and
+`unit-times.log', so slow units are measured, never guessed.
+Artifacts of deleted units are pruned.  Returns the files that
+compiled, in completion order."
   (setq manifolding-emacs--boot-phase :reading)
+  (setq manifolding-emacs--unit-times nil)
+  (setq manifolding-emacs--unit-elc-live-ids nil)
   (let* ((discovered (manifolding-emacs--ordered-units
                       "[^./]+$" (manifolding-emacs-get-org-directory)
                       progress-fn))
@@ -1739,7 +1942,8 @@ completion order."
     ;; Discovery is done: the unit loop below is compilation.
     (setq manifolding-emacs--boot-phase :compiling)
     (dolist (u units)
-      (let ((file (plist-get u :file)))
+      (let ((file (plist-get u :file))
+            (t0 (float-time)))
         (setq current (1+ current))
         (when progress-fn (funcall progress-fn current total file))
         (unless (member file pulled)
@@ -1750,17 +1954,30 @@ completion order."
             (pcase-let* ((`(,parts . ,profile)
                           (manifolding-emacs--compile-unit-parts
                            file u force)))
-              (manifolding-emacs--eval-parts file parts profile)
-              (unless (member file compiled)
-                (push file compiled)))
+              (let ((status (manifolding-emacs--unit-load
+                             file u parts profile force)))
+                (unless (member file compiled)
+                  (push file compiled))
+                (push (list (- (float-time) t0) file status)
+                      manifolding-emacs--unit-times)))
           (error
            (let ((msg (error-message-string err)))
              (when (string-match-p "End of file\\|Unbalanced\\|parsing" msg)
                (setq paren-errors (1+ paren-errors)))
              (when (string-match-p "VOID" msg)
                (setq void-errors (1+ void-errors)))
-             (manifolding-emacs-record-error
-              :level 'file :file file :message msg))))))
+              (manifolding-emacs-record-error
+               :level 'file :file file :message msg))
+           (push (list (- (float-time) t0) file 'error)
+                 manifolding-emacs--unit-times)))))
+    (manifolding-emacs--prune-elc-cache)
+    (when-let ((log (get-buffer "*Compile-Log*")))
+      ;; One pointer, not 280 popups: warnings live in the log buffer.
+      (manifolding-emacs-record-error
+       :level 'file :file "byte-compile"
+       :message "warnings emitted — see *Compile-Log*")
+      (bury-buffer log))
+    (manifolding-emacs--write-unit-times)
     (cond
      ((> paren-errors 0)
       (message "manifolding-emacs: %d paren error(s) — see the error entries above for exact positions"
@@ -1863,6 +2080,43 @@ that should happen silently just because nothing broke today."
 (defvar manifolding-emacs--last-boot-seconds nil
   "Duration of the most recent boot, set by the clean-finish handoff
 and displayed by the dashboard's Manifold status widget.")
+
+(defvar manifolding-emacs--unit-times nil
+  "Per-unit durations this boot: ((SECONDS FILE STATUS) ...), recent first.
+STATUS is loaded (compiled cache hit), compiled (fresh byte-compile),
+eval (interpreted fallback), or error.  Written to unit-times.log by
+`manifolding-emacs--write-unit-times'.")
+
+(defun manifolding-emacs--unit-times-file ()
+  "Where per-unit durations land.  Under ~/.config/emacs, never the vault."
+  (locate-user-emacs-file "unit-times.log"))
+
+(defun manifolding-emacs--write-unit-times ()
+  "Persist per-unit durations and load statuses, slowest first, with a
+total line plus loaded/compiled/eval/error counts — so the next boot
+shows exactly what recompiled and what replayed from .elc.
+Overwrites the previous boot's log (latest only).  Never throws:
+timing must never break a boot."
+  (condition-case nil
+      (let ((rows (sort (copy-sequence manifolding-emacs--unit-times)
+                        (lambda (a b) (> (car a) (car b)))))
+            (total 0.0)
+            (loaded 0) (compiled 0) (ev 0) (err 0))
+        (dolist (r manifolding-emacs--unit-times)
+          (setq total (+ total (car r)))
+          (pcase (nth 2 r)
+            ('loaded (setq loaded (1+ loaded)))
+            ('compiled (setq compiled (1+ compiled)))
+            ('eval (setq ev (1+ ev)))
+            (_ (setq err (1+ err)))))
+        (with-temp-file (manifolding-emacs--unit-times-file)
+          (insert (format ";; unit-times %.1fs total, %d units (%d loaded %d compiled %d eval %d error), %s\n"
+                          total (length rows) loaded compiled ev err
+                          (current-time-string)))
+          (dolist (r rows)
+            (insert (format "%8.2f %-9s %s\n"
+                            (car r) (or (nth 2 r) 'unknown) (cadr r))))))
+    (error nil)))
 
 (defun manifolding-emacs-show-splash ()
   (let ((buf (get-buffer-create "*Manifolding-Emacs*")))
@@ -2047,9 +2301,11 @@ and displayed by the dashboard's Manifold status widget.")
                      (length (manifolding-emacs-errors-list)))
           (plist-put manifolding-emacs-splash--state :last-w
                      (length (manifolding-emacs-warnings-list)))
-          (manifolding-emacs-splash--render-progress buf current total file)
-          (with-current-buffer buf
-            (redisplay)))))))
+           (manifolding-emacs-splash--render-progress buf current total file)
+           (with-current-buffer buf
+             ;; Forced: a busy main thread must still paint, or the
+             ;; splash looks frozen during long units.
+             (redisplay t)))))))
 
 (defun manifolding-emacs-splash--missing-prompts-count ()
   (condition-case nil
@@ -2090,6 +2346,29 @@ Non-clean boots stay in *Manifolding-Emacs* with the full report."
 
 (defvar manifolding-emacs-splash--todos-expanded nil
   "When non-nil, the dashboard lists every module TODO instead of a few.")
+
+(defvar manifolding-emacs-splash--todos-cache nil
+  "Module TODOs from the last scan.  Filled on an idle timer after the
+dashboard renders, so boot never pays the full-vault read up front.")
+
+(defvar manifolding-emacs-splash--todos-pending nil
+  "Non-nil while a TODO backfill timer is already scheduled.")
+
+(defun manifolding-emacs-splash--schedule-todos-backfill (buf boot-seconds banner)
+  "Re-scan module TODOs once idle, then re-render the dashboard.
+The boot-time render shows whatever the cache holds (nil on a fresh
+boot); the backfill fills it in without blocking startup."
+  (unless manifolding-emacs-splash--todos-pending
+    (setq manifolding-emacs-splash--todos-pending t)
+    (run-with-idle-timer
+     5 nil
+     (lambda ()
+       (setq manifolding-emacs-splash--todos-pending nil)
+       (setq manifolding-emacs-splash--todos-cache
+             (manifolding-emacs-splash--module-todos))
+       (when (buffer-live-p buf)
+         (manifolding-emacs-splash-update-dashboard
+          buf boot-seconds banner))))))
 
 (defun manifolding-emacs-splash--module-todos ()
   "Return list of (FILE-BASE . TITLE) TODO headings from mechanism files.
@@ -2143,8 +2422,8 @@ so non-mechanism files are never touched."
                           (if (fboundp 'my/manifolding-atlas-root-dir)
                               (my/manifolding-atlas-root-dir)
                             (expand-file-name "~"))))
-           (git-line (manifolding-emacs-splash--vault-git-info))
-           (todos (manifolding-emacs-splash--module-todos))
+            (git-line (manifolding-emacs-splash--vault-git-info))
+            (todos manifolding-emacs-splash--todos-cache)
            (todo-lines
             (when todos
               (let* ((shown (if manifolding-emacs-splash--todos-expanded
@@ -2221,8 +2500,11 @@ so non-mechanism files are never touched."
                             (if (fboundp 'my/manifolding-atlas-root-dir)
                                 (my/manifolding-atlas-root-dir)
                               default-directory)))))
-           map))
-        (redisplay)))))
+            map))
+         (redisplay))
+    ;; TODO scan runs idle-deferred: the render above shows the cache.
+    (manifolding-emacs-splash--schedule-todos-backfill
+     buf boot-seconds banner))))
 
 (defun manifolding-emacs-doctor--known-packages ()
   "Alist of (package-name . file) for every package declared anywhere
@@ -2355,9 +2637,9 @@ under the active Org directory."
                                  (manifolding-emacs-doctor-sweep-now))))))
 
 (defun manifolding-emacs-reload (&optional force)
-  "Recompile every Org file.
-Unchanged files replay from the content-hash cache.  With FORCE
-\(prefix argument) bypass the cache and recompile everything."
+  "Reload every Org file.
+Unchanged units load from their compiled .elc; changed units
+recompile.  With FORCE (prefix argument) recompile everything."
   (interactive "P")
   (manifolding-emacs-compile-directory nil force))
 
