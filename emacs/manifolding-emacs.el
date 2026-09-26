@@ -2237,6 +2237,29 @@ timing must never break a boot."
                                       (max 0 idx)))))
                   times ""))))))
 
+(defun manifolding-emacs-splash--missing-prompts-count ()
+  (condition-case nil
+      (let ((path (expand-file-name
+                   "admin/MISSING PROMPTS"
+                    (if (fboundp 'my/manifolding-atlas-root-dir)
+                        (my/manifolding-atlas-root-dir)
+                      (expand-file-name "~")))))
+        (if (not (file-exists-p path))
+            0
+          (with-temp-buffer
+            (insert-file-contents path)
+            (count-matches "^\\* TODO"))))
+    (error 0)))
+
+(defun manifolding-emacs-splash--notes-count ()
+  (condition-case nil
+      (if (fboundp 'manifolding-atlas-db-query)
+          (length (manifolding-atlas-db-query))
+        0)
+    (error 0)))
+
+
+
 (defvar manifolding-emacs--progress-state nil
   "Live progress state: (:t0 :count :last-render :last-count :last-status).")
 
@@ -2245,7 +2268,7 @@ timing must never break a boot."
 Manual reloads never steal the frame: only boots open it.")
 
 (defun manifolding-emacs--progress-line (current total file status)
-  "One-line progress text for *Messages* and the dashboard header."
+  "One-line progress text for *Messages*."
   (let ((label (pcase manifolding-emacs--boot-phase
                  (:compiling "Compiling") (:loading "Loading")
                  (:reading "Reading")
@@ -2263,9 +2286,10 @@ Manual reloads never steal the frame: only boots open it.")
                 (format " · %d errors · %d warnings" e w))))))
 
 (defun manifolding-emacs--progress-tick (current total file &optional status)
-  "Log progress to *Messages*; mirror it to the dashboard header line
-once the dashboard is live. Throttled to redraw-interval. Never throws:
-a progress tick must never break compilation."
+  "Log progress to *Messages*. Opens the dashboard once it is live
+(boots only — never on manual reload). Throttled to
+redraw-interval. Never throws: a progress tick must never break
+compilation."
   (condition-case nil
       (let* ((now (float-time))
              (st manifolding-emacs--progress-state)
@@ -2289,44 +2313,16 @@ a progress tick must never break compilation."
             (plist-put manifolding-emacs--progress-state :last-render now)
             (plist-put manifolding-emacs--progress-state :last-count current)
             (plist-put manifolding-emacs--progress-state :last-status status)
-            (let ((line (manifolding-emacs--progress-line
-                         current total file status)))
-              (message "%s" line)
-              (when (and (fboundp 'dashboard-open)
-                         (featurep 'dashboard))
-                (let ((dbuf (get-buffer "*dashboard*")))
-                  (when (and manifolding-emacs--booting
-                             (not manifolding-emacs--dashboard-progress-opened))
-                    (setq manifolding-emacs--dashboard-progress-opened t)
-                    (condition-case nil (dashboard-open) (error nil))
-                    (setq dbuf (get-buffer "*dashboard*")))
-                  (when (buffer-live-p dbuf)
-                    (with-current-buffer dbuf
-                      (let ((inhibit-read-only t))
-                        (setq header-line-format line)))))))
+            (message "%s" (manifolding-emacs--progress-line
+                           current total file status))
+            (when (and manifolding-emacs--booting
+                       (not manifolding-emacs--dashboard-progress-opened)
+                       (fboundp 'dashboard-open)
+                       (featurep 'dashboard))
+              (setq manifolding-emacs--dashboard-progress-opened t)
+              (condition-case nil (dashboard-open) (error nil)))
             (redisplay t))))
     (error nil)))
-
-(defun manifolding-emacs-splash--missing-prompts-count ()
-  (condition-case nil
-      (let ((path (expand-file-name
-                   "admin/MISSING PROMPTS"
-                    (if (fboundp 'my/manifolding-atlas-root-dir)
-                        (my/manifolding-atlas-root-dir)
-                      (expand-file-name "~")))))
-        (if (not (file-exists-p path))
-            0
-          (with-temp-buffer
-            (insert-file-contents path)
-            (count-matches "^\\* TODO"))))
-    (error 0)))
-
-(defun manifolding-emacs-splash--notes-count ()
-  (condition-case nil
-      (if (fboundp 'manifolding-atlas-db-query)
-          (length (manifolding-atlas-db-query))
-        0)
-    (error 0)))
 
 (defun manifolding-emacs-splash--module-todos ()
   "Return list of (FILE-BASE . TITLE) TODO headings from mechanism files.
@@ -2611,10 +2607,6 @@ whether or not files were passed on the command line."
          (if (and (fboundp 'dashboard-open)
                   (fboundp 'dashboard-refresh-buffer))
              (progn
-               (when (get-buffer "*dashboard*")
-                 (with-current-buffer "*dashboard*"
-                   (let ((inhibit-read-only t))
-                     (setq header-line-format nil))))
                (dashboard-open)
                (run-with-idle-timer
                 5 nil (lambda ()
