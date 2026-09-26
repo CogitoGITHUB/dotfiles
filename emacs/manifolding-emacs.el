@@ -220,18 +220,34 @@ status for files it didn't touch.")
   "Bound to t only during the synchronous per-package eval in the
 compiler.  Prevents double-recording of synchronous part failures.")
 
+(defvar manifolding-emacs--errors-buffer-name "*Manifolding-Emacs Errors*"
+  "Buffer holding boot errors and warnings. *Messages* stays for
+compile progress only; details live here.")
+
+(defun manifolding-emacs--report-problem (text)
+  "Append TEXT to the errors buffer. Never throws, never messages."
+  (condition-case nil
+      (with-current-buffer (get-buffer-create
+                            manifolding-emacs--errors-buffer-name)
+        (let ((inhibit-read-only t))
+          (goto-char (point-max))
+          (insert text "\n")))
+    (error nil)))
+
 (cl-defun manifolding-emacs-record-error
     (&key level file line package keyword message)
-  "Record a failure and, unless still booting, surface it immediately."
+  "Record a failure: errors buffer always, `display-warning' when
+interactive. *Messages* is never touched."
   (let ((entry (manifolding-emacs--make-error-entry
                 :level level :file file :line line :package package
                 :keyword keyword :message message :time (float-time))))
     (push entry manifolding-emacs--boot-errors)
     (when package
       (manifolding-emacs-record-status package 'error file message))
-    (message "manifolding-emacs ERROR %s%s%s: %s"
+    (manifolding-emacs--report-problem
+     (format "manifolding-emacs ERROR %s%s%s: %s"
              (or file "?") (if line (format ":%s" line) "")
-             (if package (format " [%s]" package) "") message)
+             (if package (format " [%s]" package) "") message))
     (unless manifolding-emacs--booting
       (display-warning
        'manifolding-emacs
@@ -245,7 +261,9 @@ compiler.  Prevents double-recording of synchronous part failures.")
   (push (list :type type :message message :time (float-time)
               :file (and (boundp 'manifolding-emacs--current-unit-file)
                          manifolding-emacs--current-unit-file))
-        manifolding-emacs--boot-warnings))
+        manifolding-emacs--boot-warnings)
+  (manifolding-emacs--report-problem
+   (format "manifolding-emacs WARNING [%s]: %s" type message)))
 
 (defvar manifolding-emacs--current-unit-file nil
   "Source file of the unit currently compiling/loading, or nil.
@@ -274,10 +292,14 @@ special (dynamic) even if the loader ever gains lexical-binding.")
     result))
 
 (defun manifolding-emacs-errors-clear-boot-state ()
-  "Clear the transient per-boot lists.  Does NOT touch
+  "Clear the transient per-boot lists and the errors buffer.  Does NOT touch
 `manifolding-emacs--package-status'."
   (setq manifolding-emacs--boot-errors '()
-        manifolding-emacs--boot-warnings '()))
+        manifolding-emacs--boot-warnings '())
+  (when (get-buffer manifolding-emacs--errors-buffer-name)
+    (with-current-buffer manifolding-emacs--errors-buffer-name
+      (let ((inhibit-read-only t))
+        (erase-buffer)))))
 
 (defun manifolding-emacs-errors-clear-all-status ()
   "Wipe all recorded package statuses.  Manual escape hatch for when
@@ -1480,7 +1502,7 @@ numbers in errors stay correct because nothing is narrowed."
 (defun manifolding-emacs--eval-package-string (package-name package-string file)
   "Read and eval PACKAGE-STRING in isolation: a failure marks
 PACKAGE-NAME as errored instead of propagating to its siblings.
-On failure, prints the exact error, the file, and a snippet of the
+On failure, records the exact error, the file, and a snippet of the
 failing code so you never have to guess."
   (condition-case err
       (progn
@@ -1491,10 +1513,8 @@ failing code so you never have to guess."
         (manifolding-emacs-record-status package-name 'ok file))
     (error
      (let ((snippet (if (> (length package-string) 200)
-                        (concat (substring package-string 0 200) "…")
-                      package-string)))
-       (message "manifolding-emacs ERROR [%s] %s\n  Code: %s"
-                package-name (error-message-string err) snippet)
+                          (concat (substring package-string 0 200) "…")
+                        package-string)))
        (manifolding-emacs-record-error
         :level 'package :file file :package package-name
         :message (format "%s\n  Code: %s"
@@ -1589,8 +1609,6 @@ something broke during extraction."
   (when (and (null parts)
              (> (or (nth 7 (file-attributes file)) 0) 10)
              (string-match-p "/infra/\\|/domains/" file))
-    (message "manifolding-emacs ERROR [%s]: ZERO forms extracted — likely paren imbalance or nested begin_src"
-             (file-name-nondirectory file))
     (manifolding-emacs-record-error
      :level 'file :file file
      :message "ZERO forms extracted — likely paren imbalance or nested begin_src markers"))
@@ -1603,12 +1621,9 @@ something broke during extraction."
              (fn-name (and (string-match "^(defun[ \t]+\\([^ \t\n)+]+\\)"
                                          body)
                            (match-string 1 body)))
-             (label (or fn-name
+              (label (or fn-name
                         (and is-package (plist-get part :name))
-                        "anonymous"))
-             (snippet (if (> (length body) 200)
-                          (concat (substring body 0 200) "…")
-                        body)))
+                        "anonymous")))
         (condition-case err
             (progn
               (let ((manifolding-emacs--inside-tier2-eval t))
@@ -1619,14 +1634,10 @@ something broke during extraction."
                 (manifolding-emacs-record-status
                  (plist-get part :name) 'ok file))
               (when (and fn-name (not (fboundp (intern fn-name))))
-                (message "manifolding-emacs WARNING [%s]: %s defined but VOID"
-                         file fn-name)
                 (manifolding-emacs-record-error
                  :level 'part :file file
                  :message (format "%s defined but VOID — nested inside another form" fn-name))))
           (error
-           (message "manifolding-emacs ERROR [%s] %s: %s\n  Code: %s"
-                    label file (error-message-string err) snippet)
            (manifolding-emacs-record-error
             :level (if is-package 'package 'part)
             :file file
@@ -1822,8 +1833,6 @@ units report exactly like evaluated ones."
          (plist-get part :name) 'ok file))
       (when (and (string-match "^(defun[ \t]+\\([^ \t\n)+]+\\)" body)
                  (not (fboundp (intern (match-string 1 body)))))
-        (message "manifolding-emacs WARNING [%s]: %s defined but VOID"
-                 file (match-string 1 body))
         (manifolding-emacs-record-error
          :level 'part :file file
          :message (format "%s defined but VOID — nested inside another form"
@@ -2060,11 +2069,13 @@ compiled, in completion order."
     (manifolding-emacs--write-unit-times)
     (cond
      ((> paren-errors 0)
-      (message "manifolding-emacs: %d paren error(s) — see the error entries above for exact positions"
-               paren-errors))
+      (manifolding-emacs--report-problem
+       (format "manifolding-emacs: %d paren error(s) — see the errors buffer for exact positions"
+               paren-errors)))
      ((> void-errors 0)
-      (message "manifolding-emacs: %d void function(s) — check nesting in listed files"
-               void-errors)))
+      (manifolding-emacs--report-problem
+       (format "manifolding-emacs: %d void function(s) — check nesting in listed files"
+               void-errors))))
     (nreverse compiled)))
 
 (defun manifolding-emacs-aggregate-directory (output-file)
@@ -2572,10 +2583,13 @@ whether or not files were passed on the command line."
    (unless fatal
      (manifolding-emacs-maybe-freeze-on-clean-boot)
      (manifolding-emacs-doctor-schedule-idle-sweep))
-   (message "manifolding-emacs: %s%d error(s), %d warning(s)"
-            (if fatal "BOOT THREW - " "")
-            (length (manifolding-emacs-errors-list))
-            (length (manifolding-emacs-warnings-list)))
+   (let ((errn (length (manifolding-emacs-errors-list)))
+         (warnn (length (manifolding-emacs-warnings-list))))
+     (message "manifolding-emacs: %s%d error(s), %d warning(s)%s"
+              (if fatal "BOOT THREW - " "")
+              errn warnn
+              (if (and (not (zerop (+ errn warnn))) (not fatal))
+                  " — details in *Manifolding-Emacs Errors*" "")))
    ;; Void-defun sweep: verify critical functions actually exist.
    (dolist (check
             '(("my/manifolding-atlas-org-prompt--ask" . "org-prompts.org")
@@ -2583,8 +2597,9 @@ whether or not files were passed on the command line."
               ("my/manifolding-atlas-routines-run" . "routines.org")
                               ("manifolding-keyboard-define-keys" . "engine/state-machine.org")))
      (unless (fboundp (intern (car check)))
-       (message "⚠ CRITICAL: %s is VOID — check %s for paren/nesting issues"
-                (car check) (cdr check)))))
+       (manifolding-emacs--report-problem
+        (format "⚠ CRITICAL: %s is VOID — check %s for paren/nesting issues"
+                (car check) (cdr check))))))
    ;; Paren-issue detector.
    (dolist (e (manifolding-emacs-errors-list))
      (when (and (manifolding-emacs-error-entry-p e)
@@ -2592,10 +2607,10 @@ whether or not files were passed on the command line."
                 (string-match-p
                  "UNBALANCED PARENS\\|End of file during parsing"
                  (manifolding-emacs-error-entry-message e)))
-       (message
-        "⚠ UNBALANCED PARENS — the error above shows the exact function and position. Fix the extra/missing closer and reload.")))
+       (manifolding-emacs--report-problem
+        "⚠ UNBALANCED PARENS — the errors buffer shows the exact function and position. Fix the extra/missing closer and reload.")))
    ;; Always land on the dashboard: normal opens and file opens alike.
-   ;; Errors and warnings live in *Messages* and the status widget.
+   ;; Errors and warnings live in the errors buffer and the status widget.
    (let ((secs (- (float-time) (or manifolding-emacs--boot-t0 (float-time)))))
      (unless fatal
        (manifolding-emacs-splash--record-duration secs)
