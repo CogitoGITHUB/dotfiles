@@ -136,29 +136,29 @@ seconds and the 10 slowest units (measured, never guessed)."
 
 ;; (my/init-note "[init] loader ready — booting modules…")
 
-(setq manifolding-emacs--boot-warnings '())
-(advice-add 'manifolding-emacs-boot :before
-            (lambda () (setq manifolding-emacs--boot-warnings '())))
+(setq cyberdeck-emacs--boot-warnings '())
+(advice-add 'cyberdeck-emacs-boot :before
+            (lambda () (setq cyberdeck-emacs--boot-warnings '())))
 (advice-add 'display-warning :before
             (lambda (type message &rest _)
               ;; Single recorder for the whole boot. Our own
-              ;; 'manifolding-emacs type is already counted by
+              ;; 'cyberdeck-emacs type is already counted by
               ;; record-error — capturing it again would double-count.
-              (unless (eq type 'manifolding-emacs)
-                (if (fboundp 'manifolding-emacs-record-warning)
-                    (manifolding-emacs-record-warning type message)
+              (unless (eq type 'cyberdeck-emacs)
+                (if (fboundp 'cyberdeck-emacs-record-warning)
+                    (cyberdeck-emacs-record-warning type message)
                   (push (list :type type :message message)
-                        manifolding-emacs--boot-warnings)))))
+                        cyberdeck-emacs--boot-warnings)))))
 
-(setq manifolding-emacs-package-method 'leaf
-      manifolding-emacs-org-directory
-      (or manifolding-emacs-vault-root
+(setq cyberdeck-emacs-package-method 'leaf
+      cyberdeck-emacs-org-directory
+      (or cyberdeck-emacs-vault-root
           (expand-file-name "modules" my/emacs-root))
-      manifolding-emacs-output-directory
-      (expand-file-name "manifolding-emacs" user-emacs-directory))
+      cyberdeck-emacs-output-directory
+      (expand-file-name "cyberdeck" user-emacs-directory))
 (setq inhibit-startup-screen t)
 (my/boot-mark "boot-start")
-(manifolding-emacs-boot)
+(cyberdeck-emacs-boot)
 (my/boot-mark "boot-end")
 
 (global-auto-revert-mode 1)
