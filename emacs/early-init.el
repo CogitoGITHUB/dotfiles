@@ -50,9 +50,10 @@
      "ATTENTION: org-noter"
      "setup-children.*:class must also"
      " is an obsolete alias"
-     "open-code ‘anonymous lambda’"
-     "deprecated positional arguments to ‘define-minor-mode’"
-     "Manifolding Atlas: opening database"
+      "open-code ‘anonymous lambda’"
+      "deprecated positional arguments to ‘define-minor-mode’"
+      "^Background enabled"
+      "Manifolding Atlas: opening database"
      "Manifolding Atlas: database ready"
      "For information about GNU Emacs")
    "\\|"))

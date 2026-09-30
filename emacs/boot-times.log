@@ -1,6 +1,19 @@
     0.00s (+  0.00s) foundation-start
-    8.14s (+  8.14s) straight-ready
-    8.78s (+  0.64s) core-ready
-    9.83s (+  1.05s) loader-loaded
-    9.83s (+  0.00s) boot-start
-   10.17s (+  0.34s) boot-end
+    7.93s (+  7.93s) straight-ready
+    8.24s (+  0.30s) core-ready
+    9.30s (+  1.07s) loader-loaded
+    9.30s (+  0.00s) boot-start
+  250.73s (+241.43s) boot-end
+GC: 7.4s of boot in garbage collection
+Slowest units:
+   10.44 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/buffer-management
+    9.81 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/building-things/maintaining-large-programs
+    8.62 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/org-manual/04-export
+    7.72 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/display/06-screen
+    7.27 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/00-types-a
+    7.21 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/building-things/editing-programs
+    5.99 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/org-manual/05-publish
+    4.83 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/display/05-minibuffer
+    4.42 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/reaching-outward/calculator/06-programming
+    4.30 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/dealing-with-trouble
+

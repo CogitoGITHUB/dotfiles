@@ -1,0 +1,19 @@
+    0.00s (+  0.00s) foundation-start
+    9.91s (+  9.91s) straight-ready
+   10.82s (+  0.91s) core-ready
+   12.44s (+  1.62s) loader-loaded
+   12.44s (+  0.00s) boot-start
+  833.48s (+821.03s) boot-end
+GC: 33.5s of boot in garbage collection
+Slowest units:
+  482.83 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/daily-editing/vundo
+   49.01 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/06-command-loop
+   26.29 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/03-variables
+   24.67 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/frames
+   23.81 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/file-creation/manifolding-atlas/atlas-engine/file-creation
+    9.87 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/org-manual/04-export
+    8.71 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/display/06-screen
+    8.31 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/04-functions
+    7.61 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/00-types-a
+    6.31 /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/building-things/maintaining-large-programs
+
