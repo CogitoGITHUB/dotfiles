@@ -4,10 +4,21 @@ When the user asks to add, modify, or reconfigure something:
 
 ## Emacs modules
 
-**Reference:** `~/.config/emacs/modules/AGENTS.md`
-**Location:** `~/.config/emacs/modules/<name>.org`
-**Daemon control:** prefer MCP reload (`socat → eval-elisp (manifolding-emacs-reload)`, §2 below) — `herd restart emacs-daemon` doesn't exist; confirm real service name with `herd status | grep emacs`
+**Reference:** vault `AGENT.md` + `SUBNET AGENT INTEGRATION INTO CYBERDECK` (repo root)
+**Location:** units are extensionless files under `~/Subnet/universe/.../Cyberdeck-Emacs/emacs-cyberdeck/` carrying an `:EMACS_MECHANISM:` drawer (there is no `~/.config/emacs/modules/` tree — anything referencing it is stale)
+**Daemon control:** prefer MCP reload (`socat → eval-elisp (cyberdeck-emacs-reload)`, §2 below) — `herd restart emacs-daemon` doesn't exist; confirm real service name with `herd status | grep emacs`
 **Test:** `emacs --batch --load ~/.config/emacs/init.el --eval '(message "ok")'`
+
+> **STANDING NOTE — batch implies `-q`, and `-q` skips `early-init.el`.**
+> Every `--batch` command boots WITHOUT early-init unless it is loaded
+> explicitly: no message-noise filter, no GC tuning, no
+> file-name-handler stripping. Results misrepresent real interactive
+> behavior (phantom chatter like bufler's "already compiled" ×11,
+> slower boots). Any batch diagnostic meant to reflect a real boot MUST
+> load it first:
+> `emacs --batch --debug-init -l ~/.config/emacs/early-init.el -l ~/.config/emacs/init.el ...`
+> Proven 2026-09-25 with a fake-HOME marker test (early-init never
+> touched under `--batch`). Do not re-investigate this.
 
 Each module is an `.org` file. `:STRAIGHT:` must be a single line.
 Use `:init:` tag for pre-require vars, `:config:` tag (or no tag) for main config.
@@ -69,7 +80,7 @@ herd restart emacs-emacs  # NOTE: see below — the service name is NOT emacs-da
 > but `herd restart emacs-daemon` → "service could not be found". The actual
 > shepherd service name lives in `~/.config/ManifoldOS/system.scm`. Before
 > relying on a daemon restart, prefer the MCP reload (§2) — it needs no restart
-> for `modules/*.org` edits. Confirm the real service name with
+> for unit-file edits. Confirm the real service name with
 > `herd status | grep emacs` if you truly need to restart.
 
 To test config changes without restarting the daemon:
@@ -100,12 +111,12 @@ done
 # 1. Check for load errors in log
 grep -ciE "(error|void|cannot.*load|wrong)" /tmp/emacs-daemon.log
 
-# 2. Verify manifolding-emacs loaded
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(featurep '\''manifolding-emacs)'
+# 2. Verify cyberdeck-emacs loaded (the loader provides no feature; check the entry point)
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(fboundp (quote cyberdeck-emacs-boot))'
 
-# 3. Check manifolding-emacs boot errors
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(manifolding-emacs-errors-list)'
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(manifolding-emacs-warnings-list)'
+# 3. Check cyberdeck-emacs boot errors
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(cyberdeck-emacs-errors-list)'
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(cyberdeck-emacs-warnings-list)'
 
 # 4. Quick sanity
 emacsclient --socket-name /run/user/1000/emacs/server --eval '(+ 1 2)'
@@ -121,18 +132,18 @@ herd restart emacs-daemon  # NOTE: confirm real service name — see §above
 
 ### Detecting why restart is needed
 - Changed `bootstrap.org` or `init.el` → **must restart** (tanglers/loaders changed)
-- Changed `lisp/manifolding-emacs*.el` → **just reload** (`manifolding-emacs-reload`)
-- Changed a `modules/*.org` file → **just reload**
+- Changed `.el` file under `~/.config/emacs/lisp/` → **just reload** (local helpers, no recompile step)
+- Changed a vault unit file → **just reload**
 - Changed `.el` file in `straight/repos/` → **just reload**
 - Changed Guix system packages → **must restart** (Emacs needs to see new binaries)
 
 ### What happens during boot
 1. `init.el` loads: straight bootstrap → org → leaf → leaf-keywords
-2. `manifolding-emacs` loaded from `lisp/manifolding-emacs/`
-3. `manifolding-emacs-boot` called: compiles ALL `modules/*.org` files
+2. `cyberdeck` loaded from the vault (`.../Cyberdeck-Emacs/cyberdeck`, found via `.foundation-path`)
+3. `cyberdeck-emacs-boot` called: compiles ALL vault units (extensionless `:EMACS_MECHANISM:` files)
 4. After boot: `global-auto-revert-mode`, recentf saved, daemon sits idle
 5. MCP server thread starts (after init.el finishes)
-6. Any errors are stored in `manifolding-emacs-errors-list` and `manifolding-emacs-warnings-list`
+6. Any errors are stored in `cyberdeck-emacs-errors-list` and `cyberdeck-emacs-warnings-list`
 
 ---
 
@@ -145,7 +156,7 @@ Use them in this order of preference depending on what you need.
 
 ## 1. emacsclient (fastest, simplest elisp — when it works)
 
-Best for one-liners, state checks, calling custom functions, manifolding-atlas queries.
+Best for one-liners, state checks, calling custom functions, Cyberdeck queries.
 No JSON, no encoding issues, just elisp.
 
 ⚠️ **Often fails with "Connection refused".** The socket file
@@ -160,13 +171,13 @@ emacsclient --socket-name /run/user/1000/emacs/server --eval '(+ 1 2)'
 => 3
 
 # Check feature status
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(featurep '\''manifolding-emacs-vars)'
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(fboundp (quote cyberdeck-emacs-boot))'
 
 # Get a path
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(expand-file-name "~/.config/emacs/modules/")'
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(expand-file-name "~/.config/emacs/")'
 
 # Call a custom command
-emacsclient --socket-name /run/user/1000/emacs/server --eval '(manifolding-emacs-reload)'
+emacsclient --socket-name /run/user/1000/emacs/server --eval '(cyberdeck-emacs-reload)'
 ```
 
 **Socket path:** `/run/user/1000/emacs/server` (always use the full `--socket-name`). If this gives "Connection refused" but the MCP socket connects, the daemon socket is stale — use §2 instead.
@@ -176,7 +187,7 @@ emacsclient --socket-name /run/user/1000/emacs/server --eval '(manifolding-emacs
 **Non-blocking eval (`-n` flag)** — essential for operations that take time:
 ```bash
 # Submit a reload, don't wait for completion
-emacsclient -n --socket-name /run/user/1000/emacs/server --eval '(manifolding-emacs-reload)'
+emacsclient -n --socket-name /run/user/1000/emacs/server --eval '(cyberdeck-emacs-reload)'
 
 # Submit a long eval, return immediately
 emacsclient -n --socket-name $SOCK --eval '(long-running-computation)'
@@ -188,11 +199,11 @@ emacsclient -n --socket-name $SOCK --eval '(long-running-computation)'
 # Get a value (blocks until daemon is free)
 PID=$(emacsclient --socket-name $SOCK --eval '(emacs-pid)')
 
-# Check feature (blocks)
-emacsclient --socket-name $SOCK --eval '(featurep (quote manifolding-emacs))'
+# Check boot fn (blocks)
+emacsclient --socket-name $SOCK --eval '(fboundp (quote cyberdeck-emacs-boot))'
 
 # Check errors (blocks)
-emacsclient --socket-name $SOCK --eval '(manifolding-emacs-errors-list)'
+emacsclient --socket-name $SOCK --eval '(cyberdeck-emacs-errors-list)'
 ```
 
 **Detecting daemon busy-ness:**
@@ -210,7 +221,7 @@ emacsclient --socket-name $SOCK --eval '(float-time (current-idle-time))'
 emacsclient --socket-name $SOCK --eval '(format "hello %s" (user-login-name))'
 
 # Moderate: escape inner single quotes for quoting symbols
-emacsclient --socket-name $SOCK --eval '(featurep (quote manifolding-emacs))'
+emacsclient --socket-name $SOCK --eval '(fboundp (quote cyberdeck-emacs-boot))'
 #                                      \_____/\_________________/\_____/
 #                                       bash       elisp            bash
 #                                       literal    literal           literal
@@ -218,9 +229,9 @@ emacsclient --socket-name $SOCK --eval '(featurep (quote manifolding-emacs))'
 # Complex: use a temp file
 cat > /tmp/script.el << 'EOF'
 (cl-prettyprint
-  (mapcar (lambda (f) (cons f (featurep f)))
-          '(manifolding-emacs-vars manifolding-emacs-errors
-            manifolding-emacs-compiler manifolding-emacs-doctor)))
+  (mapcar (lambda (f) (cons f (fboundp f)))
+          '(cyberdeck-emacs-reload cyberdeck-emacs-errors-list
+            cyberdeck-emacs-warnings-list cyberdeck-emacs-doctor)))
 EOF
 emacsclient --socket-name $SOCK --eval "`cat /tmp/script.el`"
 ```
@@ -228,10 +239,10 @@ emacsclient --socket-name $SOCK --eval "`cat /tmp/script.el`"
 **`-n` vs no `-n` decision table:**
 | Situation | Use `-n`? | Why |
 |-----------|----------|-----|
-| `(manifolding-emacs-reload)` | Yes | Takes 10-30s, don't block |
+| `(cyberdeck-emacs-reload)` | Yes | Takes 10-30s, don't block |
 | `(featurep '...)` | No | Instant, need result |
-| `(manifolding-emacs-errors-list)` | No | Instant check |
-| `(manifolding-atlas-db-query ...)` | Depends | Fast if db hot, slow if cold |
+| `(cyberdeck-emacs-errors-list)` | No | Instant check |
+| `(cyberdeck-db-query ...)` | Depends | Fast if db hot, slow if cold |
 | `(+ 1 2)` | No | Instant sanity check |
 | When daemon might be compiling | Yes | Avoid timeout waiting for busy main thread |
 
@@ -268,21 +279,21 @@ Every response looks like:
 1. Every request MUST end with `\n` (newline) — the MCP server reads line-delimited JSON
 2. `id` must be unique per request (doesn't need to increment, just unique)
 3. Strings with quotes in `expression` need JSON escaping: `\"` for inner double-quotes
-4. **The MCP server blocks when the Emacs main thread is busy.** During `manifolding-emacs-compile-directory`, eval-elisp hangs until compilation finishes. `tools/list` works (separate thread) but `tools/call` for eval-elisp blocks on the main thread.
+4. **The MCP server blocks when the Emacs main thread is busy.** During `cyberdeck-emacs-compile-directory`, eval-elisp hangs until compilation finishes. `tools/list` works (separate thread) but `tools/call` for eval-elisp blocks on the main thread.
 5. **How to deal with a busy daemon:** Use `emacsclient -n` to submit non-blocking work, or poll with `(current-idle-time)` to detect when it's free.
 6. **MCP dies when daemon dies.** No daemon = no MCP socket. Always check connectivity first.
 7. All tools return JSON in `result.content[0].text`. For string results, the text IS the result value. For structured results (org-agenda, org-search, etc.), the text is a JSON string you must parse.
 
 ### Reloading config + checking errors via MCP (the critical workflow)
 
-After editing any `modules/*.org` file, reload through the MCP socket (no daemon restart needed):
+After editing any vault unit file, reload through the MCP socket (no daemon restart needed):
 
 ```bash
 SOCK=/home/aoeu/.config/emacs/.local/cache/emacs-mcp-server.sock
 
 # 1. Kick off the reload (non-blocking — it takes 10-30s, compiles all modules)
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(manifolding-emacs-reload)"}}}
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(cyberdeck-emacs-reload)"}}}
 EOF
 
 # 2. Poll until the daemon is idle (reload finished)
@@ -298,15 +309,15 @@ done
 
 # 3. Check for load errors/warnings
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(manifolding-emacs-errors-list)"}}}
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(cyberdeck-emacs-errors-list)"}}}
 EOF
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(manifolding-emacs-warnings-list)"}}}
+{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(cyberdeck-emacs-warnings-list)"}}}
 EOF
 
 # 4. Confirm your new vars/functions are defined
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(fboundp 'my/manifolding-atlas-mastering-review)"}}}
+{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(fboundp 'my/cyberdeck-installation-protocol-review)"}}}
 EOF
 ```
 
@@ -328,7 +339,7 @@ printf '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"eval-eli
 # Better way — use a heredoc to avoid quote confusion
 SOCK=/home/aoeu/.config/emacs/.local/cache/emacs-mcp-server.sock
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(format \"feature %s: %s\" 'manifolding-emacs-vars (featurep 'manifolding-emacs-vars))"}}}
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(format \"boot fn %s: %s\" 'cyberdeck-emacs-boot (fboundp 'cyberdeck-emacs-boot))"}}}
 EOF
 ```
 
@@ -349,7 +360,7 @@ payload 2 '"(buffer-name)"' | socat - UNIX-CONNECT:$SOCK
 
 # Complex expression (use heredoc for readability)
 socat - UNIX-CONNECT:$SOCK <<'EOF'
-{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(cl-prettyprint (mapcar (lambda (f) (cons f (featurep f))) '(manifolding-emacs-vars manifolding-emacs-errors manifolding-emacs-compiler)))"}}}
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"eval-elisp","arguments":{"expression":"(cl-prettyprint (mapcar (lambda (f) (cons f (fboundp f))) '(cyberdeck-emacs-reload cyberdeck-emacs-errors-list cyberdeck-emacs-warnings-list cyberdeck-emacs-doctor)))"}}}
 EOF
 ```
 
@@ -492,7 +503,7 @@ Create a new roam node. `title` is required.
 | Org capture/refile/clock | MCP socket | Structured JSON params |
 | Org search/agenda with complex match | MCP socket | Match syntax as string param |
 | Elisp with complex quoting | emacsclient | No JSON escaping needed |
-| Manifolding Atlas/org-roam queries | emacsclient | Custom functions, complex elisp |
+| Cyberdeck/org-roam queries | emacsclient | Custom functions, complex elisp |
 | Diagnostics | MCP socket | Structured file/severity grouping |
 | Long-running daemon operation | emacsclient -n | Non-blocking |
 | Daemon is busy compiling | emacsclient (will block) or wait | MCP eval also blocks on main thread |
@@ -504,18 +515,28 @@ Create a new roam node. `title` is required.
 # Fast: test if init.el loads without errors
 emacs --batch --load ~/.config/emacs/init.el --eval '(message "ok")' 2>&1
 
-# Faster: test just manifolding-emacs parsing
+# Faster: test just cyberdeck-emacs source readability (the loader needs
+# full boot context — straight, vault discovery — so there is no fast
+# standalone load; use the Fast check above or daemon state checks below)
 emacs --batch \
-  --eval '(add-to-list (quote load-path) (expand-file-name "~/.config/emacs/lisp/manifolding-emacs/"))' \
-  --eval '(require (quote manifolding-emacs))' \
-  --eval '(manifolding-emacs-concatenate-source-blocks (expand-file-name "~/.config/emacs/modules/projectile.org"))' \
-  --eval '(message "ok")' 2>&1
+  --eval '(with-temp-buffer (insert-file-contents (expand-file-name "~/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Cyberdeck-Emacs/cyberdeck")) (goto-char (point-min)) (message "loader readable"))' 2>&1
 
 # Fastest: test a specific elisp function
 emacs --batch --eval '(message "%s" (+ 1 2))' 2>&1
 ```
 
-**Use batch for:** Config syntax checks, manifolding-emacs parsing tests,
+> **STANDING NOTE — batch implies `-q`, and `-q` skips `early-init.el`.**
+> Every `--batch` command above boots WITHOUT early-init unless it is
+> loaded explicitly. That means no message-noise filter, no GC tuning,
+> no file-name-handler stripping — results misrepresent real
+> interactive behavior (phantom chatter, slower boots). Any batch
+> diagnostic meant to reflect a real boot MUST load it first:
+> `emacs --batch --debug-init -l ~/.config/emacs/early-init.el -l ~/.config/emacs/init.el ...`
+> This was learned the hard way diagnosing "Function provided is already
+> compiled" ×11 (bufler byte-compile notices, correctly filtered once
+> early-init is actually loaded). Do not re-investigate this.
+
+**Use batch for:** Config syntax checks, cyberdeck-emacs parsing tests,
 straight recipe validation, leaf form generation. Anything that doesn't need
 a terminal or running state.
 
@@ -752,7 +773,7 @@ ht_safe_send "$SID" "<Esc>:!echo hello<Enter>" "shell command test"
 
 ### Known issues
 
-1. **Emacs with full init is SLOW** — straight compilation, org-babel tangling, manifolding-emacs boot all take time. Always use generous `--timeout` (60-180s) and `--wait-idle`.
+1. **Emacs with full init is SLOW** — straight compilation, org-babel tangling, cyberdeck-emacs boot all take time. Always use generous `--timeout` (60-180s) and `--wait-idle`.
 2. **--wait-idle vs --wait-text** — `--wait-idle` is safer for Emacs since there's less output to match, but `--wait-text "pattern"` is more precise. Use `--wait-text` when you know exactly what to expect.
 3. **Session cleanup** — always `ht kill` + `ht remove` after test. Orphan sessions accumulate.
 4. **Output truncation** — `ht view` may truncate very long output. Use `--view` in send for targeted snapshots.
