@@ -1,52 +1,73 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "permission": "allow",
+  // proot-Ubuntu on Termux (phone, 7.5GB RAM, TTY-only, login shell nu)
+  // V2 native shape. Removed V1-only plugins opencode-mem + context-mode:
+  // both fail V2 plugin API ("must export default definition") and
+  // opencode-mem local embeddings OOM phones. Keep oh-my-opencode-slim only.
+  "shell": "/usr/local/bin/nu",
+  "update": "notify",
+  "permissions": [
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -rf *",
+      "effect": "ask"
+    },
+    {
+      "action": "*",
+      "resource": "*",
+      "effect": "allow"
+    }
+  ],
+  // V2 ignores the `instructions` array (never resolved) — active context lives in
+  // ~/.config/opencode/AGENTS.md (global) + Subnet/AGENTS.md -> AGENT.md.
+  "plugins": [
+    "oh-my-opencode-slim"
+  ],
+  "formatter": true,
+  "watcher": {
+    "ignore": ["dist/**", "coverage/**", "node_modules/**", ".git/**", "WIP/**", "admin/**"]
+  },
+  // Small context retention for phone RAM + small phone screen output
+  "compaction": {
+    "auto": true,
+    "keep": {
+      "tokens": 10000
+    },
+    "buffer": 15000
+  },
+  "tool_output": {
+    "max_lines": 1000,
+    "max_bytes": 30000
+  },
   "mcp": {
-    "github": {
-      "type": "local",
-      "command": ["npx", "-y", "@github/mcp-server"],
-      "enabled": true
+    // proot overhead = slow spawn, raise timeouts vs defaults (30s)
+    "timeout": {
+      "startup": 60000,
+      "catalog": 45000
     },
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp"],
-      "enabled": true
-    },
-    "filesystem": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/"],
-      "enabled": true
-    },
-    "sequential-thinking": {
-      "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "enabled": true
-    },
-    "emacs": {
-      "type": "local",
-      "command": ["socat", "-", "UNIX-CONNECT:~/.config/emacs/.local/cache/emacs-mcp-server.sock"],
-      "enabled": true
-    },
-    "herdr": {
-      "type": "local",
-      "command": ["node", "/home/aoeu/.local/share/herdr-mcp/dist/index.js"],
-      "enabled": true
-    },
-    "gitnexus": {
-      "type": "local",
-      "command": ["npx", "-y", "gitnexus@latest", "mcp"],
-      "enabled": true
-    },
-    "plane": {
-      "type": "local",
-      "command": ["uvx", "plane-mcp-server", "stdio"],
-      "environment": {
-        "PLANE_API_KEY": "<fill-your-api-key>",
-        "PLANE_WORKSPACE_SLUG": "<fill-your-workspace-slug>"
+    "servers": {
+      // keep existing context7 + gh_grep untouched (connected via DB).
+      // NOTE 2026-09-30: npx-stdio locals (time, sequential-thinking,
+      // filesystem, github) all fail in proot-Ubuntu with "Connection
+      // closed" — disabled until proot stdio/npx is fixed. Remote MCPs work.
+      "time": {
+        "type": "local",
+        "command": ["npx", "-y", "@modelcontextprotocol/server-time"],
+        "disabled": true
       },
-      "enabled": false
+      "sequential-thinking": {
+        "type": "local",
+        "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+        "disabled": true
+      }
     }
   },
-  "instructions": ["~/.config/opencode/instructions/emacs.md"],
- "plugin": ["opencode-mem", "context-mode", "oh-my-opencode-slim"]
+  "worktree": {
+    "directory": ".lane/trees"
+  }
 }

@@ -10,7 +10,7 @@
      )
 
      if ($sessions | length) == 0 {
-       env ZELLIJ_SOCKET_DIR=/data/data/com.termux/files/home/.cache/zellij zellij
+       env ZELLIJ_SOCKET_DIR=/root/home/shape/.cache/zellij zellij
      } else {
        let choice = (
          $sessions | append "[ new session ]"
@@ -19,7 +19,7 @@
        )
 
        if $choice == "[ new session ]" {
-         env ZELLIJ_SOCKET_DIR=/data/data/com.termux/files/home/.cache/zellij zellij
+         env ZELLIJ_SOCKET_DIR=/root/home/shape/.cache/zellij zellij
        } else if $choice != "" {
          zellij attach ($choice | str trim)
        }

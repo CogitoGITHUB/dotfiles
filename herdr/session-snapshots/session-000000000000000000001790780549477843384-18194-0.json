@@ -7,16 +7,14 @@
       "identity_cwd": "/root/home/shape",
       "public_pane_numbers": {
         "13": 4,
-        "14": 5,
         "9": 1
       },
-      "next_public_pane_number": 6,
+      "next_public_pane_number": 5,
       "public_tab_numbers": [
         1,
-        4,
-        5
+        4
       ],
-      "next_public_tab_number": 6,
+      "next_public_tab_number": 5,
       "tabs": [
         {
           "custom_name": null,
@@ -45,23 +43,9 @@
           "zoomed": false,
           "focused": 13,
           "root_pane": 13
-        },
-        {
-          "custom_name": "git",
-          "layout": {
-            "Pane": 14
-          },
-          "panes": {
-            "14": {
-              "cwd": "/root/home/shape/.config"
-            }
-          },
-          "zoomed": false,
-          "focused": 14,
-          "root_pane": 14
         }
       ],
-      "active_tab": 2
+      "active_tab": 1
     }
   ],
   "active": 0,

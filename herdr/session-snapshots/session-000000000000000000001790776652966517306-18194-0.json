@@ -1,0 +1,75 @@
+{
+  "version": 3,
+  "workspaces": [
+    {
+      "id": "w1N",
+      "custom_name": null,
+      "identity_cwd": "/home/aoeu/.config/hypr",
+      "public_pane_numbers": {
+        "1": 1,
+        "3": 18,
+        "2": 17
+      },
+      "next_public_pane_number": 19,
+      "public_tab_numbers": [
+        1,
+        15,
+        16
+      ],
+      "next_public_tab_number": 17,
+      "tabs": [
+        {
+          "custom_name": "Opencode Hypr",
+          "layout": {
+            "Pane": 1
+          },
+          "panes": {
+            "1": {
+              "cwd": "/home/aoeu/.config/hypr"
+            }
+          },
+          "zoomed": false,
+          "focused": 1,
+          "root_pane": 1
+        },
+        {
+          "custom_name": "Opencode Emacs",
+          "layout": {
+            "Pane": 2
+          },
+          "panes": {
+            "2": {
+              "cwd": "/home/aoeu/.config/emacs"
+            }
+          },
+          "zoomed": false,
+          "focused": 2,
+          "root_pane": 2
+        },
+        {
+          "custom_name": "Git p",
+          "layout": {
+            "Pane": 3
+          },
+          "panes": {
+            "3": {
+              "cwd": "/home/aoeu/.config",
+              "label": "Git Push"
+            }
+          },
+          "zoomed": false,
+          "focused": 3,
+          "root_pane": 3
+        }
+      ],
+      "active_tab": 2
+    }
+  ],
+  "active": 0,
+  "selected": 0,
+  "sidebar_width": 18,
+  "sidebar_section_split": 0.5,
+  "collapsed_space_keys": [
+    "/home/aoeu/.emacs.d/.git"
+  ]
+}

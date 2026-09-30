@@ -34,6 +34,7 @@ $env.FZF_DEFAULT_OPTS = "--color=fg:#FFFFFF,fg+:#FFFFFF,hl:#FFFFFF,hl+:#FFFFFF,h
 
 
 #$env.PATH = ($env.PATH | prepend $"($env.HOME)/.nix-profile/bin")
+$env.PATH = ($env.PATH | prepend [$"($env.HOME)/.opencode/bin" $"($env.HOME)/.local/bin"])
 
 # --- XDG Base Directories ---
 

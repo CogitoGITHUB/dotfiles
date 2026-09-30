@@ -53,8 +53,8 @@
       "open-code ‘anonymous lambda’"
       "deprecated positional arguments to ‘define-minor-mode’"
       "^Background enabled"
-      "Manifolding Atlas: opening database"
-     "Manifolding Atlas: database ready"
+      "AIU Cyberdeck: opening database"
+     "AIU Cyberdeck: database ready"
      "For information about GNU Emacs")
    "\\|"))
 

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json",
+  // Full-power but phone-tuned. Active preset: termux.
+  // Models use opencode/* IDs from `opencode models` (Console auth).
+  // Cheap minis for scout/fix, strong for orchestrate/review.
+  "preset": "termux",
+  "presets": {
+    "termux": {
+      "orchestrator": {
+        "model": "opencode/gpt-5.5",
+        "variant": "high",
+        "skills": ["*"],
+        "mcps": ["*"]
+      },
+      "oracle": {
+        "model": "opencode/claude-sonnet-5-5",
+        "variant": "high",
+        "skills": ["simplify", "verification-planning", "reflect"],
+        "mcps": []
+      },
+      "librarian": {
+        "model": "opencode/gpt-5.4-mini",
+        "variant": "low",
+        "skills": [],
+        "mcps": ["context7", "gh_grep"]
+      },
+      "explorer": {
+        "model": "opencode/gemini-3.5-flash-lite",
+        "variant": "low",
+        "skills": [],
+        "mcps": []
+      },
+      "designer": {
+        // TTY-only phone: rarely needed, keep cheap
+        "model": "opencode/gpt-5.4-mini",
+        "variant": "medium",
+        "skills": [],
+        "mcps": []
+      },
+      "fixer": {
+        "model": "opencode/gpt-5.4-mini",
+        "variant": "high",
+        "skills": [],
+        "mcps": []
+      }
+    }
+  },
+  // TTY-only phone: observer (vision) disabled saves RAM/context.
+  // Re-enable with "disabled_agents": [] + vision model if needed.
+  "disabled_agents": ["observer"],
+  // guix skill is for Guix System; this box is Ubuntu proot. Prune to save context.
+  "disabled_skills": ["guix"],
+  "agents": {
+    "elisp-reviewer": {
+      "model": "opencode/gpt-5.5",
+      "variant": "high",
+      "prompt": "You review Emacs Org/Elisp units for Subnet Cyberdeck loader compliance. Check: basename has no dot, not under .git/admin/WIP, level-1 heading tagged :EMACS_MECHANISM:, property drawer immediately after heading with :ID:, :MM_PARENT: (parent ID not title/path), :MM_ORDER: float. Chainless units sort by path so moves change load order. Never edit ~/.config/emacs/*.el build artifacts. Return concise findings with file:line refs.",
+      "orchestratorPrompt": "Delegate to @elisp-reviewer for Cyberdeck-Emacs unit changes, AIU-Frame Org edits, loader ordering, or :EMACS_MECHANISM: tag/drawer issues. Do not use for universe/ knowledge prose or routine implementation.",
+      "skills": ["emacs", "neomacsclient", "git"],
+      "mcps": []
+    },
+    "nu-fixer": {
+      "model": "opencode/gpt-5.4-mini",
+      "variant": "high",
+      "prompt": "You fix Nushell scripts and one-liners for /usr/local/bin/nu on proot-Ubuntu/Termux. Prefer nu-native pipelines over bash-isms, handle Termux $PREFIX and proot path differences (/root/home/shape vs /data/data/com.termux/files/home). Return minimal diff-ready fixes.",
+      "orchestratorPrompt": "Delegate to @nu-fixer for nushell errors, nu script changes, or shell quoting/pipeline bugs when the user runs nu. Do not use for Elisp review or codebase scouting.",
+      "skills": ["nushell"],
+      "mcps": []
+    }
+  }
+}

@@ -287,8 +287,8 @@ def jj-push-confirmed [] {
     }
     print ""
     print -n $"(ansi purple)  Push? [y/N]: (ansi reset)"
-    let ans = (input "" | str trim | str lowercase)
-    if $ans == "y" {
+    let answer = (input "" | str trim | str lowercase)
+    if $answer == "y" {
         ManifoldOS-Reshaping-History
         print $"(ansi white)  ✓ pushed(ansi reset)"
     } else {

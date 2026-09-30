@@ -296,3 +296,5 @@ nu
 y
 nu
 nu
+emacs -Q .
+gh repo clone Subnet

@@ -21,13 +21,17 @@ source "~/.config/nushell/modules/forms/scripts/zoxide.nu"
 source "~/.config/nushell/modules/forms/aliases/cli.nu"
 
 # external integrations
-source ~/.local/share/atuin/init.nu
+# atuin init is generated on demand (atuin init nu > this file);
+# an empty placeholder keeps source working until then.
+source "~/.local/share/atuin/init.nu"
 
 $env.config.color_config = $light_theme
 
-# starship
+# starship (guarded: skip when not installed)
 $env.NO_COLOR = "1"
-starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+if ((which starship | length) > 0) {
+  starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+}
 
 # PSLEEP style
 $env.PSLEEP_STYLE = "bar"

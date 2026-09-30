@@ -1,4 +1,4 @@
-;;; foundation-init.el --- generated from Manifolding-Emacs-Foundation.org
+;;; foundation-init.el --- generated from AIU-Frame.org
 ;;
 ;; ┌─────────────────────────────────────────────────────────────┐
 ;; │  BOOT ORDER                                                 │
@@ -6,11 +6,11 @@
 ;; │  2. straight/build/* → load-path                            │
 ;; │  3. org from GNU ELPA                                       │
 ;; │  4. leaf + leaf-keywords                                    │
-;; │  5. manifolding-emacs (literate loader)                     │
-;; │  6. Manifolding-Emacs/modules/*.org                         │
+;; │  5. cyberdeck-emacs (literate loader)                     │
+;; │  6. Cyberdeck-Emacs/modules/*.org                         │
 ;; └─────────────────────────────────────────────────────────────┘
 
-(defun my/init-note (fmt &rest args)
+(defun my/init-aiu (fmt &rest args)
   (let ((message-log-max nil)) (apply #'message fmt args)))
 
 ;; Boot phase measurement: near-zero overhead timestamp marks.
@@ -56,7 +56,7 @@ seconds and the 10 slowest units (measured, never guessed)."
   "GC seconds at boot start, for the boot report.")
 (my/boot-mark "foundation-start")
 
-;; (my/init-note "[init] straight bootstrap…")
+;; (my/init-aiu "[init] straight bootstrap…")
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name
@@ -64,7 +64,7 @@ seconds and the 10 slowest units (measured, never guessed)."
       (bootstrap-version 6))
   (when (file-exists-p bootstrap-file)
     (load bootstrap-file nil 'nomessage)))
-;; (my/init-note "[init] straight ready")
+;; (my/init-aiu "[init] straight ready")
 (my/boot-mark "straight-ready")
 
 (let ((straight-build-dir
@@ -92,49 +92,55 @@ seconds and the 10 slowest units (measured, never guessed)."
         (when (file-directory-p dir) (add-to-list 'load-path dir)))
       (require 'nerd-icons))
   (error nil))
-;; (my/init-note "[init] modeline ready")
+;; (my/init-aiu "[init] modeline ready")
 
-;; (my/init-note "[init] loading org + leaf…")
+;; (my/init-aiu "[init] loading org + leaf…")
 (straight-use-package 'org)
 
 (straight-use-package 'leaf)
 (straight-use-package 'leaf-keywords)
 (eval-and-compile
   (leaf-keywords-init))
-;; (my/init-note "[init] core ready")
+;; (my/init-aiu "[init] core ready")
 (my/boot-mark "core-ready")
 
 (defvar my/emacs-root
   (file-name-directory
    (or (and (boundp 'manifold--foundation-org)
             manifold--foundation-org)
+       (and (boundp 'cyberdeck--foundation-org)
+            cyberdeck--foundation-org)
        load-file-name buffer-file-name))
-  "Directory holding the Foundation org. Derived, never hardcoded.")
+  "Directory holding the AIU Frame org. Derived, never hardcoded.")
 
 (defun my/load-literate-loader (&optional file)
-  "Tangle the loader org to ~/.config/emacs/cyberdeck.el, then load it."
+  "Tangle the loader org to ~/.config/emacs/cyberdeck-emacs.el, then load it."
   (or file (setq file
                  (let ((dir my/emacs-root))
                    (or (let ((f (expand-file-name "cyberdeck" dir)))
                          (when (file-exists-p f) f))
-                       (expand-file-name "cyberdeck.org" dir)))))
+                       (let ((f (expand-file-name "cyberdeck-emacs" dir)))
+                         (when (file-exists-p f) f))
+                       (let ((f (expand-file-name "cyberdeck.org" dir)))
+                         (when (file-exists-p f) f))
+                       (expand-file-name "cyberdeck-emacs.org" dir)))))
   (unless (file-exists-p file)
     (error "[init] literate loader missing: %s" file))
-  (let ((el (locate-user-emacs-file "cyberdeck.el")))
-    ;; (my/init-note "[init] tangling loader…")
-    ;; Guarded like the Foundation tangle: with explicit sync allowed,
+  (let ((el (locate-user-emacs-file "cyberdeck-emacs.el")))
+    ;; (my/init-aiu "[init] tangling loader…")
+    ;; Guarded like the AIU Frame tangle: with explicit sync allowed,
     ;; re-tangling an up-to-date loader every boot is pure waste.
     (when (or (not (file-exists-p el)) (file-newer-than-file-p file el))
       (with-demoted-errors "[init] tangle failed: %s"
         (org-babel-tangle-file file)))
-    ;; (my/init-note "[init] loading literate loader…")
+    ;; (my/init-aiu "[init] loading literate loader…")
     (load el nil t)))
 
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 (my/load-literate-loader)
 (my/boot-mark "loader-loaded")
 
-;; (my/init-note "[init] loader ready — booting modules…")
+;; (my/init-aiu "[init] loader ready — booting modules…")
 
 (setq cyberdeck-emacs--boot-warnings '())
 (advice-add 'cyberdeck-emacs-boot :before
@@ -152,10 +158,9 @@ seconds and the 10 slowest units (measured, never guessed)."
 
 (setq cyberdeck-emacs-package-method 'leaf
       cyberdeck-emacs-org-directory
-      (or cyberdeck-emacs-vault-root
-          (expand-file-name "modules" my/emacs-root))
+      (expand-file-name "emacs-cyberdeck" my/emacs-root)
       cyberdeck-emacs-output-directory
-      (expand-file-name "cyberdeck" user-emacs-directory))
+      (expand-file-name "cyberdeck-emacs" user-emacs-directory))
 (setq inhibit-startup-screen t)
 (my/boot-mark "boot-start")
 (cyberdeck-emacs-boot)
@@ -166,7 +171,7 @@ seconds and the 10 slowest units (measured, never guessed)."
       revert-without-query '(".*")
       global-auto-revert-non-file-buffers t)
 
-;; Everything else lives in <my/emacs-root>/modules (extensionless).
+;; Everything else lives in <my/emacs-root>/emacs-cyberdeck (extensionless).
 ;; See keyboard leaders for keybindings.
 ;; See buffer-management for buffer lifecycle.
 

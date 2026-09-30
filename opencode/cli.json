@@ -1,0 +1,28 @@
+{
+  "theme": {
+    "name": "shape-white",
+    "mode": "light"
+  },
+  "session": {
+    "sidebar": "hide",
+    "thinking": "show"
+  },
+  "animations": true,
+  "tabs": {
+    "enabled": true,
+    "layout": "horizontal"
+  },
+  "diffs": {
+    "view": "auto"
+  },
+  "scroll": {
+    "acceleration": true
+  },
+  "attention": {
+    "enabled": true,
+    "volume": 0.9999999999999999
+  },
+  "debug": {
+    "devtools": false
+  }
+}
