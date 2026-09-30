@@ -112,15 +112,15 @@ seconds and the 10 slowest units (measured, never guessed)."
   "Directory holding the Foundation org. Derived, never hardcoded.")
 
 (defun my/load-literate-loader (&optional file)
-  "Tangle the loader org to ~/.config/emacs/manifolding-emacs.el, then load it."
+  "Tangle the loader org to ~/.config/emacs/cyberdeck.el, then load it."
   (or file (setq file
                  (let ((dir my/emacs-root))
-                   (or (let ((f (expand-file-name "manifolding-emacs" dir)))
+                   (or (let ((f (expand-file-name "cyberdeck" dir)))
                          (when (file-exists-p f) f))
-                       (expand-file-name "manifolding-emacs.org" dir)))))
+                       (expand-file-name "cyberdeck.org" dir)))))
   (unless (file-exists-p file)
     (error "[init] literate loader missing: %s" file))
-  (let ((el (locate-user-emacs-file "manifolding-emacs.el")))
+  (let ((el (locate-user-emacs-file "cyberdeck.el")))
     ;; (my/init-note "[init] tangling loader…")
     ;; Guarded like the Foundation tangle: with explicit sync allowed,
     ;; re-tangling an up-to-date loader every boot is pure waste.
@@ -141,14 +141,14 @@ seconds and the 10 slowest units (measured, never guessed)."
             (lambda () (setq manifolding-emacs--boot-warnings '())))
 (advice-add 'display-warning :before
             (lambda (type message &rest _)
-              ;; Single recorder for the whole boot (the loader no
-              ;; longer double-captures): routes through record-warning
-              ;; for file attribution when the loader is up, plain push
-              ;; before it exists.
-              (if (fboundp 'manifolding-emacs-record-warning)
-                  (manifolding-emacs-record-warning type message)
-                (push (list :type type :message message)
-                      manifolding-emacs--boot-warnings))))
+              ;; Single recorder for the whole boot. Our own
+              ;; 'manifolding-emacs type is already counted by
+              ;; record-error — capturing it again would double-count.
+              (unless (eq type 'manifolding-emacs)
+                (if (fboundp 'manifolding-emacs-record-warning)
+                    (manifolding-emacs-record-warning type message)
+                  (push (list :type type :message message)
+                        manifolding-emacs--boot-warnings)))))
 
 (setq manifolding-emacs-package-method 'leaf
       manifolding-emacs-org-directory
