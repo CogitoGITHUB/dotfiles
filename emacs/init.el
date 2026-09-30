@@ -42,24 +42,24 @@ Structural match only: no vault name literal, renames never break it."
         (when (and (file-directory-p top)
                    (file-directory-p (expand-file-name ".git" top)))
           (let ((hits (ignore-errors
-                        (directory-files-recursively
-                         top "Manifolding-Emacs-Foundation$" nil))))
+                         (directory-files-recursively
+                          top "AIU-Frame$" nil))))
             (when hits (throw 'found (car hits)))))))
     nil))
 
 (defun manifold/find-foundation-org ()
-  "Locate Manifolding-Emacs-Foundation by search, not fixed path.
+  "Locate AIU-Frame by search, not fixed path.
 Marker file first (instant), sibling dir next (old layout, instant),
 then home-children scan.  Accepts extensionless and legacy .org names."
   (or (manifold/read-foundation-marker)
-      (let ((found
-             (or (let ((sib (locate-user-emacs-file
-                             "Manifolding-Emacs/Manifolding-Emacs-Foundation")))
-                   (when (file-exists-p sib) sib))
-                 (let ((sib-org (locate-user-emacs-file
-                                 "Manifolding-Emacs/Manifolding-Emacs-Foundation.org")))
-                   (when (file-exists-p sib-org) sib-org))
-                 (manifold/scan-home-for-foundation))))
+       (let ((found
+              (or (let ((sib (locate-user-emacs-file
+                              "Manifolding-Emacs/AIU-Frame")))
+                    (when (file-exists-p sib) sib))
+                  (let ((sib-org (locate-user-emacs-file
+                                  "Manifolding-Emacs/AIU-Frame.org")))
+                    (when (file-exists-p sib-org) sib-org))
+                  (manifold/scan-home-for-foundation))))
         (when found (manifold/write-foundation-marker found))
         found)))
 
