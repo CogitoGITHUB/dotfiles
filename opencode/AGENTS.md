@@ -23,5 +23,5 @@
 - Never run into your own pane; use a spare tab/pane. One builder per tree at a time.
 
 ## Git: always ship with `git gg`
-- After making any changes in the Subnet repo, always finish with `git gg` (`git add -A && git commit -m 'update' && git push`).
-- The `gg` alias is repo-local to Subnet — run it from the vault root.
+- After making any changes, always finish with `git gg` (`git add -A && git commit -m 'update' && git push`).
+- Applies to both repos: Subnet vault root AND `~/.config` (dotfiles). The `gg` alias exists in both — run it from each root you touched.
