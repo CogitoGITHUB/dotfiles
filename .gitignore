@@ -13,3 +13,11 @@ mozilla/
 
 # ---- Splashboard runtime cache ----
 splashboard/cache/
+
+# ---- generated logs/state (never commit) ----
+*.log
+herdr/session-snapshots/
+herdr/*.log
+emacs/recentf.eld
+emacs/projectile-frecency.eld
+emacs/cyberdeck-emacs-errors.log.el

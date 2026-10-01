@@ -17949,3 +17949,88 @@
 2026-09-30T15:02:39.827609Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
 2026-09-30T15:02:47.210810Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
 2026-09-30T15:03:01.105279Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:03:17.963197Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=14 status="ExitStatus { code: 1, signal: Some(\"Hangup\") }"
+2026-09-30T15:03:18.009567Z  INFO herdr::pane: pane session terminated pane=14 pid=29188 signal=Hangup
+2026-09-30T15:03:18.033481Z  WARN herdr::app::actions: PaneDied for unknown pane pane=14
+2026-09-30T15:03:23.074634Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:19:00.911802Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T15:19:00.955199Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T15:19:05.029973Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t4"
+2026-09-30T15:19:05.030089Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t4"
+2026-09-30T15:19:10.145485Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790781550102509982-18194-0.json
+2026-09-30T15:19:10.168623Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:22:26.763761Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T15:46:24.162175Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T15:46:24.172602Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T15:46:29.393845Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790783189277441772-18194-0.json
+2026-09-30T15:46:29.415583Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:47:00.527081Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t4"
+2026-09-30T15:47:00.527259Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t4"
+2026-09-30T15:47:05.682235Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:47:59.763673Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=13 status="ExitStatus { code: 1, signal: Some(\"Hangup\") }"
+2026-09-30T15:47:59.886291Z  INFO herdr::pane: pane session terminated pane=13 pid=997 signal=Hangup
+2026-09-30T15:47:59.999510Z  WARN herdr::app::actions: PaneDied for unknown pane pane=13
+2026-09-30T15:48:05.016044Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:48:05.812424Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=15 rows=85 cols=131 scrollback_limit_bytes=10000000
+2026-09-30T15:48:06.438072Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=15 pid=24012
+2026-09-30T15:48:06.467339Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t6"
+2026-09-30T15:48:11.911334Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:50:49.660569Z  INFO herdr::server::headless: client detached client_id=4
+2026-09-30T15:51:22.986146Z  INFO herdr::api::server: api server listening path=/root/home/shape/.config/herdr/herdr.sock
+2026-09-30T15:51:23.018678Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=1 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-09-30T15:51:23.040323Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=1 pid=6246
+2026-09-30T15:51:23.050131Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=2 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-09-30T15:51:23.068149Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=2 pid=6249
+2026-09-30T15:51:23.078313Z  INFO herdr::logging: session restore evaluated event="persist.restore" subsystem="persist" outcome="ok" workspaces=1
+2026-09-30T15:51:23.078523Z  INFO herdr::app: using pane scrollback configuration pane_scrollback_limit_bytes=10000000
+2026-09-30T15:51:23.879157Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T15:51:23.894514Z  INFO herdr::server::headless::bootstrap: restored session already has workspaces; ignoring startup cwd cwd=/root/home/shape
+2026-09-30T15:51:23.900424Z  INFO herdr::server::headless: client protocol socket listening path=/root/home/shape/.config/herdr/herdr-client.sock
+2026-09-30T15:51:23.905606Z  INFO herdr::server::headless::bootstrap: herdr server started api_socket=/root/home/shape/.config/herdr/herdr.sock client_socket=/root/home/shape/.config/herdr/herdr-client.sock
+2026-09-30T15:51:23.922622Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="server" outcome="started" pid=6236
+2026-09-30T15:51:24.162307Z  INFO herdr::server::headless: client connected client_id=2 cols=56 rows=34 cell_width_px=19 cell_height_px=38 surface_active=true render_encoding=SemanticFrame
+2026-09-30T15:51:27.676912Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=2 status="ExitStatus { code: 0, signal: None }"
+2026-09-30T15:51:27.679534Z  INFO herdr::pane: pane session terminated pane=2 pid=6249 signal=Hangup
+2026-09-30T15:51:32.698140Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T15:51:46.831660Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(6446)
+2026-09-30T16:10:05.135391Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=3 rows=40 cols=63 scrollback_limit_bytes=10000000
+2026-09-30T16:10:05.204669Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=3 pid=20214
+2026-09-30T16:10:05.208914Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t7"
+2026-09-30T16:10:10.342092Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790784610251193549-6236-0.json
+2026-09-30T16:10:10.349098Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T16:21:23.900892Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T16:41:23.700353Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T16:41:23.706367Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-09-30T16:41:28.967374Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790786488738028123-6236-0.json
+2026-09-30T16:41:29.017863Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T16:41:52.138782Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t7"
+2026-09-30T16:41:52.138910Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t7"
+2026-09-30T16:41:57.164955Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T16:57:18.211457Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T17:27:18.229342Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T17:57:18.219079Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T18:27:18.217610Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T18:35:07.354566Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790793307306811886-6236-0.json
+2026-09-30T18:35:07.359375Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-09-30T18:57:18.226456Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T19:27:18.233684Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T19:57:18.257397Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T20:27:18.274994Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T20:57:18.278454Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T21:27:18.250182Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T21:57:18.254537Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T22:27:18.259809Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T22:57:18.263785Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T23:27:18.267144Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-30T23:57:18.271175Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T00:27:18.298495Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T00:57:18.279138Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T01:27:18.281411Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T01:57:18.283163Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T02:27:18.288752Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T02:57:18.296650Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T03:27:18.297760Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-01T03:28:07.435609Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-10-01T03:28:07.435815Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-10-01T03:28:12.514137Z  INFO herdr::persist::writer: preserved session recovery copy event="persist.backup" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json backup_path=/root/home/shape/.config/herdr/session-snapshots/session-000000000000000000001790825292482333408-6236-0.json
+2026-10-01T03:28:12.525037Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
