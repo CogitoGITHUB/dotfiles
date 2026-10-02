@@ -18643,3 +18643,5 @@
 2026-10-02T10:37:02.121572Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
 2026-10-02T10:37:10.958264Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(OpenCode) agent=None pgid=Some(16679)
 2026-10-02T10:37:13.518266Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(12950)
+2026-10-02T10:47:39.805023Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(OpenCode) agent=None pgid=Some(19537)
+2026-10-02T10:47:44.484489Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(19554)
