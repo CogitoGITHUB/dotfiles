@@ -10,12 +10,12 @@
         "5": 15,
         "1": 1
       },
-      "next_public_pane_number": 18,
+      "next_public_pane_number": 19,
       "public_tab_numbers": [
         1,
         15
       ],
-      "next_public_tab_number": 17,
+      "next_public_tab_number": 18,
       "tabs": [
         {
           "custom_name": "opencode",
@@ -46,11 +46,11 @@
             }
           },
           "panes": {
-            "5": {
-              "cwd": "/root/home/shape"
-            },
             "6": {
               "cwd": "/tmp/kilo"
+            },
+            "5": {
+              "cwd": "/root/home/shape"
             }
           },
           "zoomed": false,

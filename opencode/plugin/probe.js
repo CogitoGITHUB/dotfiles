@@ -1,133 +1,87 @@
 /**
- * THROWAWAY DIAGNOSTIC PROBE — safe to delete once its output has been read.
+ * Removes the agent / model / variant line that sits at the top of the composer
+ * ("Orchestrator · Space Bunny Free Personal / OpenCode · max").
  *
- * Two questions, one restart:
+ * ── how this was found ──
  *
- *   A) Does `api.plugins.list()` expose built-in TUI blocks under an id that
- *      `plugin_enabled` can switch off? If yes, the two lines can be hidden with
- *      a config entry and no code at all.
+ * `mini.footer: "hide"` in cli.json removed the interrupt/context line (verified). The
+ * agent/model line survived `mini.turn_summary: "hide"`, whose description is "the agent,
+ * model, and duration summary **in scrollback**" — a different place.
  *
- *   B) Does contributing to `session_prompt` / `session_prompt_right` put anything on
- *      screen, and does it displace what is already there or sit beside it?
+ * `opencode plugin list` reports only three plugins and none are `internal:`:
  *
- * Exports the same shape as @opencode-cockpit/status: a single entry that answers to
- * both `tui` (v1) and `setup` (v2), each calling the same async function.
+ *   -  0.7.1  @opencode-cockpit/status
+ *   -  local  ~/.config/opencode/plugin/probe.js
+ *   oh-my-opencode-slim  3.0.1  oh-my-opencode-slim
  *
- * ── Why there is no `mode: "replace"` on the registrations below ──
+ * so there is no built-in block id for `plugin_enabled` to switch off. That path is closed.
  *
- * It was asked for, and it is not expressible. Verified in the installed types:
+ * What is left is the V2 slot API. From the composer component in the host binary:
  *
- *   @opencode/solid  src/plugins/slot.d.ts:5
- *     export type SolidPlugin<TSlots, TContext> = Plugin<JSX.Element, TSlots, TContext>
+ *   c(Ae, s(Wl, { path: "session.composer.top", get input(){ return { sessionID: … } } }))
  *
- *   @opentui/core    plugins/types.d.ts
- *     export interface Plugin<TNode, TSlots, TContext> {
- *       id: string; order?: number; setup?; dispose?;
- *       slots: { [K in keyof TSlots]?: SlotRenderer<TNode, TSlots[K], TContext> }   ← fn only
- *     }
+ * A slot component `Wl` at the very top of the composer box, rendered unconditionally, in
+ * exactly the position the line occupies. `Wl`'s definition references `input`, `mode` and
+ * `replace`, and `ctx.ui.slot()` is typed as
  *
- *   @opentui/core    plugins/registry.d.ts
- *     register(plugin: Plugin<...>): () => void      ← no mode parameter
- *     resolve<K>(slot: K): Array<SlotRenderer<...>>  ← always a list, ordered by `order`
+ *   slot(claim: { render: (input: never) => JSX.Element } & Record<string, unknown>): () => void
  *
- * `SlotMode = "append" | "replace" | "single_winner"` is real, but it is declared on the
- * *consumer* side — `SolidSlotProps` and `SolidBoundSlotProps` both carry
- * `{ name; mode?: SlotMode; children? }`. That is the host's own `<Slot name=... mode=...>`
- * call. A plugin contributing to a slot passes a bare renderer function and has no way to
- * say how the host should resolve it, so the host's choice stands and this contribution
- * takes whatever the default is.
+ * — the `& Record<string, unknown>` is where `append` / `replace` live. `@opencode-cockpit/client`
+ * only ever uses `append` (`dist/host.js:328`, `:448`), so **`replace` on this path is untested**
+ * and this plugin is the test.
  *
- * So B cannot test "does replace work". What it can actually establish, which is the
- * question that matters: whether these slots are rendered at all, and whether a plugin
- * contribution lands beside the built-in lines or in place of them.
+ * ── v1 of this probe failed twice, for two different reasons ──
  *
- * Also note `id` is deliberately absent from the `api.slots.register(...)` argument:
- * `TuiSlotPlugin` is `Omit<SlotCore, "id"> & { id?: never }` — the registry assigns it.
+ * 1. Exported `{ tui, setup }` with no `id`:
+ *      PluginModule.LoadError: Plugin must export a default definition with an id and an
+ *      effect or setup function.  SchemaError(Missing key at ["default"]["id"])
+ *    The host normalises with `x = "effect" in k ? k : hG(k)` and then reads `x.id`.
+ * 2. Used the v1 API. In V2 `setup` receives an Effect context, not a `TuiPluginApi`:
+ *      TypeError: undefined is not an object (evaluating 'api.plugins.list')
+ *    So there is no `api.plugins` and no `api.slots` here — the v2 surface is `ctx.ui`,
+ *    `ctx.keymap`, `ctx.data`, `ctx.storage`, `ctx.theme`, `ctx.location`, `ctx.renderer`.
+ *    Also `import("solid-js")` fails from a bare plugin file (`Cannot find package 'solid-js'`)
+ *    even though the cockpit package imports it fine — node_modules resolution privilege, not
+ *    an opencode feature. Irrelevant here: rendering `null` needs no element at all.
+ *
+ * `setup` returns its cleanup function, which is what OpenCode calls to dispose the claim.
  */
 
 import { writeFileSync } from "node:fs"
 
-const PLUGINS_OUT = "/tmp/oc-probe-plugins.json"
-const ERROR_OUT = "/tmp/oc-probe-error.txt"
+const LOG = "/tmp/oc-probe-log.txt"
 
-const notes = []
-
-function fail(where, err) {
-  const text = err && err.stack ? err.stack : String(err)
-  notes.push(`=== ${where} ===\n${text}`)
+function log(text) {
   try {
-    writeFileSync(ERROR_OUT, notes.join("\n\n") + "\n")
+    writeFileSync(LOG, text + "\n", { flag: "a" })
   } catch {
-    // Nothing more can be done; part A's own output file is the fallback signal.
+    // Nothing useful to do if /tmp is unwritable; the visual result is the real signal.
   }
 }
 
-/** A visible marker as a renderable node, via the same runtime the host uses. */
-async function marker(text) {
-  const solid = await import("solid-js")
-  const opentui = await import("@opentui/core")
-  return solid.createComponent(opentui.Text, { children: text })
+async function setup(ctx) {
+  log(`--- setup() ran, v2 context ---`)
+  log(`ctx keys: ${Object.keys(ctx ?? {}).join(", ") || "(none)"}`)
+  log(`ctx.ui keys: ${Object.keys(ctx?.ui ?? {}).join(", ") || "(none)"}`)
+
+  // The fix: claim the top of the composer and render nothing into it.
+  const dispose = ctx.ui.slot({
+    replace: "session.composer.top",
+    render: () => null,
+  })
+  log(`claimed session.composer.top with replace; dispose is ${typeof dispose}`)
+
+  return dispose
 }
 
-async function probe(api) {
-  // ── A: every plugin the host knows about, plus the TUI config it resolved ──────────
-  // Runs first and independently: if the slot work below throws, this file still exists.
-  let plugins = null
-  let tuiConfig = null
-
-  try {
-    plugins = api.plugins.list()
-  } catch (err) {
-    fail("A: api.plugins.list()", err)
-  }
-
-  try {
-    const c = api.tuiConfig
-    tuiConfig = {
-      plugin: c?.plugin ?? null,
-      plugin_enabled: c?.plugin_enabled ?? null,
-      theme: c?.theme ?? null,
-    }
-  } catch (err) {
-    fail("A: api.tuiConfig", err)
-  }
-
-  try {
-    writeFileSync(
-      PLUGINS_OUT,
-      JSON.stringify(
-        {
-          probe: "opencode-slot-probe",
-          note: "plugins[].source is 'file' | 'npm' | 'internal' (tui.d.ts:420). Anything not file/npm is a candidate for plugin_enabled.",
-          plugins,
-          tuiConfig,
-        },
-        null,
-        2,
-      ),
-    )
-  } catch (err) {
-    fail("A: write " + PLUGINS_OUT, err)
-  }
-
-  // ── B: does contributing to these slots put anything on screen? ─────────────────────
-  try {
-    const replacement = await marker("PROBE-REPLACED")
-    const right = await marker("PROBE-RIGHT")
-
-    api.slots.register({
-      slots: {
-        session_prompt: () => replacement,
-        session_prompt_right: () => right,
-      },
-    })
-  } catch (err) {
-    fail("B: api.slots.register on session_prompt / session_prompt_right", err)
-  }
+/** v1 entry point. Only reached on OpenCode 1.x, where the v2 context does not exist. */
+async function tui(api) {
+  log(`--- tui() ran, v1 context ---`)
+  log(`api keys: ${Object.keys(api ?? {}).join(", ") || "(none)"}`)
 }
 
-/** v1 calls `tui`, v2 calls `setup`; both run the same body. */
 export default {
-  tui: (api) => probe(api),
-  setup: (api) => probe(api),
+  id: "oc-probe",
+  setup,
+  tui,
 }
