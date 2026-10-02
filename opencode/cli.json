@@ -27,5 +27,14 @@
   },
   "plugins": [
     "@opencode-cockpit/status"
-  ]
+  ],
+  "mini": {
+    "work_spinner": "block-shuttle",
+    "mono": true,
+    "footer": "hide",
+    "shell_output": "show",
+    "tools": "show",
+    "thinking": "show",
+    "turn_summary": "hide"
+  }
 }

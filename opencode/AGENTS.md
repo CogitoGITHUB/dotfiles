@@ -25,6 +25,9 @@
 - Name every tab you use for work: `herdr tab rename <TAB_ID> <short-task-slug>` (e.g. `aiu-stage-loader`). Do not leave default numeric labels on tabs you are using.
 
 ## Long runs: never block on them
+- NEVER call a shell tool with a long foreground `timeout` (e.g. `timeout 900 ...`), never sleep-loop in a foreground call, and never wrap any tool call in a wall-clock wait. If a command can take minutes, it goes to a herdr pane AND gets a background watcher.
+- The ONLY permitted pattern for anything over a few seconds: run it detached with a completion marker written to a log, arm a background watcher that greps for that marker, then END THE TURN and wait for the harness notification.
+- `timeout 600 neomacs ...` in a foreground tool call is the same mistake as `sleep 300`. There is no exception for "it's only a probe".
 - The tab exists so the USER CAN WATCH. Stream output into the pane with `tee`, never `> logfile` — a fully redirected run makes the tab a hidden shell and defeats the point. `sh -c 'cmd 2>&1 | tee /tmp/run.log; echo EXIT=$? >> /tmp/run.log'` gives live output *and* a greppable log.
 - NEVER `sleep` in a loop waiting for a build/boot/test to finish, and never sit in a foreground call that outlasts the work. That burns minutes of wall clock and the phone's battery for nothing.
 - After sending a long run to a herdr pane, arm a completion watcher with the shell tool's `background: true` and `timeout: 0`, then STOP and end the turn. The harness notifies you on completion — that notification is the "echo".

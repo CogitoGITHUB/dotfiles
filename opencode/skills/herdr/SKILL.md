@@ -36,6 +36,14 @@ herdr pane run <pane_id> <command...>
 
 Sending the command is not the end of the job — and waiting for it is not done by sleeping.
 
+**Forbidden outright**, because each of these has burned real time here:
+
+- a foreground shell call with a long `timeout` (`timeout 900 neomacs ...`)
+- `sleep 300` in a foreground call
+- any tool call wrapped in a wall-clock wait
+
+There is no "but it's only a probe" exception. Anything that can take minutes gets: a herdr pane to run it in, a `DONE`/`EXIT=` marker on disk, and a background watcher that greps for it. Then end the turn and let the harness notification arrive.
+
 **The user must be able to watch it.** So stream the output into the pane. Do NOT redirect the whole run to a log file — that hides the very thing the tab is for and turns the pane into a hidden shell with extra steps. Use `tee`: live in the pane, greppable on disk.
 
 ```bash
