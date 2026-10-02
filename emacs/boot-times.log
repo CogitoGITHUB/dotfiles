@@ -1,19 +1,19 @@
     0.00s (+  0.00s) foundation-start
-    7.93s (+  7.93s) straight-ready
-    8.24s (+  0.30s) core-ready
-    9.30s (+  1.07s) loader-loaded
-    9.30s (+  0.00s) boot-start
-  250.73s (+241.43s) boot-end
-GC: 7.4s of boot in garbage collection
+   21.03s (+ 21.03s) straight-ready
+   26.84s (+  5.81s) core-ready
+   28.48s (+  1.64s) loader-loaded
+   28.48s (+  0.00s) boot-start
+ 1220.34s (+1191.86s) boot-end
+GC: 0.6s of boot in garbage collection
 Slowest units:
-   10.44 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/buffer-management
-    9.81 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/building-things/maintaining-large-programs
-    8.62 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/org-manual/04-export
-    7.72 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/display/06-screen
-    7.27 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/elisp/00-types-a
-    7.21 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/building-things/editing-programs
-    5.99 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/files/org-manual/05-publish
-    4.83 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/the-screen/display/05-minibuffer
-    4.42 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/reaching-outward/calculator/06-programming
-    4.30 loaded    /data/data/com.termux/files/home/Cartesia-of-My-Aether/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/emacs/Manifolding-Emacs/emacs-manifoldings/under-the-hood/dealing-with-trouble
+   32.75 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/files/org-manual/04-export
+   30.64 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/under-the-hood/elisp/00-types-a
+   28.60 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/the-screen/display/06-screen
+   20.89 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/files/org-manual/05-publish
+   20.25 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/under-the-hood/elisp/05-programs
+   19.70 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/the-screen/display/05-minibuffer
+   18.02 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/under-the-hood/dealing-with-trouble
+   16.62 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/reaching-outward/calculator/02-modes
+   16.60 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/reaching-outward/calculator/03-math
+   15.61 loaded    /root/home/shape/Subnet/universe/galaxy/solar-system/planets/earth/computer-science/operating-systems/linux/text-editors/neomacs/Cyberdeck-Emacs/emacs-cyberdeck/reaching-outward/calculator/06-programming
 

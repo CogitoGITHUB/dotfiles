@@ -6,18 +6,19 @@
       "custom_name": null,
       "identity_cwd": "/root/home/shape",
       "public_pane_numbers": {
-        "3": 7,
-        "1": 1
+        "1": 1,
+        "6": 16,
+        "5": 15
       },
-      "next_public_pane_number": 8,
+      "next_public_pane_number": 17,
       "public_tab_numbers": [
         1,
-        7
+        15
       ],
-      "next_public_tab_number": 8,
+      "next_public_tab_number": 16,
       "tabs": [
         {
-          "custom_name": null,
+          "custom_name": "opencode",
           "layout": {
             "Pane": 1
           },
@@ -31,18 +32,30 @@
           "root_pane": 1
         },
         {
-          "custom_name": null,
+          "custom_name": "aiu-stage-loader",
           "layout": {
-            "Pane": 3
+            "Split": {
+              "direction": "Vertical",
+              "ratio": 0.5,
+              "first": {
+                "Pane": 5
+              },
+              "second": {
+                "Pane": 6
+              }
+            }
           },
           "panes": {
-            "3": {
-              "cwd": "/root/home/shape/Subnet"
+            "6": {
+              "cwd": "/tmp/kilo"
+            },
+            "5": {
+              "cwd": "/root/home/shape"
             }
           },
           "zoomed": false,
-          "focused": 3,
-          "root_pane": 3
+          "focused": 6,
+          "root_pane": 5
         }
       ],
       "active_tab": 0

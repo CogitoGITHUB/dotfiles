@@ -24,5 +24,8 @@
   },
   "debug": {
     "devtools": false
-  }
+  },
+  "plugins": [
+    "@opencode-cockpit/status"
+  ]
 }

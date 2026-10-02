@@ -1,0 +1,28 @@
+{
+  "statusline": {
+    "surface": "bottom",
+    "separator": " │ ",
+    "icons": true,
+    "paddingLeft": 0,
+    "paddingRight": 0,
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "commands": {
+      "lanes": {
+        "run": "sh ~/.config/opencode-cockpit/lanes.sh",
+        "intervalMs": 10000,
+        "timeoutMs": 1500,
+        "claudeCodeCompat": false,
+        "priority": 45
+      }
+    },
+    "segments": [
+      { "type": "session.status", "priority": 100 },
+      { "type": "diagnostics", "priority": 88 },
+      { "type": "todo", "priority": 80 },
+      { "type": "git.diff", "priority": 75 },
+      { "type": "session.time", "priority": 50 },
+      { "type": "command", "name": "lanes", "priority": 45 }
+    ]
+  }
+}
