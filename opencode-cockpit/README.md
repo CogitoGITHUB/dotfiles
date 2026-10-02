@@ -6,41 +6,55 @@ so it must be valid JSON. A `//` comment does not error visibly — it makes the
 config silently vanish and the stock default line comes back. The reasoning lives here
 for exactly that reason. `lanes.sh` is the one shell probe the config calls.
 
-## What was cut, and why
-
-The stock default line carries a context bar **and** a token breakdown:
+## What is on the line, and why
 
 ```
-▐▊·············▌ 6% │ tk 65.2k │ cache 60.8k │ in 4.1k │ out 81 │ 8m32s │ ⚠ context7, gh_grep +2
+◔ ████░░░░░░ 43% │ ⧉ 85.2k tok │ ▤ 2/5 todo │ ± +42 / -7 │ ◷ 2d 15h
 ```
 
-Both came out:
+Verified against the real renderer at this box's actual 80 columns:
 
-- **The bar + `tk/cache/in/out`.** A second copy of the percentage OpenCode's own footer
-  already carries, on a screen with 80 columns. A context meter is the one thing worth a
-  bar — but not when the number beside it is already there and the bar's real value is the
-  slope, not the level.
-- **`headroom`** (custom: `+1.2%/m · 48m left`) and **`cached`** (`⇄87% cached`) went with
-  them. Both only annotated the bar. `headroom` was the better of the two and is the one
-  worth reviving if a compact-time warning is ever wanted back — it is a *figure*, not a
-  moving picture, which is the form that does not pull the eye.
-- **`burn`** (`$/min`) also went. It is silent unless the provider declares prices, and this
-  box talks to OpenCode's own provider, which does not — so it was a segment that never
-  drew.
-
-## What is left, and the rule behind it
-
-Only what the host does not already say. OpenCode's footer carries path, branch, token
-total and spend; its prompt carries agent and model. None of those are repeated here.
+```
+node /tmp/opencode/preview/node_modules/@opencode-cockpit/status/dist/cli/preview.js --width 80
+```
 
 | Segment | Why it earns a place |
 |---|---|
 | `session.status` | The spinner never says *why* it stalled — this says `retry 2 in 5s`. |
-| `diagnostics` | Draws only when something is unhealthy. The `⚠ context7, gh_grep` in the default was already worth keeping. |
-| `todo` | `cli.json` sets `session.sidebar: "hide"`, so OpenCode's own todo block is not on screen. This had nowhere else to live. |
+| `context` (gradient, 10) | The capacity instrument. Reads at a glance instead of parsed. Self-hides when the provider declares no window, so no confident wrong number. |
+| `tokens` | The absolute total beside the bar. |
+| `todo` | `cli.json` sets `session.sidebar: "hide"`, so OpenCode's own todo block is off screen. This had nowhere else to live. |
 | `git.diff` | `git diff --shortstat HEAD` — uncommitted, staged and unstaged together. Untracked files are left out: git cannot count lines in a file it has never seen. |
 | `session.time` | Elapsed. |
 | `lanes` (`lanes.sh`) | Other herdr lanes that are working. Silent when zero, so a solo session's line stays short. |
+
+Not carried: `cwd`, `git.branch`, `model`, `cost` — OpenCode's own footer already shows path,
+branch, token total and spend, and its prompt shows agent and model. A second copy of a fact
+adds nothing.
+
+## `diagnostics` is removed on purpose
+
+It was rendering `⚠ context7, gh_grep +2`, which is a false positive — `opencode mcp list`
+reports both of those as `connected`. Two separate reasons it cannot be trusted here:
+
+1. It flags on any status outside `{connected, ready, ok, running, active}`
+   (`HEALTHY` in `dist/core/context.js`), and its snapshot can catch a server mid-startup.
+2. **It could never clear anyway.** `time` and `sequential-thinking` are `disabled: true` in
+   `opencode.jsonc` *and* genuinely broken (`@modelcontextprotocol/server-time` 404s;
+   `mcp-server-sequential-thinking` is not found, exit 127). A warning that is permanently lit
+   is noise, and noise on a 24-row screen costs more than the signal is worth.
+
+## Cut, and why
+
+- **The `cache / in / out` breakdown** (`tk 65.2k │ cache 60.8k │ in 4.1k │ out 81`). Four
+  columns to describe one bar that is already there. The bar plus the total says the same
+  thing in a third of the width.
+- **`headroom`** (custom: `+1.2%/m · 48m left`). The best of the ideas that went, and the one
+  worth reviving if a compact-time warning is ever wanted — it is a *figure*, not a moving
+  picture, which is the form that does not pull the eye.
+- **`cached`** (`⇄87% cached`) and **`burn`** (`$/min`). `burn` is silent unless the provider
+  declares prices, and this box talks to OpenCode's own provider, which does not — so it was a
+  segment that never drew.
 
 ## Priority is the sacrifice order
 
@@ -61,11 +75,22 @@ that true rather than accidental.
   it in the config's `modules` array *and* reference it.
 - **Check it without restarting OpenCode:**
   ```
-  node /tmp/opencode/preview/node_modules/@opencode-cockpit/status/dist/cli/preview.js --width 80 --debug
+  sh ~/.config/opencode-cockpit/preview.sh              # all six states at 80 cols
+  sh ~/.config/opencode-cockpit/preview.sh --debug      # mark segments that drew nothing
+  sh ~/.config/opencode-cockpit/preview.sh --state full # one state
+  sh ~/.config/opencode-cockpit/preview.sh --watch     # redraw on every save
   ```
-  `--state fresh|working|full|unpriced|retrying|empty` draws one state; no flag draws all
-  six. `--debug` marks segments that drew nothing, so a typo and genuinely-missing data stop
-  looking identical. The package's CLI wants `bun >=1.3.5` per its `engines`, which this box
-  does not have — but it runs fine under `node`.
+  `--state` takes `fresh|working|full|unpriced|retrying|empty`. `--debug` marks segments
+  that drew nothing, so a typo and genuinely-missing data stop looking identical. The script
+  runs the package's own preview CLI out of **OpenCode's own plugin cache**, so it always
+  renders the exact version the TUI is running. The package declares `engines.bun >= 1.3.5`,
+  which this box does not have — it runs fine under plain `node` anyway.
+
+- **There is no hot reload for config.** `dist/tui/index.js:40` calls `loadStatusConfig`
+  during plugin setup and line 74 freezes it with `resolveLines`; the per-frame memo rebuilds
+  the line from the session snapshot only. So the line's *data* updates every frame (tokens,
+  todo, diff, timer, retry countdown all move live), but changing *which segments are there*,
+  their priority, width or style needs a restart. That is what `preview.sh` is for — it turns a
+  restart into a one-second check.
 - `session.status` / `diagnostics` / `todo` / `git.diff` / `session.time` are all built-ins;
   nothing here needs the module, a custom segment, or anything installed beside it.

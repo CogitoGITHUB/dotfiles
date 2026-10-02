@@ -18636,3 +18636,10 @@
 2026-10-02T10:26:34.931036Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
 2026-10-02T10:26:34.931139Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
 2026-10-02T10:26:39.986766Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-10-02T10:36:55.791149Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:tF"
+2026-10-02T10:36:55.791376Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:tF"
+2026-10-02T10:36:57.093616Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-10-02T10:36:57.093829Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
+2026-10-02T10:37:02.121572Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
+2026-10-02T10:37:10.958264Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(OpenCode) agent=None pgid=Some(16679)
+2026-10-02T10:37:13.518266Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(12950)

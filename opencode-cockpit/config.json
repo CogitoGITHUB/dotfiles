@@ -18,7 +18,8 @@
     },
     "segments": [
       { "type": "session.status", "priority": 100 },
-      { "type": "diagnostics", "priority": 88 },
+      { "type": "context", "style": "gradient", "width": 10, "priority": 95 },
+      { "type": "tokens", "priority": 90 },
       { "type": "todo", "priority": 80 },
       { "type": "git.diff", "priority": 75 },
       { "type": "session.time", "priority": 50 },

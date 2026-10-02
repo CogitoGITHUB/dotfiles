@@ -7765,3 +7765,4 @@
 2026-10-02T09:24:22.741647Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="client" outcome="started" pid=16667
 2026-10-02T09:24:22.743726Z  INFO herdr::client: connecting to server path=/root/home/shape/.config/herdr/herdr-client.sock
 2026-10-02T09:24:22.990280Z  INFO herdr::client::handshake: endpoint handshake succeeded generation=1 server_version=0.9.3
+2026-10-02T10:36:29.177465Z  WARN herdr::sound: sound playback failed sound=Request err=no mp3-capable audio player available: paplay exited with exit status: 1: Connection failure: Connection refused; pw-play failed: No such file or directory (os error 2); ffplay failed: No such file or directory (os error 2); mpg123 failed: No such file or directory (os error 2); mpv failed: No such file or directory (os error 2)

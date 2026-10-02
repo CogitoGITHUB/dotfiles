@@ -7,8 +7,8 @@
       "identity_cwd": "/root/home/shape",
       "public_pane_numbers": {
         "1": 1,
-        "6": 16,
-        "5": 15
+        "5": 15,
+        "6": 16
       },
       "next_public_pane_number": 17,
       "public_tab_numbers": [
@@ -46,11 +46,11 @@
             }
           },
           "panes": {
-            "6": {
-              "cwd": "/tmp/kilo"
-            },
             "5": {
               "cwd": "/root/home/shape"
+            },
+            "6": {
+              "cwd": "/tmp/kilo"
             }
           },
           "zoomed": false,
