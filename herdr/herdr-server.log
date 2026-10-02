@@ -18686,3 +18686,5 @@
 2026-10-02T11:23:59.097264Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w1T" tab_id="w1T:t1"
 2026-10-02T11:24:04.147474Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/root/home/shape/.config/herdr/session.json workspaces=1
 2026-10-02T11:24:22.735982Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-10-02T11:30:47.131584Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(OpenCode) agent=None pgid=Some(16679)
+2026-10-02T11:30:58.941532Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(7627)
