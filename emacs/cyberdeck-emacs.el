@@ -240,11 +240,63 @@ compiler.  Prevents double-recording of synchronous part failures.")
      :error)
     entry))
 
+(defcustom cyberdeck-emacs-deferred-variables '(dashboard-agenda-files)
+  "Variables a unit may legitimately assign before its owning package is
+loaded, because that package is deferred.
+
+`byte-compile-free-vars-warn' warns unless the symbol is `boundp' at
+compile time, and a deferred package has not defined its variables yet,
+so a correct `setq' reads as a free-variable assignment.  The loader
+binds these names for the duration of the compile only
+(`cyberdeck-emacs--with-deferred-variables'), so no unit's parts change
+and no parts-hash or .elc cache id moves: adding a name here recompiles
+nothing.
+
+Each name is left void again afterwards, so when the owning package does
+load, its own `defcustom' still installs its own default."
+  :type '(repeat symbol)
+  :group 'cyberdeck-emacs)
+
+(defun cyberdeck-emacs--with-deferred-variables (body)
+  "Run BODY with `cyberdeck-emacs-deferred-variables' temporarily bound.
+Bound, not valued: the byte compiler only asks `boundp'.  Anything this
+binds is made void again on the way out, including on error."
+  (let (was-void)
+    (dolist (sym cyberdeck-emacs-deferred-variables)
+      (unless (boundp sym)
+        (set sym nil)
+        (push sym was-void)))
+    (unwind-protect
+        (funcall body)
+      (dolist (sym was-void)
+        (makunbound sym)))))
+
+(defvar cyberdeck-emacs--third-party-warning-count 0
+  "Third-party package warnings deliberately NOT recorded this boot.
+Always reported in the boot summary, so filtering is never silent.")
+
+(defun cyberdeck-emacs--third-party-warning-p (type _message)
+  "Non-nil when TYPE is upstream package noise this vault must not own.
+Deliberately ONE case: a missing `lexical-binding' cookie in a file under
+straight's build directory.  Those are third-party git sources we do not
+edit, and straight leaves them uncompiled, so the warning would otherwise
+reappear on every single boot.  Nothing else is filtered: every other
+type, and every cookie warning inside the vault, still records."
+  (and (consp type)
+       (eq (car type) 'files)
+       (eq (cadr type) 'missing-lexbind-cookie)
+       (let ((path (caddr type)))
+         (and (stringp path)
+              (string-match-p "/straight/build/" path)))))
+
 (defun cyberdeck-emacs-record-warning (type message)
-  (push (list :type type :message message :time (float-time)
-              :file (and (boundp 'cyberdeck-emacs--current-unit-file)
-                         cyberdeck-emacs--current-unit-file))
-        cyberdeck-emacs--boot-warnings))
+  (if (cyberdeck-emacs--third-party-warning-p type message)
+      (setq cyberdeck-emacs--third-party-warning-count
+            (1+ cyberdeck-emacs--third-party-warning-count))
+    (push (list :type type :message message :time (float-time)
+                :file (and (boundp 'cyberdeck-emacs--current-unit-file)
+                           cyberdeck-emacs--current-unit-file))
+          cyberdeck-emacs--boot-warnings)))
 
 (defvar cyberdeck-emacs--current-unit-file nil
   "Source file of the unit currently compiling/loading, or nil.
@@ -277,7 +329,8 @@ special (dynamic) even if the loader ever gains lexical-binding.")
 per run (killed below in compile-directory).  Does NOT touch
 `cyberdeck-emacs--package-status'."
   (setq cyberdeck-emacs--boot-errors '()
-        cyberdeck-emacs--boot-warnings '()))
+        cyberdeck-emacs--boot-warnings '()
+        cyberdeck-emacs--third-party-warning-count 0))
 
 (defun cyberdeck-emacs-errors-clear-all-status ()
   "Wipe all recorded package statuses.  Manual escape hatch for when
@@ -1129,28 +1182,6 @@ fails to read is skipped whole, with one warning, never fatal."
                              (symbolp (cadr f)))
                     (push (cadr f) data)))))))))
     (list :code (nreverse code) :data (nreverse data))))
-
-(defun cyberdeck-emacs--step3-snapshot (file)
-  "TEMP-STEP3-SNAPSHOT — remove before commit.
-Writes FILE: every symbol the index says a unit defines, plus whether it
-was already fbound here.  The pre-loop call is the baseline a Step-4
-autoload would have to respect."
-  (condition-case nil
-      (let (rows)
-        (maphash
-         (lambda (k entry)
-           (dolist (p (plist-get entry :symbols))
-             (dolist (c (plist-get (cdr p) :code))
-               (let ((s (intern (nth 0 c))))
-                 (push (list (nth 0 c) (nth 1 c) (file-name-nondirectory k)
-                             (and (fboundp s) t)
-                             (and (fboundp s)
-                                  (eq (nth 0 c)
-                                      (car (autoload-find-file s)))))
-                       rows)))))
-         cyberdeck-emacs--discovery-index)
-        (with-temp-file file (insert (prin1-to-string rows))))
-    (error nil)))
 
 (defun cyberdeck-emacs--index-ensure (file)
   "Refresh FILE's index entry from session memos, scanning on miss.
@@ -2246,7 +2277,8 @@ before any load/compile/eval."
                          ;; Free-variable, callargs, and unused
                          ;; warnings still fire.
                          (let ((byte-compile-warnings '(not unresolved)))
-                           (byte-compile-file el) t)
+                           (cyberdeck-emacs--with-deferred-variables
+                             (lambda () (byte-compile-file el))) t)
                        (error nil))
                      (file-exists-p elc))
                 (condition-case err
@@ -2439,9 +2471,6 @@ compiled, in completion order."
          (paren-errors 0) (void-errors 0))
     ;; Discovery is done: the unit loop below is compilation.
     (setq cyberdeck-emacs--boot-phase :compiling)
-    ;; TEMP-STEP3-SNAPSHOT — remove before commit.  Baseline: the index
-    ;; is populated and not one unit has loaded yet.
-    (cyberdeck-emacs--step3-snapshot "/tmp/kilo/snap-before-loop.el")
     ;; Position of the last dashboard-group unit: the dashboard opens
     ;; only past it (full render, never staged).
     (setq cyberdeck-emacs--dashboard-complete-at
@@ -3057,18 +3086,21 @@ whether or not files were passed on the command line."
             (when my/loader-strict-p
               (signal (car err) (cdr err)))))
    (cyberdeck-emacs-errors-save-log)
-    ;; TEMP-STEP3-SNAPSHOT — remove before commit.
-    (cyberdeck-emacs--step3-snapshot "/tmp/kilo/snap-after-loop.el")
    (unless fatal
      (cyberdeck-emacs-maybe-freeze-on-clean-boot)
      (cyberdeck-emacs-doctor-schedule-idle-sweep))
    (let ((errn (length (cyberdeck-emacs-errors-list)))
          (warnn (length (cyberdeck-emacs-warnings-list))))
-     (message "cyberdeck-emacs: %s%d error(s), %d warning(s)%s"
+     (message "cyberdeck-emacs: %s%d error(s), %d warning(s)%s%s"
               (if fatal "BOOT THREW - " "")
               errn warnn
               (if (and (not (zerop (+ errn warnn))) (not fatal))
-                  " — details in *Warnings*" "")))
+                  " — details in *Warnings*" "")
+              ;; Filtering is never silent: say what was dropped.
+              (if (zerop cyberdeck-emacs--third-party-warning-count)
+                  ""
+                (format " (%d third-party package warning(s) filtered)"
+                        cyberdeck-emacs--third-party-warning-count))))
    ;; Void-defun sweep: verify critical functions actually exist.
    (dolist (check
             '(("my/cyberdeck-org-prompt--ask" . "org-prompts.org")

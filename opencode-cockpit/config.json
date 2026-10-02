@@ -1,11 +1,22 @@
 {
   "statusline": {
     "surface": "bottom",
-    "separator": " │ ",
+    "separator": "·",
     "icons": true,
     "modules": ["~/.config/opencode-cockpit/statusline.mjs"],
     "segments": [
-      { "type": "bar", "width": 10, "priority": 95 }
+      { "type": "model", "priority": 98 },
+      { "type": "session.status", "priority": 88 },
+      { "type": "bar", "width": 10, "priority": 96 },
+
+      { "type": "filling", "priority": 75 },
+      { "type": "tokens", "priority": 65 },
+      { "type": "todo", "priority": 60 },
+      { "type": "rate", "priority": 40 },
+
+      { "type": "cwd", "priority": 92 },
+      { "type": "git.branch", "priority": 93 },
+      { "type": "git.diff", "priority": 94 }
     ]
   }
 }
