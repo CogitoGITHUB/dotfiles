@@ -4,32 +4,75 @@ Config lives in `config.json` next to this file. `preview.sh` renders it without
 OpenCode. This file is the reasoning, kept out of `config.json` for the reason in the first
 section.
 
-## The line is one segment
+## The line is one custom segment
+
+`statusline.mjs` draws the context window as a bar; `config.json` just points at it.
 
 ```jsonc
-{ "statusline": { "segments": [ { "type": "context", "style": "gradient", "width": 10 } ] } }
+{
+  "statusline": {
+    "modules": ["~/.config/opencode-cockpit/statusline.mjs"],
+    "segments": [{ "type": "bar", "width": 10, "priority": 95 }]
+  }
+}
 ```
 
 It draws:
 
 ```
-◔ ████░░░░░░ 43%
+██████████ 43%
 ```
 
-Nothing else. Everything else that was tried and cut is listed under **Cut** below.
+The fill is the `text` tone (white in this theme) and the track is `border`. Verified in the
+raw escapes rather than by eye, since stripped ANSI hides exactly the thing that matters:
 
-`◔` is the segment's icon, the ten `█`/`░` cells are the bar, and `43%` is the reading. The
-percentage is not a separate segment — all three bar styles (`bar`, `gradient`, `split`) append
-it in the same run, and only `style: "percent"` drops the bar for the number. If the bar is ever
-wanted without the figure, that needs a custom module, not a config key.
+```
+cells 1-4   38;2;232;237;242   ← fill, theme foreground
+cells 5-10  38;2;62;70;80      ← track, border tone
+  43%       38;2;232;237;242   ← figure
+```
+
+**Why a module and not the built-in `context` segment:**
+
+- `{ "type": "context", "style": "gradient" }` colours every filled cell with `gradient(t)` —
+  green while there is room, amber as it tightens, red when nearly gone. Good default, wrong
+  here.
+- `SegmentConfig.color` is no way out either. `dist/core/segments.js:138` — a colour named on
+  the segment "overrides every run in it, icon included" — so the track would be whitened too and
+  the bar would stop reading as a bar.
+
+Two tone choices worth keeping: the fill is `text` and not a literal white, so it follows
+whatever theme is running; the track is `border` and never `panel`, because `panel` is the
+panel's own colour and a track drawn in it is invisible on most themes.
 
 The bar **disappears entirely** when the model in play declares no context window, rather than
 showing a percentage against an invented denominator. Three of the six preview states draw
 nothing for exactly that reason (`fresh`, `unpriced`, `empty`), and that is correct.
 
-Cell colours are interpolated along a gradient rather than bucketed into three states, so the
-bar reads as a measurement. The empty track is drawn in `border` tone — in `panel` tone it would
-be the panel's own colour and therefore invisible.
+**If the track is ever wanted solid** — the package's own design skill says `░` "reads as
+floating gaps" and that a solid `█` track in `border` tone is the correct form, so the built-in
+may well be the better gauge — it is one character in `statusline.mjs`: `░` becomes `█`.
+
+## The module has no imports, and that is load-bearing
+
+`statusline.mjs` inlines `contextUsed`, `contextRatio` and `percent` verbatim from the package
+rather than importing them from `@opencode-cockpit/status/segment`. That import is not merely
+stylistic:
+
+- The loader tries a bare `import()` first, and only falls back to rewriting the authoring
+  specifier when that fails.
+- **The fallback uses `Bun.resolveSync`, `Bun.file` and `Bun.write`** (`dist/core/custom.js:73`).
+- So a module that imports the authoring specifier loads in the TUI (Bun) and **fails in
+  `preview.sh` (node)** — and a module that fails to load puts a `⚠` row on the line itself.
+
+With no imports, the first `import()` succeeds in both runtimes, so what the preview checks is
+the same file the TUI loads. The file is `.mjs` because node treats a bare `.js` as CommonJS
+unless the nearest `package.json` sets `"type": "module"`, and this directory has no
+`package.json`.
+
+The cost: three functions to keep in step if the package ever changes its definitions. They are
+arithmetic over plain fields, and `contextRatio`'s contract — `undefined` when no window was
+declared, which is what makes the bar disappear rather than lie — is the part that must not drift.
 
 ## `config.json` must be strictly valid JSON
 
@@ -126,12 +169,16 @@ That is what `preview.sh` is for — it turns a restart into a one-second check.
   declares prices, and this box talks to OpenCode's own provider, which does not — so it was a
   segment that never drew.
 
-## Adding a custom segment
+## Adding a segment
 
-A TypeScript module at `~/.config/opencode-cockpit/statusline.ts` is loaded and transpiled at
-plugin startup **even when no segment references it**, and a module that fails to load puts a
-`⚠` row on the line itself. Both are reasons not to keep one lying around unused. Put it in the
-config's `modules` array *and* reference it, or keep no module at all — which is the current
-state.
+The one module here is `statusline.mjs`, referenced by the config's `modules` array and used by
+the `bar` segment. Two things to know before adding another:
+
+- **A module listed in `modules` is loaded at plugin startup even if no segment references it**,
+  and a module that fails to load puts a `⚠` row on the line itself. So a module is only ever
+  worth adding alongside the segment that uses it — which is why this stayed at one file with one
+  segment in it rather than growing a library of unused instruments.
+- **Give it no imports from the authoring specifier**, for the reason above, or `preview.sh` will
+  not be able to load it and the change goes in unverified.
 
 `preview.sh --module <path>` renders one module's segments in isolation, without OpenCode.

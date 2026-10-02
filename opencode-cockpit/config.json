@@ -3,8 +3,9 @@
     "surface": "bottom",
     "separator": " │ ",
     "icons": true,
+    "modules": ["~/.config/opencode-cockpit/statusline.mjs"],
     "segments": [
-      { "type": "context", "style": "gradient", "width": 10, "priority": 95 }
+      { "type": "bar", "width": 10, "priority": 95 }
     ]
   }
 }

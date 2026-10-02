@@ -18645,3 +18645,4 @@
 2026-10-02T10:37:13.518266Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(12950)
 2026-10-02T10:47:39.805023Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(OpenCode) agent=None pgid=Some(19537)
 2026-10-02T10:47:44.484489Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(OpenCode) process=opencode pgid=Some(19554)
+2026-10-02T10:54:22.735441Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
