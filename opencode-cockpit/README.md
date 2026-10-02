@@ -64,6 +64,33 @@ the order things get thrown away on a narrow screen: `session.time` and `lanes` 
 actually broken. At 80 columns nothing should need dropping, but the ordering is what makes
 that true rather than accidental.
 
+## Do not set `padding*` in this config
+
+Setting `paddingBottom: 0` (and left/right/top to 0 for good measure) makes the whole line
+**invisible in the TUI** while `preview.sh` keeps rendering it perfectly. Cost: one confused
+afternoon.
+
+`dist/core/config.js:212` — the defaults are not cosmetic:
+
+```js
+const PADDING = {
+  // OpenCode's footer indents three columns, and a line hard against the bottom of the window
+  // reads as clipped, so this one keeps a row clear underneath it.
+  bottom: { left: 3, right: 2, top: 0, bottom: 1 },
+  ...
+}
+```
+
+`paddingBottom: 1` is the row that stops the line being clipped off the bottom edge. Zero it and
+the line is drawn into a zero-height container. `paddingLeft: 3` / `paddingRight: 2` line it up
+with the prompt's own furniture.
+
+**The preview cannot catch this.** The preview CLI lays segments out horizontally and does not
+model the surface's vertical padding, so it reported the line as healthy while the TUI was drawing
+nothing. This is the general shape of the trap the package's own design skill warns about: a
+preview proves the *segments* are right, never that the *placement* is. Anything about padding,
+position, or clipping can only be confirmed by restarting OpenCode and looking.
+
 ## Notes for later
 
 - **`lanes.sh` interval is 10s, not the 2s default.** Spawning `herdr` + `python3` every 2

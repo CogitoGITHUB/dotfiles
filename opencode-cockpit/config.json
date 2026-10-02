@@ -3,10 +3,6 @@
     "surface": "bottom",
     "separator": " │ ",
     "icons": true,
-    "paddingLeft": 0,
-    "paddingRight": 0,
-    "paddingTop": 0,
-    "paddingBottom": 0,
     "commands": {
       "lanes": {
         "run": "sh ~/.config/opencode-cockpit/lanes.sh",
