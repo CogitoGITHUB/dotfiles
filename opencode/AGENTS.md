@@ -1,3 +1,9 @@
+## Herdr + neomacs: run it, watch it, get pinged
+- Open neomacs in a spare pane/tab: `herdr pane run <pane> 'bash -c "neomacs -nw ... 2>&1 | tee <log>; echo DONE-MARKER=\${PIPESTATUS[0]} >> <log>"'`. Output streams (watchable) AND lands in a file.
+- Read it live anytime: `herdr pane read <pane>` — progress, errors, backtraces — without touching the session.
+- Notify on done: background watcher polls for the exit marker; the harness pings on completion. Never sleep-loop in foreground.
+- Safety, learned the hard way: verify a pane is an idle shell BEFORE sending anything (typed into the user's live Emacs twice); never use your own pane; one boot at a time (unit-times.log/module-el race); plain `-nw` never exits — read results, then kill it; batch probes that hang get `timeout`, batch `read`/`with-temp-buffer` flakiness is real.
+
 # Global instructions — loaded in every session
 
 ## Environment: proot-Ubuntu on Termux (phone)
@@ -38,3 +44,18 @@
 ## Git: always ship with `git gg`
 - After making any changes, always finish with `git gg` (`git add -A && git commit -m 'update' && git push`).
 - Applies to both repos: Subnet vault root AND `~/.config` (dotfiles). The `gg` alias exists in both — run it from each root you touched.
+
+## Warnings/errors: fix everything you see
+- Every error or warning you observe (boot logs, *Warnings*, byte-compiler
+  output, test results) gets fixed in the same session, not deferred.
+  Unfixed issues compound: one silent failure masks the next and each costs
+  more to diagnose later than now.
+- No silent suppression as a "fix". Filtering/counting is instrumentation;
+  the fix removes the cause. Third-party/upstream causes get a durable
+  in-scope workaround or an explicit user decision, never a quiet filter.
+- Verify each fix with the project's own gates (balance/tangle/reader/
+  byte-compile/boot as applicable) before reporting it fixed.
+
+## Session 2026-10-03 (Subnet vault) — what changed
+- Staged boot (S1/S2/S0), modular 19-file loader, keyboard + dashboard renames, db path
+  repair, warning cleanup. Details in the vault AGENT.md session entry.
